@@ -2,8 +2,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Trophy, Users, PlayCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white">
       <div className="container mx-auto px-4 py-16">
@@ -40,6 +43,7 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
             className="glass rounded-lg p-6 card-hover"
+            onClick={() => navigate("/guess-player")}
           >
             <PlayCircle className="w-12 h-12 text-flu-grena mx-auto mb-4" />
             <h3 className="text-xl font-semibold mb-2">Adivinhe o Jogador</h3>
