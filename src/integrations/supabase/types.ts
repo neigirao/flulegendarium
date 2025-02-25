@@ -9,7 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      players: {
+        Row: {
+          achievements: string[] | null
+          created_at: string
+          fun_fact: string | null
+          id: string
+          image_url: string
+          name: string
+          position: string
+          statistics: Json | null
+          year_highlight: string | null
+        }
+        Insert: {
+          achievements?: string[] | null
+          created_at?: string
+          fun_fact?: string | null
+          id?: string
+          image_url: string
+          name: string
+          position?: string
+          statistics?: Json | null
+          year_highlight?: string | null
+        }
+        Update: {
+          achievements?: string[] | null
+          created_at?: string
+          fun_fact?: string | null
+          id?: string
+          image_url?: string
+          name?: string
+          position?: string
+          statistics?: Json | null
+          year_highlight?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
