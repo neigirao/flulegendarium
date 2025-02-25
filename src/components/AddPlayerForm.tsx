@@ -26,16 +26,33 @@ export const AddPlayerForm = () => {
 
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      formData.append('image', image);
-      formData.append('name', name);
-      formData.append('position', position);
+      // Primeiro upload a imagem para o storage
+      const fileExt = image.name.split('.').pop();
+      const fileName = `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('players')
+        .upload(fileName, image);
 
-      const { data, error } = await supabase.functions.invoke('upload-player', {
-        body: formData,
-      });
+      if (uploadError) throw uploadError;
 
-      if (error) throw error;
+      // Pegar a URL pública da imagem
+      const { data: { publicUrl } } = supabase.storage
+        .from('players')
+        .getPublicUrl(fileName);
+
+      // Inserir o jogador no banco
+      const { data: player, error: insertError } = await supabase
+        .from('players')
+        .insert({
+          name,
+          position: position || 'Não informada',
+          image_url: publicUrl,
+        })
+        .select()
+        .single();
+
+      if (insertError) throw insertError;
 
       toast({
         title: "Sucesso!",
