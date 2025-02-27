@@ -31,12 +31,14 @@ const GuessPlayer = () => {
   const [guess, setGuess] = useState("");
   const [gameOver, setGameOver] = useState(false);
   
-  // Busca jogadores do Supabase com tratamento de erro melhorado
+  // Busca jogadores do Supabase com tratamento de erro melhorado e mais logs
   const { data: players = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
     queryFn: async () => {
       try {
         console.log("Iniciando busca de jogadores...");
+        console.log("URL do Supabase:", supabase.supabaseUrl);
+        
         const { data, error } = await supabase
           .from('players')
           .select('*');
@@ -46,7 +48,10 @@ const GuessPlayer = () => {
           throw error;
         }
         
-        console.log("Jogadores carregados:", data);
+        console.log("Jogadores carregados com sucesso:", data?.length || 0, "jogadores");
+        if (data && data.length > 0) {
+          console.log("Primeiro jogador:", data[0].name);
+        }
         return data as Player[];
       } catch (err) {
         console.error("Exceção ao buscar jogadores:", err);
@@ -59,7 +64,7 @@ const GuessPlayer = () => {
 
   useEffect(() => {
     if (players?.length > 0 && !currentPlayer) {
-      console.log("Selecionando jogador aleatório...");
+      console.log("Selecionando jogador aleatório entre", players.length, "jogadores");
       selectRandomPlayer();
     }
   }, [players]);
@@ -71,7 +76,7 @@ const GuessPlayer = () => {
     }
     
     const randomIndex = Math.floor(Math.random() * players.length);
-    console.log("Jogador selecionado:", players[randomIndex]);
+    console.log("Jogador selecionado:", players[randomIndex]?.name || "Desconhecido");
     setCurrentPlayer(players[randomIndex]);
     setAttempts(0);
     setGuess("");
@@ -147,6 +152,9 @@ const GuessPlayer = () => {
         <p className="text-sm text-gray-600 mb-4">
           {playersError instanceof Error ? playersError.message : "Erro desconhecido"}
         </p>
+        <pre className="bg-gray-100 p-4 rounded text-xs overflow-auto max-h-48 mb-4">
+          {JSON.stringify(playersError, null, 2)}
+        </pre>
         <button 
           onClick={() => navigate("/")}
           className="bg-flu-grena text-white px-4 py-2 rounded-lg"
