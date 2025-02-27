@@ -1,11 +1,12 @@
 
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowLeft, Trophy } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase"; // Assuma que já existe
+import { supabase } from "@/lib/supabase";
+import { PlayerRanking } from "@/components/PlayerRanking";
 
 interface Player {
   id: string;
@@ -26,6 +27,8 @@ interface ProcessedName {
   confidence: number;
 }
 
+const MAX_GAMES_PER_SESSION = 5;
+
 const GuessPlayer = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -36,6 +39,14 @@ const GuessPlayer = () => {
   const [showHint, setShowHint] = useState(false);
   const [imageBlur, setImageBlur] = useState("blur-xl");
   const [gameOver, setGameOver] = useState(false);
+  const [gamesPlayed, setGamesPlayed] = useState(0);
+  const [showRanking, setShowRanking] = useState(false);
+
+  // Som de feedback
+  const playSound = (success: boolean) => {
+    const audio = new Audio(success ? '/success.mp3' : '/error.mp3');
+    audio.play().catch(console.error);
+  };
 
   // Busca jogadores do Supabase
   const { data: players = [] } = useQuery({
@@ -84,6 +95,15 @@ const GuessPlayer = () => {
   }, [players]);
 
   const selectRandomPlayer = () => {
+    if (gamesPlayed >= MAX_GAMES_PER_SESSION) {
+      toast({
+        title: "Sessão finalizada!",
+        description: `Você jogou ${MAX_GAMES_PER_SESSION} vezes. Volte mais tarde!`,
+      });
+      setGameOver(true);
+      return;
+    }
+
     const randomIndex = Math.floor(Math.random() * players.length);
     setCurrentPlayer(players[randomIndex]);
     setAttempts(0);
@@ -91,6 +111,7 @@ const GuessPlayer = () => {
     setImageBlur("blur-xl");
     setGuess("");
     setGameOver(false);
+    setGamesPlayed(prev => prev + 1);
   };
 
   const handleGuess = async () => {
@@ -106,6 +127,7 @@ const GuessPlayer = () => {
         setScore((prev) => prev + points);
         await updateRanking(points);
         
+        playSound(true);
         toast({
           title: "Parabéns!",
           description: `Você acertou e ganhou ${points} pontos!`,
@@ -113,6 +135,7 @@ const GuessPlayer = () => {
         selectRandomPlayer();
       } else {
         setAttempts((prev) => prev + 1);
+        playSound(false);
         
         if (attempts === 0) {
           setImageBlur("blur-md");
@@ -158,78 +181,106 @@ const GuessPlayer = () => {
             <ArrowLeft className="mr-2" />
             Voltar
           </button>
-          <div className="text-flu-grena font-semibold">
-            Ranking: {score} pontos
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => setShowRanking(!showRanking)}
+              className="flex items-center text-flu-grena hover:opacity-80"
+            >
+              <Trophy className="mr-2" />
+              Ranking
+            </button>
+            <div className="text-flu-grena font-semibold">
+              {score} pontos
+            </div>
           </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass rounded-lg p-6"
-        >
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-flu-grena mb-2">
-              Adivinhe o Jogador
-            </h1>
-            <p className="text-gray-600">Use apelidos ou nomes oficiais!</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-2">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="glass rounded-lg p-6"
+            >
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-flu-grena mb-2">
+                  Adivinhe o Jogador
+                </h1>
+                <p className="text-gray-600">Use apelidos ou nomes oficiais!</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Jogos restantes: {MAX_GAMES_PER_SESSION - gamesPlayed}
+                </p>
+              </div>
+
+              {currentPlayer && (
+                <div className="space-y-6">
+                  <div className="relative aspect-video rounded-lg overflow-hidden">
+                    <img
+                      src={currentPlayer.image_url}
+                      alt="Jogador misterioso"
+                      className={`w-full h-full object-cover ${imageBlur} transition-all duration-500`}
+                    />
+                  </div>
+
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      value={guess}
+                      onChange={(e) => setGuess(e.target.value)}
+                      placeholder="Nome ou apelido do jogador..."
+                      className="flex-1 px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-flu-grena"
+                      onKeyDown={(e) => e.key === "Enter" && handleGuess()}
+                      disabled={gameOver}
+                    />
+                    <button
+                      onClick={() => handleGuess()}
+                      disabled={!guess || gameOver}
+                      className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Adivinhar
+                    </button>
+                  </div>
+
+                  {gameOver && (
+                    <div className="text-center">
+                      <button
+                        onClick={selectRandomPlayer}
+                        className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90"
+                      >
+                        Próximo Jogador
+                      </button>
+                    </div>
+                  )}
+
+                  <div className="text-sm text-gray-600">
+                    <p>Tentativas restantes: {3 - attempts}</p>
+                    <p>Dicas desbloqueadas: {attempts}/3</p>
+                  </div>
+
+                  {showHint && (
+                    <div className="p-4 bg-flu-verde/10 rounded-lg">
+                      <h3 className="font-semibold mb-2">Estatísticas do Jogador</h3>
+                      <p>Gols: {currentPlayer.statistics.gols}</p>
+                      <p>Jogos: {currentPlayer.statistics.jogos}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
           </div>
 
-          {currentPlayer && (
-            <div className="space-y-6">
-              <div className="relative aspect-video rounded-lg overflow-hidden">
-                <img
-                  src={currentPlayer.image_url}
-                  alt="Jogador misterioso"
-                  className={`w-full h-full object-cover ${imageBlur} transition-all duration-500`}
-                />
-              </div>
-
-              <div className="flex gap-4">
-                <input
-                  type="text"
-                  value={guess}
-                  onChange={(e) => setGuess(e.target.value)}
-                  placeholder="Nome ou apelido do jogador..."
-                  className="flex-1 px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-flu-grena"
-                  onKeyDown={(e) => e.key === "Enter" && handleGuess()}
-                  disabled={gameOver}
-                />
-                <button
-                  onClick={() => handleGuess()}
-                  disabled={!guess || gameOver}
-                  className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Adivinhar
-                </button>
-              </div>
-
-              {gameOver && (
-                <div className="text-center">
-                  <button
-                    onClick={selectRandomPlayer}
-                    className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90"
-                  >
-                    Próximo Jogador
-                  </button>
-                </div>
-              )}
-
-              <div className="text-sm text-gray-600">
-                <p>Tentativas restantes: {3 - attempts}</p>
-                <p>Dicas desbloqueadas: {attempts}/3</p>
-              </div>
-
-              {showHint && (
-                <div className="p-4 bg-flu-verde/10 rounded-lg">
-                  <h3 className="font-semibold mb-2">Estatísticas do Jogador</h3>
-                  <p>Gols: {currentPlayer.statistics.gols}</p>
-                  <p>Jogos: {currentPlayer.statistics.jogos}</p>
-                </div>
-              )}
-            </div>
-          )}
-        </motion.div>
+          <AnimatePresence>
+            {showRanking && (
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+              >
+                <PlayerRanking />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
