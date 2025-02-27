@@ -41,44 +41,15 @@ serve(async (req) => {
       }
     }
 
-    // Se não encontrou correspondência exata, usa IA para processar
-    const openAIApiKey = Deno.env.get('OPENAI_API_KEY');
-    
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${openAIApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4o-mini',
-        messages: [
-          {
-            role: 'system',
-            content: `Você é um especialista em jogadores do Fluminense. 
-            Sua tarefa é identificar o jogador correto mesmo com erros de digitação 
-            ou uso de apelidos. Responda apenas com o nome oficial do jogador se 
-            tiver certeza, ou "null" se não tiver certeza.`
-          },
-          {
-            role: 'user',
-            content: `Identifique este jogador do Fluminense: "${userInput}"`
-          }
-        ]
-      })
-    });
-
-    const aiResponse = await response.json();
-    const suggestion = aiResponse.choices[0].message.content.trim();
-    
+    // Não precisamos usar IA para o primeiro MVP
+    // Se não encontrou correspondência exata, retorna null
     return new Response(
-      JSON.stringify({
-        processedName: suggestion === "null" ? null : suggestion,
-        confidence: suggestion === "null" ? 0 : 0.8
+      JSON.stringify({ 
+        processedName: null,
+        confidence: 0.0 
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
   } catch (error) {
     return new Response(
       JSON.stringify({ error: error.message }),
