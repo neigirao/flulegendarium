@@ -29,7 +29,6 @@ const GuessPlayer = () => {
   const [attempts, setAttempts] = useState(0);
   const [score, setScore] = useState(0);
   const [guess, setGuess] = useState("");
-  const [imageBlur, setImageBlur] = useState("blur-xl");
   const [gameOver, setGameOver] = useState(false);
   
   // Busca jogadores do Supabase com tratamento de erro melhorado
@@ -75,7 +74,6 @@ const GuessPlayer = () => {
     console.log("Jogador selecionado:", players[randomIndex]);
     setCurrentPlayer(players[randomIndex]);
     setAttempts(0);
-    setImageBlur("blur-xl");
     setGuess("");
     setGameOver(false);
   };
@@ -105,15 +103,13 @@ const GuessPlayer = () => {
       const newAttempts = attempts + 1;
       setAttempts(newAttempts);
       
-      // Ajustar o blur conforme as tentativas
+      // Mostrar dicas conforme as tentativas
       if (newAttempts === 1) {
-        setImageBlur("blur-md");
         toast({
           title: "Dica!",
           description: `Posição: ${currentPlayer.position}`,
         });
       } else if (newAttempts === 2) {
-        setImageBlur("blur-sm");
         if (currentPlayer.achievements && currentPlayer.achievements.length > 0) {
           toast({
             title: "Dica!",
@@ -127,7 +123,6 @@ const GuessPlayer = () => {
         }
       } else {
         // Game over após 3 tentativas
-        setImageBlur("blur-none");
         setGameOver(true);
         toast({
           variant: "destructive",
@@ -211,8 +206,8 @@ const GuessPlayer = () => {
               <div className="relative aspect-video rounded-lg overflow-hidden">
                 <img
                   src={currentPlayer.image_url}
-                  alt="Jogador misterioso"
-                  className={`w-full h-full object-cover ${imageBlur} transition-all duration-500`}
+                  alt="Jogador"
+                  className="w-full h-full object-cover transition-all duration-500"
                   onError={(e) => {
                     console.error("Erro ao carregar imagem:", e);
                     e.currentTarget.src = "/placeholder.svg";
