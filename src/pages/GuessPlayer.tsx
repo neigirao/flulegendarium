@@ -32,28 +32,47 @@ const GuessPlayer = () => {
   const [imageBlur, setImageBlur] = useState("blur-xl");
   const [gameOver, setGameOver] = useState(false);
   
-  // Busca jogadores do Supabase
+  // Busca jogadores do Supabase com tratamento de erro melhorado
   const { data: players = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('players')
-        .select('*');
-      if (error) throw error;
-      return data as Player[];
+      try {
+        console.log("Iniciando busca de jogadores...");
+        const { data, error } = await supabase
+          .from('players')
+          .select('*');
+        
+        if (error) {
+          console.error("Erro ao buscar jogadores:", error);
+          throw error;
+        }
+        
+        console.log("Jogadores carregados:", data);
+        return data as Player[];
+      } catch (err) {
+        console.error("Exceção ao buscar jogadores:", err);
+        throw err;
+      }
     },
+    retry: 3, // Tenta mais vezes em caso de falha
+    refetchOnWindowFocus: false, // Evita refetch desnecessário
   });
 
   useEffect(() => {
-    if (players.length > 0 && !currentPlayer) {
+    if (players?.length > 0 && !currentPlayer) {
+      console.log("Selecionando jogador aleatório...");
       selectRandomPlayer();
     }
   }, [players]);
 
   const selectRandomPlayer = () => {
-    if (players.length === 0) return;
+    if (!players || players.length === 0) {
+      console.log("Não há jogadores disponíveis para selecionar");
+      return;
+    }
     
     const randomIndex = Math.floor(Math.random() * players.length);
+    console.log("Jogador selecionado:", players[randomIndex]);
     setCurrentPlayer(players[randomIndex]);
     setAttempts(0);
     setImageBlur("blur-xl");
@@ -65,7 +84,12 @@ const GuessPlayer = () => {
     if (!currentPlayer || !guess || gameOver) return;
 
     // Verificação simplificada do nome (case insensitive)
-    if (guess.toLowerCase() === currentPlayer.name.toLowerCase()) {
+    const normalizedGuess = guess.toLowerCase().trim();
+    const normalizedPlayerName = currentPlayer.name.toLowerCase().trim();
+    
+    console.log(`Comparando "${normalizedGuess}" com "${normalizedPlayerName}"`);
+    
+    if (normalizedGuess === normalizedPlayerName) {
       // Acertou!
       const points = (MAX_ATTEMPTS - attempts) * 5;
       setScore((prev) => prev + points);
@@ -121,13 +145,30 @@ const GuessPlayer = () => {
   }
 
   if (playersError) {
-    return <div className="text-center p-8 text-red-500">Erro ao carregar jogadores.</div>;
+    console.error("Erro exibido na UI:", playersError);
+    return (
+      <div className="text-center p-8">
+        <p className="text-red-500 font-semibold mb-4">Erro ao carregar jogadores.</p>
+        <p className="text-sm text-gray-600 mb-4">
+          {playersError instanceof Error ? playersError.message : "Erro desconhecido"}
+        </p>
+        <button 
+          onClick={() => navigate("/")}
+          className="bg-flu-grena text-white px-4 py-2 rounded-lg"
+        >
+          Voltar
+        </button>
+      </div>
+    );
   }
 
-  if (players.length === 0) {
+  if (!players || players.length === 0) {
     return (
       <div className="text-center p-8">
         <p className="mb-4">Nenhum jogador cadastrado ainda.</p>
+        <p className="text-sm text-gray-600 mb-4">
+          Adicione jogadores na página inicial para começar a jogar.
+        </p>
         <button 
           onClick={() => navigate("/")}
           className="bg-flu-grena text-white px-4 py-2 rounded-lg"
@@ -160,6 +201,9 @@ const GuessPlayer = () => {
               Adivinhe o Jogador
             </h1>
             <p className="text-gray-600">Use apelidos ou nomes oficiais!</p>
+            <p className="text-sm text-gray-500 mt-2">
+              Total de jogadores: {players ? players.length : 0}
+            </p>
           </div>
 
           {currentPlayer && (
@@ -169,6 +213,10 @@ const GuessPlayer = () => {
                   src={currentPlayer.image_url}
                   alt="Jogador misterioso"
                   className={`w-full h-full object-cover ${imageBlur} transition-all duration-500`}
+                  onError={(e) => {
+                    console.error("Erro ao carregar imagem:", e);
+                    e.currentTarget.src = "/placeholder.svg";
+                  }}
                 />
               </div>
 
