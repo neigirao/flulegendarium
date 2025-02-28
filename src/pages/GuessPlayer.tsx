@@ -37,7 +37,6 @@ const GuessPlayer = () => {
     queryFn: async () => {
       try {
         console.log("Iniciando busca de jogadores...");
-        console.log("URL do Supabase:", supabase.supabaseUrl);
         
         const { data, error } = await supabase
           .from('players')
