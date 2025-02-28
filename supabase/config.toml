@@ -1,1 +1,10 @@
+
 project_id = "hafxruwnggitvtyngedy"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+
+[functions.collect-players-data]
+verify_jwt = false

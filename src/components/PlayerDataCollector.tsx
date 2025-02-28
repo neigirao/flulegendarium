@@ -5,10 +5,17 @@ import { supabase } from "@/lib/supabase";
 import { useState } from "react";
 
 interface Player {
+  id: string;
   name: string;
   position: string;
-  funFact: string;
+  image_url: string;
+  fun_fact: string;
   achievements: string[];
+  year_highlight: string;
+  statistics: {
+    gols: number;
+    jogos: number;
+  };
 }
 
 export const PlayerDataCollector = () => {
@@ -19,6 +26,11 @@ export const PlayerDataCollector = () => {
   const collectData = async () => {
     setIsLoading(true);
     try {
+      toast({
+        title: "Coletando dados",
+        description: "Buscando jogadores do Fluminense desde 1995...",
+      });
+
       const { data, error } = await supabase.functions.invoke('collect-players-data');
       
       if (error) throw error;
@@ -53,25 +65,45 @@ export const PlayerDataCollector = () => {
       {players.length > 0 && (
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">Jogadores Coletados</h2>
-          <div className="grid gap-4">
-            {players.map((player, index) => (
+          <div className="grid gap-4 md:grid-cols-2">
+            {players.map((player) => (
               <div 
-                key={index}
+                key={player.id}
                 className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm"
               >
-                <h3 className="text-lg font-semibold">{player.name}</h3>
-                <p className="text-sm text-muted-foreground">Posição: {player.position}</p>
-                <p className="mt-2">{player.funFact}</p>
-                {player.achievements.length > 0 && (
-                  <div className="mt-2">
-                    <p className="font-medium">Conquistas:</p>
-                    <ul className="list-disc list-inside text-sm">
-                      {player.achievements.map((achievement, i) => (
-                        <li key={i}>{achievement}</li>
-                      ))}
-                    </ul>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="w-full sm:w-20 h-20 rounded-md overflow-hidden shrink-0">
+                    <img 
+                      src={player.image_url} 
+                      alt={player.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder.svg";
+                      }}
+                    />
                   </div>
-                )}
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold">{player.name}</h3>
+                    <p className="text-sm text-muted-foreground">Posição: {player.position}</p>
+                    <p className="text-sm text-muted-foreground">Ano de destaque: {player.year_highlight}</p>
+                    <p className="mt-2 text-sm">{player.fun_fact}</p>
+                    {player.statistics && (
+                      <p className="text-sm mt-1">
+                        Estatísticas: {player.statistics.gols} gols em {player.statistics.jogos} jogos
+                      </p>
+                    )}
+                    {player.achievements && player.achievements.length > 0 && (
+                      <div className="mt-2">
+                        <p className="text-xs font-medium">Conquistas:</p>
+                        <ul className="list-disc list-inside text-xs">
+                          {player.achievements.map((achievement, i) => (
+                            <li key={i}>{achievement}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             ))}
           </div>
