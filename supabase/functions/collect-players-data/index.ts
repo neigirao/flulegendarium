@@ -225,32 +225,67 @@ async function getPlayersData(apiKey: string) {
   }
 }
 
+// Mapa de jogadores para imagens fixas mais confiáveis
+const playerImagesMap = {
+  "Germán Cano": "https://tntsports.com.br/__export/1670800795599/sites/esporteinterativo/img/2022/12/11/gettyimages-1447173498_crop1670800794814.jpg",
+  "Fred": "https://s2.glbimg.com/9Lbh2qz19LDtffAJQQwP8OYx3II=/0x0:2000x1333/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2022/d/U/aqeGG8S0yAlBPYa4nK3g/agif22071013182553.jpg",
+  "Felipe Melo": "https://www.ofutebolero.com.br/__export/1671836222411/sites/elfutbolero/img/2022/12/23/whatsapp_image_2022-12-23_at_18_22_44_crop1671836221785.jpeg",
+  "Thiago Silva": "https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt38eff59ed13fff34/60dac1480401cb0ebfa64d18/8aa23e84f5bbad02d6d5dcc9144ae9d8e8c4574e.jpg",
+  "Marcelo": "https://pbs.twimg.com/media/Fyvk3Q2XoAIIrij.jpg",
+  "Conca": "https://sportbuzz.uol.com.br/media/_versions/conca-fluminense-getty_widelg.jpg",
+  "Cássio": "https://s2.glbimg.com/YmukB9uaicUWlZOGfr7n1n1w_m4=/0x0:1023x766/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2022/U/U/oCETsrRHWtEbEURByJnw/cassio-no-treino-do-fluminense.png",
+  "Washington": "https://s2.glbimg.com/z-eBTaxaERxU_tWwXfYSVlwcibU=/0x0:649x433/984x0/smart/filters:strip_icc()/s.glbimg.com/es/ge/f/original/2011/05/22/washington_349.jpg",
+  "Deco": "https://pbs.twimg.com/media/Fn5QoQGXgAEs8XV.jpg",
+  "Romário": "https://sportbuzz.uol.com.br/media/_versions/gettyimages-1151058_widelg.jpg",
+  "Cuca": "https://s2.glbimg.com/DQfQeoIHH_5QRN9lNi_fKTwpbWI=/0x0:900x630/984x0/smart/filters:strip_icc()/s.glbimg.com/es/ge/f/original/2016/11/13/20161113145842.jpg",
+  "Ganso": "https://www.estadao.com.br/resizer/1WdpAwkDH08BnCXP-FMkBmIEHe8=/arc-anglerfish-arc2-prod-estadao/public/4L7AWZVKHRAJJCUXNPPX4HL35A.jpg",
+  "Marcão": "https://pbs.twimg.com/media/E6MkNJPXoAQFIEL.jpg",
+  "Abel Braga": "https://www.estadao.com.br/resizer/j5WoPm9j4XtWddfRvXLkkj1gtvI=/arc-anglerfish-arc2-prod-estadao/public/X2OCDG3S4JE7NLBRBVKZMZNYUU.jpg",
+  "Fábio": "https://tntsports.com.br/__export/1694550747175/sites/esporteinterativo/img/2023/09/12/fabio-flu.jpg_1216690859.jpg",
+  "Nino": "https://s2.glbimg.com/fy5zdRuvzwJuIcAo8v8E0cptPYk=/0x0:2048x1365/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2023/w/E/Ae5qy7QS2EGXzFIY5RQQ/img-2915.jpg",
+  "Arias": "https://www.ofutebolero.com.br/__export/1675798714386/sites/elfutbolero/img/2023/02/07/jhon_arias_copy_crop1675798713637.jpg",
+  "David Braz": "https://diariodonordeste.verdesmares.com.br/image/contentid/policy:1.3128826:1631912095/David-Braz.jpg",
+  "Felipe Mello": "https://www.ofutebolero.com.br/__export/1671836222411/sites/elfutbolero/img/2022/12/23/whatsapp_image_2022-12-23_at_18_22_44_crop1671836221785.jpeg",
+  "Thiago Neves": "https://pbs.twimg.com/media/DlA4VYQXoAAILhw.jpg",
+  "Roger Machado": "https://images.futebolinterior.com.br/2018/05/5b0862ef97e4f.jpeg"
+};
+
+// Imagens de fallback para caso nenhuma correspondência seja encontrada
+const fallbackImages = [
+  "https://uploads.metropoles.com/wp-content/uploads/2023/10/31123243/Fluminense-campeao-Libertadores-2023-12.jpg",
+  "https://www.cnnbrasil.com.br/wp-content/uploads/sites/12/2023/10/GettyImages-1740123177.jpg?w=876&h=484&crop=1",
+  "https://ogimg.infoglobo.com.br/in/25822664-7b0-e5a/FT1086A/x93269560_Rio-de-Janeiro-RJ-27-11-2022-Campeonato-Brasileiro-A-2022-Fluminense-x-Goias-no-Maraca.jpg.pagespeed.ic.TgLJn9NYR5.jpg",
+  "https://diariodorio.com/wp-content/uploads/2022/12/Fluminense-2023-1270x720.webp",
+  "https://conteudo.cbf.com.br/cdn/imagens/original/2022/02/19/62110c0f6fc6e.jpeg",
+  "https://www.ofutebolero.com.br/__export/1690243968826/sites/elfutbolero/img/2023/07/24/fluminense-campeon-copa-brasil-2007.jpg"
+];
+
 async function getPlayerImageUrl(playerName: string) {
   try {
     console.log(`Buscando imagem para ${playerName}...`);
     
-    // Buscar imagem do jogador no Pexels (serviço mais confiável que Unsplash para este uso)
-    // Fallback para Unsplash e depois para uma imagem genérica
-    try {
-      // Tentativa com imagem genérica de futebol
-      const encodedName = encodeURIComponent(`${playerName} Fluminense jogador futebol`);
-      const response = await fetch(`https://source.unsplash.com/featured/?${encodedName}`);
-      
-      if (response.ok) {
-        console.log(`Imagem encontrada para ${playerName} via Unsplash`);
-        return response.url;
-      }
-    } catch (unsplashError) {
-      console.warn(`Erro ao buscar no Unsplash para ${playerName}:`, unsplashError);
+    // Verificar se temos uma imagem específica para este jogador
+    if (playerImagesMap[playerName]) {
+      console.log(`Usando imagem pré-configurada para ${playerName}`);
+      return playerImagesMap[playerName];
     }
     
-    // Fallback para imagem genérica
-    console.warn(`Não foi possível obter imagem específica para ${playerName}. Usando imagem genérica.`);
-    return 'https://images.unsplash.com/photo-1624526267942-75d8025fc9fe?q=80&w=1000';
+    // Verificar se temos um match parcial
+    for (const [key, url] of Object.entries(playerImagesMap)) {
+      if (playerName.includes(key) || key.includes(playerName)) {
+        console.log(`Usando imagem com match parcial: ${key} para ${playerName}`);
+        return url;
+      }
+    }
+    
+    // Se não encontrarmos uma correspondência, usar uma imagem aleatória de fallback
+    const randomIndex = Math.floor(Math.random() * fallbackImages.length);
+    console.log(`Nenhuma imagem específica encontrada para ${playerName}. Usando fallback #${randomIndex}`);
+    return fallbackImages[randomIndex];
   } catch (error) {
     console.error(`Erro ao buscar imagem para ${playerName}:`, error);
-    // Retorna uma imagem genérica de futebol em caso de erro
-    return 'https://images.unsplash.com/photo-1624526267942-75d8025fc9fe?q=80&w=1000';
+    // Uso de imagem genérica de fallback em caso de erro
+    return "https://uploads.metropoles.com/wp-content/uploads/2023/10/31123243/Fluminense-campeao-Libertadores-2023-12.jpg";
   }
 }
 
