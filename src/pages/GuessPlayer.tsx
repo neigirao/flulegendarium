@@ -22,6 +22,50 @@ interface Player {
 
 const MAX_ATTEMPTS = 3;
 
+// URLs confiáveis para jogadores específicos
+const playerImagesFallbacks = {
+  "Germán Cano": "https://tntsports.com.br/__export/1670800795599/sites/esporteinterativo/img/2022/12/11/gettyimages-1447173498_crop1670800794814.jpg",
+  "Fred": "https://s2.glbimg.com/9Lbh2qz19LDtffAJQQwP8OYx3II=/0x0:2000x1333/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2022/d/U/aqeGG8S0yAlBPYa4nK3g/agif22071013182553.jpg",
+  "Felipe Melo": "https://www.ofutebolero.com.br/__export/1671836222411/sites/elfutbolero/img/2022/12/23/whatsapp_image_2022-12-23_at_18_22_44_crop1671836221785.jpeg",
+  "Thiago Silva": "https://assets.goal.com/v3/assets/bltcc7a7ffd2fbf71f5/blt38eff59ed13fff34/60dac1480401cb0ebfa64d18/8aa23e84f5bbad02d6d5dcc9144ae9d8e8c4574e.jpg",
+  "Marcelo": "https://pbs.twimg.com/media/Fyvk3Q2XoAIIrij.jpg",
+  "Conca": "https://sportbuzz.uol.com.br/media/_versions/conca-fluminense-getty_widelg.jpg",
+  "Deco": "https://pbs.twimg.com/media/Fn5QoQGXgAEs8XV.jpg",
+  "Romário": "https://sportbuzz.uol.com.br/media/_versions/gettyimages-1151058_widelg.jpg",
+  "Ganso": "https://www.estadao.com.br/resizer/1WdpAwkDH08BnCXP-FMkBmIEHe8=/arc-anglerfish-arc2-prod-estadao/public/4L7AWZVKHRAJJCUXNPPX4HL35A.jpg",
+  "Fábio": "https://tntsports.com.br/__export/1694550747175/sites/esporteinterativo/img/2023/09/12/fabio-flu.jpg_1216690859.jpg",
+  "Nino": "https://s2.glbimg.com/fy5zdRuvzwJuIcAo8v8E0cptPYk=/0x0:2048x1365/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2023/w/E/Ae5qy7QS2EGXzFIY5RQQ/img-2915.jpg",
+  "Arias": "https://www.ofutebolero.com.br/__export/1675798714386/sites/elfutbolero/img/2023/02/07/jhon_arias_copy_crop1675798713637.jpg"
+};
+
+// Imagem de fallback padrão
+const defaultImage = "https://uploads.metropoles.com/wp-content/uploads/2023/10/31123243/Fluminense-campeao-Libertadores-2023-12.jpg";
+
+// Função para obter uma URL de imagem confiável
+const getReliableImageUrl = (player: Player) => {
+  // Tenta encontrar correspondência exata
+  if (playerImagesFallbacks[player.name]) {
+    return playerImagesFallbacks[player.name];
+  }
+  
+  // Tenta encontrar correspondência parcial
+  for (const [key, url] of Object.entries(playerImagesFallbacks)) {
+    if (player.name.includes(key) || key.includes(player.name)) {
+      return url;
+    }
+  }
+  
+  // Verifica se a URL original parece válida
+  if (player.image_url && 
+      (player.image_url.startsWith('http') || 
+       player.image_url.startsWith('https'))) {
+    return player.image_url;
+  }
+  
+  // Retorna imagem padrão
+  return defaultImage;
+};
+
 const GuessPlayer = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -50,6 +94,29 @@ const GuessPlayer = () => {
         console.log("Jogadores carregados com sucesso:", data?.length || 0, "jogadores");
         if (data && data.length > 0) {
           console.log("Primeiro jogador:", data[0].name);
+          
+          // Corrigir URLs de imagens para todos os jogadores
+          const enhancedPlayers = data.map((player: Player) => ({
+            ...player,
+            image_url: getReliableImageUrl(player)
+          }));
+          
+          // Atualizar as imagens no banco de dados também
+          for (const player of enhancedPlayers) {
+            try {
+              const newUrl = getReliableImageUrl(player);
+              if (newUrl !== player.image_url) {
+                await supabase
+                  .from('players')
+                  .update({ image_url: newUrl })
+                  .eq('id', player.id);
+              }
+            } catch (err) {
+              console.error(`Erro ao atualizar imagem do jogador ${player.name}:`, err);
+            }
+          }
+          
+          return enhancedPlayers;
         }
         return data as Player[];
       } catch (err) {
@@ -75,8 +142,15 @@ const GuessPlayer = () => {
     }
     
     const randomIndex = Math.floor(Math.random() * players.length);
-    console.log("Jogador selecionado:", players[randomIndex]?.name || "Desconhecido");
-    setCurrentPlayer(players[randomIndex]);
+    const player = players[randomIndex];
+    console.log("Jogador selecionado:", player?.name || "Desconhecido");
+    
+    // Certificar que temos uma imagem válida
+    if (player) {
+      player.image_url = getReliableImageUrl(player);
+    }
+    
+    setCurrentPlayer(player);
     setAttempts(0);
     setGuess("");
     setGameOver(false);
@@ -137,6 +211,37 @@ const GuessPlayer = () => {
     }
     
     setGuess("");
+  };
+
+  // Função para corrigir a imagem de um jogador diretamente no jogo
+  const fixPlayerImage = async (player: Player) => {
+    try {
+      const newUrl = getReliableImageUrl(player);
+      await supabase
+        .from('players')
+        .update({ image_url: newUrl })
+        .eq('id', player.id);
+      
+      // Atualizar o jogador atual se for o mesmo
+      if (currentPlayer && currentPlayer.id === player.id) {
+        setCurrentPlayer({
+          ...currentPlayer,
+          image_url: newUrl
+        });
+      }
+      
+      toast({
+        title: "Imagem corrigida",
+        description: "A imagem do jogador foi atualizada.",
+      });
+    } catch (err) {
+      console.error("Erro ao corrigir imagem:", err);
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Não foi possível corrigir a imagem."
+      });
+    }
   };
 
   if (isLoading) {
@@ -217,9 +322,23 @@ const GuessPlayer = () => {
                   className="w-full h-full object-cover transition-all duration-500"
                   onError={(e) => {
                     console.error("Erro ao carregar imagem:", e);
-                    e.currentTarget.src = "/placeholder.svg";
+                    // Tentar carregar imagem de fallback
+                    e.currentTarget.src = defaultImage;
+                    // Corrigir a imagem na base de dados
+                    if (currentPlayer) {
+                      fixPlayerImage(currentPlayer);
+                    }
                   }}
                 />
+                <button
+                  onClick={() => currentPlayer && fixPlayerImage(currentPlayer)}
+                  className="absolute top-2 right-2 bg-white/80 p-2 rounded-full shadow-md hover:bg-white"
+                  title="Corrigir imagem"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                  </svg>
+                </button>
               </div>
 
               <div className="flex gap-4">
