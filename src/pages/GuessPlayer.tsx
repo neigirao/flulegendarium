@@ -74,6 +74,7 @@ const GuessPlayer = () => {
   const [score, setScore] = useState(0);
   const [guess, setGuess] = useState("");
   const [gameOver, setGameOver] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   // Busca jogadores do Supabase com tratamento de erro melhorado e mais logs
   const { data: players = [], isLoading, error: playersError } = useQuery({
@@ -154,6 +155,7 @@ const GuessPlayer = () => {
     setAttempts(0);
     setGuess("");
     setGameOver(false);
+    setImageError(false);
   };
 
   const handleGuess = () => {
@@ -216,7 +218,23 @@ const GuessPlayer = () => {
   // Função para corrigir a imagem de um jogador diretamente no jogo
   const fixPlayerImage = async (player: Player) => {
     try {
-      const newUrl = getReliableImageUrl(player);
+      // Encontrar uma imagem alternativa no dicionário de fallbacks
+      let newUrl = "";
+      
+      // Verificar se já temos imagem do jogador nas fallbacks
+      for (const [key, url] of Object.entries(playerImagesFallbacks)) {
+        if (player.name.includes(key) || key.includes(player.name)) {
+          newUrl = url;
+          break;
+        }
+      }
+      
+      // Se não encontramos, usar a imagem padrão
+      if (!newUrl) {
+        newUrl = defaultImage;
+      }
+      
+      // Atualizar no banco de dados
       await supabase
         .from('players')
         .update({ image_url: newUrl })
@@ -228,6 +246,7 @@ const GuessPlayer = () => {
           ...currentPlayer,
           image_url: newUrl
         });
+        setImageError(false);
       }
       
       toast({
@@ -316,20 +335,34 @@ const GuessPlayer = () => {
           {currentPlayer && (
             <div className="space-y-6">
               <div className="relative aspect-video rounded-lg overflow-hidden">
-                <img
-                  src={currentPlayer.image_url}
-                  alt="Jogador"
-                  className="w-full h-full object-cover transition-all duration-500"
-                  onError={(e) => {
-                    console.error("Erro ao carregar imagem:", e);
-                    // Tentar carregar imagem de fallback
-                    e.currentTarget.src = defaultImage;
-                    // Corrigir a imagem na base de dados
-                    if (currentPlayer) {
-                      fixPlayerImage(currentPlayer);
-                    }
-                  }}
-                />
+                {imageError ? (
+                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                    <div className="text-center p-4">
+                      <p className="text-gray-600 mb-2">Erro ao carregar imagem</p>
+                      <button
+                        onClick={() => currentPlayer && fixPlayerImage(currentPlayer)}
+                        className="bg-flu-grena text-white px-4 py-2 rounded-lg text-sm"
+                      >
+                        Corrigir imagem
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <img
+                    src={currentPlayer.image_url || defaultImage}
+                    alt="Jogador"
+                    className="w-full h-full object-cover transition-all duration-500"
+                    onError={(e) => {
+                      console.error("Erro ao carregar imagem:", e);
+                      // Marcar que houve erro na imagem
+                      setImageError(true);
+                      // Corrigir a imagem na base de dados
+                      if (currentPlayer) {
+                        fixPlayerImage(currentPlayer);
+                      }
+                    }}
+                  />
+                )}
                 <button
                   onClick={() => currentPlayer && fixPlayerImage(currentPlayer)}
                   className="absolute top-2 right-2 bg-white/80 p-2 rounded-full shadow-md hover:bg-white"

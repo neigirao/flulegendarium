@@ -67,6 +67,7 @@ export const PlayerDataCollector = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [players, setPlayers] = useState<Player[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
   const collectData = async () => {
     setIsLoading(true);
@@ -150,8 +151,23 @@ export const PlayerDataCollector = () => {
   };
 
   const fixPlayerImage = async (player: Player) => {
-    const newImageUrl = getReliableImageUrl(player);
     try {
+      // Encontrar uma imagem alternativa no dicionário de fallbacks
+      let newImageUrl = "";
+      
+      // Verificar se já temos imagem do jogador nas fallbacks
+      for (const [key, url] of Object.entries(playerImagesFallbacks)) {
+        if (player.name.includes(key) || key.includes(player.name)) {
+          newImageUrl = url;
+          break;
+        }
+      }
+      
+      // Se não encontramos, usar a imagem padrão
+      if (!newImageUrl) {
+        newImageUrl = defaultImage;
+      }
+      
       const { error } = await supabase
         .from('players')
         .update({ image_url: newImageUrl })
@@ -166,6 +182,13 @@ export const PlayerDataCollector = () => {
         )
       );
       
+      // Remove do registro de erros
+      setImageErrors(prev => {
+        const newErrors = {...prev};
+        delete newErrors[player.id];
+        return newErrors;
+      });
+      
       toast({
         title: "Imagem corrigida",
         description: `A imagem de ${player.name} foi atualizada com sucesso.`,
@@ -178,6 +201,14 @@ export const PlayerDataCollector = () => {
         description: `Não foi possível corrigir a imagem de ${player.name}.`,
       });
     }
+  };
+
+  const handleImageError = (player: Player) => {
+    console.error(`Erro ao carregar imagem para ${player.name}`);
+    setImageErrors(prev => ({
+      ...prev,
+      [player.id]: true
+    }));
   };
 
   return (
@@ -219,18 +250,23 @@ export const PlayerDataCollector = () => {
               >
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="w-full sm:w-20 h-20 rounded-md overflow-hidden shrink-0 relative">
-                    <img 
-                      src={player.image_url} 
-                      alt={player.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        console.error("Erro ao carregar imagem:", e);
-                        // Tentar carregar imagem de fallback
-                        e.currentTarget.src = defaultImage;
-                        // Corrigir a imagem na base de dados
-                        fixPlayerImage(player);
-                      }}
-                    />
+                    {imageErrors[player.id] ? (
+                      <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                        <button
+                          onClick={() => fixPlayerImage(player)}
+                          className="text-xs text-flu-grena p-1"
+                        >
+                          Corrigir
+                        </button>
+                      </div>
+                    ) : (
+                      <img 
+                        src={player.image_url || defaultImage} 
+                        alt={player.name}
+                        className="w-full h-full object-cover"
+                        onError={() => handleImageError(player)}
+                      />
+                    )}
                     <Button 
                       variant="outline" 
                       size="icon" 
