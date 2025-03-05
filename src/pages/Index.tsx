@@ -33,7 +33,14 @@ export default function Index() {
         {showAddPlayer ? (
           <AddPlayerForm />
         ) : (
-          <PlayerDataCollector />
+          <div className="text-center p-6 bg-gray-50 rounded-lg border">
+            <p className="text-gray-600 mb-2">
+              Dados dos jogadores são gerenciados manualmente.
+            </p>
+            <p className="text-sm text-gray-500">
+              Para adicionar novos jogadores, use o botão "Adicionar Jogador" acima.
+            </p>
+          </div>
         )}
       </div>
     </div>
