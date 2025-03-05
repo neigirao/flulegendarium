@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
@@ -27,14 +26,16 @@ export interface PlayerCardProps {
 export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
   const { toast } = useToast();
   const [imageError, setImageError] = useState(false);
+  const [isFixingImage, setIsFixingImage] = useState(false);
 
   const fixPlayerImage = async () => {
+    if (isFixingImage) return; // Prevent multiple simultaneous corrections
+    
     try {
-      // Encontrar uma imagem alternativa
-      let newImageUrl = "";
+      setIsFixingImage(true);
       
       // Usar a imagem padrão como fallback
-      newImageUrl = defaultPlayerImage;
+      const newImageUrl = defaultPlayerImage;
       
       const { error } = await supabase
         .from('players')
@@ -60,12 +61,16 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
         title: "Erro",
         description: `Não foi possível corrigir a imagem de ${player.name}.`,
       });
+    } finally {
+      setIsFixingImage(false);
     }
   };
 
   const handleImageError = () => {
     console.error(`Erro ao carregar imagem para ${player.name}`);
-    setImageError(true);
+    if (!imageError) {
+      setImageError(true);
+    }
   };
   
   return (
@@ -77,8 +82,9 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
               <button
                 onClick={fixPlayerImage}
                 className="text-xs text-flu-grena p-1"
+                disabled={isFixingImage}
               >
-                Corrigir
+                {isFixingImage ? "Corrigindo..." : "Corrigir"}
               </button>
             </div>
           ) : (
@@ -94,12 +100,14 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
             size="icon" 
             className="absolute top-0 right-0 bg-white/80 w-6 h-6 p-1"
             onClick={fixPlayerImage}
+            disabled={isFixingImage}
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
               <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
             </svg>
           </Button>
         </div>
+        
         <div className="flex-1">
           <h3 className="text-lg font-semibold">{player.name}</h3>
           <p className="text-sm text-muted-foreground">Posição: {player.position}</p>
