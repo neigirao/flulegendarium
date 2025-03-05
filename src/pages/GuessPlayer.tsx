@@ -7,6 +7,7 @@ import { getReliableImageUrl } from "@/utils/playerImageUtils";
 import { PlayerImage } from "@/components/guess-game/PlayerImage";
 import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
+import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
 import { useGuessGame } from "@/hooks/use-guess-game";
 
 interface Player {
@@ -119,7 +120,7 @@ const GuessPlayer = () => {
       <div className="text-center p-8">
         <p className="mb-4">Nenhum jogador cadastrado ainda.</p>
         <p className="text-sm text-gray-600 mb-4">
-          Adicione jogadores na página inicial para começar a jogar.
+          Entre em contato com o administrador para adicionar jogadores.
         </p>
         <button 
           onClick={() => navigate("/")}
@@ -179,6 +180,8 @@ const GuessPlayer = () => {
               />
             </div>
           )}
+          
+          <RankingDisplay />
         </div>
       </div>
     </div>
