@@ -1,10 +1,13 @@
-import { useState, useEffect } from "react";
+
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { getReliableImageUrl, defaultPlayerImage } from "@/utils/playerImageUtils";
+import { getReliableImageUrl } from "@/utils/playerImageUtils";
+import { PlayerImage } from "@/components/guess-game/PlayerImage";
+import { GuessForm } from "@/components/guess-game/GuessForm";
+import { GameStatus } from "@/components/guess-game/GameStatus";
+import { useGuessGame } from "@/hooks/use-guess-game";
 
 interface Player {
   id: string;
@@ -20,20 +23,10 @@ interface Player {
   };
 }
 
-const MAX_ATTEMPTS = 3;
-
 const GuessPlayer = () => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const [attempts, setAttempts] = useState(0);
-  const [score, setScore] = useState(0);
-  const [guess, setGuess] = useState("");
-  const [gameOver, setGameOver] = useState(false);
-  const [imageError, setImageError] = useState(false);
-  const [isFixingImage, setIsFixingImage] = useState(false);
   
-  // Busca jogadores do Supabase com tratamento de erro melhorado e mais logs
+  // Fetch players from Supabase with improved error handling and more logs
   const { data: players = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
     queryFn: async () => {
@@ -53,13 +46,13 @@ const GuessPlayer = () => {
         if (data && data.length > 0) {
           console.log("Primeiro jogador:", data[0].name);
           
-          // Corrigir URLs de imagens para todos os jogadores
+          // Fix image URLs for all players
           const enhancedPlayers = data.map((player: Player) => ({
             ...player,
             image_url: getReliableImageUrl(player)
           }));
           
-          // Atualizar as imagens no banco de dados também
+          // Update images in database too
           for (const player of enhancedPlayers) {
             try {
               const newUrl = getReliableImageUrl(player);
@@ -82,143 +75,26 @@ const GuessPlayer = () => {
         throw err;
       }
     },
-    retry: 3, // Tenta mais vezes em caso de falha
-    refetchOnWindowFocus: false, // Evita refetch desnecessário
+    retry: 3,
+    refetchOnWindowFocus: false,
   });
 
-  useEffect(() => {
-    if (players?.length > 0 && !currentPlayer) {
-      console.log("Selecionando jogador aleatório entre", players.length, "jogadores");
-      selectRandomPlayer();
-    }
-  }, [players]);
-
-  const selectRandomPlayer = () => {
-    if (!players || players.length === 0) {
-      console.log("Não há jogadores disponíveis para selecionar");
-      return;
-    }
-    
-    const randomIndex = Math.floor(Math.random() * players.length);
-    const player = players[randomIndex];
-    console.log("Jogador selecionado:", player?.name || "Desconhecido");
-    
-    // Certificar que temos uma imagem válida
-    if (player) {
-      player.image_url = getReliableImageUrl(player);
-    }
-    
-    setCurrentPlayer(player);
-    setAttempts(0);
-    setGuess("");
-    setGameOver(false);
-    setImageError(false);
-  };
-
-  const handleGuess = () => {
-    if (!currentPlayer || !guess || gameOver) return;
-
-    // Verificação simplificada do nome (case insensitive)
-    const normalizedGuess = guess.toLowerCase().trim();
-    const normalizedPlayerName = currentPlayer.name.toLowerCase().trim();
-    
-    console.log(`Comparando "${normalizedGuess}" com "${normalizedPlayerName}"`);
-    
-    if (normalizedGuess === normalizedPlayerName) {
-      // Acertou!
-      const points = (MAX_ATTEMPTS - attempts) * 5;
-      setScore((prev) => prev + points);
-      
-      toast({
-        title: "Parabéns!",
-        description: `Você acertou e ganhou ${points} pontos!`,
-      });
-      
-      selectRandomPlayer();
-    } else {
-      // Errou
-      const newAttempts = attempts + 1;
-      setAttempts(newAttempts);
-      
-      // Mostrar dicas conforme as tentativas
-      if (newAttempts === 1) {
-        toast({
-          title: "Dica!",
-          description: `Posição: ${currentPlayer.position}`,
-        });
-      } else if (newAttempts === 2) {
-        if (currentPlayer.achievements && currentPlayer.achievements.length > 0) {
-          toast({
-            title: "Dica!",
-            description: `Conquistas: ${currentPlayer.achievements.join(", ")}`,
-          });
-        } else {
-          toast({
-            title: "Dica!",
-            description: `Ano de destaque: ${currentPlayer.year_highlight}`,
-          });
-        }
-      } else {
-        // Game over após 3 tentativas
-        setGameOver(true);
-        toast({
-          variant: "destructive",
-          title: "Game Over!",
-          description: `O jogador era ${currentPlayer.name}`,
-        });
-      }
-    }
-    
-    setGuess("");
-  };
-
-  // Função para corrigir a imagem de um jogador diretamente no jogo
-  const fixPlayerImage = async (player: Player) => {
-    if (isFixingImage) return; // Prevent multiple simultaneous corrections
-    
-    try {
-      setIsFixingImage(true);
-      
-      // Encontrar uma imagem alternativa no dicionário de fallbacks
-      let newUrl = defaultPlayerImage;
-      
-      // Atualizar no banco de dados
-      await supabase
-        .from('players')
-        .update({ image_url: newUrl })
-        .eq('id', player.id);
-      
-      // Atualizar o jogador atual se for o mesmo
-      if (currentPlayer && currentPlayer.id === player.id) {
-        setCurrentPlayer({
-          ...currentPlayer,
-          image_url: newUrl
-        });
-        setImageError(false);
-      }
-      
-      toast({
-        title: "Imagem corrigida",
-        description: "A imagem do jogador foi atualizada.",
-      });
-    } catch (err) {
-      console.error("Erro ao corrigir imagem:", err);
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Não foi possível corrigir a imagem."
-      });
-    } finally {
-      setIsFixingImage(false);
-    }
-  };
+  const {
+    currentPlayer,
+    attempts,
+    score,
+    gameOver,
+    MAX_ATTEMPTS,
+    handleGuess,
+    selectRandomPlayer,
+    handlePlayerImageFixed
+  } = useGuessGame(players);
 
   if (isLoading) {
     return <div className="text-center p-8">Carregando jogadores...</div>;
   }
 
   if (playersError) {
-    console.error("Erro exibido na UI:", playersError);
     return (
       <div className="text-center p-8">
         <p className="text-red-500 font-semibold mb-4">Erro ao carregar jogadores.</p>
@@ -284,80 +160,23 @@ const GuessPlayer = () => {
 
           {currentPlayer && (
             <div className="space-y-6">
-              <div className="relative aspect-video rounded-lg overflow-hidden">
-                {imageError ? (
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                    <div className="text-center p-4">
-                      <p className="text-gray-600 mb-2">Erro ao carregar imagem</p>
-                      <button
-                        onClick={() => currentPlayer && !isFixingImage && fixPlayerImage(currentPlayer)}
-                        className="bg-flu-grena text-white px-4 py-2 rounded-lg text-sm"
-                        disabled={isFixingImage}
-                      >
-                        {isFixingImage ? "Corrigindo..." : "Corrigir imagem"}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <img
-                    src={currentPlayer.image_url || defaultPlayerImage}
-                    alt="Jogador"
-                    className="w-full h-full object-cover transition-all duration-500"
-                    onError={(e) => {
-                      console.error("Erro ao carregar imagem:", e);
-                      // Marcar que houve erro na imagem apenas se ainda não foi marcado
-                      if (!imageError) {
-                        setImageError(true);
-                      }
-                    }}
-                  />
-                )}
-                <button
-                  onClick={() => currentPlayer && !isFixingImage && fixPlayerImage(currentPlayer)}
-                  className="absolute top-2 right-2 bg-white/80 p-2 rounded-full shadow-md hover:bg-white"
-                  title="Corrigir imagem"
-                  disabled={isFixingImage}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isFixingImage ? "animate-spin" : ""}>
-                    <path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
-                  </svg>
-                </button>
-              </div>
+              <PlayerImage 
+                player={currentPlayer} 
+                onImageFixed={handlePlayerImageFixed} 
+              />
 
-              <div className="flex gap-4">
-                <input
-                  type="text"
-                  value={guess}
-                  onChange={(e) => setGuess(e.target.value)}
-                  placeholder="Nome ou apelido do jogador..."
-                  className="flex-1 px-4 py-2 rounded-lg border focus:outline-none focus:ring-2 focus:ring-flu-grena"
-                  onKeyDown={(e) => e.key === "Enter" && handleGuess()}
-                  disabled={gameOver}
-                />
-                <button
-                  onClick={handleGuess}
-                  disabled={!guess || gameOver}
-                  className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Adivinhar
-                </button>
-              </div>
+              <GuessForm 
+                disabled={gameOver}
+                onSubmitGuess={handleGuess}
+              />
 
-              {gameOver && (
-                <div className="text-center mt-4">
-                  <button
-                    onClick={selectRandomPlayer}
-                    className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90"
-                  >
-                    Próximo Jogador
-                  </button>
-                </div>
-              )}
-
-              <div className="text-sm text-gray-600">
-                <p>Tentativas restantes: {MAX_ATTEMPTS - attempts}</p>
-                <p>Dicas desbloqueadas: {attempts}/{MAX_ATTEMPTS}</p>
-              </div>
+              <GameStatus
+                attempts={attempts}
+                maxAttempts={MAX_ATTEMPTS}
+                score={score}
+                gameOver={gameOver}
+                onNextPlayer={selectRandomPlayer}
+              />
             </div>
           )}
         </div>
