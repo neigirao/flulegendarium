@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { getReliableImageUrl } from "@/utils/playerImageUtils";
@@ -17,7 +16,7 @@ interface Player {
   };
 }
 
-const MAX_ATTEMPTS = 3;
+const MAX_ATTEMPTS = 1; // Changed from 3 to 1
 const TIME_LIMIT_SECONDS = 60; // 1 minute timer
 
 export const useGuessGame = (players: Player[] | undefined) => {
@@ -122,7 +121,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     
     if (normalizedGuess === normalizedPlayerName) {
       // Correct guess!
-      const points = (MAX_ATTEMPTS - attempts) * 5;
+      const points = 5; // Always award 5 points since we only have one attempt now
       setScore((prev) => prev + points);
       
       toast({
@@ -137,43 +136,19 @@ export const useGuessGame = (players: Player[] | undefined) => {
       
       selectRandomPlayer();
     } else {
-      // Wrong guess
-      const newAttempts = attempts + 1;
-      setAttempts(newAttempts);
+      // Wrong guess - game over immediately
+      setGameOver(true);
       
-      // Show hints based on attempt count
-      if (newAttempts === 1) {
-        toast({
-          title: "Dica!",
-          description: `Posição: ${currentPlayer.position}`,
-        });
-      } else if (newAttempts === 2) {
-        if (currentPlayer.achievements && currentPlayer.achievements.length > 0) {
-          toast({
-            title: "Dica!",
-            description: `Conquistas: ${currentPlayer.achievements.join(", ")}`,
-          });
-        } else {
-          toast({
-            title: "Dica!",
-            description: `Ano de destaque: ${currentPlayer.year_highlight}`,
-          });
-        }
-      } else {
-        // Game over after 3 attempts
-        setGameOver(true);
-        
-        // Clear the timer
-        if (timerRef.current) {
-          window.clearInterval(timerRef.current);
-        }
-        
-        toast({
-          variant: "destructive",
-          title: "Game Over!",
-          description: `O jogador era ${currentPlayer.name}`,
-        });
+      // Clear the timer
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
       }
+      
+      toast({
+        variant: "destructive",
+        title: "Game Over!",
+        description: `O jogador era ${currentPlayer.name}`,
+      });
     }
   };
 

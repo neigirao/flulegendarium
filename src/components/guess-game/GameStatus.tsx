@@ -62,8 +62,8 @@ export const GameStatus = ({
         <div className={`font-medium ${timeRemaining < 10 && !gameOver ? 'text-red-500 animate-pulse' : ''}`}>
           Tempo: {formatTime(timeRemaining)}
         </div>
-        <p>Tentativas restantes: {maxAttempts - attempts}</p>
-        <p>Dicas desbloqueadas: {attempts}/{maxAttempts}</p>
+        {/* Updated to show that only one attempt is allowed */}
+        <p className="font-medium text-red-600">Atenção: Apenas uma tentativa!</p>
         <p className="font-medium">Pontuação: {score}</p>
       </div>
     </div>
