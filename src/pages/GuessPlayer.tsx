@@ -9,6 +9,8 @@ import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
 import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
 import { useGuessGame } from "@/hooks/use-guess-game";
+import { useState, useCallback, Suspense } from "react";
+import { cn } from "@/lib/utils";
 
 interface Player {
   id: string;
@@ -24,8 +26,16 @@ interface Player {
   };
 }
 
+// Loader component
+const Loader = () => (
+  <div className="w-full flex justify-center my-8">
+    <div className="w-10 h-10 border-4 border-flu-verde border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
+
 const GuessPlayer = () => {
   const navigate = useNavigate();
+  const [showRanking, setShowRanking] = useState(false);
   
   // Fetch players from Supabase with improved error handling and more logs
   const { data: players = [], isLoading, error: playersError } = useQuery({
@@ -53,21 +63,6 @@ const GuessPlayer = () => {
             image_url: getReliableImageUrl(player)
           }));
           
-          // Update images in database too
-          for (const player of enhancedPlayers) {
-            try {
-              const newUrl = getReliableImageUrl(player);
-              if (newUrl !== player.image_url) {
-                await supabase
-                  .from('players')
-                  .update({ image_url: newUrl })
-                  .eq('id', player.id);
-              }
-            } catch (err) {
-              console.error(`Erro ao atualizar imagem do jogador ${player.name}:`, err);
-            }
-          }
-          
           return enhancedPlayers;
         }
         return data as Player[];
@@ -76,6 +71,7 @@ const GuessPlayer = () => {
         throw err;
       }
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
     retry: 3,
     refetchOnWindowFocus: false,
   });
@@ -92,8 +88,14 @@ const GuessPlayer = () => {
     handlePlayerImageFixed
   } = useGuessGame(players);
 
+  const toggleRanking = useCallback(() => {
+    setShowRanking(prev => !prev);
+  }, []);
+
   if (isLoading) {
-    return <div className="text-center p-8">Carregando jogadores...</div>;
+    return <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4 flex items-center justify-center">
+      <Loader />
+    </div>;
   }
 
   if (playersError) {
@@ -103,9 +105,6 @@ const GuessPlayer = () => {
         <p className="text-sm text-gray-600 mb-4">
           {playersError instanceof Error ? playersError.message : "Erro desconhecido"}
         </p>
-        <pre className="bg-gray-100 p-4 rounded text-xs overflow-auto max-h-48 mb-4">
-          {JSON.stringify(playersError, null, 2)}
-        </pre>
         <button 
           onClick={() => navigate("/")}
           className="bg-flu-grena text-white px-4 py-2 rounded-lg"
@@ -120,9 +119,6 @@ const GuessPlayer = () => {
     return (
       <div className="text-center p-8">
         <p className="mb-4">Nenhum jogador cadastrado ainda.</p>
-        <p className="text-sm text-gray-600 mb-4">
-          Entre em contato com o administrador para adicionar jogadores.
-        </p>
         <button 
           onClick={() => navigate("/")}
           className="bg-flu-grena text-white px-4 py-2 rounded-lg"
@@ -139,7 +135,7 @@ const GuessPlayer = () => {
         <div className="flex items-center justify-between mb-8">
           <button
             onClick={() => navigate("/")}
-            className="flex items-center text-flu-grena hover:opacity-80"
+            className="flex items-center text-flu-grena hover:opacity-80 transition-opacity"
           >
             <ArrowLeft className="mr-2" />
             Voltar
@@ -183,7 +179,25 @@ const GuessPlayer = () => {
             </div>
           )}
           
-          <RankingDisplay />
+          <div className="mt-6">
+            <button 
+              onClick={toggleRanking}
+              className={cn(
+                "w-full py-2 px-4 rounded-lg transition-colors",
+                showRanking 
+                  ? "bg-gray-200 text-gray-700" 
+                  : "bg-flu-grena text-white"
+              )}
+            >
+              {showRanking ? "Ocultar Ranking" : "Mostrar Ranking"}
+            </button>
+            
+            {showRanking && (
+              <Suspense fallback={<Loader />}>
+                <RankingDisplay />
+              </Suspense>
+            )}
+          </div>
         </div>
       </div>
     </div>
