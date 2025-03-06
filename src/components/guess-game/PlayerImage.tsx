@@ -55,7 +55,7 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
         <img
           src={player?.image_url || defaultPlayerImage}
           alt="Jogador"
-          className={`w-full h-full object-cover transition-all duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+          className={`w-full h-full object-contain transition-all duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           onError={handleImageError}
           onLoad={handleImageLoaded}
           loading="eager"
