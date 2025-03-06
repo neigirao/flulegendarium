@@ -85,6 +85,7 @@ const GuessPlayer = () => {
     attempts,
     score,
     gameOver,
+    timeRemaining,
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
@@ -176,6 +177,7 @@ const GuessPlayer = () => {
                 maxAttempts={MAX_ATTEMPTS}
                 score={score}
                 gameOver={gameOver}
+                timeRemaining={timeRemaining}
                 onNextPlayer={selectRandomPlayer}
               />
             </div>

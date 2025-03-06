@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { getReliableImageUrl } from "@/utils/playerImageUtils";
 
@@ -18,6 +18,7 @@ interface Player {
 }
 
 const MAX_ATTEMPTS = 3;
+const TIME_LIMIT_SECONDS = 60; // 1 minute timer
 
 export const useGuessGame = (players: Player[] | undefined) => {
   const { toast } = useToast();
@@ -25,6 +26,41 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [attempts, setAttempts] = useState(0);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
+  const timerRef = useRef<number | null>(null);
+
+  // Setup timer when a new player is selected
+  useEffect(() => {
+    if (currentPlayer && !gameOver) {
+      // Clear any existing timer
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+      }
+      
+      // Reset time
+      setTimeRemaining(TIME_LIMIT_SECONDS);
+      
+      // Start new timer
+      timerRef.current = window.setInterval(() => {
+        setTimeRemaining(prev => {
+          if (prev <= 1) {
+            // Time's up
+            window.clearInterval(timerRef.current as number);
+            handleTimeUp();
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    
+    // Cleanup timer on unmount
+    return () => {
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+      }
+    };
+  }, [currentPlayer, gameOver]);
 
   useEffect(() => {
     if (players?.length > 0 && !currentPlayer) {
@@ -32,6 +68,17 @@ export const useGuessGame = (players: Player[] | undefined) => {
       selectRandomPlayer();
     }
   }, [players]);
+
+  const handleTimeUp = () => {
+    if (!gameOver && currentPlayer) {
+      setGameOver(true);
+      toast({
+        variant: "destructive",
+        title: "Tempo esgotado!",
+        description: `O jogador era ${currentPlayer.name}`,
+      });
+    }
+  };
 
   const selectRandomPlayer = () => {
     if (!players || players.length === 0) {
@@ -51,6 +98,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     setCurrentPlayer(player);
     setAttempts(0);
     setGameOver(false);
+    setTimeRemaining(TIME_LIMIT_SECONDS);
   };
 
   const handlePlayerImageFixed = () => {
@@ -82,6 +130,11 @@ export const useGuessGame = (players: Player[] | undefined) => {
         description: `Você acertou e ganhou ${points} pontos!`,
       });
       
+      // Clear the timer
+      if (timerRef.current) {
+        window.clearInterval(timerRef.current);
+      }
+      
       selectRandomPlayer();
     } else {
       // Wrong guess
@@ -109,6 +162,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
       } else {
         // Game over after 3 attempts
         setGameOver(true);
+        
+        // Clear the timer
+        if (timerRef.current) {
+          window.clearInterval(timerRef.current);
+        }
+        
         toast({
           variant: "destructive",
           title: "Game Over!",
@@ -123,6 +182,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     attempts,
     score,
     gameOver,
+    timeRemaining,
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,

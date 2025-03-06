@@ -7,6 +7,7 @@ interface GameStatusProps {
   maxAttempts: number;
   score: number;
   gameOver: boolean;
+  timeRemaining: number;
   onNextPlayer: () => void;
 }
 
@@ -15,6 +16,7 @@ export const GameStatus = ({
   maxAttempts, 
   score,
   gameOver,
+  timeRemaining,
   onNextPlayer
 }: GameStatusProps) => {
   const [showRankingForm, setShowRankingForm] = useState(false);
@@ -26,6 +28,13 @@ export const GameStatus = ({
   const handleNextPlayer = () => {
     setShowRankingForm(false);
     onNextPlayer();
+  };
+
+  // Format time as MM:SS
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
   return (
@@ -49,7 +58,10 @@ export const GameStatus = ({
         />
       )}
 
-      <div className="text-sm text-gray-600">
+      <div className="text-sm text-gray-600 space-y-1">
+        <div className={`font-medium ${timeRemaining < 10 && !gameOver ? 'text-red-500 animate-pulse' : ''}`}>
+          Tempo: {formatTime(timeRemaining)}
+        </div>
         <p>Tentativas restantes: {maxAttempts - attempts}</p>
         <p>Dicas desbloqueadas: {attempts}/{maxAttempts}</p>
         <p className="font-medium">Pontuação: {score}</p>
