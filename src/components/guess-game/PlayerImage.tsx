@@ -1,6 +1,7 @@
 
 import { useState, memo, useEffect } from "react";
 import { defaultPlayerImage } from "@/utils/playerImageUtils";
+import { Loader } from "lucide-react";
 
 interface PlayerImageProps {
   player: {
@@ -38,10 +39,13 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
   };
 
   return (
-    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100">
+    <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100 shadow-md transition-all duration-300 hover:shadow-lg">
       {isLoading && !imageError && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-8 h-8 border-4 border-flu-verde border-t-transparent rounded-full animate-spin"></div>
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 backdrop-blur-sm">
+          <div className="flex flex-col items-center gap-2">
+            <Loader className="w-8 h-8 text-flu-grena animate-spin" />
+            <p className="text-sm text-gray-600 animate-pulse">Carregando imagem...</p>
+          </div>
         </div>
       )}
       
@@ -49,13 +53,14 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
         <div className="w-full h-full bg-gray-200 flex items-center justify-center">
           <div className="text-center p-4">
             <p className="text-gray-600 mb-2">Carregando imagem alternativa...</p>
+            <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin mx-auto"></div>
           </div>
         </div>
       ) : (
         <img
           src={player?.image_url || defaultPlayerImage}
           alt="Jogador"
-          className={`w-full h-full object-contain transition-all duration-500 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+          className={`w-full h-full object-contain transition-all duration-500 ${isLoading ? 'opacity-0' : 'opacity-100 animate-fade-in'}`}
           onError={handleImageError}
           onLoad={handleImageLoaded}
           loading="eager"
