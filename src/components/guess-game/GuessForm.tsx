@@ -30,7 +30,7 @@ export const GuessForm = ({ disabled, onSubmitGuess }: GuessFormProps) => {
       <button
         onClick={handleSubmit}
         disabled={!guess || disabled}
-        className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flu-shadow"
       >
         Adivinhar
       </button>

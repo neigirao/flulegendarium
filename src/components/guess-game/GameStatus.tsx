@@ -59,9 +59,9 @@ export const GameStatus = ({
 
   // Determina a cor da barra de tempo com base no tempo restante
   const getTimeBarColor = () => {
-    if (timeRemaining > 30) return 'bg-green-500';
+    if (timeRemaining > 30) return 'bg-flu-verde';
     if (timeRemaining > 10) return 'bg-yellow-500';
-    return 'bg-red-500';
+    return 'bg-flu-grena';
   };
 
   return (
@@ -70,7 +70,7 @@ export const GameStatus = ({
         <div className="text-center mt-4 animate-fade-in">
           <button
             onClick={handleShowRankingForm}
-            className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto"
+            className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto flu-shadow"
           >
             <Trophy className="w-5 h-5" />
             Salvar Pontuação
@@ -86,14 +86,14 @@ export const GameStatus = ({
         />
       )}
 
-      <div className="space-y-4 p-4 rounded-lg bg-white/80 shadow-sm">
+      <div className="space-y-4 p-4 rounded-lg bg-white/90 shadow-sm border border-flu-verde/30">
         {/* Barra de progresso do tempo */}
         {!gameOver && (
           <div className="space-y-1">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-1">
-                <Clock className="w-4 h-4 text-gray-600" />
-                <span className={`font-medium ${timeRemaining < 10 ? 'text-red-500' : 'text-gray-700'}`}>
+                <Clock className="w-4 h-4 text-flu-grena" />
+                <span className={`font-medium ${timeRemaining < 10 ? 'text-flu-grena' : 'text-flu-verde'}`}>
                   {formatTime(timeRemaining)}
                 </span>
               </div>
@@ -119,7 +119,7 @@ export const GameStatus = ({
           </div>
 
           {/* Aviso de tentativa única */}
-          <div className="text-sm font-medium text-red-600 flex items-center gap-1">
+          <div className="text-sm font-medium text-flu-grena flex items-center gap-1">
             <Timer className="w-4 h-4" />
             <span>Apenas uma tentativa!</span>
           </div>

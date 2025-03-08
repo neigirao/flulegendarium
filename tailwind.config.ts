@@ -26,9 +26,9 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         flu: {
-          grena: "#8B5CF6",
-          verde: "#F2FCE2",
-          branco: "#FFFFFF",
+          grena: "#7A0213", // Cor grená do Fluminense (vermelho escuro/bordô)
+          verde: "#00613C", // Cor verde do Fluminense
+          branco: "#FFFFFF", // Cor branca do Fluminense
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -87,6 +87,9 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         fadeIn: "fadeIn 0.5s ease-out",
         float: "float 3s ease-in-out infinite",
+      },
+      backgroundImage: {
+        'flu-stripes': "linear-gradient(90deg, #7A0213 33%, #00613C 33%, #00613C 67%, #7A0213 67%)",
       },
     },
   },

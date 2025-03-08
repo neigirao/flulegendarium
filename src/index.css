@@ -11,9 +11,9 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 262.1 83.3% 57.8%;
+    --primary: 351 98% 24%;  /* Grená do Fluminense */
     --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
+    --secondary: 159 100% 19%;  /* Verde do Fluminense */
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
@@ -23,7 +23,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 262.1 83.3% 57.8%;
+    --ring: 351 98% 24%;
     --radius: 0.75rem;
   }
  
@@ -34,9 +34,9 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 262.1 83.3% 57.8%;
+    --primary: 351 98% 24%;
     --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
+    --secondary: 159 100% 19%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
@@ -46,7 +46,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 262.1 83.3% 57.8%;
+    --ring: 351 98% 24%;
   }
 }
  
@@ -60,10 +60,33 @@
   }
 }
 
+/* Temas personalizados do Fluminense */
 .glass {
   @apply bg-white/10 backdrop-blur-lg border border-white/20;
 }
 
 .card-hover {
   @apply transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer;
+}
+
+.flu-gradient {
+  @apply bg-gradient-to-r from-flu-grena via-flu-branco to-flu-verde;
+}
+
+.flu-shadow {
+  box-shadow: 0 4px 20px rgba(122, 2, 19, 0.2), 0 2px 10px rgba(0, 97, 60, 0.15);
+}
+
+/* Animações adicionais */
+@keyframes pulse-flu {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(122, 2, 19, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(0, 97, 60, 0);
+  }
+}
+
+.animate-pulse-flu {
+  animation: pulse-flu 2s infinite;
 }
