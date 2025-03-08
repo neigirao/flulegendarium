@@ -2,9 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Trophy } from "lucide-react";
+import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
+import { useState } from "react";
 
 export default function Index() {
   const navigate = useNavigate();
+  const [showRanking, setShowRanking] = useState(true);
 
   return (
     <div className="min-h-screen bg-flu-stripes">
@@ -28,6 +31,15 @@ export default function Index() {
               <Trophy className="mr-2 h-5 w-5" />
               Jogar Agora
             </Button>
+
+            <Button 
+              onClick={() => setShowRanking(prev => !prev)} 
+              className="w-full bg-flu-verde hover:bg-flu-verde/90 text-white font-bold py-3"
+            >
+              {showRanking ? "Ocultar Ranking" : "Mostrar Ranking"}
+            </Button>
+
+            {showRanking && <RankingDisplay />}
 
             <div className="text-center p-6 bg-flu-verde/10 rounded-lg border border-flu-verde/30">
               <p className="text-flu-verde font-medium mb-2">

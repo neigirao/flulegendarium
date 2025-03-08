@@ -1,6 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { getTopRankings, Ranking } from "@/services/rankingService";
+import { Trophy } from "lucide-react";
 
 export const RankingDisplay = () => {
   const { data: rankings = [], isLoading, error } = useQuery({
@@ -25,27 +26,30 @@ export const RankingDisplay = () => {
   }
 
   return (
-    <div className="mt-6">
-      <h3 className="text-lg font-semibold mb-3">Top 10 Jogadores</h3>
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+    <div className="mt-4">
+      <h3 className="text-lg font-semibold mb-3 text-center text-flu-grena flex items-center justify-center gap-2">
+        <Trophy className="h-5 w-5 text-yellow-500" />
+        Top 10 Jogadores
+      </h3>
+      <div className="bg-white/80 rounded-lg shadow overflow-hidden">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-flu-verde/20">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Posição</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pontuação</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-flu-grena uppercase tracking-wider">#</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-flu-grena uppercase tracking-wider">Nome</th>
+              <th className="px-3 py-2 text-left text-xs font-medium text-flu-grena uppercase tracking-wider">Pontos</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {rankings.map((ranking, index) => (
               <tr key={ranking.id} className={index < 3 ? "bg-yellow-50" : ""}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
                   {index + 1}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                   {ranking.player_name}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
                   {ranking.score}
                 </td>
               </tr>
