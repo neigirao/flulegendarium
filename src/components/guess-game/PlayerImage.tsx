@@ -57,15 +57,17 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
           </div>
         </div>
       ) : (
-        <img
-          src={player?.image_url || defaultPlayerImage}
-          alt="Jogador"
-          className={`w-full h-full object-contain transition-all duration-500 ${isLoading ? 'opacity-0' : 'opacity-100 animate-fade-in'}`}
-          onError={handleImageError}
-          onLoad={handleImageLoaded}
-          loading="eager"
-          decoding="async"
-        />
+        <div className="w-full h-full flex items-center justify-center p-2">
+          <img
+            src={player?.image_url || defaultPlayerImage}
+            alt="Jogador"
+            className={`max-w-full max-h-full object-contain transition-all duration-500 ${isLoading ? 'opacity-0' : 'opacity-100 animate-fade-in'}`}
+            onError={handleImageError}
+            onLoad={handleImageLoaded}
+            loading="eager"
+            decoding="async"
+          />
+        </div>
       )}
     </div>
   );
