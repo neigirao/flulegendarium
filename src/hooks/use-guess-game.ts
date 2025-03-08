@@ -125,16 +125,48 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, [currentPlayer]);
 
+  // Helper function to check if guess matches player name
+  const isCorrectGuess = (guess: string, playerName: string): boolean => {
+    const normalizedGuess = guess.toLowerCase().trim();
+    const normalizedPlayerName = playerName.toLowerCase().trim();
+    
+    // Exact match check
+    if (normalizedGuess === normalizedPlayerName) {
+      return true;
+    }
+    
+    // Last name check (e.g., "Cavalieri" for "Diego Cavalieri")
+    const playerNameParts = normalizedPlayerName.split(' ');
+    if (playerNameParts.length > 1) {
+      const lastName = playerNameParts[playerNameParts.length - 1];
+      if (normalizedGuess === lastName) {
+        return true;
+      }
+    }
+    
+    // First name check (e.g., "Diego" for "Diego Cavalieri")
+    if (playerNameParts.length > 0) {
+      const firstName = playerNameParts[0];
+      if (normalizedGuess === firstName) {
+        return true;
+      }
+    }
+    
+    // Nickname check - if the player name contains the guess as a whole word
+    // This helps with known nicknames like "Fred" for "Frederico Chaves Guedes"
+    const wordBoundaryRegex = new RegExp(`\\b${normalizedGuess}\\b`);
+    if (wordBoundaryRegex.test(normalizedPlayerName)) {
+      return true;
+    }
+    
+    return false;
+  };
+
   const handleGuess = useCallback((guess: string) => {
     if (!currentPlayer || !guess || gameOver) return;
 
-    // Simplified name check (case insensitive)
-    const normalizedGuess = guess.toLowerCase().trim();
-    const normalizedPlayerName = currentPlayer.name.toLowerCase().trim();
-    
-    console.log(`Comparando "${normalizedGuess}" com "${normalizedPlayerName}"`);
-    
-    if (normalizedGuess === normalizedPlayerName) {
+    // Check if guess matches player name using our helper function
+    if (isCorrectGuess(guess, currentPlayer.name)) {
       // Correct guess!
       const points = 5; // Always award 5 points since we only have one attempt now
       setScore(prev => prev + points);
