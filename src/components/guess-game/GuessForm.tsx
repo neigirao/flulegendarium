@@ -28,6 +28,7 @@ export const GuessForm = ({ disabled, onSubmitGuess }: GuessFormProps) => {
         className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-flu-grena"
         onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
         disabled={disabled}
+        autoComplete="off"
       />
       
       <Button

@@ -1,15 +1,14 @@
-
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { getReliableImageUrl } from "@/utils/playerImageUtils";
+import { getReliableImageUrl, preloadPlayerImages } from "@/utils/playerImageUtils";
 import { PlayerImage } from "@/components/guess-game/PlayerImage";
 import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
 import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
 import { useGuessGame } from "@/hooks/use-guess-game";
-import { useState, useCallback, Suspense } from "react";
+import { useState, useCallback, Suspense, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 interface Player {
@@ -75,6 +74,13 @@ const GuessPlayer = () => {
     retry: 3,
     refetchOnWindowFocus: false,
   });
+
+  // Preload player images when data is available
+  useEffect(() => {
+    if (players && players.length > 0) {
+      preloadPlayerImages(players);
+    }
+  }, [players]);
 
   const {
     currentPlayer,
