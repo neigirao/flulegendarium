@@ -1,4 +1,5 @@
-import { useState, memo, useEffect } from "react";
+
+import { useState, memo, useEffect, useRef } from "react";
 import { defaultPlayerImage, playerImagesFallbacksMap } from "@/utils/playerImageUtils";
 import { Loader } from "lucide-react";
 
@@ -16,6 +17,50 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  // Cleanup function for observer
+  const cleanupObserver = () => {
+    if (observerRef.current && imgRef.current) {
+      observerRef.current.unobserve(imgRef.current);
+      observerRef.current.disconnect();
+      observerRef.current = null;
+    }
+  };
+
+  // Set up Intersection Observer for lazy loading
+  useEffect(() => {
+    if (!imgRef.current) return;
+
+    cleanupObserver();
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      const [entry] = entries;
+      if (entry.isIntersecting && imgRef.current) {
+        // Set high priority when visible
+        if (imgRef.current) {
+          imgRef.current.fetchPriority = "high";
+          
+          // Force browser to load the image if it hasn't already
+          if (imgRef.current.complete === false) {
+            const currentSrc = imgRef.current.src;
+            imgRef.current.src = currentSrc;
+          }
+        }
+        
+        // Cleanup observer once image is visible
+        cleanupObserver();
+      }
+    }, {
+      rootMargin: "200px", // Start loading when within 200px of viewport
+      threshold: 0.1
+    });
+    
+    observerRef.current.observe(imgRef.current);
+    
+    return cleanupObserver;
+  }, [imageSrc]);
 
   // Reset states and set image source when player changes
   useEffect(() => {
@@ -84,14 +129,15 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
       
       <div className="w-full h-full flex items-center justify-center p-2">
         <img
+          ref={imgRef}
           src={imageSrc}
           alt={player?.name || "Jogador"}
           className={`max-w-full max-h-full object-contain transition-all duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           onError={handleImageError}
           onLoad={handleImageLoaded}
-          loading="eager"
+          loading="lazy"
           decoding="async"
-          fetchPriority="high"
+          fetchPriority="auto"
         />
       </div>
     </div>

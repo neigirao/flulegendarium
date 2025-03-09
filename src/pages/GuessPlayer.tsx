@@ -1,15 +1,25 @@
+
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { getReliableImageUrl, preloadPlayerImages } from "@/utils/playerImageUtils";
+import { getReliableImageUrl, preloadPlayerImages, preloadNextPlayer } from "@/utils/playerImageUtils";
 import { PlayerImage } from "@/components/guess-game/PlayerImage";
 import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
 import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
 import { useGuessGame } from "@/hooks/use-guess-game";
-import { useState, useCallback, Suspense, useEffect } from "react";
+import { usePreload } from "@/hooks/use-preload";
+import { useState, useCallback, Suspense, useEffect, lazy } from "react";
 import { cn } from "@/lib/utils";
+import { RootLayout } from "@/components/RootLayout";
+
+// Lazy load the RankingDisplay component since it's not initially visible
+const LazyRankingDisplay = lazy(() => 
+  import("@/components/guess-game/RankingDisplay").then(module => ({
+    default: module.RankingDisplay
+  }))
+);
 
 interface Player {
   id: string;
@@ -35,6 +45,7 @@ const Loader = () => (
 const GuessPlayer = () => {
   const navigate = useNavigate();
   const [showRanking, setShowRanking] = useState(false);
+  const { preloadImages } = usePreload();
   
   // Fetch players from Supabase with improved error handling and more logs
   const { data: players = [], isLoading, error: playersError } = useQuery({
@@ -79,8 +90,15 @@ const GuessPlayer = () => {
   useEffect(() => {
     if (players && players.length > 0) {
       preloadPlayerImages(players);
+      
+      // Preload images using our new hook
+      const imagesToPreload = players
+        .slice(0, 5)
+        .map(player => getReliableImageUrl(player));
+      
+      preloadImages(imagesToPreload);
     }
-  }, [players]);
+  }, [players, preloadImages]);
 
   const {
     currentPlayer,
@@ -93,6 +111,19 @@ const GuessPlayer = () => {
     selectRandomPlayer,
     handlePlayerImageFixed
   } = useGuessGame(players);
+
+  // Preload next player when current one is guessed
+  useEffect(() => {
+    if (players && players.length > 1 && currentPlayer) {
+      // Find a potential next player that's different from current
+      const nextPlayerIndex = Math.floor(Math.random() * players.length);
+      const potentialNextPlayer = players[nextPlayerIndex];
+      
+      if (potentialNextPlayer.id !== currentPlayer.id) {
+        preloadNextPlayer(potentialNextPlayer);
+      }
+    }
+  }, [currentPlayer, players]);
 
   const toggleRanking = useCallback(() => {
     setShowRanking(prev => !prev);
@@ -136,77 +167,79 @@ const GuessPlayer = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4">
-      <div className="container mx-auto max-w-4xl">
-        <div className="flex items-center justify-between mb-8">
-          <button
-            onClick={() => navigate("/")}
-            className="flex items-center text-flu-grena hover:opacity-80 transition-opacity"
-          >
-            <ArrowLeft className="mr-2" />
-            Voltar
-          </button>
-          <div className="text-flu-grena font-semibold">
-            {score} pontos
-          </div>
-        </div>
-
-        <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-flu-grena mb-2">
-              Adivinhe o Jogador
-            </h1>
-            <p className="text-gray-600">Use apelidos ou nomes oficiais!</p>
-            <p className="text-sm text-gray-500 mt-2">
-              Total de jogadores: {players ? players.length : 0}
-            </p>
-          </div>
-
-          {currentPlayer && (
-            <div className="space-y-6">
-              <PlayerImage 
-                player={currentPlayer} 
-                onImageFixed={handlePlayerImageFixed} 
-              />
-
-              <GuessForm 
-                disabled={gameOver}
-                onSubmitGuess={handleGuess}
-              />
-
-              <GameStatus
-                attempts={attempts}
-                maxAttempts={MAX_ATTEMPTS}
-                score={score}
-                gameOver={gameOver}
-                timeRemaining={timeRemaining}
-                onNextPlayer={selectRandomPlayer}
-              />
-            </div>
-          )}
-          
-          <div className="mt-6">
-            <button 
-              onClick={toggleRanking}
-              className={cn(
-                "w-full py-2 px-4 rounded-lg transition-colors",
-                showRanking 
-                  ? "bg-gray-200 text-gray-700" 
-                  : "bg-flu-grena text-white"
-              )}
+    <RootLayout>
+      <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex items-center justify-between mb-8">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center text-flu-grena hover:opacity-80 transition-opacity"
             >
-              {showRanking ? "Ocultar Ranking" : "Mostrar Ranking"}
+              <ArrowLeft className="mr-2" />
+              Voltar
             </button>
-            
-            {showRanking && (
-              <Suspense fallback={<Loader />}>
-                <RankingDisplay />
-              </Suspense>
+            <div className="text-flu-grena font-semibold">
+              {score} pontos
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-flu-grena mb-2">
+                Adivinhe o Jogador
+              </h1>
+              <p className="text-gray-600">Use apelidos ou nomes oficiais!</p>
+              <p className="text-sm text-gray-500 mt-2">
+                Total de jogadores: {players ? players.length : 0}
+              </p>
+            </div>
+
+            {currentPlayer && (
+              <div className="space-y-6">
+                <PlayerImage 
+                  player={currentPlayer} 
+                  onImageFixed={handlePlayerImageFixed} 
+                />
+
+                <GuessForm 
+                  disabled={gameOver}
+                  onSubmitGuess={handleGuess}
+                />
+
+                <GameStatus
+                  attempts={attempts}
+                  maxAttempts={MAX_ATTEMPTS}
+                  score={score}
+                  gameOver={gameOver}
+                  timeRemaining={timeRemaining}
+                  onNextPlayer={selectRandomPlayer}
+                />
+              </div>
             )}
+            
+            <div className="mt-6">
+              <button 
+                onClick={toggleRanking}
+                className={cn(
+                  "w-full py-2 px-4 rounded-lg transition-colors",
+                  showRanking 
+                    ? "bg-gray-200 text-gray-700" 
+                    : "bg-flu-grena text-white"
+                )}
+              >
+                {showRanking ? "Ocultar Ranking" : "Mostrar Ranking"}
+              </button>
+              
+              {showRanking && (
+                <Suspense fallback={<Loader />}>
+                  <LazyRankingDisplay />
+                </Suspense>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </RootLayout>
   );
 };
 

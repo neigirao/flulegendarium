@@ -32,14 +32,36 @@ const playerImagesFallbacks: Record<string, string> = {
 // Default fallback image
 const defaultImage = "https://uploads.metropoles.com/wp-content/uploads/2023/10/31123243/Fluminense-campeao-Libertadores-2023-12.jpg";
 
-// Function to get a reliable image URL with a cache
-const imageCache = new Map<string, string>();
+// Image cache with expiration time (30 minutes)
+interface CachedImage {
+  url: string;
+  timestamp: number;
+}
+
+const CACHE_EXPIRATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+const imageCache = new Map<string, CachedImage>();
+
+// Function to clean expired cache entries
+const cleanExpiredCache = () => {
+  const now = Date.now();
+  for (const [key, value] of imageCache.entries()) {
+    if (now - value.timestamp > CACHE_EXPIRATION) {
+      imageCache.delete(key);
+    }
+  }
+};
 
 // Function to get a reliable image URL
 export const getReliableImageUrl = (player: Player): string => {
+  // Clean expired cache entries periodically
+  if (Math.random() < 0.1) { // 10% chance to clean on each call
+    cleanExpiredCache();
+  }
+  
   // Check cache first
-  if (imageCache.has(player.id)) {
-    return imageCache.get(player.id)!;
+  const cached = imageCache.get(player.id);
+  if (cached && Date.now() - cached.timestamp < CACHE_EXPIRATION) {
+    return cached.url;
   }
   
   let imageUrl = player.image_url;
@@ -64,25 +86,73 @@ export const getReliableImageUrl = (player: Player): string => {
     imageUrl = defaultImage;
   }
   
-  // Save to cache
-  imageCache.set(player.id, imageUrl);
+  // Save to cache with timestamp
+  imageCache.set(player.id, {
+    url: imageUrl,
+    timestamp: Date.now()
+  });
   
   return imageUrl;
 };
 
-// Helper function to preload images
+// Helper function to preload images with priority
 export const preloadPlayerImages = (players: Player[]) => {
   if (!players || players.length === 0) return;
   
-  // Preload first 5 player images to improve initial performance
-  const imagesToPreload = players.slice(0, 5).map(player => getReliableImageUrl(player));
+  // Intelligently decide how many images to preload based on device performance
+  const preloadCount = navigator.hardwareConcurrency
+    ? Math.min(Math.max(2, navigator.hardwareConcurrency), 5) // Between 2 and 5 based on CPU cores
+    : 3; // Default to 3 if hardwareConcurrency not available
   
-  imagesToPreload.forEach(src => {
+  console.log(`Precarregando ${preloadCount} imagens de jogadores`);
+  
+  // First preload currently needed images with high priority
+  const highPriorityImages = players.slice(0, 3).map(player => getReliableImageUrl(player));
+  
+  highPriorityImages.forEach(src => {
     if (typeof window !== 'undefined') {
       const img = new Image();
       img.src = src;
+      img.fetchPriority = 'high';
     }
   });
+  
+  // Then preload a few more with low priority
+  if (players.length > 3) {
+    // Use requestIdleCallback if available, otherwise setTimeout
+    const schedulePreload = window.requestIdleCallback || ((cb) => setTimeout(cb, 1000));
+    
+    schedulePreload(() => {
+      const lowPriorityImages = players
+        .slice(3, 3 + preloadCount)
+        .map(player => getReliableImageUrl(player));
+      
+      lowPriorityImages.forEach(src => {
+        if (typeof window !== 'undefined') {
+          const img = new Image();
+          img.src = src;
+          img.fetchPriority = 'low';
+        }
+      });
+    });
+  }
+};
+
+// Create a lightweight component loader function
+export const preloadNextPlayer = (nextPlayer: Player | null) => {
+  if (!nextPlayer) return;
+  
+  const imageUrl = getReliableImageUrl(nextPlayer);
+  
+  if (typeof window !== 'undefined') {
+    // Use requestIdleCallback if available for non-critical preloading
+    const requestIdleCallback = window.requestIdleCallback || ((cb) => setTimeout(cb, 200));
+    
+    requestIdleCallback(() => {
+      const img = new Image();
+      img.src = imageUrl;
+    });
+  }
 };
 
 export const playerImagesFallbacksMap = playerImagesFallbacks;
