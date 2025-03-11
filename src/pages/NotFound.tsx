@@ -1,27 +1,21 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
+import { RootLayout } from "@/components/RootLayout";
 
-const NotFound = () => {
-  const location = useLocation();
-
-  useEffect(() => {
-    console.error(
-      "404 Error: User attempted to access non-existent route:",
-      location.pathname
-    );
-  }, [location.pathname]);
+export default function NotFound() {
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <RootLayout>
+      <div className="min-h-screen bg-flu-stripes">
+        <div className="container mx-auto px-4 py-8 flex flex-col items-center justify-center">
+          <h1 className="text-6xl font-bold text-flu-grena mb-4">404</h1>
+          <p className="text-2xl text-flu-verde mb-8">Página não encontrada</p>
+          <Button onClick={() => navigate("/")} className="bg-flu-grena hover:bg-flu-grena/90 text-white font-bold py-3 px-6">
+            Voltar para a página inicial
+          </Button>
+        </div>
       </div>
-    </div>
+    </RootLayout>
   );
-};
-
-export default NotFound;
+}

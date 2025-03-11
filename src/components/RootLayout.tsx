@@ -2,9 +2,12 @@
 import { Suspense, useEffect, ReactNode } from "react";
 import { Loader } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import { Footer } from "./Footer";
 
 interface RootLayoutProps {
   children: ReactNode;
+  currentPlayerName?: string;
+  currentPlayerId?: string;
 }
 
 // Loading fallback component for content
@@ -14,7 +17,11 @@ const ContentLoader = () => (
   </div>
 );
 
-export const RootLayout = ({ children }: RootLayoutProps) => {
+export const RootLayout = ({ 
+  children, 
+  currentPlayerName,
+  currentPlayerId 
+}: RootLayoutProps) => {
   const location = useLocation();
   
   // Reset scroll position when route changes
@@ -38,8 +45,16 @@ export const RootLayout = ({ children }: RootLayoutProps) => {
   }, []);
   
   return (
-    <Suspense fallback={<ContentLoader />}>
-      {children}
-    </Suspense>
+    <div className="flex flex-col min-h-screen">
+      <Suspense fallback={<ContentLoader />}>
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer 
+          currentPlayerName={currentPlayerName}
+          currentPlayerId={currentPlayerId}
+        />
+      </Suspense>
+    </div>
   );
 };
