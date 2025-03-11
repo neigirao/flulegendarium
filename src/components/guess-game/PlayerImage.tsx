@@ -110,14 +110,14 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
   // Early return for no image source
   if (!imageSrc) {
     return (
-      <div className="relative aspect-video h-[400px] md:h-[500px] rounded-lg overflow-hidden bg-gray-100 border-2 border-flu-verde flex items-center justify-center">
+      <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-gray-100 border-2 border-flu-verde flex items-center justify-center">
         <p className="text-gray-500">Imagem não disponível</p>
       </div>
     );
   }
 
   return (
-    <div className="relative aspect-video h-[400px] md:h-[500px] rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300 hover:shadow-lg border-2 border-flu-verde">
+    <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300 hover:shadow-lg border-2 border-flu-verde">
       {isLoading && !imageError && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 backdrop-blur-sm z-10">
           <div className="flex flex-col items-center gap-2">
@@ -127,7 +127,7 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
         </div>
       )}
       
-      <div className="w-full h-full flex items-center justify-center p-2">
+      <div className="w-full h-full flex items-center justify-center p-2 relative">
         <img
           ref={imgRef}
           src={imageSrc}
