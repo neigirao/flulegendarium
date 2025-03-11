@@ -1,98 +1,246 @@
-import { useEffect, useState } from "react";
-import { RootLayout } from "@/components/RootLayout";
-import { useGuessGame } from "@/hooks/use-guess-game";
-import { RankingForm } from "@/components/guess-game/RankingForm";
-import { GuessingForm } from "@/components/guess-game/GuessingForm";
-import { PlayerDisplay } from "@/components/guess-game/PlayerDisplay";
-import { GameEnd } from "@/components/guess-game/GameEnd";
-import { Loader } from "lucide-react";
 
-export default function GuessPlayer() {
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/lib/supabase";
+import { getReliableImageUrl, preloadPlayerImages, preloadNextPlayer } from "@/utils/playerImageUtils";
+import { PlayerImage } from "@/components/guess-game/PlayerImage";
+import { GuessForm } from "@/components/guess-game/GuessForm";
+import { GameStatus } from "@/components/guess-game/GameStatus";
+import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
+import { useGuessGame } from "@/hooks/use-guess-game";
+import { usePreload } from "@/hooks/use-preload";
+import { useState, useCallback, Suspense, useEffect, lazy } from "react";
+import { cn } from "@/lib/utils";
+import { RootLayout } from "@/components/RootLayout";
+
+// Lazy load the RankingDisplay component since it's not initially visible
+const LazyRankingDisplay = lazy(() => 
+  import("@/components/guess-game/RankingDisplay").then(module => ({
+    default: module.RankingDisplay
+  }))
+);
+
+interface Player {
+  id: string;
+  name: string;
+  position: string;
+  image_url: string;
+  year_highlight: string;
+  fun_fact: string;
+  achievements: string[];
+  statistics: {
+    gols: number;
+    jogos: number;
+  };
+}
+
+// Loader component
+const Loader = () => (
+  <div className="w-full flex justify-center my-8">
+    <div className="w-10 h-10 border-4 border-flu-verde border-t-transparent rounded-full animate-spin"></div>
+  </div>
+);
+
+const GuessPlayer = () => {
+  const navigate = useNavigate();
+  const [showRanking, setShowRanking] = useState(false);
+  const { preloadImages } = usePreload();
+  
+  // Fetch players from Supabase with improved error handling and more logs
+  const { data: players = [], isLoading, error: playersError } = useQuery({
+    queryKey: ['players'],
+    queryFn: async () => {
+      try {
+        console.log("Iniciando busca de jogadores...");
+        
+        const { data, error } = await supabase
+          .from('players')
+          .select('*');
+        
+        if (error) {
+          console.error("Erro ao buscar jogadores:", error);
+          throw error;
+        }
+        
+        console.log("Jogadores carregados com sucesso:", data?.length || 0, "jogadores");
+        if (data && data.length > 0) {
+          console.log("Primeiro jogador:", data[0].name);
+          
+          // Fix image URLs for all players
+          const enhancedPlayers = data.map((player: Player) => ({
+            ...player,
+            image_url: getReliableImageUrl(player)
+          }));
+          
+          return enhancedPlayers;
+        }
+        return data as Player[];
+      } catch (err) {
+        console.error("Exceção ao buscar jogadores:", err);
+        throw err;
+      }
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes cache
+    retry: 3,
+    refetchOnWindowFocus: false,
+  });
+
+  // Preload player images when data is available
+  useEffect(() => {
+    if (players && players.length > 0) {
+      preloadPlayerImages(players);
+      
+      // Preload images using our new hook
+      const imagesToPreload = players
+        .slice(0, 5)
+        .map(player => getReliableImageUrl(player));
+      
+      preloadImages(imagesToPreload);
+    }
+  }, [players, preloadImages]);
+
   const {
     currentPlayer,
-    score,
     attempts,
-    hasGuessed,
-    isLoading,
-    isGameOver,
-    startNewGame,
-    guessPlayer,
-    handleCorrectGuess,
-  } = useGuessGame();
+    score,
+    gameOver,
+    timeRemaining,
+    MAX_ATTEMPTS,
+    handleGuess,
+    selectRandomPlayer,
+    handlePlayerImageFixed
+  } = useGuessGame(players);
 
-  const [showRankingForm, setShowRankingForm] = useState(false);
-
+  // Preload next player when current one is guessed
   useEffect(() => {
-    if (isGameOver && !showRankingForm) {
-      // Delay the ranking form to allow the game end modal to be seen
-      const timer = setTimeout(() => {
-        setShowRankingForm(true);
-      }, 2000);
-
-      return () => clearTimeout(timer);
+    if (players && players.length > 1 && currentPlayer) {
+      // Find a potential next player that's different from current
+      const nextPlayerIndex = Math.floor(Math.random() * players.length);
+      const potentialNextPlayer = players[nextPlayerIndex];
+      
+      if (potentialNextPlayer.id !== currentPlayer.id) {
+        preloadNextPlayer(potentialNextPlayer);
+      }
     }
-  }, [isGameOver, showRankingForm]);
+  }, [currentPlayer, players]);
 
-  const handleSaveRanking = () => {
-    setShowRankingForm(false);
-    startNewGame();
-  };
+  const toggleRanking = useCallback(() => {
+    setShowRanking(prev => !prev);
+  }, []);
 
-  const handleCancelRanking = () => {
-    setShowRankingForm(false);
-    startNewGame();
-  };
+  if (isLoading) {
+    return <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4 flex items-center justify-center">
+      <Loader />
+    </div>;
+  }
 
-  // Get the current player info to pass to the footer
-  const currentPlayerInfo = {
-    name: currentPlayer?.name || "",
-    id: currentPlayer?.id || "",
-  };
+  if (playersError) {
+    return (
+      <div className="text-center p-8">
+        <p className="text-red-500 font-semibold mb-4">Erro ao carregar jogadores.</p>
+        <p className="text-sm text-gray-600 mb-4">
+          {playersError instanceof Error ? playersError.message : "Erro desconhecido"}
+        </p>
+        <button 
+          onClick={() => navigate("/")}
+          className="bg-flu-grena text-white px-4 py-2 rounded-lg"
+        >
+          Voltar
+        </button>
+      </div>
+    );
+  }
+
+  if (!players || players.length === 0) {
+    return (
+      <div className="text-center p-8">
+        <p className="mb-4">Nenhum jogador cadastrado ainda.</p>
+        <button 
+          onClick={() => navigate("/")}
+          className="bg-flu-grena text-white px-4 py-2 rounded-lg"
+        >
+          Voltar
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <RootLayout 
-      currentPlayerName={currentPlayerInfo.name}
-      currentPlayerId={currentPlayerInfo.id}
-    >
-      <div className="min-h-screen bg-flu-stripes">
-        <div className="container mx-auto p-4 py-8">
-          <div className="max-w-md mx-auto bg-white/90 backdrop-blur-sm rounded-xl shadow-xl overflow-hidden">
-            {isLoading ? (
-              <div className="flex items-center justify-center p-12">
-                <Loader className="w-8 h-8 text-flu-grena animate-spin" />
-              </div>
-            ) : (
-              <>
-                <PlayerDisplay
-                  currentPlayer={currentPlayer}
-                  attempts={attempts}
+    <RootLayout>
+      <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="flex items-center justify-between mb-8">
+            <button
+              onClick={() => navigate("/")}
+              className="flex items-center text-flu-grena hover:opacity-80 transition-opacity"
+            >
+              <ArrowLeft className="mr-2" />
+              Voltar
+            </button>
+            <div className="text-flu-grena font-semibold">
+              {score} pontos
+            </div>
+          </div>
+
+          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-flu-grena mb-2">
+                Adivinhe o Jogador
+              </h1>
+              <p className="text-gray-600">Use apelidos ou nomes oficiais!</p>
+              <p className="text-sm text-gray-500 mt-2">
+                Total de jogadores: {players ? players.length : 0}
+              </p>
+            </div>
+
+            {currentPlayer && (
+              <div className="space-y-6">
+                <PlayerImage 
+                  player={currentPlayer} 
+                  onImageFixed={handlePlayerImageFixed} 
                 />
 
-                {hasGuessed || isGameOver ? (
-                  <GameEnd
-                    isGameOver={isGameOver}
-                    score={score}
-                    attempts={attempts}
-                    currentPlayer={currentPlayer}
-                    startNewGame={startNewGame}
-                    handleCorrectGuess={handleCorrectGuess}
-                  />
-                ) : (
-                  <GuessingForm guessPlayer={guessPlayer} />
-                )}
+                <GuessForm 
+                  disabled={gameOver}
+                  onSubmitGuess={handleGuess}
+                />
 
-                {showRankingForm && (
-                  <RankingForm
-                    score={score}
-                    onSaved={handleSaveRanking}
-                    onCancel={handleCancelRanking}
-                  />
-                )}
-              </>
+                <GameStatus
+                  attempts={attempts}
+                  maxAttempts={MAX_ATTEMPTS}
+                  score={score}
+                  gameOver={gameOver}
+                  timeRemaining={timeRemaining}
+                  onNextPlayer={selectRandomPlayer}
+                />
+              </div>
             )}
+            
+            <div className="mt-6">
+              <button 
+                onClick={toggleRanking}
+                className={cn(
+                  "w-full py-2 px-4 rounded-lg transition-colors",
+                  showRanking 
+                    ? "bg-gray-200 text-gray-700" 
+                    : "bg-flu-grena text-white"
+                )}
+              >
+                {showRanking ? "Ocultar Ranking" : "Mostrar Ranking"}
+              </button>
+              
+              {showRanking && (
+                <Suspense fallback={<Loader />}>
+                  <LazyRankingDisplay />
+                </Suspense>
+              )}
+            </div>
           </div>
         </div>
       </div>
     </RootLayout>
   );
-}
+};
+
+export default GuessPlayer;
