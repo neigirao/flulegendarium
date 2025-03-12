@@ -55,8 +55,17 @@ serve(async (req) => {
 
     if (insertError) throw insertError
 
+    // Return success without exposing the full URL details in logs
+    const sanitizedPlayer = {
+      ...player,
+      image_url: player.image_url ? `[SECURE_IMAGE_URL]` : null
+    }
+
     return new Response(
-      JSON.stringify({ success: true, player }),
+      JSON.stringify({ 
+        success: true, 
+        player: sanitizedPlayer 
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   } catch (error) {

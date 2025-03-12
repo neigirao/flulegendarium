@@ -134,7 +134,7 @@ export const preloadPlayerImages = (players: Player[]) => {
     
     img.onload = loadNextImage;
     img.onerror = () => {
-      console.warn(`Falha ao pré-carregar imagem para ${player.name}, tentando fallback`);
+      console.warn(`Falha ao pré-carregar imagem para ${player.name}`);
       // Try fallback image if available
       if (playerImagesFallbacks[player.name]) {
         const fallbackImg = new Image();
@@ -190,7 +190,7 @@ export const preloadNextPlayer = (nextPlayer: Player | null) => {
       };
       
       img.onerror = () => {
-        console.warn(`Falha ao pré-carregar próximo jogador (${nextPlayer.name}), tentando fallback`);
+        console.warn(`Falha ao pré-carregar próximo jogador (${nextPlayer.name})`);
         // Try fallback if available
         if (playerImagesFallbacks[nextPlayer.name]) {
           const fallbackImg = new Image();

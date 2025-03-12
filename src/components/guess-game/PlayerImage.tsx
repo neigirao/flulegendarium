@@ -96,6 +96,7 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
   }, [player?.id, player?.name]);
 
   const handleImageError = () => {
+    // Log error without revealing the exact URL
     console.error(`Erro ao carregar imagem para ${player?.name || 'jogador desconhecido'} (tentativa ${retryCount + 1})`);
     
     // First retry - check for fallbacks
@@ -106,7 +107,7 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
       if (player?.name) {
         // First try exact match
         if (playerImagesFallbacksMap[player.name]) {
-          console.log(`Tentando fallback exato para ${player.name}`);
+          console.log(`Tentando fallback para ${player.name}`);
           setImageSrc(playerImagesFallbacksMap[player.name]);
           setIsLoading(true);
           return;
@@ -115,7 +116,7 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
         // Then try partial match
         for (const [key, url] of Object.entries(playerImagesFallbacksMap)) {
           if (player.name.includes(key) || key.includes(player.name)) {
-            console.log(`Tentando fallback parcial: ${key} para ${player.name}`);
+            console.log(`Tentando fallback para ${player.name}`);
             setImageSrc(url);
             setIsLoading(true);
             return;
@@ -178,13 +179,19 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
         <img
           ref={imgRef}
           src={imageSrc}
-          alt={player?.name || "Jogador"}
+          alt="Imagem do jogador" // Generic alt text without revealing player name
           className={`max-w-full max-h-full object-contain transition-all duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           onError={handleImageError}
           onLoad={handleImageLoaded}
           loading="eager" 
           decoding="async"
           fetchPriority="high"
+          // Add referrerpolicy to prevent leaking origin information
+          referrerPolicy="no-referrer"
+          // Disable right-click menu on image
+          onContextMenu={(e) => e.preventDefault()}
+          // Disable dragging of image to prevent revealing URL
+          draggable="false"
         />
       </div>
     </div>
