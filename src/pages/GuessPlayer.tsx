@@ -129,7 +129,8 @@ const GuessPlayer = () => {
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
-    handlePlayerImageFixed
+    handlePlayerImageFixed,
+    isProcessingGuess
   } = useGuessGame(players);
 
   // Enhanced next player preloading that's more aggressive
@@ -235,6 +236,7 @@ const GuessPlayer = () => {
                 <GuessForm 
                   disabled={gameOver}
                   onSubmitGuess={handleGuess}
+                  isProcessing={isProcessingGuess}
                 />
 
                 <GameStatus

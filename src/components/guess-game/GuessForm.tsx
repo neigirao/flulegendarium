@@ -2,14 +2,16 @@
 import { useState, memo, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Loader2 } from "lucide-react";
 
 interface GuessFormProps {
   disabled: boolean;
   onSubmitGuess: (guess: string) => void;
+  isProcessing?: boolean;
 }
 
 // Memoized component to prevent unnecessary re-renders
-export const GuessForm = memo(({ disabled, onSubmitGuess }: GuessFormProps) => {
+export const GuessForm = memo(({ disabled, onSubmitGuess, isProcessing = false }: GuessFormProps) => {
   const [guess, setGuess] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -26,7 +28,7 @@ export const GuessForm = memo(({ disabled, onSubmitGuess }: GuessFormProps) => {
   }, [disabled]);
 
   const handleSubmit = () => {
-    if (guess.trim()) {
+    if (guess.trim() && !isProcessing) {
       onSubmitGuess(guess);
       setGuess("");
     }
@@ -50,19 +52,26 @@ export const GuessForm = memo(({ disabled, onSubmitGuess }: GuessFormProps) => {
         placeholder="Nome ou apelido do jogador..."
         className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-flu-grena"
         onKeyDown={handleKeyDown}
-        disabled={disabled}
+        disabled={disabled || isProcessing}
         autoComplete="off"
         aria-label="Palpite do nome do jogador"
       />
       
       <Button
         onClick={handleSubmit}
-        disabled={!guess || disabled}
+        disabled={!guess || disabled || isProcessing}
         className="w-full bg-flu-grena text-white font-semibold flu-shadow"
         size="lg"
         type="button"
       >
-        Adivinhar
+        {isProcessing ? (
+          <>
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            Processando...
+          </>
+        ) : (
+          'Adivinhar'
+        )}
       </Button>
       
       <div className="text-xs text-gray-500 italic mt-2">

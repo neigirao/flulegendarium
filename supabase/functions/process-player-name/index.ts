@@ -7,16 +7,94 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Expanded nicknames database with more players and common variations
 const PLAYER_NICKNAMES: Record<string, string[]> = {
-  "Germán Cano": ["cano", "el matador"],
+  "Germán Cano": ["cano", "el matador", "german", "germán"],
   "Fred": ["frederico chaves guedes", "fredgol", "fred jogador"],
-  "John Kennedy": ["jk", "kennedy", "john"],
-  "Marcelo": ["m12", "filho do flu"],
-  "Fábio": ["são fábio", "muralha tricolor"],
-  "Felipe Melo": ["pitbull", "fm30"],
-  "André": ["andrezinho", "andre flu"],
-  "Ganso": ["paulo henrique", "ph", "ph ganso"],
+  "John Kennedy": ["jk", "kennedy", "john", "john k"],
+  "Marcelo": ["m12", "filho do flu", "marcelo vieira", "marcelinho"],
+  "Fábio": ["são fábio", "fabio", "muralha tricolor", "fabinho"],
+  "Felipe Melo": ["pitbull", "fm30", "melo"],
+  "André": ["andrezinho", "andre", "andre flu"],
+  "Ganso": ["paulo henrique", "ph", "ph ganso", "paulo henrique ganso"],
+  "Thiago Silva": ["monstro", "ts", "silva", "thiago"],
+  "Keno": ["marcos rocha", "keninho"],
+  "Nino": ["ninão", "nino cavaliere"],
+  "Lima": ["limão", "john arias lima"],
+  "Arias": ["john arias", "jhon arias", "aras"],
+  "Petch": ["pet", "petchi", "petersson"],
+  "Martinelli": ["gabi martinelli", "gabriel martinelli", "martine", "martineli"],
+  "Samuel Xavier": ["samuel", "xavier", "samuca"],
+  "Diogo Barbosa": ["diogo", "barbosa"],
+  "Nonato": ["tatinho", "nato"],
+  "Manoel": ["manel", "manuel"],
+  "Thiago Santos": ["thiago", "santão", "thiagão"],
+  "Alexsander": ["alex", "alexandre", "alexsandro"],
+  "Arthur": ["art", "arthurzinho", "artur", "arthur melo"],
+  "Caio Paulista": ["caio", "paulista"],
+  "Fábio Santos": ["fabinho", "santos"],
+  "David Braz": ["david", "braz"],
+  "Jhon Arias": ["arias", "jhon", "john arias", "columbian"],
+  "Renato Augusto": ["renato", "augusto", "ra8"],
+  "Lelê": ["lele", "lê", "lelezinho"]
 };
+
+// Helper function to calculate string similarity 
+// using Levenshtein distance algorithm
+function calculateSimilarity(s1: string, s2: string): number {
+  if (s1 === s2) return 1.0; // Perfect match
+  
+  // Convert both strings to lowercase for case-insensitive comparison
+  s1 = s1.toLowerCase();
+  s2 = s2.toLowerCase();
+  
+  // If one string contains the other, it's likely a match
+  if (s1.includes(s2) || s2.includes(s1)) {
+    // Calculate ratio based on length difference
+    const longLength = Math.max(s1.length, s2.length);
+    const shortLength = Math.min(s1.length, s2.length);
+    return shortLength / longLength;
+  }
+  
+  // For very short inputs, be more lenient
+  if (s1.length <= 3 || s2.length <= 3) {
+    // For very short strings (like 'Pet' for 'Petch'), check if it's the start
+    if (s2.startsWith(s1) || s1.startsWith(s2)) {
+      return 0.8; // High confidence for prefix matches on short strings
+    }
+  }
+  
+  // Simple Levenshtein distance calculation
+  const track = Array(s2.length + 1).fill(null).map(() => 
+    Array(s1.length + 1).fill(null));
+  
+  for (let i = 0; i <= s1.length; i += 1) {
+    track[0][i] = i;
+  }
+  
+  for (let j = 0; j <= s2.length; j += 1) {
+    track[j][0] = j;
+  }
+  
+  for (let j = 1; j <= s2.length; j += 1) {
+    for (let i = 1; i <= s1.length; i += 1) {
+      const indicator = s1[i - 1] === s2[j - 1] ? 0 : 1;
+      track[j][i] = Math.min(
+        track[j][i - 1] + 1, // deletion
+        track[j - 1][i] + 1, // insertion
+        track[j - 1][i - 1] + indicator, // substitution
+      );
+    }
+  }
+  
+  // Get the distance
+  const distance = track[s2.length][s1.length];
+  
+  // Convert to similarity score between 0 and 1
+  // For strings of different lengths, use the longer one for normalization
+  const maxLength = Math.max(s1.length, s2.length);
+  return maxLength === 0 ? 1.0 : 1.0 - distance / maxLength;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -26,33 +104,84 @@ serve(async (req) => {
   try {
     const { userInput } = await req.json();
     const normalizedInput = userInput.toLowerCase().trim();
+    
+    const threshold = 0.8; // Similarity threshold for fuzzy matching
+    let bestMatch = null;
+    let highestConfidence = 0;
 
-    // Procura por correspondências diretas ou apelidos
+    // First check for direct matches in our nickname database
     for (const [playerName, nicknames] of Object.entries(PLAYER_NICKNAMES)) {
-      if (playerName.toLowerCase() === normalizedInput || 
-          nicknames.some(nick => nick === normalizedInput)) {
+      // Perfect match with the official name
+      if (playerName.toLowerCase() === normalizedInput) {
         return new Response(
           JSON.stringify({ 
             processedName: playerName,
-            confidence: 1.0 
+            confidence: 1.0,
+            matchType: "exact_name"
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
+      
+      // Check if it matches any of the known nicknames
+      const nicknameMatch = nicknames.find(nick => nick === normalizedInput);
+      if (nicknameMatch) {
+        return new Response(
+          JSON.stringify({ 
+            processedName: playerName,
+            confidence: 1.0,
+            matchType: "exact_nickname"
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+      
+      // No exact match, try fuzzy matching
+      // First with the official name
+      const nameConfidence = calculateSimilarity(playerName.toLowerCase(), normalizedInput);
+      if (nameConfidence > highestConfidence) {
+        highestConfidence = nameConfidence;
+        bestMatch = playerName;
+      }
+      
+      // Then with each nickname
+      for (const nickname of nicknames) {
+        const nicknameConfidence = calculateSimilarity(nickname, normalizedInput);
+        if (nicknameConfidence > highestConfidence) {
+          highestConfidence = nicknameConfidence;
+          bestMatch = playerName;
+        }
+      }
     }
-
-    // Não precisamos usar IA para o primeiro MVP
-    // Se não encontrou correspondência exata, retorna null
+    
+    // Return the best fuzzy match if it's above our threshold
+    if (bestMatch && highestConfidence >= threshold) {
+      return new Response(
+        JSON.stringify({ 
+          processedName: bestMatch,
+          confidence: highestConfidence,
+          matchType: "fuzzy_match"
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    
+    // No good match found
     return new Response(
       JSON.stringify({ 
         processedName: null,
-        confidence: 0.0 
+        confidence: highestConfidence,
+        matchType: "no_match"
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        processedName: null,
+        confidence: 0
+      }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { getReliableImageUrl } from "@/utils/playerImageUtils";
+import { supabase } from "@/lib/supabase";
 
 interface Player {
   id: string;
@@ -17,6 +18,12 @@ interface Player {
   };
 }
 
+interface NameProcessingResult {
+  processedName: string | null;
+  confidence: number;
+  matchType?: string;
+}
+
 const MAX_ATTEMPTS = 1;
 const TIME_LIMIT_SECONDS = 60; // 1 minute timer
 
@@ -27,6 +34,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
+  const [isProcessingGuess, setIsProcessingGuess] = useState(false);
   const timerRef = useRef<number | null>(null);
   const availablePlayers = useRef<Player[]>([]);
 
@@ -125,8 +133,36 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, [currentPlayer]);
 
-  // Helper function to check if guess matches player name
+  // Use edge function to process and validate player names
+  const processPlayerName = async (guess: string): Promise<NameProcessingResult> => {
+    try {
+      // Call our edge function to process the player name
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-player-name`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ userInput: guess })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Falha ao processar o nome do jogador');
+      }
+      
+      const result = await response.json();
+      return result;
+    } catch (error) {
+      console.error('Erro ao processar nome do jogador:', error);
+      // Fallback to local name matching if edge function fails
+      return { processedName: null, confidence: 0 };
+    }
+  };
+
+  // Local fallback for name matching if the edge function fails
   const isCorrectGuess = (guess: string, playerName: string): boolean => {
+    if (!guess || !playerName) return false;
+    
     const normalizedGuess = guess.toLowerCase().trim();
     const normalizedPlayerName = playerName.toLowerCase().trim();
     
@@ -159,41 +195,98 @@ export const useGuessGame = (players: Player[] | undefined) => {
       return true;
     }
     
+    // Special case for short inputs like "Pet" for "Petch"
+    // Handle common nickname variations
+    if (
+      (normalizedPlayerName === "petch" && normalizedGuess === "pet") ||
+      (normalizedPlayerName === "germán cano" && (normalizedGuess === "german" || normalizedGuess === "cano")) ||
+      (normalizedPlayerName === "fábio" && normalizedGuess === "fabio") ||
+      (normalizedPlayerName === "jhon arias" && normalizedGuess === "arias") ||
+      (normalizedPlayerName === "john kennedy" && (normalizedGuess === "john" || normalizedGuess === "kennedy"))
+    ) {
+      return true;
+    }
+    
     return false;
   };
 
-  const handleGuess = useCallback((guess: string) => {
-    if (!currentPlayer || !guess || gameOver) return;
-
-    // Check if guess matches player name using our helper function
-    if (isCorrectGuess(guess, currentPlayer.name)) {
-      // Correct guess!
-      const points = 5; // Always award 5 points since we only have one attempt now
-      setScore(prev => prev + points);
+  const handleGuess = useCallback(async (guess: string) => {
+    if (!currentPlayer || !guess || gameOver || isProcessingGuess) return;
+    
+    setIsProcessingGuess(true);
+    
+    try {
+      // First try with the edge function
+      const processingResult = await processPlayerName(guess);
       
-      toast({
-        title: "Parabéns!",
-        description: `Você acertou e ganhou ${points} pontos!`,
-      });
+      // Check if we got a match and if it matches our current player
+      let isCorrect = false;
       
-      // Clear the timer
-      clearGameTimer();
+      if (processingResult.processedName) {
+        isCorrect = processingResult.processedName.toLowerCase() === currentPlayer.name.toLowerCase();
+      }
       
-      selectRandomPlayer();
-    } else {
-      // Wrong guess - game over immediately
-      setGameOver(true);
+      // If no match from the edge function, try local fallback
+      if (!isCorrect) {
+        isCorrect = isCorrectGuess(guess, currentPlayer.name);
+      }
       
-      // Clear the timer
-      clearGameTimer();
+      if (isCorrect) {
+        // Correct guess!
+        const points = 5; // Always award 5 points since we only have one attempt now
+        setScore(prev => prev + points);
+        
+        toast({
+          title: "Parabéns!",
+          description: `Você acertou e ganhou ${points} pontos!`,
+        });
+        
+        // Clear the timer
+        clearGameTimer();
+        
+        selectRandomPlayer();
+      } else {
+        // Wrong guess - game over immediately
+        setGameOver(true);
+        
+        // Clear the timer
+        clearGameTimer();
+        
+        toast({
+          variant: "destructive",
+          title: "Game Over!",
+          description: `O jogador era ${currentPlayer.name}`,
+        });
+      }
+    } catch (error) {
+      console.error("Erro ao processar palpite:", error);
       
-      toast({
-        variant: "destructive",
-        title: "Game Over!",
-        description: `O jogador era ${currentPlayer.name}`,
-      });
+      // Fallback to basic matching if there's an error
+      if (isCorrectGuess(guess, currentPlayer.name)) {
+        const points = 5;
+        setScore(prev => prev + points);
+        
+        toast({
+          title: "Parabéns!",
+          description: `Você acertou e ganhou ${points} pontos!`,
+        });
+        
+        clearGameTimer();
+        selectRandomPlayer();
+      } else {
+        setGameOver(true);
+        clearGameTimer();
+        
+        toast({
+          variant: "destructive",
+          title: "Game Over!",
+          description: `O jogador era ${currentPlayer.name}`,
+        });
+      }
+    } finally {
+      setIsProcessingGuess(false);
     }
-  }, [currentPlayer, gameOver, clearGameTimer, selectRandomPlayer, toast]);
+  }, [currentPlayer, gameOver, clearGameTimer, selectRandomPlayer, toast, isProcessingGuess]);
 
   return {
     currentPlayer,
@@ -204,6 +297,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
-    handlePlayerImageFixed
+    handlePlayerImageFixed,
+    isProcessingGuess
   };
 };
