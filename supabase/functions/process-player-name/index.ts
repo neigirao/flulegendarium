@@ -7,6 +7,17 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Function to normalize text: remove accents, lowercase, and trim
+function normalizeText(text: string): string {
+  if (!text) return '';
+  
+  return text
+    .normalize('NFD')  // Decompose accented characters
+    .replace(/[\u0300-\u036f]/g, '') // Remove accent marks
+    .toLowerCase()
+    .trim();
+}
+
 // Expanded nicknames database with more players and common variations
 const PLAYER_NICKNAMES: Record<string, string[]> = {
   "Germán Cano": ["cano", "el matador", "german", "germán"],
@@ -23,6 +34,7 @@ const PLAYER_NICKNAMES: Record<string, string[]> = {
   "Lima": ["limão", "john arias lima"],
   "Arias": ["john arias", "jhon arias", "aras"],
   "Petch": ["pet", "petchi", "petersson"],
+  "Petković": ["pet", "petkovic", "petko"],
   "Martinelli": ["gabi martinelli", "gabriel martinelli", "martine", "martineli"],
   "Samuel Xavier": ["samuel", "xavier", "samuca"],
   "Diogo Barbosa": ["diogo", "barbosa"],
@@ -42,11 +54,11 @@ const PLAYER_NICKNAMES: Record<string, string[]> = {
 // Helper function to calculate string similarity 
 // using Levenshtein distance algorithm
 function calculateSimilarity(s1: string, s2: string): number {
-  if (s1 === s2) return 1.0; // Perfect match
+  // Normalize both strings to remove accents and make comparison consistent
+  s1 = normalizeText(s1);
+  s2 = normalizeText(s2);
   
-  // Convert both strings to lowercase for case-insensitive comparison
-  s1 = s1.toLowerCase();
-  s2 = s2.toLowerCase();
+  if (s1 === s2) return 1.0; // Perfect match
   
   // If one string contains the other, it's likely a match
   if (s1.includes(s2) || s2.includes(s1)) {
@@ -60,7 +72,7 @@ function calculateSimilarity(s1: string, s2: string): number {
   if (s1.length <= 3 || s2.length <= 3) {
     // For very short strings (like 'Pet' for 'Petch'), check if it's the start
     if (s2.startsWith(s1) || s1.startsWith(s2)) {
-      return 0.8; // High confidence for prefix matches on short strings
+      return 0.9; // Higher confidence for prefix matches on short strings
     }
   }
   
@@ -103,16 +115,18 @@ serve(async (req) => {
 
   try {
     const { userInput } = await req.json();
-    const normalizedInput = userInput.toLowerCase().trim();
+    const normalizedInput = normalizeText(userInput);
     
-    const threshold = 0.8; // Similarity threshold for fuzzy matching
+    const threshold = 0.7; // Slightly lower threshold to be more permissive
     let bestMatch = null;
     let highestConfidence = 0;
 
     // First check for direct matches in our nickname database
     for (const [playerName, nicknames] of Object.entries(PLAYER_NICKNAMES)) {
+      const normalizedPlayerName = normalizeText(playerName);
+      
       // Perfect match with the official name
-      if (playerName.toLowerCase() === normalizedInput) {
+      if (normalizedPlayerName === normalizedInput) {
         return new Response(
           JSON.stringify({ 
             processedName: playerName,
@@ -124,7 +138,8 @@ serve(async (req) => {
       }
       
       // Check if it matches any of the known nicknames
-      const nicknameMatch = nicknames.find(nick => nick === normalizedInput);
+      const normalizedNicknames = nicknames.map(nick => normalizeText(nick));
+      const nicknameMatch = normalizedNicknames.find(nick => nick === normalizedInput);
       if (nicknameMatch) {
         return new Response(
           JSON.stringify({ 
@@ -138,18 +153,47 @@ serve(async (req) => {
       
       // No exact match, try fuzzy matching
       // First with the official name
-      const nameConfidence = calculateSimilarity(playerName.toLowerCase(), normalizedInput);
+      const nameConfidence = calculateSimilarity(normalizedPlayerName, normalizedInput);
       if (nameConfidence > highestConfidence) {
         highestConfidence = nameConfidence;
         bestMatch = playerName;
       }
       
       // Then with each nickname
-      for (const nickname of nicknames) {
+      for (const nickname of normalizedNicknames) {
         const nicknameConfidence = calculateSimilarity(nickname, normalizedInput);
         if (nicknameConfidence > highestConfidence) {
           highestConfidence = nicknameConfidence;
           bestMatch = playerName;
+        }
+      }
+    }
+    
+    // Check if input is a common shortening of a longer name
+    // e.g. "Pet" for "Petković" or "Petch"
+    if (!bestMatch && normalizedInput.length <= 3) {
+      for (const [playerName, nicknames] of Object.entries(PLAYER_NICKNAMES)) {
+        const normalizedPlayerName = normalizeText(playerName);
+        
+        // If the input is a prefix of the player name
+        if (normalizedPlayerName.startsWith(normalizedInput)) {
+          const confidence = 0.8; // Set a high confidence for short prefix matches
+          if (confidence > highestConfidence) {
+            highestConfidence = confidence;
+            bestMatch = playerName;
+          }
+        }
+        
+        // Check nickname prefixes too
+        for (const nickname of nicknames) {
+          const normalizedNickname = normalizeText(nickname);
+          if (normalizedNickname.startsWith(normalizedInput)) {
+            const confidence = 0.8;
+            if (confidence > highestConfidence) {
+              highestConfidence = confidence;
+              bestMatch = playerName;
+            }
+          }
         }
       }
     }
