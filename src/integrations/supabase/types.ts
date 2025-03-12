@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bugs: {
+        Row: {
+          created_at: string
+          description: string
+          email: string
+          id: string
+          name: string
+          page_url: string | null
+          player_id: string | null
+          player_name: string | null
+          screenshot_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          email: string
+          id?: string
+          name: string
+          page_url?: string | null
+          player_id?: string | null
+          player_name?: string | null
+          screenshot_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          email?: string
+          id?: string
+          name?: string
+          page_url?: string | null
+          player_id?: string | null
+          player_name?: string | null
+          screenshot_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bugs_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       players: {
         Row: {
           achievements: string[] | null

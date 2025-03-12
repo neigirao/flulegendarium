@@ -3,7 +3,7 @@ import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { getReliableImageUrl, preloadPlayerImages, preloadNextPlayer } from "@/utils/playerImageUtils";
+import { getReliableImageUrl, preloadPlayerImages, preloadNextPlayer, prepareNextBatch } from "@/utils/playerImageUtils";
 import { PlayerImage } from "@/components/guess-game/PlayerImage";
 import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
@@ -86,17 +86,37 @@ const GuessPlayer = () => {
     refetchOnWindowFocus: false,
   });
 
-  // Preload player images when data is available
+  // Enhanced preloading system when data is available
   useEffect(() => {
     if (players && players.length > 0) {
+      // Immediate preloading of initial batch
       preloadPlayerImages(players);
       
-      // Preload images using our new hook
+      // Preload using our hook as well for redundancy
       const imagesToPreload = players
-        .slice(0, 5)
+        .slice(0, 8) // Increased from 5 to 8
         .map(player => getReliableImageUrl(player));
       
       preloadImages(imagesToPreload);
+      
+      // Schedule background preloading for the rest with delays
+      if (players.length > 8) {
+        // Stagger loading the rest of the players in batches
+        const batchSize = 5;
+        for (let i = 8; i < players.length; i += batchSize) {
+          const batch = players.slice(i, i + batchSize);
+          const delay = (i - 8) * 1000; // 1 second between batches
+          
+          setTimeout(() => {
+            console.log(`Iniciando pré-carregamento em background de lote ${i / batchSize + 1}`);
+            batch.forEach((player, index) => {
+              const img = new Image();
+              img.src = getReliableImageUrl(player);
+              img.fetchPriority = 'low';
+            });
+          }, delay);
+        }
+      }
     }
   }, [players, preloadImages]);
 
@@ -112,15 +132,26 @@ const GuessPlayer = () => {
     handlePlayerImageFixed
   } = useGuessGame(players);
 
-  // Preload next player when current one is guessed
+  // Enhanced next player preloading that's more aggressive
   useEffect(() => {
     if (players && players.length > 1 && currentPlayer) {
-      // Find a potential next player that's different from current
-      const nextPlayerIndex = Math.floor(Math.random() * players.length);
-      const potentialNextPlayer = players[nextPlayerIndex];
+      // Prepare next batch of potential players
+      prepareNextBatch(players, currentPlayer, 5);
       
-      if (potentialNextPlayer.id !== currentPlayer.id) {
-        preloadNextPlayer(potentialNextPlayer);
+      // Also preload a specific next player for immediate use
+      const potentialNextPlayers = players.filter(p => p.id !== currentPlayer.id);
+      if (potentialNextPlayers.length > 0) {
+        // Pick multiple random potential next players to preload
+        const randomIndices = Array.from(
+          { length: Math.min(3, potentialNextPlayers.length) },
+          () => Math.floor(Math.random() * potentialNextPlayers.length)
+        );
+        
+        randomIndices.forEach((idx, i) => {
+          setTimeout(() => {
+            preloadNextPlayer(potentialNextPlayers[idx]);
+          }, i * 200); // Stagger preloading
+        });
       }
     }
   }, [currentPlayer, players]);
