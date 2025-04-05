@@ -13,13 +13,13 @@ interface PlayerImageProps {
     image_url: string;
   } | null;
   onImageFixed: () => void;
-  onImageLoaded?: () => void; // New prop for notifying parent when image loads
+  onImageLoaded: () => void;
 }
 
 // Memoized component to prevent unnecessary re-renders
 export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: PlayerImageProps) => {
   const imgRef = useRef<HTMLImageElement>(null);
-  const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded: onImageLoad } = 
+  const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded } = 
     usePlayerImage({ player, onImageFixed });
   const { cleanupObserver } = useImageObserver(imgRef);
 
@@ -28,6 +28,12 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
     // Component cleanup
     return () => cleanupObserver();
   }, [cleanupObserver]);
+
+  // Handle image loaded event
+  const onImageLoad = () => {
+    handleImageLoaded();
+    onImageLoaded(); // Notify parent component that image is loaded
+  };
 
   // Prefetch fallback images when component mounts
   useEffect(() => {
@@ -41,15 +47,6 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
       img.src = url;
     });
   }, []);
-
-  // Custom image loaded handler that also notifies parent
-  const handleImageLoadedComplete = () => {
-    onImageLoad();
-    // Notify parent component when image is loaded
-    if (onImageLoaded) {
-      onImageLoaded();
-    }
-  };
 
   // Early return for no image source
   if (!imageSrc) {
@@ -72,7 +69,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
           alt="Imagem do jogador" // Generic alt text without revealing player name
           className={`max-w-full max-h-full object-contain transition-all duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           onError={handleImageError}
-          onLoad={handleImageLoadedComplete}
+          onLoad={onImageLoad}
           loading="eager" 
           decoding="async"
           fetchPriority="high"

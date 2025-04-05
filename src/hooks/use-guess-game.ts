@@ -1,5 +1,6 @@
+
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { getReliableImageUrl } from "@/utils/playerImageUtils";
 import { supabase } from "@/lib/supabase";
 
@@ -34,7 +35,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [gameOver, setGameOver] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const timerRef = useRef<number | null>(null);
   const availablePlayers = useRef<Player[]>([]);
 
@@ -53,10 +54,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, []);
 
-  // Start timer only when image is loaded and game is active
+  // Start timer only when image is loaded and there's a current player
   useEffect(() => {
-    // Only start the timer if the image is loaded, we have a player, and the game isn't over
-    if (currentPlayer && !gameOver && isImageLoaded) {
+    if (currentPlayer && !gameOver && imageLoaded) {
       // Clear any existing timer
       clearGameTimer();
       
@@ -79,15 +79,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     
     // Cleanup timer on unmount
     return clearGameTimer;
-  }, [currentPlayer, gameOver, isImageLoaded, clearGameTimer]);
-
-  // Initialize game when players data is loaded
-  useEffect(() => {
-    if (players?.length > 0 && !currentPlayer) {
-      console.log("Selecionando jogador aleatório entre", players.length, "jogadores");
-      selectRandomPlayer();
-    }
-  }, [players]);
+  }, [currentPlayer, gameOver, imageLoaded, clearGameTimer]);
 
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer) {
@@ -115,8 +107,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
       player.image_url = getReliableImageUrl(player);
     }
     
-    // Reset image loaded state when selecting a new player
-    setIsImageLoaded(false);
+    // Reset the image loaded state when selecting a new player
+    setImageLoaded(false);
+    
     setCurrentPlayer(player);
     setAttempts(0);
     setGameOver(false);
@@ -136,9 +129,10 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, [currentPlayer]);
 
-  // New function to handle image load state
+  // This function will be called when the image is successfully loaded
   const handleImageLoaded = useCallback(() => {
-    setIsImageLoaded(true);
+    setImageLoaded(true);
+    console.log("Imagem carregada, iniciando o timer");
   }, []);
 
   // Use edge function to process and validate player names
@@ -307,7 +301,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     selectRandomPlayer,
     handlePlayerImageFixed,
     isProcessingGuess,
-    isImageLoaded,
-    handleImageLoaded
+    handleImageLoaded,
+    imageLoaded
   };
 };

@@ -1,3 +1,4 @@
+
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -130,8 +131,8 @@ const GuessPlayer = () => {
     selectRandomPlayer,
     handlePlayerImageFixed,
     isProcessingGuess,
-    isImageLoaded,
-    handleImageLoaded
+    handleImageLoaded,
+    imageLoaded
   } = useGuessGame(players);
 
   // Enhanced next player preloading that's more aggressive
@@ -236,7 +237,7 @@ const GuessPlayer = () => {
                 />
 
                 <GuessForm 
-                  disabled={gameOver || !isImageLoaded}
+                  disabled={gameOver || !imageLoaded}
                   onSubmitGuess={handleGuess}
                   isProcessing={isProcessingGuess}
                 />
@@ -248,7 +249,7 @@ const GuessPlayer = () => {
                   gameOver={gameOver}
                   timeRemaining={timeRemaining}
                   onNextPlayer={selectRandomPlayer}
-                  isImageLoaded={isImageLoaded}
+                  imageLoaded={imageLoaded}
                 />
               </div>
             )}
