@@ -35,6 +35,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [gameOver, setGameOver] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const timerRef = useRef<number | null>(null);
   const availablePlayers = useRef<Player[]>([]);
 
@@ -53,9 +54,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, []);
 
-  // Start timer when a new player is selected
+  // Start timer only when image is loaded and there's a current player
   useEffect(() => {
-    if (currentPlayer && !gameOver) {
+    if (currentPlayer && !gameOver && imageLoaded) {
       // Clear any existing timer
       clearGameTimer();
       
@@ -78,15 +79,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     
     // Cleanup timer on unmount
     return clearGameTimer;
-  }, [currentPlayer, gameOver, clearGameTimer]);
-
-  // Initialize game when players data is loaded
-  useEffect(() => {
-    if (players?.length > 0 && !currentPlayer) {
-      console.log("Selecionando jogador aleatório entre", players.length, "jogadores");
-      selectRandomPlayer();
-    }
-  }, [players]);
+  }, [currentPlayer, gameOver, imageLoaded, clearGameTimer]);
 
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer) {
@@ -114,6 +107,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
       player.image_url = getReliableImageUrl(player);
     }
     
+    // Reset the image loaded state when selecting a new player
+    setImageLoaded(false);
+    
     setCurrentPlayer(player);
     setAttempts(0);
     setGameOver(false);
@@ -132,6 +128,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
       });
     }
   }, [currentPlayer]);
+
+  // This function will be called when the image is successfully loaded
+  const handleImageLoaded = useCallback(() => {
+    setImageLoaded(true);
+    console.log("Imagem carregada, iniciando o timer");
+  }, []);
 
   // Use edge function to process and validate player names
   const processPlayerName = async (guess: string): Promise<NameProcessingResult> => {
@@ -298,6 +300,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
     handleGuess,
     selectRandomPlayer,
     handlePlayerImageFixed,
-    isProcessingGuess
+    isProcessingGuess,
+    handleImageLoaded,
+    imageLoaded
   };
 };

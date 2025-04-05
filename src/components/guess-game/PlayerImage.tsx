@@ -13,10 +13,11 @@ interface PlayerImageProps {
     image_url: string;
   } | null;
   onImageFixed: () => void;
+  onImageLoaded: () => void;
 }
 
 // Memoized component to prevent unnecessary re-renders
-export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => {
+export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: PlayerImageProps) => {
   const imgRef = useRef<HTMLImageElement>(null);
   const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded } = 
     usePlayerImage({ player, onImageFixed });
@@ -27,6 +28,12 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
     // Component cleanup
     return () => cleanupObserver();
   }, [cleanupObserver]);
+
+  // Handle image loaded event
+  const onImageLoad = () => {
+    handleImageLoaded();
+    onImageLoaded(); // Notify parent component that image is loaded
+  };
 
   // Prefetch fallback images when component mounts
   useEffect(() => {
@@ -62,7 +69,7 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
           alt="Imagem do jogador" // Generic alt text without revealing player name
           className={`max-w-full max-h-full object-contain transition-all duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           onError={handleImageError}
-          onLoad={handleImageLoaded}
+          onLoad={onImageLoad}
           loading="eager" 
           decoding="async"
           fetchPriority="high"
