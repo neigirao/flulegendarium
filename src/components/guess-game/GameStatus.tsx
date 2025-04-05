@@ -11,7 +11,6 @@ interface GameStatusProps {
   gameOver: boolean;
   timeRemaining: number;
   onNextPlayer: () => void;
-  imageLoaded?: boolean;
 }
 
 export const GameStatus = ({ 
@@ -20,8 +19,7 @@ export const GameStatus = ({
   score,
   gameOver,
   timeRemaining,
-  onNextPlayer,
-  imageLoaded = true
+  onNextPlayer
 }: GameStatusProps) => {
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [prevTime, setPrevTime] = useState(timeRemaining);
@@ -100,15 +98,14 @@ export const GameStatus = ({
                 </span>
               </div>
               <div className="text-xs text-gray-500">
-                {!imageLoaded ? 'Carregando imagem...' : 
-                  timeRemaining < 10 ? 'Tempo acabando!' : 'Tempo restante'}
+                {timeRemaining < 10 ? 'Tempo acabando!' : 'Tempo restante'}
               </div>
             </div>
             
             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
               <div 
                 className={`h-full rounded-full transition-all duration-1000 ${getTimeBarColor()} ${timeRemaining < 10 ? 'animate-pulse' : ''}`}
-                style={{ width: `${imageLoaded ? timePercentage : 0}%` }}
+                style={{ width: `${timePercentage}%` }}
               />
             </div>
           </div>

@@ -130,9 +130,7 @@ const GuessPlayer = () => {
     handleGuess,
     selectRandomPlayer,
     handlePlayerImageFixed,
-    isProcessingGuess,
-    handleImageLoaded,
-    imageLoaded
+    isProcessingGuess
   } = useGuessGame(players);
 
   // Enhanced next player preloading that's more aggressive
@@ -232,12 +230,11 @@ const GuessPlayer = () => {
               <div className="space-y-6">
                 <PlayerImage 
                   player={currentPlayer} 
-                  onImageFixed={handlePlayerImageFixed}
-                  onImageLoaded={handleImageLoaded}
+                  onImageFixed={handlePlayerImageFixed} 
                 />
 
                 <GuessForm 
-                  disabled={gameOver || !imageLoaded}
+                  disabled={gameOver}
                   onSubmitGuess={handleGuess}
                   isProcessing={isProcessingGuess}
                 />
@@ -249,7 +246,6 @@ const GuessPlayer = () => {
                   gameOver={gameOver}
                   timeRemaining={timeRemaining}
                   onNextPlayer={selectRandomPlayer}
-                  imageLoaded={imageLoaded}
                 />
               </div>
             )}
