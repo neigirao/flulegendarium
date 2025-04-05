@@ -11,6 +11,7 @@ interface GameStatusProps {
   gameOver: boolean;
   timeRemaining: number;
   onNextPlayer: () => void;
+  isImageLoaded?: boolean; // New prop to know if image is loaded
 }
 
 export const GameStatus = ({ 
@@ -19,7 +20,8 @@ export const GameStatus = ({
   score,
   gameOver,
   timeRemaining,
-  onNextPlayer
+  onNextPlayer,
+  isImageLoaded = false // Default to false for backward compatibility
 }: GameStatusProps) => {
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [prevTime, setPrevTime] = useState(timeRemaining);
@@ -87,26 +89,40 @@ export const GameStatus = ({
       )}
 
       <div className="space-y-4 p-4 rounded-lg bg-white/90 shadow-sm border border-flu-verde/30">
-        {/* Barra de progresso do tempo */}
+        {/* Barra de progresso do tempo - agora só mostrada quando a imagem estiver carregada */}
         {!gameOver && (
           <div className="space-y-1">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-1">
                 <Clock className="w-4 h-4 text-flu-grena" />
-                <span className={`font-medium ${timeRemaining < 10 ? 'text-flu-grena' : 'text-flu-verde'}`}>
-                  {formatTime(timeRemaining)}
-                </span>
+                {isImageLoaded ? (
+                  <span className={`font-medium ${timeRemaining < 10 ? 'text-flu-grena' : 'text-flu-verde'}`}>
+                    {formatTime(timeRemaining)}
+                  </span>
+                ) : (
+                  <span className="font-medium text-gray-500">
+                    Carregando...
+                  </span>
+                )}
               </div>
               <div className="text-xs text-gray-500">
-                {timeRemaining < 10 ? 'Tempo acabando!' : 'Tempo restante'}
+                {!isImageLoaded 
+                  ? 'Aguardando imagem...' 
+                  : timeRemaining < 10 
+                    ? 'Tempo acabando!' 
+                    : 'Tempo restante'}
               </div>
             </div>
             
             <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                className={`h-full rounded-full transition-all duration-1000 ${getTimeBarColor()} ${timeRemaining < 10 ? 'animate-pulse' : ''}`}
-                style={{ width: `${timePercentage}%` }}
-              />
+              {isImageLoaded ? (
+                <div 
+                  className={`h-full rounded-full transition-all duration-1000 ${getTimeBarColor()} ${timeRemaining < 10 ? 'animate-pulse' : ''}`}
+                  style={{ width: `${timePercentage}%` }}
+                />
+              ) : (
+                <div className="h-full rounded-full bg-gray-300 animate-pulse" style={{ width: '100%' }} />
+              )}
             </div>
           </div>
         )}

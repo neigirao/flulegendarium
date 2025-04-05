@@ -1,6 +1,5 @@
-
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { getReliableImageUrl } from "@/utils/playerImageUtils";
 import { supabase } from "@/lib/supabase";
 
@@ -35,6 +34,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [gameOver, setGameOver] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const timerRef = useRef<number | null>(null);
   const availablePlayers = useRef<Player[]>([]);
 
@@ -53,9 +53,10 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, []);
 
-  // Start timer when a new player is selected
+  // Start timer only when image is loaded and game is active
   useEffect(() => {
-    if (currentPlayer && !gameOver) {
+    // Only start the timer if the image is loaded, we have a player, and the game isn't over
+    if (currentPlayer && !gameOver && isImageLoaded) {
       // Clear any existing timer
       clearGameTimer();
       
@@ -78,7 +79,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     
     // Cleanup timer on unmount
     return clearGameTimer;
-  }, [currentPlayer, gameOver, clearGameTimer]);
+  }, [currentPlayer, gameOver, isImageLoaded, clearGameTimer]);
 
   // Initialize game when players data is loaded
   useEffect(() => {
@@ -114,6 +115,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
       player.image_url = getReliableImageUrl(player);
     }
     
+    // Reset image loaded state when selecting a new player
+    setIsImageLoaded(false);
     setCurrentPlayer(player);
     setAttempts(0);
     setGameOver(false);
@@ -132,6 +135,11 @@ export const useGuessGame = (players: Player[] | undefined) => {
       });
     }
   }, [currentPlayer]);
+
+  // New function to handle image load state
+  const handleImageLoaded = useCallback(() => {
+    setIsImageLoaded(true);
+  }, []);
 
   // Use edge function to process and validate player names
   const processPlayerName = async (guess: string): Promise<NameProcessingResult> => {
@@ -298,6 +306,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
     handleGuess,
     selectRandomPlayer,
     handlePlayerImageFixed,
-    isProcessingGuess
+    isProcessingGuess,
+    isImageLoaded,
+    handleImageLoaded
   };
 };

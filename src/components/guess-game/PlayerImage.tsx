@@ -13,12 +13,13 @@ interface PlayerImageProps {
     image_url: string;
   } | null;
   onImageFixed: () => void;
+  onImageLoaded?: () => void; // New prop for notifying parent when image loads
 }
 
 // Memoized component to prevent unnecessary re-renders
-export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => {
+export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: PlayerImageProps) => {
   const imgRef = useRef<HTMLImageElement>(null);
-  const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded } = 
+  const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded: onImageLoad } = 
     usePlayerImage({ player, onImageFixed });
   const { cleanupObserver } = useImageObserver(imgRef);
 
@@ -41,6 +42,15 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
     });
   }, []);
 
+  // Custom image loaded handler that also notifies parent
+  const handleImageLoadedComplete = () => {
+    onImageLoad();
+    // Notify parent component when image is loaded
+    if (onImageLoaded) {
+      onImageLoaded();
+    }
+  };
+
   // Early return for no image source
   if (!imageSrc) {
     return (
@@ -62,7 +72,7 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
           alt="Imagem do jogador" // Generic alt text without revealing player name
           className={`max-w-full max-h-full object-contain transition-all duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
           onError={handleImageError}
-          onLoad={handleImageLoaded}
+          onLoad={handleImageLoadedComplete}
           loading="eager" 
           decoding="async"
           fetchPriority="high"
