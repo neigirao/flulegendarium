@@ -1,5 +1,5 @@
 
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
@@ -13,6 +13,8 @@ import { usePreload } from "@/hooks/use-preload";
 import { useState, useCallback, Suspense, useEffect, lazy } from "react";
 import { cn } from "@/lib/utils";
 import { RootLayout } from "@/components/RootLayout";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 // Lazy load the RankingDisplay component since it's not initially visible
 const LazyRankingDisplay = lazy(() => 
@@ -46,6 +48,8 @@ const GuessPlayer = () => {
   const navigate = useNavigate();
   const [showRanking, setShowRanking] = useState(false);
   const { preloadImages } = usePreload();
+  const [debugClickCount, setDebugClickCount] = useState(0);
+  const [showImageUrl, setShowImageUrl] = useState(false);
   
   // Fetch players from Supabase with improved error handling and more logs
   const { data: players = [], isLoading, error: playersError } = useQuery({
@@ -161,6 +165,29 @@ const GuessPlayer = () => {
     setShowRanking(prev => !prev);
   }, []);
 
+  // Debug click handler
+  const handleDebugClick = useCallback(() => {
+    setDebugClickCount(prev => {
+      const newCount = prev + 1;
+      if (newCount >= 3) {
+        setShowImageUrl(true);
+        return 0; // Reset count after 3 clicks
+      }
+      return newCount;
+    });
+  }, []);
+
+  // Hide URL alert after a few seconds
+  useEffect(() => {
+    if (showImageUrl) {
+      const timer = setTimeout(() => {
+        setShowImageUrl(false);
+      }, 5000); // Hide after 5 seconds
+      
+      return () => clearTimeout(timer);
+    }
+  }, [showImageUrl]);
+
   if (isLoading) {
     return <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4 flex items-center justify-center">
       <Loader />
@@ -210,10 +237,36 @@ const GuessPlayer = () => {
               <ArrowLeft className="mr-2" />
               Voltar
             </button>
-            <div className="text-flu-grena font-semibold">
-              {score} pontos
+            <div className="flex flex-col items-center">
+              <div className="text-flu-grena font-semibold">
+                {score} pontos
+              </div>
+              <div 
+                className="text-gray-500 mt-1 cursor-default"
+                onClick={handleDebugClick}
+              >
+                <Info size={16} className="opacity-50 hover:opacity-70 transition-opacity" />
+              </div>
             </div>
           </div>
+
+          {showImageUrl && currentPlayer && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Alert className="mb-4">
+                    <AlertTitle>Debug Info</AlertTitle>
+                    <AlertDescription className="text-xs truncate">
+                      URL da imagem: {currentPlayer.image_url}
+                    </AlertDescription>
+                  </Alert>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="text-xs">Clique para copiar</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
 
           <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md">
             <div className="text-center mb-8">
