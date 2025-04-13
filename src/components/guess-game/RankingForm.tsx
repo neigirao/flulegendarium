@@ -156,7 +156,7 @@ export const RankingForm = ({ score, onSaved, onCancel }: RankingFormProps) => {
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className="space-y-4 p-4 bg-white/70 rounded-lg">
+      <form onSubmit={handleSubmit} className="space-y-4">
         <h3 className="text-lg font-semibold text-flu-grena">Salvar Pontuação</h3>
         
         <div>

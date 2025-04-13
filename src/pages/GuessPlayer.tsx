@@ -7,6 +7,7 @@ import { PlayerImage } from "@/components/guess-game/PlayerImage";
 import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
 import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
+import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { useGuessGame } from "@/hooks/use-guess-game";
 import { usePreload } from "@/hooks/use-preload";
 import { useState, useCallback, Suspense, useEffect, lazy } from "react";
@@ -47,6 +48,7 @@ const GuessPlayer = () => {
   const { preloadImages } = usePreload();
   const [debugClickCount, setDebugClickCount] = useState(0);
   const [showImageUrl, setShowImageUrl] = useState(false);
+  const [showGameOverDialog, setShowGameOverDialog] = useState(false);
   
   const { data: players = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
@@ -127,6 +129,17 @@ const GuessPlayer = () => {
     isProcessingGuess,
     hasLost
   } = useGuessGame(players);
+
+  useEffect(() => {
+    if (hasLost) {
+      setShowGameOverDialog(true);
+    }
+  }, [hasLost]);
+
+  const handleGameOverClose = useCallback(() => {
+    setShowGameOverDialog(false);
+    selectRandomPlayer();
+  }, [selectRandomPlayer]);
 
   useEffect(() => {
     if (players && players.length > 1 && currentPlayer) {
@@ -312,6 +325,15 @@ const GuessPlayer = () => {
           </div>
         </div>
       </div>
+
+      {currentPlayer && (
+        <GameOverDialog
+          open={showGameOverDialog}
+          onClose={handleGameOverClose}
+          playerName={currentPlayer.name}
+          score={score}
+        />
+      )}
     </RootLayout>
   );
 };
