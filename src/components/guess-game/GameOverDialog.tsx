@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { RankingForm } from "@/components/guess-game/RankingForm";
+import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 
@@ -50,9 +51,14 @@ export const GameOverDialog = ({ open, onClose, playerName, score }: GameOverDia
               />
             ) : (
               <div className="space-y-4">
-                <p className="text-center text-gray-600">
+                <p className="text-center text-gray-600 mb-4">
                   Pontuação salva com sucesso!
                 </p>
+                
+                <div className="max-h-64 overflow-y-auto rounded-lg border border-gray-200">
+                  <RankingDisplay />
+                </div>
+                
                 <button
                   onClick={onClose}
                   className="w-full bg-flu-grena text-white px-4 py-2 rounded-lg hover:opacity-90"
