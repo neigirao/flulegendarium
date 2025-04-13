@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
-import { defaultPlayerImage } from "@/utils/playerImageUtils";
+import { defaultPlayerImage } from "@/utils/player-image";
 
 interface PlayerStatistics {
   gols: number;

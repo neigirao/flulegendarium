@@ -1,7 +1,12 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
-import { getReliableImageUrl, preloadPlayerImages, preloadNextPlayer, prepareNextBatch } from "@/utils/playerImageUtils";
+import { 
+  getReliableImageUrl, 
+  preloadPlayerImages, 
+  preloadNextPlayer, 
+  prepareNextBatch 
+} from "@/utils/player-image";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { useGuessGame } from "@/hooks/use-guess-game";
 import { usePreload } from "@/hooks/use-preload";

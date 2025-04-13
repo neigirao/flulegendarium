@@ -1,6 +1,6 @@
 
 import { memo, useRef, useEffect } from "react";
-import { defaultPlayerImage, playerImagesFallbacksMap } from "@/utils/playerImageUtils";
+import { defaultPlayerImage, playerImagesFallbacksMap } from "@/utils/player-image";
 import { usePlayerImage } from "@/hooks/use-player-image";
 import { useImageObserver } from "@/hooks/use-image-observer";
 import { ImageLoader } from "./ImageLoader";

@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { defaultPlayerImage, playerImagesFallbacksMap } from "@/utils/playerImageUtils";
+import { defaultPlayerImage, playerImagesFallbacksMap } from "@/utils/player-image";
 
 interface UsePlayerImageProps {
   player: {
