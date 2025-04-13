@@ -1,4 +1,3 @@
-
 import { ArrowLeft, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -16,7 +15,6 @@ import { RootLayout } from "@/components/RootLayout";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
-// Lazy load the RankingDisplay component since it's not initially visible
 const LazyRankingDisplay = lazy(() => 
   import("@/components/guess-game/RankingDisplay").then(module => ({
     default: module.RankingDisplay
@@ -37,7 +35,6 @@ interface Player {
   };
 }
 
-// Loader component
 const Loader = () => (
   <div className="w-full flex justify-center my-8">
     <div className="w-10 h-10 border-4 border-flu-verde border-t-transparent rounded-full animate-spin"></div>
@@ -51,7 +48,6 @@ const GuessPlayer = () => {
   const [debugClickCount, setDebugClickCount] = useState(0);
   const [showImageUrl, setShowImageUrl] = useState(false);
   
-  // Fetch players from Supabase with improved error handling and more logs
   const { data: players = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
     queryFn: async () => {
@@ -71,7 +67,6 @@ const GuessPlayer = () => {
         if (data && data.length > 0) {
           console.log("Primeiro jogador:", data[0].name);
           
-          // Fix image URLs for all players
           const enhancedPlayers = data.map((player: Player) => ({
             ...player,
             image_url: getReliableImageUrl(player)
@@ -85,31 +80,26 @@ const GuessPlayer = () => {
         throw err;
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes cache
+    staleTime: 5 * 60 * 1000,
     retry: 3,
     refetchOnWindowFocus: false,
   });
 
-  // Enhanced preloading system when data is available
   useEffect(() => {
     if (players && players.length > 0) {
-      // Immediate preloading of initial batch
       preloadPlayerImages(players);
       
-      // Preload using our hook as well for redundancy
       const imagesToPreload = players
-        .slice(0, 8) // Increased from 5 to 8
+        .slice(0, 8)
         .map(player => getReliableImageUrl(player));
       
       preloadImages(imagesToPreload);
       
-      // Schedule background preloading for the rest with delays
       if (players.length > 8) {
-        // Stagger loading the rest of the players in batches
         const batchSize = 5;
         for (let i = 8; i < players.length; i += batchSize) {
           const batch = players.slice(i, i + batchSize);
-          const delay = (i - 8) * 1000; // 1 second between batches
+          const delay = (i - 8) * 1000;
           
           setTimeout(() => {
             console.log(`Iniciando pré-carregamento em background de lote ${i / batchSize + 1}`);
@@ -134,19 +124,16 @@ const GuessPlayer = () => {
     handleGuess,
     selectRandomPlayer,
     handlePlayerImageFixed,
-    isProcessingGuess
+    isProcessingGuess,
+    hasLost
   } = useGuessGame(players);
 
-  // Enhanced next player preloading that's more aggressive
   useEffect(() => {
     if (players && players.length > 1 && currentPlayer) {
-      // Prepare next batch of potential players
       prepareNextBatch(players, currentPlayer, 5);
       
-      // Also preload a specific next player for immediate use
       const potentialNextPlayers = players.filter(p => p.id !== currentPlayer.id);
       if (potentialNextPlayers.length > 0) {
-        // Pick multiple random potential next players to preload
         const randomIndices = Array.from(
           { length: Math.min(3, potentialNextPlayers.length) },
           () => Math.floor(Math.random() * potentialNextPlayers.length)
@@ -155,7 +142,7 @@ const GuessPlayer = () => {
         randomIndices.forEach((idx, i) => {
           setTimeout(() => {
             preloadNextPlayer(potentialNextPlayers[idx]);
-          }, i * 200); // Stagger preloading
+          }, i * 200);
         });
       }
     }
@@ -165,24 +152,22 @@ const GuessPlayer = () => {
     setShowRanking(prev => !prev);
   }, []);
 
-  // Debug click handler
   const handleDebugClick = useCallback(() => {
     setDebugClickCount(prev => {
       const newCount = prev + 1;
       if (newCount >= 3) {
         setShowImageUrl(true);
-        return 0; // Reset count after 3 clicks
+        return 0;
       }
       return newCount;
     });
   }, []);
 
-  // Hide URL alert after a few seconds
   useEffect(() => {
     if (showImageUrl) {
       const timer = setTimeout(() => {
         setShowImageUrl(false);
-      }, 5000); // Hide after 5 seconds
+      }, 5000);
       
       return () => clearTimeout(timer);
     }
@@ -286,11 +271,13 @@ const GuessPlayer = () => {
                   onImageFixed={handlePlayerImageFixed} 
                 />
 
-                <GuessForm 
-                  disabled={gameOver}
-                  onSubmitGuess={handleGuess}
-                  isProcessing={isProcessingGuess}
-                />
+                {!hasLost && (
+                  <GuessForm 
+                    disabled={gameOver}
+                    onSubmitGuess={handleGuess}
+                    isProcessing={isProcessingGuess}
+                  />
+                )}
 
                 <GameStatus
                   attempts={attempts}

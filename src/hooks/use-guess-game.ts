@@ -14,6 +14,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
+  const [hasLost, setHasLost] = useState(false); // New state to track loss
   
   // Player selection hook
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed } = usePlayerSelection(players);
@@ -22,6 +23,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer) {
       setGameOver(true);
+      setHasLost(true); // Set hasLost when time is up
       toast({
         variant: "destructive",
         title: "Tempo esgotado!",
@@ -80,6 +82,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
       } else {
         // Wrong guess - game over immediately
         setGameOver(true);
+        setHasLost(true); // Set hasLost when guess is incorrect
         
         // Clear the timer
         clearGameTimer();
@@ -107,6 +110,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         selectRandomPlayer();
       } else {
         setGameOver(true);
+        setHasLost(true); // Set hasLost when guess fails
         clearGameTimer();
         
         toast({
@@ -124,6 +128,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const resetGameForNewRound = useCallback(() => {
     setAttempts(0);
     setGameOver(false);
+    setHasLost(false); // Reset hasLost
     startTimer();
   }, [startTimer]);
   
@@ -145,6 +150,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
     selectRandomPlayer,
     handlePlayerImageFixed,
     isProcessingGuess,
-    TIME_LIMIT_SECONDS
+    TIME_LIMIT_SECONDS,
+    hasLost // Export hasLost state
   };
 };
+
