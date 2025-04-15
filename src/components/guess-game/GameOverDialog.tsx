@@ -5,6 +5,7 @@ import { RankingForm } from "@/components/guess-game/RankingForm";
 import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface GameOverDialogProps {
   open: boolean;
@@ -15,14 +16,25 @@ interface GameOverDialogProps {
 
 export const GameOverDialog = ({ open, onClose, playerName, score }: GameOverDialogProps) => {
   const [showRankingForm, setShowRankingForm] = useState(true);
+  const navigate = useNavigate();
   
   const handleRankingSaved = () => {
     setShowRankingForm(false);
   };
+
+  const handleDialogClose = () => {
+    if (showRankingForm) {
+      // If user hasn't saved their score, redirect to home
+      navigate("/");
+    } else {
+      // If user has saved their score, just close the dialog
+      onClose();
+    }
+  };
   
   return (
     <Dialog open={open} onOpenChange={(isOpen) => {
-      if (!isOpen) onClose();
+      if (!isOpen) handleDialogClose();
     }}>
       <DialogContent className="max-w-md">
         <DialogTitle className="text-center text-2xl font-bold text-flu-grena">
