@@ -1,61 +1,59 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { getTopRankings, Ranking } from "@/services/rankingService";
+import { supabase } from "@/lib/supabase";
 import { Trophy } from "lucide-react";
+import { useVirtualizedRanking } from "@/hooks/use-virtualized-ranking";
 
 export const RankingDisplay = () => {
-  const { data: rankings = [], isLoading, error } = useQuery({
+  const { data: rankings = [], isLoading } = useQuery({
     queryKey: ['rankings'],
-    queryFn: () => getTopRankings(10),
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('rankings')
+        .select('*')
+        .order('score', { ascending: false })
+        .limit(100);
+      return data || [];
+    },
+    staleTime: 30000, // Cache for 30 seconds
   });
 
+  const { visibleItems, totalHeight, offset } = useVirtualizedRanking(rankings);
+
   if (isLoading) {
-    return <div className="text-center p-4">Carregando ranking...</div>;
-  }
-
-  if (error) {
-    return <div className="text-center text-red-500 p-4">Erro ao carregar ranking</div>;
-  }
-
-  if (rankings.length === 0) {
     return (
-      <div className="text-center p-4 text-gray-500">
-        Ainda não há jogadores no ranking
+      <div className="flex justify-center p-4">
+        <div className="w-6 h-6 border-2 border-flu-grena border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="mt-4">
-      <h3 className="text-lg font-semibold mb-3 text-center text-flu-grena flex items-center justify-center gap-2">
-        <Trophy className="h-5 w-5 text-yellow-500" />
-        Top 10 Jogadores
-      </h3>
-      <div className="bg-white/80 rounded-lg shadow overflow-hidden">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-flu-verde/20">
-            <tr>
-              <th className="px-3 py-2 text-left text-xs font-medium text-flu-grena uppercase tracking-wider">#</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-flu-grena uppercase tracking-wider">Nome</th>
-              <th className="px-3 py-2 text-left text-xs font-medium text-flu-grena uppercase tracking-wider">Pontos</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {rankings.map((ranking, index) => (
-              <tr key={ranking.id} className={index < 3 ? "bg-yellow-50" : ""}>
-                <td className="px-3 py-2 whitespace-nowrap text-sm font-medium">
-                  {index + 1}
-                </td>
-                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+    <div className="ranking-container relative overflow-auto" style={{ height: '400px' }}>
+      <div style={{ height: `${totalHeight}px`, position: 'relative' }}>
+        <div style={{ transform: `translateY(${offset}px)` }}>
+          {visibleItems.map((ranking, index) => (
+            <div
+              key={ranking.id}
+              className="flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <span className="w-8 text-center font-medium text-gray-600">
+                  {ranking.index + 1}
+                </span>
+                <span className="font-medium text-gray-800">
                   {ranking.player_name}
-                </td>
-                <td className="px-3 py-2 whitespace-nowrap text-sm text-gray-900">
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-flu-grena" />
+                <span className="font-bold text-flu-grena">
                   {ranking.score}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
