@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { 
@@ -93,10 +92,11 @@ const GuessPlayer = () => {
     }
   }, [players, preloadImages]);
 
+  const [score, setScore] = useState(0);
+
   const {
     currentPlayer,
     attempts,
-    score,
     gameOver,
     timeRemaining,
     MAX_ATTEMPTS,
@@ -106,6 +106,10 @@ const GuessPlayer = () => {
     isProcessingGuess,
     hasLost
   } = useGuessGame(players);
+
+  const handleResetScore = useCallback(() => {
+    setScore(0); // Reset the score state
+  }, []);
 
   // Show game over dialog when player loses
   useEffect(() => {
@@ -196,6 +200,7 @@ const GuessPlayer = () => {
           onClose={handleGameOverClose}
           playerName={currentPlayer.name}
           score={score}
+          onResetScore={handleResetScore}
         />
       )}
     </RootLayout>

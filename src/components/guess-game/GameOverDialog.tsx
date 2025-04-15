@@ -12,19 +12,28 @@ interface GameOverDialogProps {
   onClose: () => void;
   playerName: string;
   score: number;
+  onResetScore: () => void; // New prop for resetting score
 }
 
-export const GameOverDialog = ({ open, onClose, playerName, score }: GameOverDialogProps) => {
+export const GameOverDialog = ({ 
+  open, 
+  onClose, 
+  playerName, 
+  score,
+  onResetScore 
+}: GameOverDialogProps) => {
   const [showRankingForm, setShowRankingForm] = useState(true);
   const navigate = useNavigate();
   
   const handleRankingSaved = () => {
     setShowRankingForm(false);
+    onResetScore(); // Reset score after saving
   };
 
   const handleDialogClose = () => {
     if (showRankingForm) {
-      // If user hasn't saved their score, redirect to home
+      // If user hasn't saved their score, redirect to home and reset score
+      onResetScore();
       navigate("/");
     } else {
       // If user has saved their score, just close the dialog
