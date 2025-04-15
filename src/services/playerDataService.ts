@@ -1,6 +1,6 @@
 
 import { supabase } from "@/lib/supabase";
-import { getReliableImageUrl } from "@/utils/playerImageUtils";
+import { getReliableImageUrl } from "@/utils/player-image";
 
 export interface Player {
   id: string;

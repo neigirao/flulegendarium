@@ -28,3 +28,6 @@ export const isImageLoaded = (playerId: string): boolean => {
   const cached = imageCache.get(playerId);
   return cached?.loaded === true;
 };
+
+// Re-export the cache expiration constant to avoid the error
+export { CACHE_EXPIRATION };

@@ -1,7 +1,6 @@
-
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Player } from "@/types/guess-game";
-import { getReliableImageUrl } from "@/utils/playerImageUtils";
+import { getReliableImageUrl } from "@/utils/player-image";
 
 export const usePlayerSelection = (players: Player[] | undefined) => {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);

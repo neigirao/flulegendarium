@@ -1,7 +1,7 @@
 
 import { Player } from './types';
-import { playerImagesFallbacks, defaultImage } from './constants';
-import { imageCache, cleanExpiredCache, CACHE_EXPIRATION } from './cache';
+import { playerImagesFallbacks, defaultImage, CACHE_EXPIRATION } from './constants';
+import { imageCache, cleanExpiredCache } from './cache';
 
 // Function to get a reliable image URL
 export const getReliableImageUrl = (player: Player): string => {
