@@ -10,6 +10,8 @@ import { Loader } from "lucide-react";
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
 const GuessPlayer = lazy(() => import("./pages/GuessPlayer"));
+const Admin = lazy(() => import("./pages/Admin"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 // Loading fallback component
@@ -41,6 +43,8 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/guess-player" element={<GuessPlayer />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>

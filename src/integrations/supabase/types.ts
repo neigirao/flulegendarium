@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          id: string
+          password_hash: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          password_hash: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          password_hash?: string
+          username?: string
+        }
+        Relationships: []
+      }
       areas: {
         Row: {
           created_at: string
@@ -115,6 +136,74 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      game_attempts: {
+        Row: {
+          attempt_number: number
+          created_at: string
+          guess: string
+          id: string
+          is_correct: boolean
+          player_name: string
+          target_player_id: string | null
+          target_player_name: string
+        }
+        Insert: {
+          attempt_number?: number
+          created_at?: string
+          guess: string
+          id?: string
+          is_correct?: boolean
+          player_name: string
+          target_player_id?: string | null
+          target_player_name: string
+        }
+        Update: {
+          attempt_number?: number
+          created_at?: string
+          guess?: string
+          id?: string
+          is_correct?: boolean
+          player_name?: string
+          target_player_id?: string | null
+          target_player_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_attempts_target_player_id_fkey"
+            columns: ["target_player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_sessions: {
+        Row: {
+          created_at: string
+          id: string
+          max_streak: number
+          player_name: string
+          total_attempts: number
+          total_correct: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_streak?: number
+          player_name: string
+          total_attempts?: number
+          total_correct?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_streak?: number
+          player_name?: string
+          total_attempts?: number
+          total_correct?: number
+        }
+        Relationships: []
       }
       players: {
         Row: {
