@@ -73,11 +73,6 @@ export const GuessForm = memo(({ disabled, onSubmitGuess, isProcessing = false }
           'Adivinhar'
         )}
       </Button>
-      
-      <div className="text-xs text-gray-500 italic mt-2">
-        Dica: Você pode usar o nome completo, primeiro nome, sobrenome ou apelido conhecido.
-        Aceitamos abreviações como "Pet" para "Petković".
-      </div>
     </div>
   );
 });

@@ -9,6 +9,27 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      areas: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
       bugs: {
         Row: {
           created_at: string
@@ -49,6 +70,48 @@ export type Database = {
             columns: ["player_id"]
             isOneToOne: false
             referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      check_ins: {
+        Row: {
+          check_in_time: string
+          check_out_time: string | null
+          created_at: string
+          id: string
+          table_id: string
+          user_id: string
+        }
+        Insert: {
+          check_in_time?: string
+          check_out_time?: string | null
+          created_at?: string
+          id?: string
+          table_id: string
+          user_id: string
+        }
+        Update: {
+          check_in_time?: string
+          check_out_time?: string | null
+          created_at?: string
+          id?: string
+          table_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "check_ins_table_id_fkey"
+            columns: ["table_id"]
+            isOneToOne: false
+            referencedRelation: "tables"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "check_ins_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -110,6 +173,75 @@ export type Database = {
           id?: string
           player_name?: string
           score?: number
+        }
+        Relationships: []
+      }
+      tables: {
+        Row: {
+          area_id: string
+          created_at: string
+          id: string
+          is_occupied: boolean
+          number: number
+          occupied_by: string | null
+          occupied_since: string | null
+        }
+        Insert: {
+          area_id: string
+          created_at?: string
+          id?: string
+          is_occupied?: boolean
+          number: number
+          occupied_by?: string | null
+          occupied_since?: string | null
+        }
+        Update: {
+          area_id?: string
+          created_at?: string
+          id?: string
+          is_occupied?: boolean
+          number?: number
+          occupied_by?: string | null
+          occupied_since?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tables_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tables_occupied_by_fkey"
+            columns: ["occupied_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
         }
         Relationships: []
       }
