@@ -10,7 +10,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 
 // Lazy load pages
 const Index = lazy(() => import("./pages/Index"));
-const GuessPlayer = lazy(() => import("./pages/GuessPlayer"));
+const GameModeSelection = lazy(() => import("./pages/GameModeSelection"));
+const Game = lazy(() => import("./pages/Game"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -45,7 +46,8 @@ const App = () => (
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/guess-player" element={<GuessPlayer />} />
+              <Route path="/select-mode" element={<GameModeSelection />} />
+              <Route path="/game" element={<Game />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/login" element={<AdminLogin />} />

@@ -20,7 +20,7 @@ export default function Index() {
             <Link to="/" className="text-flu-verde hover:text-flu-grena">
               Início
             </Link>
-            <Link to="/guess-player" className="text-flu-verde hover:text-flu-grena">
+            <Link to="/select-mode" className="text-flu-verde hover:text-flu-grena">
               Jogar
             </Link>
             {user && (
@@ -53,7 +53,7 @@ export default function Index() {
               className="bg-flu-grena text-white font-semibold flu-shadow hover:scale-105 transition-transform"
               asChild
             >
-              <Link to="/guess-player">
+              <Link to="/select-mode">
                 Começar Jogo
               </Link>
             </Button>
