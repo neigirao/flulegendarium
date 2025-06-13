@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { 
@@ -7,6 +8,7 @@ import {
   prepareNextBatch 
 } from "@/utils/player-image";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
+import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { useGuessGame } from "@/hooks/use-guess-game";
 import { usePreload } from "@/hooks/use-preload";
 import { useCallback, useEffect, useState } from "react";
@@ -23,6 +25,8 @@ import { useDebug } from "@/hooks/use-debug";
 const GuessPlayer = () => {
   const { preloadImages } = usePreload();
   const [showGameOverDialog, setShowGameOverDialog] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(true);
+  const [gameStarted, setGameStarted] = useState(false);
   const { showImageUrl, handleDebugClick } = useDebug();
   
   const { data: players = [], isLoading, error: playersError } = useQuery({
@@ -105,7 +109,7 @@ const GuessPlayer = () => {
     handlePlayerImageFixed,
     isProcessingGuess,
     hasLost
-  } = useGuessGame(players);
+  } = useGuessGame(gameStarted ? players : undefined);
 
   const handleResetScore = useCallback(() => {
     setScore(0); // Reset the score state
@@ -145,6 +149,16 @@ const GuessPlayer = () => {
     }
   }, [currentPlayer, players]);
 
+  const handleTutorialComplete = () => {
+    setShowTutorial(false);
+    setGameStarted(true);
+  };
+
+  const handleSkipTutorial = () => {
+    setShowTutorial(false);
+    setGameStarted(true);
+  };
+
   // Loading state
   if (isLoading) {
     return (
@@ -178,23 +192,32 @@ const GuessPlayer = () => {
             imageUrl={currentPlayer?.image_url} 
           />
 
-          <GameContainer
-            currentPlayer={currentPlayer}
-            attempts={attempts}
-            score={score}
-            gameOver={gameOver}
-            timeRemaining={timeRemaining}
-            MAX_ATTEMPTS={MAX_ATTEMPTS}
-            handleGuess={handleGuess}
-            selectRandomPlayer={selectRandomPlayer}
-            handlePlayerImageFixed={handlePlayerImageFixed}
-            isProcessingGuess={isProcessingGuess}
-            hasLost={hasLost}
-          />
+          {gameStarted && (
+            <GameContainer
+              currentPlayer={currentPlayer}
+              attempts={attempts}
+              score={score}
+              gameOver={gameOver}
+              timeRemaining={timeRemaining}
+              MAX_ATTEMPTS={MAX_ATTEMPTS}
+              handleGuess={handleGuess}
+              selectRandomPlayer={selectRandomPlayer}
+              handlePlayerImageFixed={handlePlayerImageFixed}
+              isProcessingGuess={isProcessingGuess}
+              hasLost={hasLost}
+            />
+          )}
         </div>
       </div>
 
-      {currentPlayer && (
+      {showTutorial && (
+        <GameTutorial
+          onComplete={handleTutorialComplete}
+          onSkip={handleSkipTutorial}
+        />
+      )}
+
+      {currentPlayer && gameStarted && (
         <GameOverDialog
           open={showGameOverDialog}
           onClose={handleGameOverClose}

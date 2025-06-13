@@ -1,6 +1,7 @@
 
 import { ArrowLeft, Info } from "lucide-react";
 import { Link } from "react-router-dom";
+import { GameRulesTooltip } from "./GameRulesTooltip";
 
 interface GameHeaderProps {
   score: number;
@@ -21,11 +22,14 @@ export const GameHeader = ({ score, onDebugClick }: GameHeaderProps) => {
         <div className="text-flu-grena font-semibold">
           {score} pontos
         </div>
-        <div 
-          className="text-gray-500 mt-1 cursor-default"
-          onClick={onDebugClick}
-        >
-          <Info size={16} className="opacity-50 hover:opacity-70 transition-opacity" />
+        <div className="flex items-center gap-2 mt-1">
+          <GameRulesTooltip />
+          <div 
+            className="text-gray-500 cursor-default"
+            onClick={onDebugClick}
+          >
+            <Info size={16} className="opacity-50 hover:opacity-70 transition-opacity" />
+          </div>
         </div>
       </div>
     </div>

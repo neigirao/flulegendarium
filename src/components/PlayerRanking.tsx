@@ -9,6 +9,7 @@ interface RankingEntry {
   score: number;
   games_played: number;
   perfect_guesses: number;
+  player_name: string;
 }
 
 export const PlayerRanking = () => {
@@ -27,19 +28,29 @@ export const PlayerRanking = () => {
   });
 
   return (
-    <div className="bg-white/80 rounded-lg p-4 backdrop-blur-sm">
-      <h3 className="text-lg font-semibold text-flu-grena mb-4">Top 5 Jogadores</h3>
-      <div className="space-y-2">
+    <div className="bg-white/80 rounded-lg p-6 backdrop-blur-sm max-w-md mx-auto">
+      <h3 className="text-lg font-semibold text-flu-grena mb-4 text-center">Top 5 Tricolores</h3>
+      <div className="space-y-3">
         {rankings.map((rank, index) => (
-          <div key={rank.player_id} className="flex items-center gap-2">
-            {index === 0 && <Medal className="text-yellow-500" size={20} />}
-            {index === 1 && <Medal className="text-gray-400" size={20} />}
-            {index === 2 && <Medal className="text-amber-600" size={20} />}
-            <span className="font-medium">{rank.username}</span>
-            <span className="ml-auto">{rank.score} pts</span>
+          <div key={rank.player_id} className="flex items-center gap-3 p-3 bg-white/50 rounded-lg">
+            <div className="flex items-center justify-center w-8 h-8">
+              {index === 0 && <Medal className="text-yellow-500" size={20} />}
+              {index === 1 && <Medal className="text-gray-400" size={20} />}
+              {index === 2 && <Medal className="text-amber-600" size={20} />}
+              {index > 2 && <span className="font-bold text-flu-grena">#{index + 1}</span>}
+            </div>
+            <div className="flex-1">
+              <div className="font-medium text-flu-grena">{rank.player_name}</div>
+              <div className="text-sm text-gray-600">{rank.score} pontos</div>
+            </div>
           </div>
         ))}
       </div>
+      {rankings.length === 0 && (
+        <div className="text-center text-gray-500 py-4">
+          Nenhum ranking ainda
+        </div>
+      )}
     </div>
   );
 };

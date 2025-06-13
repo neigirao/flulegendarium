@@ -11,7 +11,7 @@ export default function Index() {
       <header className="bg-white shadow-md py-4">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold text-flu-grena">
-            Flu Legendarium
+            Lendas do Flu
           </Link>
           <nav>
             <ul className="flex space-x-6">
@@ -34,7 +34,7 @@ export default function Index() {
       <section className="relative py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-flu-grena mb-6 flu-shadow">
-            Flu Legendarium
+            Lendas do Flu
           </h1>
           <p className="text-xl md:text-2xl text-flu-verde mb-8 font-medium">
             Teste seus conhecimentos sobre os ídolos tricolores!
@@ -153,7 +153,7 @@ export default function Index() {
 
       {/* Footer */}
       <footer className="bg-flu-grena py-8 text-white text-center">
-        <p>&copy; 2024 Flu Legendarium. Todos os direitos reservados.</p>
+        <p>&copy; 2024 Lendas do Flu. Todos os direitos reservados.</p>
       </footer>
     </div>
   );

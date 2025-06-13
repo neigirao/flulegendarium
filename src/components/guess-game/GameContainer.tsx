@@ -48,11 +48,11 @@ export const GameContainer = ({
     <div className="bg-white/80 backdrop-blur-sm rounded-lg p-6 shadow-md">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-flu-grena mb-2">
-          Adivinhe o Jogador
+          Lendas do Flu
         </h1>
-        <p className="text-gray-600">Use apelidos ou nomes oficiais!</p>
+        <p className="text-gray-600">Adivinhe a Lenda Tricolor!</p>
         <p className="text-sm text-gray-500 mt-2">
-          Total de jogadores: {currentPlayer ? "Carregado" : "Carregando..."}
+          Use nomes oficiais ou apelidos conhecidos
         </p>
       </div>
 

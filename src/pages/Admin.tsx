@@ -3,9 +3,10 @@ import { useState } from "react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AddPlayerForm } from "@/components/AddPlayerForm";
+import { PlayersManagement } from "@/components/admin/PlayersManagement";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, BarChart3, UserPlus } from "lucide-react";
+import { LogOut, BarChart3, UserPlus, Users } from "lucide-react";
 
 export default function Admin() {
   const { isAuthenticated, isLoading, adminData, logout } = useAdminAuth();
@@ -30,7 +31,7 @@ export default function Admin() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div>
-              <h1 className="text-2xl font-bold text-flu-grena">Área Administrativa</h1>
+              <h1 className="text-2xl font-bold text-flu-grena">Área Administrativa - Lendas do Flu</h1>
               <p className="text-gray-600">Bem-vindo, {adminData?.username}</p>
             </div>
             <Button variant="outline" onClick={logout} className="flex items-center gap-2">
@@ -44,19 +45,30 @@ export default function Admin() {
       {/* Conteúdo Principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 max-w-md">
+          <TabsList className="grid w-full grid-cols-3 max-w-lg">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 size={16} />
               Dashboard
             </TabsTrigger>
+            <TabsTrigger value="players" className="flex items-center gap-2">
+              <Users size={16} />
+              Jogadores
+            </TabsTrigger>
             <TabsTrigger value="add-player" className="flex items-center gap-2">
               <UserPlus size={16} />
-              Adicionar Jogador
+              Adicionar
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="dashboard">
             <AdminDashboard />
+          </TabsContent>
+
+          <TabsContent value="players">
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-bold text-flu-grena mb-4">Gerenciar Jogadores</h2>
+              <PlayersManagement />
+            </div>
           </TabsContent>
 
           <TabsContent value="add-player">
