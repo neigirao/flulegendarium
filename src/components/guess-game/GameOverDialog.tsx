@@ -12,7 +12,8 @@ interface GameOverDialogProps {
   onClose: () => void;
   playerName: string;
   score: number;
-  onResetScore: () => void; // New prop for resetting score
+  onResetScore: () => void;
+  isAuthenticated?: boolean;
 }
 
 export const GameOverDialog = ({ 
@@ -20,14 +21,15 @@ export const GameOverDialog = ({
   onClose, 
   playerName, 
   score,
-  onResetScore 
+  onResetScore,
+  isAuthenticated = false
 }: GameOverDialogProps) => {
   const [showRankingForm, setShowRankingForm] = useState(true);
   const navigate = useNavigate();
   
   const handleRankingSaved = () => {
     setShowRankingForm(false);
-    onResetScore(); // Reset score after saving
+    onResetScore();
   };
 
   const handleDialogClose = () => {
@@ -78,6 +80,7 @@ export const GameOverDialog = ({
                 score={score}
                 onSaved={handleRankingSaved}
                 onCancel={onClose}
+                isAuthenticated={isAuthenticated}
               />
             ) : (
               <div className="space-y-4">

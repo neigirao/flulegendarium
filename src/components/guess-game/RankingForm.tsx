@@ -2,10 +2,12 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { saveRanking, getTopRankings } from "@/services/rankingService";
+import { saveGameHistory } from "@/services/gameHistoryService";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { isValidPlayerName } from "@/utils/filterUtils";
 import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/hooks/useAuth";
 import ReactConfetti from "react-confetti";
 import { Trophy } from "lucide-react";
 
@@ -13,9 +15,11 @@ interface RankingFormProps {
   score: number;
   onSaved: () => void;
   onCancel: () => void;
+  isAuthenticated?: boolean;
 }
 
-export const RankingForm = ({ score, onSaved, onCancel }: RankingFormProps) => {
+export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false }: RankingFormProps) => {
+  const { user } = useAuth();
   const [playerName, setPlayerName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isChampion, setIsChampion] = useState(false);
@@ -32,6 +36,13 @@ export const RankingForm = ({ score, onSaved, onCancel }: RankingFormProps) => {
     queryKey: ['rankings-top'],
     queryFn: () => getTopRankings(1),
   });
+
+  // Set player name from authenticated user
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      setPlayerName(user.user_metadata?.full_name || user.email || "");
+    }
+  }, [isAuthenticated, user]);
 
   // Update window size for confetti
   useEffect(() => {
@@ -69,7 +80,7 @@ export const RankingForm = ({ score, onSaved, onCancel }: RankingFormProps) => {
       return;
     }
     
-    if (!isValidPlayerName(playerName)) {
+    if (!isAuthenticated && !isValidPlayerName(playerName)) {
       toast({
         title: "Nome inadequado",
         description: "Você usou um termo inadequado ou nome de time rival. Sua pontuação não será salva.",
@@ -87,11 +98,25 @@ export const RankingForm = ({ score, onSaved, onCancel }: RankingFormProps) => {
     try {
       setIsSubmitting(true);
       
-      await saveRanking({
+      // Save to rankings table
+      const rankingData = {
         player_name: playerName.trim(),
         score,
-        games_played: 1
-      });
+        games_played: 1,
+        user_id: isAuthenticated && user ? user.id : null
+      };
+
+      await saveRanking(rankingData);
+
+      // If authenticated, also save to game history
+      if (isAuthenticated && user) {
+        await saveGameHistory({
+          user_id: user.id,
+          score,
+          correct_guesses: score / 5, // Assuming 5 points per correct guess
+          total_attempts: score / 5, // This would need to be tracked properly
+        });
+      }
 
       // Check if this score is the new champion (higher than current #1)
       const isNewChampion = topRankings.length === 0 || score > topRankings[0].score;
@@ -159,19 +184,29 @@ export const RankingForm = ({ score, onSaved, onCancel }: RankingFormProps) => {
       <form onSubmit={handleSubmit} className="space-y-4">
         <h3 className="text-lg font-semibold text-flu-grena">Salvar Pontuação</h3>
         
-        <div>
-          <label htmlFor="playerName" className="block text-sm font-medium mb-1">
-            Seu nome
-          </label>
-          <Input
-            id="playerName"
-            value={playerName}
-            onChange={(e) => setPlayerName(e.target.value)}
-            placeholder="Digite seu nome..."
-            className="w-full"
-            disabled={isSubmitting}
-          />
-        </div>
+        {!isAuthenticated && (
+          <div>
+            <label htmlFor="playerName" className="block text-sm font-medium mb-1">
+              Seu nome
+            </label>
+            <Input
+              id="playerName"
+              value={playerName}
+              onChange={(e) => setPlayerName(e.target.value)}
+              placeholder="Digite seu nome..."
+              className="w-full"
+              disabled={isSubmitting}
+            />
+          </div>
+        )}
+
+        {isAuthenticated && (
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <p className="text-green-700">
+              Salvando como: <strong>{playerName}</strong>
+            </p>
+          </div>
+        )}
         
         <div className="flex justify-between">
           <button

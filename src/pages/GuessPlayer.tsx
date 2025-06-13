@@ -9,8 +9,10 @@ import {
 } from "@/utils/player-image";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
+import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
 import { useGuessGame } from "@/hooks/use-guess-game";
 import { usePreload } from "@/hooks/use-preload";
+import { useAuth } from "@/hooks/useAuth";
 import { useCallback, useEffect, useState } from "react";
 import { RootLayout } from "@/components/RootLayout";
 import { Player } from "@/types/guess-game";
@@ -23,10 +25,13 @@ import { GameContainer } from "@/components/guess-game/GameContainer";
 import { useDebug } from "@/hooks/use-debug";
 
 const GuessPlayer = () => {
+  const { user } = useAuth();
   const { preloadImages } = usePreload();
   const [showGameOverDialog, setShowGameOverDialog] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
+  const [showAuthSelection, setShowAuthSelection] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
+  const [isAuthenticatedGame, setIsAuthenticatedGame] = useState(false);
   const { showImageUrl, handleDebugClick } = useDebug();
   
   const { data: players = [], isLoading, error: playersError } = useQuery({
@@ -112,7 +117,7 @@ const GuessPlayer = () => {
   } = useGuessGame(gameStarted ? players : undefined);
 
   const handleResetScore = useCallback(() => {
-    setScore(0); // Reset the score state
+    setScore(0);
   }, []);
 
   // Show game over dialog when player loses
@@ -151,12 +156,36 @@ const GuessPlayer = () => {
 
   const handleTutorialComplete = () => {
     setShowTutorial(false);
-    setGameStarted(true);
+    if (user) {
+      setShowAuthSelection(false);
+      setGameStarted(true);
+      setIsAuthenticatedGame(true);
+    } else {
+      setShowAuthSelection(true);
+    }
   };
 
   const handleSkipTutorial = () => {
     setShowTutorial(false);
+    if (user) {
+      setShowAuthSelection(false);
+      setGameStarted(true);
+      setIsAuthenticatedGame(true);
+    } else {
+      setShowAuthSelection(true);
+    }
+  };
+
+  const handleGuestPlay = () => {
+    setShowAuthSelection(false);
     setGameStarted(true);
+    setIsAuthenticatedGame(false);
+  };
+
+  const handleAuthenticatedPlay = () => {
+    setShowAuthSelection(false);
+    setGameStarted(true);
+    setIsAuthenticatedGame(true);
   };
 
   // Loading state
@@ -207,6 +236,13 @@ const GuessPlayer = () => {
               hasLost={hasLost}
             />
           )}
+
+          {showAuthSelection && !gameStarted && (
+            <GameAuthSelection
+              onGuestPlay={handleGuestPlay}
+              onAuthenticatedPlay={handleAuthenticatedPlay}
+            />
+          )}
         </div>
       </div>
 
@@ -224,6 +260,7 @@ const GuessPlayer = () => {
           playerName={currentPlayer.name}
           score={score}
           onResetScore={handleResetScore}
+          isAuthenticated={isAuthenticatedGame}
         />
       )}
     </RootLayout>

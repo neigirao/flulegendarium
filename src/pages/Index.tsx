@@ -1,10 +1,13 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { PlayerRanking } from "@/components/PlayerRanking";
+import { AuthButton } from "@/components/auth/AuthButton";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Index() {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-flu-verde/50 to-white">
       {/* Header */}
@@ -13,19 +16,19 @@ export default function Index() {
           <Link to="/" className="text-2xl font-bold text-flu-grena">
             Lendas do Flu
           </Link>
-          <nav>
-            <ul className="flex space-x-6">
-              <li>
-                <Link to="/" className="text-flu-verde hover:text-flu-grena">
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link to="/guess-player" className="text-flu-verde hover:text-flu-grena">
-                  Jogar
-                </Link>
-              </li>
-            </ul>
+          <nav className="flex items-center space-x-6">
+            <Link to="/" className="text-flu-verde hover:text-flu-grena">
+              Início
+            </Link>
+            <Link to="/guess-player" className="text-flu-verde hover:text-flu-grena">
+              Jogar
+            </Link>
+            {user && (
+              <Link to="/profile" className="text-flu-verde hover:text-flu-grena">
+                Meu Perfil
+              </Link>
+            )}
+            <AuthButton />
           </nav>
         </div>
       </header>

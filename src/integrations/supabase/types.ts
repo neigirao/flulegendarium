@@ -244,6 +244,30 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
       rankings: {
         Row: {
           created_at: string
@@ -251,6 +275,7 @@ export type Database = {
           id: string
           player_name: string
           score: number
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -258,6 +283,7 @@ export type Database = {
           id?: string
           player_name: string
           score?: number
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -265,6 +291,7 @@ export type Database = {
           id?: string
           player_name?: string
           score?: number
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -312,6 +339,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_game_history: {
+        Row: {
+          correct_guesses: number
+          created_at: string
+          game_duration: number | null
+          id: string
+          score: number
+          total_attempts: number
+          user_id: string
+        }
+        Insert: {
+          correct_guesses?: number
+          created_at?: string
+          game_duration?: number | null
+          id?: string
+          score?: number
+          total_attempts?: number
+          user_id: string
+        }
+        Update: {
+          correct_guesses?: number
+          created_at?: string
+          game_duration?: number | null
+          id?: string
+          score?: number
+          total_attempts?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       users: {
         Row: {

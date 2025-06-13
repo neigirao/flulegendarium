@@ -6,6 +6,7 @@ export interface Ranking {
   player_name: string;
   score: number;
   games_played: number;
+  user_id?: string | null;
   created_at?: string;
 }
 
@@ -33,6 +34,22 @@ export const getTopRankings = async (limit: number = 10): Promise<Ranking[]> => 
 
   if (error) {
     console.error('Error fetching rankings:', error);
+    throw error;
+  }
+
+  return data || [];
+};
+
+export const getUserRankings = async (userId: string, limit: number = 10): Promise<Ranking[]> => {
+  const { data, error } = await supabase
+    .from('rankings')
+    .select('*')
+    .eq('user_id', userId)
+    .order('score', { ascending: false })
+    .limit(limit);
+
+  if (error) {
+    console.error('Error fetching user rankings:', error);
     throw error;
   }
 
