@@ -50,8 +50,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
     setIsProcessingGuess(true);
     
     try {
-      // First try with the edge function
-      const processingResult = await processPlayerName(guess);
+      // First try with the enhanced function that checks nicknames
+      const processingResult = await processPlayerName(guess, currentPlayer.name, currentPlayer.id);
       
       // Check if we got a match and if it matches our current player
       let isCorrect = false;
@@ -60,7 +60,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         isCorrect = processingResult.processedName.toLowerCase() === currentPlayer.name.toLowerCase();
       }
       
-      // If no match from the edge function, try local fallback
+      // If no match from the enhanced function, try local fallback
       if (!isCorrect) {
         isCorrect = isCorrectGuess(guess, currentPlayer.name);
       }

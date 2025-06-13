@@ -40,6 +40,11 @@ const isPartialMatch = (guess: string, target: string): boolean => {
   );
 };
 
+// Função simples para verificar se um palpite está correto (fallback local)
+export const isCorrectGuess = (guess: string, playerName: string): boolean => {
+  return isPartialMatch(guess, playerName);
+};
+
 export const processPlayerName = async (
   guess: string,
   targetPlayerName: string,
