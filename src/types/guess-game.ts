@@ -7,6 +7,7 @@ export interface Player {
   year_highlight: string;
   fun_fact: string;
   achievements: string[];
+  nicknames?: string[];
   statistics: {
     gols: number;
     jogos: number;

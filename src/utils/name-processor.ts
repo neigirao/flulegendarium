@@ -1,79 +1,97 @@
 
-import { NameProcessingResult } from "@/types/guess-game";
+import { supabase } from "@/lib/supabase";
 
-// Local fallback for name matching if the edge function fails
-export const isCorrectGuess = (guess: string, playerName: string): boolean => {
-  if (!guess || !playerName) return false;
-  
-  const normalizedGuess = guess.toLowerCase().trim();
-  const normalizedPlayerName = playerName.toLowerCase().trim();
-  
-  // Exact match check
-  if (normalizedGuess === normalizedPlayerName) {
-    return true;
-  }
-  
-  // Last name check (e.g., "Cavalieri" for "Diego Cavalieri")
-  const playerNameParts = normalizedPlayerName.split(' ');
-  if (playerNameParts.length > 1) {
-    const lastName = playerNameParts[playerNameParts.length - 1];
-    if (normalizedGuess === lastName) {
-      return true;
-    }
-  }
-  
-  // First name check (e.g., "Diego" for "Diego Cavalieri")
-  if (playerNameParts.length > 0) {
-    const firstName = playerNameParts[0];
-    if (normalizedGuess === firstName) {
-      return true;
-    }
-  }
-  
-  // Nickname check - if the player name contains the guess as a whole word
-  // This helps with known nicknames like "Fred" for "Frederico Chaves Guedes"
-  const wordBoundaryRegex = new RegExp(`\\b${normalizedGuess}\\b`);
-  if (wordBoundaryRegex.test(normalizedPlayerName)) {
-    return true;
-  }
-  
-  // Special case for short inputs like "Pet" for "Petch"
-  // Handle common nickname variations
-  if (
-    (normalizedPlayerName === "petch" && normalizedGuess === "pet") ||
-    (normalizedPlayerName === "germán cano" && (normalizedGuess === "german" || normalizedGuess === "cano")) ||
-    (normalizedPlayerName === "fábio" && normalizedGuess === "fabio") ||
-    (normalizedPlayerName === "jhon arias" && normalizedGuess === "arias") ||
-    (normalizedPlayerName === "john kennedy" && (normalizedGuess === "john" || normalizedGuess === "kennedy"))
-  ) {
-    return true;
-  }
-  
-  return false;
+export interface NameProcessingResult {
+  processedName: string | null;
+  confidence: number;
+  matchType?: string;
+}
+
+// Função para normalizar nomes (remover acentos, converter para minúsculo, etc.)
+const normalizeText = (text: string): string => {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^\w\s]/g, '')
+    .trim();
 };
 
-// Edge function to process and validate player names
-export const processPlayerName = async (guess: string): Promise<NameProcessingResult> => {
+// Função para verificar se uma string está contida em outra (parcialmente)
+const isPartialMatch = (guess: string, target: string): boolean => {
+  const normalizedGuess = normalizeText(guess);
+  const normalizedTarget = normalizeText(target);
+  
+  // Verifica match exato primeiro
+  if (normalizedGuess === normalizedTarget) return true;
+  
+  // Verifica se o palpite está contido no nome
+  if (normalizedTarget.includes(normalizedGuess)) return true;
+  
+  // Verifica se o nome está contido no palpite
+  if (normalizedGuess.includes(normalizedTarget)) return true;
+  
+  // Verifica por palavras individuais
+  const guessWords = normalizedGuess.split(' ').filter(w => w.length > 2);
+  const targetWords = normalizedTarget.split(' ').filter(w => w.length > 2);
+  
+  return guessWords.some(gw => 
+    targetWords.some(tw => tw.includes(gw) || gw.includes(tw))
+  );
+};
+
+export const processPlayerName = async (
+  guess: string,
+  targetPlayerName: string,
+  targetPlayerId: string
+): Promise<NameProcessingResult> => {
   try {
-    // Call our edge function to process the player name
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-player-name`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-      },
-      body: JSON.stringify({ userInput: guess })
-    });
+    console.log("Processando palpite:", guess, "para jogador:", targetPlayerName);
     
-    if (!response.ok) {
-      throw new Error('Falha ao processar o nome do jogador');
+    // Buscar dados do jogador alvo incluindo apelidos
+    const { data: playerData, error } = await supabase
+      .from('players')
+      .select('name, nicknames')
+      .eq('id', targetPlayerId)
+      .single();
+
+    if (error) {
+      console.error("Erro ao buscar dados do jogador:", error);
+      return { processedName: null, confidence: 0 };
     }
+
+    const playerName = playerData.name;
+    const nicknames = playerData.nicknames || [];
     
-    const result = await response.json();
-    return result;
+    console.log("Dados do jogador:", { playerName, nicknames });
+
+    // Verificar match com o nome principal
+    if (isPartialMatch(guess, playerName)) {
+      console.log("Match encontrado com nome principal");
+      return {
+        processedName: playerName,
+        confidence: 0.9,
+        matchType: 'name'
+      };
+    }
+
+    // Verificar match com apelidos
+    for (const nickname of nicknames) {
+      if (isPartialMatch(guess, nickname)) {
+        console.log("Match encontrado com apelido:", nickname);
+        return {
+          processedName: playerName,
+          confidence: 0.85,
+          matchType: 'nickname'
+        };
+      }
+    }
+
+    console.log("Nenhum match encontrado");
+    return { processedName: null, confidence: 0 };
+
   } catch (error) {
-    console.error('Erro ao processar nome do jogador:', error);
-    // Fallback to local name matching if edge function fails
+    console.error("Erro no processamento do nome:", error);
     return { processedName: null, confidence: 0 };
   }
 };

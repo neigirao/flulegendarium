@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -77,8 +78,18 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Ranking Section */}
+      <section className="py-16 bg-white/80 backdrop-blur-sm">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-flu-grena mb-8 text-center">
+            Ranking dos Tricolores
+          </h2>
+          <PlayerRanking />
+        </div>
+      </section>
+
       {/* Stats Section */}
-      <section className="py-12 bg-white/80 backdrop-blur-sm">
+      <section className="py-12 bg-flu-verde/10">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-flu-grena mb-8">
             Estatísticas do Jogo
@@ -101,7 +112,7 @@ export default function Index() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 bg-flu-verde/10">
+      <section className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-flu-grena mb-8 text-center">
             Funcionalidades
@@ -137,16 +148,6 @@ export default function Index() {
               </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Ranking Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-flu-grena mb-8 text-center">
-            Ranking dos Tricolores
-          </h2>
-          <PlayerRanking />
         </div>
       </section>
 

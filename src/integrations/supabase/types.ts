@@ -213,6 +213,7 @@ export type Database = {
           id: string
           image_url: string
           name: string
+          nicknames: string[] | null
           position: string
           statistics: Json | null
           year_highlight: string | null
@@ -224,6 +225,7 @@ export type Database = {
           id?: string
           image_url: string
           name: string
+          nicknames?: string[] | null
           position?: string
           statistics?: Json | null
           year_highlight?: string | null
@@ -235,6 +237,7 @@ export type Database = {
           id?: string
           image_url?: string
           name?: string
+          nicknames?: string[] | null
           position?: string
           statistics?: Json | null
           year_highlight?: string | null
