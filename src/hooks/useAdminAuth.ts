@@ -12,6 +12,7 @@ export const useAdminAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [adminData, setAdminData] = useState<AdminAuth | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -48,6 +49,34 @@ export const useAdminAuth = () => {
     checkAuth();
   }, []);
 
+  const login = async (username: string, password: string) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      // Simulação de login admin (substitua pela sua lógica real)
+      if (username === 'admin' && password === 'admin123') {
+        const adminAuth: AdminAuth = {
+          userId: 'admin-id',
+          username: username,
+          loginTime: Date.now()
+        };
+        
+        localStorage.setItem('adminAuth', JSON.stringify(adminAuth));
+        setIsAuthenticated(true);
+        setAdminData(adminAuth);
+        navigate('/admin');
+      } else {
+        setError('Credenciais inválidas');
+      }
+    } catch (error) {
+      console.error('Erro no login:', error);
+      setError('Erro interno do servidor');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('adminAuth');
     setIsAuthenticated(false);
@@ -57,8 +86,12 @@ export const useAdminAuth = () => {
 
   return {
     isAuthenticated,
+    isAdmin: isAuthenticated, // Alias for backward compatibility
     isLoading,
+    loading: isLoading, // Alias for backward compatibility
     adminData,
-    logout
+    login,
+    logout,
+    error
   };
 };
