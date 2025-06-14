@@ -17,7 +17,7 @@ const GameModeSelection = () => {
     // Adiciona um pequeno delay para evitar loops de redirecionamento
     if (!loading && user) {
       const timer = setTimeout(() => {
-        navigate("/game", { replace: true });
+        navigate("/jogar-quiz-fluminense", { replace: true });
       }, 100);
       
       return () => clearTimeout(timer);
@@ -25,11 +25,11 @@ const GameModeSelection = () => {
   }, [user, loading, navigate]);
 
   const handleGuestPlay = () => {
-    navigate("/game", { replace: true });
+    navigate("/jogar-quiz-fluminense", { replace: true });
   };
 
   const handleAuthenticatedPlay = () => {
-    navigate("/game", { replace: true });
+    navigate("/jogar-quiz-fluminense", { replace: true });
   };
 
   // Mostra loading enquanto verifica autenticação

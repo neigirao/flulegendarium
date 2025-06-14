@@ -51,15 +51,15 @@ export default function Index() {
               <Link to="/" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Início
               </Link>
-              <Link to="/select-mode" className="text-flu-verde hover:text-flu-grena transition-colors">
+              <Link to="/selecionar-modo-jogo" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Jogar Quiz
               </Link>
               {user && (
-                <Link to="/profile" className="text-flu-verde hover:text-flu-grena transition-colors">
+                <Link to="/meu-perfil-tricolor" className="text-flu-verde hover:text-flu-grena transition-colors">
                   Meu Perfil
                 </Link>
               )}
-              <Link to="/admin/login" className="text-flu-verde hover:text-flu-grena transition-colors">
+              <Link to="/admin/login-administrador" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Admin
               </Link>
               <AuthButton />
@@ -91,7 +91,7 @@ export default function Index() {
                   Início
                 </Link>
                 <Link 
-                  to="/select-mode" 
+                  to="/selecionar-modo-jogo" 
                   className="block text-flu-verde hover:text-flu-grena transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -99,7 +99,7 @@ export default function Index() {
                 </Link>
                 {user && (
                   <Link 
-                    to="/profile" 
+                    to="/meu-perfil-tricolor" 
                     className="block text-flu-verde hover:text-flu-grena transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -107,7 +107,7 @@ export default function Index() {
                   </Link>
                 )}
                 <Link 
-                  to="/admin/login" 
+                  to="/admin/login-administrador" 
                   className="block text-flu-verde hover:text-flu-grena transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -155,7 +155,7 @@ export default function Index() {
                     className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 md:px-8 py-3 md:py-4 rounded-xl text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
                     asChild
                   >
-                    <Link to="/select-mode" className="flex items-center gap-2 md:gap-3">
+                    <Link to="/selecionar-modo-jogo" className="flex items-center gap-2 md:gap-3">
                       <PlayIcon className="w-5 h-5 md:w-6 md:h-6" />
                       Jogar Quiz Agora - Grátis
                     </Link>

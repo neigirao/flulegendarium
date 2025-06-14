@@ -24,10 +24,16 @@ export const Breadcrumbs = ({ items, className = "" }: BreadcrumbsProps) => {
     ];
 
     const routeMap: Record<string, string> = {
+      'selecionar-modo-jogo': 'Selecionar Modo de Jogo',
+      'jogar-quiz-fluminense': 'Jogar Quiz Fluminense',
+      'meu-perfil-tricolor': 'Meu Perfil Tricolor',
+      'admin': 'Admin',
+      'painel-controle': 'Painel de Controle',
+      'login-administrador': 'Login Administrador',
+      // Legacy routes for compatibility
       'select-mode': 'Selecionar Modo',
       'game': 'Jogar Quiz',
       'profile': 'Meu Perfil',
-      'admin': 'Admin',
       'login': 'Login'
     };
 

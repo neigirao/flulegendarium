@@ -15,36 +15,48 @@
     </image:image>
   </url>
 
-  <!-- Game Page -->
+  <!-- Semantic URLs for better SEO -->
   <url>
-    <loc>https://flulegendarium.lovable.app/game</loc>
+    <loc>https://flulegendarium.lovable.app/jogar-quiz-fluminense</loc>
     <lastmod>2024-12-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
 
-  <!-- Select Mode Page -->
   <url>
-    <loc>https://flulegendarium.lovable.app/select-mode</loc>
+    <loc>https://flulegendarium.lovable.app/selecionar-modo-jogo</loc>
     <lastmod>2024-12-14</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
-  <!-- Profile Page -->
   <url>
-    <loc>https://flulegendarium.lovable.app/profile</loc>
+    <loc>https://flulegendarium.lovable.app/meu-perfil-tricolor</loc>
     <lastmod>2024-12-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
-  <!-- Admin Login -->
   <url>
-    <loc>https://flulegendarium.lovable.app/admin/login</loc>
+    <loc>https://flulegendarium.lovable.app/admin/login-administrador</loc>
     <lastmod>2024-12-14</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
+  </url>
+
+  <!-- Legacy URLs for compatibility (will redirect) -->
+  <url>
+    <loc>https://flulegendarium.lovable.app/game</loc>
+    <lastmod>2024-12-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.1</priority>
+  </url>
+
+  <url>
+    <loc>https://flulegendarium.lovable.app/select-mode</loc>
+    <lastmod>2024-12-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.1</priority>
   </url>
 
 </urlset>

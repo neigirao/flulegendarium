@@ -32,7 +32,7 @@ const Game = () => {
 
   // Track page view
   useEffect(() => {
-    trackPageView('/game');
+    trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
   // Only pass players when game has actually started
@@ -110,8 +110,8 @@ const Game = () => {
         title="Jogar Quiz Fluminense - Adivinhe os Jogadores | Lendas do Flu"
         description="🎮 Jogue agora o quiz oficial do Fluminense! Adivinhe os jogadores pelas fotos, ganhe pontos e entre no ranking tricolor. Desafio gratuito!"
         keywords="jogar quiz fluminense, adivinhar jogador fluminense, jogo tricolor, quiz futebol online, teste fluminense grátis"
-        url="https://flulegendarium.lovable.app/game"
-        canonical="https://flulegendarium.lovable.app/game"
+        url="https://flulegendarium.lovable.app/jogar-quiz-fluminense"
+        canonical="https://flulegendarium.lovable.app/jogar-quiz-fluminense"
       />
       <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white">
         {/* Header */}
@@ -138,7 +138,7 @@ const Game = () => {
                 Início
               </Link>
               <Link 
-                to="/select-mode" 
+                to="/selecionar-modo-jogo" 
                 className="text-flu-verde hover:text-flu-grena transition-colors"
                 onClick={() => trackEvent({
                   action: 'navigation_click',
@@ -150,7 +150,7 @@ const Game = () => {
               </Link>
               {user && (
                 <Link 
-                  to="/profile" 
+                  to="/meu-perfil-tricolor" 
                   className="text-flu-verde hover:text-flu-grena transition-colors"
                   onClick={() => trackEvent({
                     action: 'navigation_click',
@@ -162,7 +162,7 @@ const Game = () => {
                 </Link>
               )}
               <Link 
-                to="/admin/login" 
+                to="/admin/login-administrador" 
                 className="text-flu-verde hover:text-flu-grena transition-colors"
                 onClick={() => trackEvent({
                   action: 'navigation_click',

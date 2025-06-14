@@ -41,7 +41,7 @@ const Profile = () => {
               <Link to="/" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Início
               </Link>
-              <Link to="/select-mode" className="text-flu-verde hover:text-flu-grena transition-colors">
+              <Link to="/selecionar-modo-jogo" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Jogar
               </Link>
               <AuthButton />

@@ -1,6 +1,6 @@
 
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
 
@@ -88,11 +88,21 @@ const App = () => (
           <Suspense fallback={<PageLoader />}>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/select-mode" element={<GameModeSelection />} />
-              <Route path="/game" element={<Game />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/login" element={<AdminLogin />} />
+              
+              {/* URLs Semânticas Otimizadas para SEO */}
+              <Route path="/selecionar-modo-jogo" element={<GameModeSelection />} />
+              <Route path="/jogar-quiz-fluminense" element={<Game />} />
+              <Route path="/meu-perfil-tricolor" element={<Profile />} />
+              <Route path="/admin/painel-controle" element={<Admin />} />
+              <Route path="/admin/login-administrador" element={<AdminLogin />} />
+              
+              {/* Redirects das URLs antigas para manter compatibilidade */}
+              <Route path="/select-mode" element={<Navigate to="/selecionar-modo-jogo" replace />} />
+              <Route path="/game" element={<Navigate to="/jogar-quiz-fluminense" replace />} />
+              <Route path="/profile" element={<Navigate to="/meu-perfil-tricolor" replace />} />
+              <Route path="/admin" element={<Navigate to="/admin/painel-controle" replace />} />
+              <Route path="/admin/login" element={<Navigate to="/admin/login-administrador" replace />} />
+              
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
