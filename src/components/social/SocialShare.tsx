@@ -1,17 +1,44 @@
-
 import { Share2, Twitter, Instagram, Facebook, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
+import { QuickShareButton } from './QuickShareButton';
+import { Achievement } from "@/types/achievements";
 
 interface SocialShareProps {
   score: number;
   correctGuesses: number;
   gameMode?: string;
+  streak?: number;
+  achievements?: Achievement[];
+  playerName?: string;
+  showFullInterface?: boolean;
 }
 
-export const SocialShare = ({ score, correctGuesses, gameMode = "Clássico" }: SocialShareProps) => {
+export const SocialShare = ({ 
+  score, 
+  correctGuesses, 
+  gameMode = "Clássico",
+  streak = 0,
+  achievements = [],
+  playerName,
+  showFullInterface = true
+}: SocialShareProps) => {
   const { toast } = useToast();
   
+  // If not showing full interface, return quick share button
+  if (!showFullInterface) {
+    return (
+      <QuickShareButton
+        score={score}
+        correctGuesses={correctGuesses}
+        gameMode={gameMode}
+        streak={streak}
+        achievements={achievements}
+        playerName={playerName}
+      />
+    );
+  }
+
   const shareText = `🔥 Acabei de fazer ${correctGuesses} acertos seguidos no Lendas do Flu! 
 ⚽ ${score} pontos no modo ${gameMode}
 🏆 Você consegue superar? 
@@ -47,7 +74,6 @@ Teste seus conhecimentos sobre os ídolos tricolores:`;
   };
 
   const shareOnInstagram = () => {
-    // Instagram doesn't have direct sharing, so we copy and inform user
     copyToClipboard();
     toast({
       title: "📱 Instagram",
