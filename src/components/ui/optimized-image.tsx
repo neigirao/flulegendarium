@@ -23,19 +23,18 @@ export const OptimizedImage = ({
   priority = false,
   onLoad,
   onError,
-  fallbackSrc = '/placeholder.svg'
+  fallbackSrc = '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png'
 }: OptimizedImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [currentSrc, setCurrentSrc] = useState(src);
-  const imgRef = useRef<HTMLImageElement>(null);
-  const errorAttempts = useRef(0);
+  const hasTriedFallback = useRef(false);
 
   useEffect(() => {
     setCurrentSrc(src);
     setIsLoaded(false);
     setHasError(false);
-    errorAttempts.current = 0;
+    hasTriedFallback.current = false;
   }, [src]);
 
   const handleLoad = () => {
@@ -47,20 +46,11 @@ export const OptimizedImage = ({
 
   const handleError = () => {
     console.error(`❌ OptimizedImage error for: ${currentSrc}`);
-    errorAttempts.current++;
     
-    // Prevent infinite loops by limiting error attempts
-    if (errorAttempts.current >= 3) {
-      console.error(`🛑 Too many error attempts for: ${currentSrc}`);
-      setHasError(true);
-      setIsLoaded(false);
-      onError?.();
-      return;
-    }
-
     // Try fallback only once
-    if (currentSrc !== fallbackSrc && errorAttempts.current === 1) {
+    if (!hasTriedFallback.current && currentSrc !== fallbackSrc) {
       console.log(`🔄 Trying fallback for: ${currentSrc} -> ${fallbackSrc}`);
+      hasTriedFallback.current = true;
       setCurrentSrc(fallbackSrc);
     } else {
       setHasError(true);
@@ -81,7 +71,6 @@ export const OptimizedImage = ({
       
       {!hasError && (
         <img
-          ref={imgRef}
           src={currentSrc}
           alt={alt}
           width={width}

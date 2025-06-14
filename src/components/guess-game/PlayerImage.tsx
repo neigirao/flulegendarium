@@ -3,7 +3,6 @@ import { memo } from "react";
 import { usePlayerImage } from "@/hooks/use-player-image";
 import { ImageLoader } from "./ImageLoader";
 import { ImageErrorDisplay } from "./ImageErrorDisplay";
-import { OptimizedImage } from "@/components/ui/optimized-image";
 import { PlayerImageSkeleton } from "@/components/ui/skeleton-loader";
 
 interface PlayerImageProps {
@@ -49,12 +48,10 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
       
       <div className="w-full h-full flex items-center justify-center p-2 md:p-3 lg:p-4 relative">
         {imageSrc && !imageError ? (
-          <OptimizedImage
+          <img
             src={imageSrc}
             alt={`Imagem de ${player.name}`}
-            width={400}
-            height={400}
-            priority={priority}
+            loading={priority ? "eager" : "lazy"}
             className={`max-w-full max-h-full object-contain transition-all duration-300 ${
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
@@ -66,10 +63,9 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
               console.log(`🎉 Evento onLoad para ${player.name} com URL: ${imageSrc}`);
               handleImageLoadComplete();
             }}
-            fallbackSrc="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png"
           />
-        ) : (
-          // Fallback display when no image source or error
+        ) : !imageError ? (
+          // Show loading state when no error
           <div className="flex items-center justify-center w-full h-full">
             <div className="text-center">
               <img 
@@ -78,11 +74,11 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
                 className="w-20 h-20 mx-auto mb-4 opacity-50"
               />
               <p className="text-gray-500 text-sm md:text-base">
-                {imageError ? 'Imagem não disponível' : 'Carregando imagem...'}
+                Carregando imagem...
               </p>
             </div>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   );

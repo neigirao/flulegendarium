@@ -13,23 +13,22 @@ interface UsePlayerImageProps {
 
 export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
   const [imageError, setImageError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
-  const [currentAttempt, setCurrentAttempt] = useState(0);
 
   // Reset states when player changes
   useEffect(() => {
     if (player) {
-      console.log(`🖼️ Iniciando carregamento para: ${player.name}`);
+      console.log(`🖼️ Carregando imagem para: ${player.name}`);
       setImageError(false);
       setIsLoading(true);
-      setCurrentAttempt(0);
       
-      // Try original image first
-      setImageSrc(player.image_url);
+      // Start with the player's original image
+      setImageSrc(player.image_url || defaultPlayerImage);
     } else {
       setImageSrc(null);
       setIsLoading(false);
+      setImageError(false);
     }
   }, [player?.id]);
 
@@ -62,26 +61,17 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
       return;
     }
 
-    console.error(`❌ Erro no carregamento (tentativa ${currentAttempt + 1}) para ${player.name}`);
+    console.error(`❌ Erro no carregamento para ${player.name}`);
     
-    const nextAttempt = currentAttempt + 1;
-    
-    if (nextAttempt === 1) {
-      // First error: try fallback image
+    // Try fallback image
+    if (imageSrc !== defaultPlayerImage) {
       const fallbackUrl = getFallbackImage(player.name);
       console.log(`🔄 Tentando fallback para ${player.name}: ${fallbackUrl}`);
       setImageSrc(fallbackUrl);
-      setCurrentAttempt(nextAttempt);
-      onImageFixed();
-    } else if (nextAttempt === 2) {
-      // Second error: try default image
-      console.log(`🛡️ Tentando imagem padrão para ${player.name}`);
-      setImageSrc(defaultPlayerImage);
-      setCurrentAttempt(nextAttempt);
       onImageFixed();
     } else {
-      // Final fallback: show error state
-      console.log(`💥 Todas as tentativas falharam para ${player.name}`);
+      // If even default image fails, show error
+      console.log(`💥 Falha total para ${player.name}`);
       setImageError(true);
       setIsLoading(false);
     }
