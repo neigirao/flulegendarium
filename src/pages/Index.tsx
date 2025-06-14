@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -31,10 +30,9 @@ export default function Index() {
           <div className="container mx-auto px-4 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3">
               <img 
-                src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
                 alt="Fluminense FC" 
                 className="w-8 h-8 object-contain"
-                style={{ background: 'transparent' }}
               />
               <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
             </Link>
@@ -67,10 +65,9 @@ export default function Index() {
                 <div className="flex items-center gap-6 mb-8">
                   <div className="relative">
                     <img 
-                      src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                      src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
                       alt="Fluminense FC" 
                       className="w-20 h-20 object-contain drop-shadow-2xl"
-                      style={{ background: 'transparent' }}
                     />
                   </div>
                   <div>
@@ -132,10 +129,9 @@ export default function Index() {
                       </div>
                       <div className="absolute top-6 right-6">
                         <img 
-                          src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                          src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
                           alt="Fluminense FC" 
                           className="w-16 h-16 object-contain opacity-60 drop-shadow-lg"
-                          style={{ background: 'transparent' }}
                         />
                       </div>
                     </div>
@@ -153,10 +149,9 @@ export default function Index() {
             <div className="text-center mb-16">
               <div className="flex items-center justify-center gap-4 mb-6">
                 <img 
-                  src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                  src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
                   alt="Fluminense FC" 
                   className="w-12 h-12 object-contain"
-                  style={{ background: 'transparent' }}
                 />
                 <h2 className="text-5xl font-black text-flu-grena">
                   RANKING TRICOLOR
@@ -177,10 +172,9 @@ export default function Index() {
             <div className="text-center mb-16">
               <div className="flex items-center justify-center gap-4 mb-6">
                 <img 
-                  src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                  src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
                   alt="Fluminense FC" 
                   className="w-12 h-12 object-contain drop-shadow-lg"
-                  style={{ background: 'transparent' }}
                 />
                 <h2 className="text-4xl font-black">ESTATÍSTICAS DO JOGO</h2>
               </div>
@@ -288,10 +282,9 @@ export default function Index() {
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-center gap-4 mb-6">
               <img 
-                src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
                 alt="Fluminense FC" 
                 className="w-10 h-10"
-                style={{ background: 'transparent' }}
               />
               <span className="text-2xl font-bold">Lendas do Flu</span>
             </div>
