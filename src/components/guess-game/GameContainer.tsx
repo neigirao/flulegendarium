@@ -47,12 +47,14 @@ export const GameContainer = ({
   // Start game for player when currentPlayer is available
   useEffect(() => {
     if (currentPlayer) {
+      console.log('🎮 GameContainer: Iniciando jogo para jogador:', currentPlayer.name);
       startGameForPlayer();
     }
   }, [currentPlayer, startGameForPlayer]);
 
   // Select random player on component mount
   useEffect(() => {
+    console.log('🎮 GameContainer: Selecionando jogador inicial');
     selectRandomPlayer();
   }, [selectRandomPlayer]);
 
@@ -69,11 +71,17 @@ export const GameContainer = ({
     };
   }, [handleKeyDown]);
 
-  console.log('🎮 GameContainer - Score atual:', score, 'Timer:', timeRemaining);
+  // Debug logs para verificar props
+  console.log('🎮 GameContainer Props:');
+  console.log('- Player:', currentPlayer?.name);
+  console.log('- Score:', score);
+  console.log('- Timer:', timeRemaining);
+  console.log('- Game Over:', gameOver);
+  console.log('- Timer Running:', isTimerRunning);
 
   return (
     <div className="space-y-6">
-      {/* Game Status - com timer e pontuação visíveis */}
+      {/* Game Status - Sempre visível com timer e pontuação */}
       <GameStatus
         score={score}
         timeRemaining={timeRemaining}
@@ -83,20 +91,27 @@ export const GameContainer = ({
         onNextPlayer={selectRandomPlayer}
       />
 
-      {/* Player Image - now with priority and performance tracking */}
+      {/* Player Image */}
       <PlayerImage
         player={currentPlayer}
         onImageFixed={handlePlayerImageFixed}
         onImageLoaded={handleImageLoaded}
-        priority={true} // First image should have high priority
+        priority={true}
       />
 
-      {/* Guess Form - Fixed prop names to match GuessForm interface */}
+      {/* Guess Form */}
       <GuessForm
         disabled={gameOver}
         onSubmitGuess={handleGuess}
         isProcessing={isProcessingGuess}
       />
+      
+      {/* Debug info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
+          <p>Debug: Score={score}, Timer={timeRemaining}, Running={isTimerRunning}</p>
+        </div>
+      )}
     </div>
   );
 };

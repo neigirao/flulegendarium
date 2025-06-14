@@ -49,8 +49,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const startGameForPlayer = useCallback(() => {
     if (currentPlayer && !gameOver && !isRunning) {
       console.log('🎮 Iniciando jogo para novo jogador:', currentPlayer.name);
+      console.log('🎯 Score atual antes do reset:', score);
       
-      // Reset states for new player
+      // Reset states for new player (mas não reset o score)
       setAttempts(0);
       setGameOver(false);
       setHasLost(false);
@@ -64,12 +65,13 @@ export const useGuessGame = (players: Player[] | undefined) => {
         label: currentPlayer.name
       });
     }
-  }, [currentPlayer, gameOver, isRunning, startTimer, trackEvent]);
+  }, [currentPlayer, gameOver, isRunning, startTimer, trackEvent, score]);
 
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
     if (!currentPlayer || !guess || gameOver || isProcessingGuess) return;
     
+    console.log('🎮 Processando palpite:', guess, 'para jogador:', currentPlayer.name);
     setIsProcessingGuess(true);
     
     try {
@@ -89,7 +91,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         const points = 5;
         setScore(prev => {
           const newScore = prev + points;
-          console.log('🎯 Pontuação atualizada:', newScore);
+          console.log('🎯 ACERTOU! Pontuação atualizada de', prev, 'para', newScore);
           return newScore;
         });
         
@@ -107,11 +109,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
         });
         
         stopTimer();
-        // Pequeno delay para mostrar a pontuação antes de selecionar novo jogador
+        // Delay para mostrar a pontuação antes de selecionar novo jogador
         setTimeout(() => {
           selectRandomPlayer();
         }, 1500);
       } else {
+        console.log('❌ ERROU! Resposta:', guess, 'Esperado:', currentPlayer.name);
         setGameOver(true);
         setHasLost(true);
         
@@ -132,7 +135,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         const points = 5;
         setScore(prev => {
           const newScore = prev + points;
-          console.log('🎯 Pontuação atualizada (fallback):', newScore);
+          console.log('🎯 ACERTOU (fallback)! Pontuação atualizada de', prev, 'para', newScore);
           return newScore;
         });
         
@@ -164,6 +167,16 @@ export const useGuessGame = (players: Player[] | undefined) => {
       setIsProcessingGuess(false);
     }
   }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent]);
+
+  // Debug logs para rastrear o estado
+  useEffect(() => {
+    console.log('🎮 useGuessGame State Update:');
+    console.log('- Current Player:', currentPlayer?.name);
+    console.log('- Score:', score);
+    console.log('- Time Remaining:', timeRemaining);
+    console.log('- Game Over:', gameOver);
+    console.log('- Timer Running:', isRunning);
+  }, [currentPlayer, score, timeRemaining, gameOver, isRunning]);
 
   return {
     currentPlayer,
