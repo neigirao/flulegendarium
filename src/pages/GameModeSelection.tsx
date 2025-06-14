@@ -11,19 +11,24 @@ const GameModeSelection = () => {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  // Se o usuário está logado, redireciona diretamente para o jogo
+  // Redireciona usuários logados diretamente para o jogo, mas apenas uma vez
   useEffect(() => {
+    // Adiciona um pequeno delay para evitar loops de redirecionamento
     if (!loading && user) {
-      navigate("/game");
+      const timer = setTimeout(() => {
+        navigate("/game", { replace: true });
+      }, 100);
+      
+      return () => clearTimeout(timer);
     }
   }, [user, loading, navigate]);
 
   const handleGuestPlay = () => {
-    navigate("/game");
+    navigate("/game", { replace: true });
   };
 
   const handleAuthenticatedPlay = () => {
-    navigate("/game");
+    navigate("/game", { replace: true });
   };
 
   // Mostra loading enquanto verifica autenticação
@@ -40,9 +45,18 @@ const GameModeSelection = () => {
     );
   }
 
-  // Se usuário está logado, não mostra a seleção (será redirecionado)
+  // Se usuário está logado, mostra uma tela de transição ao invés de null
   if (user) {
-    return null;
+    return (
+      <RootLayout>
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="flex flex-col items-center gap-4 p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
+            <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-flu-grena font-semibold">Redirecionando para o jogo...</p>
+          </div>
+        </div>
+      </RootLayout>
+    );
   }
 
   return (
