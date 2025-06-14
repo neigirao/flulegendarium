@@ -102,9 +102,4 @@ export const useAnalytics = () => {
   };
 };
 
-// Extend Window interface for gtag
-declare global {
-  interface Window {
-    gtag: (...args: any[]) => void;
-  }
-}
+// Note: gtag declaration moved to src/types/global.d.ts to avoid conflicts
