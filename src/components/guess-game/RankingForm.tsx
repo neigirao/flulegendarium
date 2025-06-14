@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
@@ -23,6 +23,20 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
   const { user } = useAuth();
   const { trackEvent } = useAnalytics();
   const navigate = useNavigate();
+
+  // Auto-fill name if user is authenticated
+  useEffect(() => {
+    if (user) {
+      // Try to get name from user metadata or email
+      const displayName = user.user_metadata?.full_name || 
+                         user.user_metadata?.name || 
+                         user.email?.split('@')[0] || 
+                         '';
+      
+      console.log('👤 Preenchendo nome automaticamente:', displayName);
+      setName(displayName);
+    }
+  }, [user]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -115,9 +129,14 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
             placeholder="Digite seu nome..."
             className="pl-10"
             disabled={isLoading}
-            autoFocus
+            autoFocus={!user} // Only auto-focus if not logged in (no auto-fill)
           />
         </div>
+        {user && (
+          <p className="text-xs text-gray-500">
+            Nome preenchido automaticamente do seu perfil
+          </p>
+        )}
       </div>
 
       <Button
