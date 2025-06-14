@@ -4,7 +4,7 @@ import { GuessForm } from "./GuessForm";
 import { GameStatus } from "./GameStatus";
 import { GameLoadingState } from "./GameLoadingState";
 import { Player } from "@/types/guess-game";
-import { PlayerImage } from "./PlayerImage";
+import { SimplePlayerImage } from "./SimplePlayerImage";
 import { usePerformance } from "@/hooks/use-performance";
 
 interface GameContainerProps {
@@ -55,16 +55,9 @@ export const GameContainer = ({
   useEffect(() => {
     if (currentPlayer) {
       console.log('🎮 GameContainer: Iniciando jogo para jogador:', currentPlayer.name);
-      console.log('🎯 GameContainer: Score atual:', score);
       startGameForPlayer();
     }
   }, [currentPlayer, startGameForPlayer]);
-
-  // Select random player on component mount
-  useEffect(() => {
-    console.log('🎮 GameContainer: Selecionando jogador inicial');
-    selectRandomPlayer();
-  }, [selectRandomPlayer]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Enter') {
@@ -79,13 +72,12 @@ export const GameContainer = ({
     };
   }, [handleKeyDown]);
 
-  // Debug logs para verificar props
-  console.log('🎮 GameContainer Props:');
-  console.log('- Player:', currentPlayer?.name);
-  console.log('- Score propagado:', score);
+  // Debug logs
+  console.log('🎮 GameContainer State:');
+  console.log('- Player:', currentPlayer?.name || 'Nenhum');
+  console.log('- Score:', score);
   console.log('- Timer:', timeRemaining);
   console.log('- Game Over:', gameOver);
-  console.log('- Timer Running:', isTimerRunning);
 
   // Loading state quando não há jogador
   if (!currentPlayer) {
@@ -98,7 +90,7 @@ export const GameContainer = ({
 
   return (
     <div className="space-y-6 md:space-y-8">
-      {/* Game Status - Sempre visível com timer destacado e progresso */}
+      {/* Game Status */}
       <GameStatus
         score={score}
         timeRemaining={timeRemaining}
@@ -112,13 +104,11 @@ export const GameContainer = ({
         onNextPlayer={selectRandomPlayer}
       />
 
-      {/* Player Image - Responsivo */}
+      {/* Player Image */}
       <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
-        <PlayerImage
+        <SimplePlayerImage
           player={currentPlayer}
-          onImageFixed={handlePlayerImageFixed}
           onImageLoaded={handleImageLoaded}
-          priority={true}
         />
       </div>
 
@@ -129,7 +119,7 @@ export const GameContainer = ({
         </div>
       )}
 
-      {/* Guess Form - Responsivo */}
+      {/* Guess Form */}
       {!isProcessingGuess && (
         <div className="w-full max-w-md md:max-w-lg mx-auto">
           <GuessForm
@@ -140,17 +130,14 @@ export const GameContainer = ({
         </div>
       )}
       
-      {/* Debug info detalhado - Responsivo */}
+      {/* Debug info em desenvolvimento */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-4 p-3 bg-gray-100 rounded text-xs md:text-sm border">
           <p><strong>Debug Info:</strong></p>
           <p>Score = {score}</p>
           <p>Timer = {timeRemaining}s</p>
-          <p>Running = {isTimerRunning ? 'Sim' : 'Não'}</p>
-          <p>Player = {currentPlayer?.name || 'Nenhum'}</p>
-          <p>Game Over = {gameOver ? 'Sim' : 'Não'}</p>
-          <p>Games Played = {gamesPlayed}</p>
-          <p>Current Streak = {currentStreak}</p>
+          <p>Player = {currentPlayer?.name}</p>
+          <p>Image URL = {currentPlayer?.image_url}</p>
         </div>
       )}
     </div>

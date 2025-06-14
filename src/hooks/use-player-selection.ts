@@ -1,58 +1,39 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Player } from "@/types/guess-game";
-import { getReliableImageUrl } from "@/utils/player-image";
 
 export const usePlayerSelection = (players: Player[] | undefined) => {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const availablePlayers = useRef<Player[]>([]);
   const isInitialized = useRef(false);
 
-  // Cache available players
+  // Initialize with first player when players are loaded
   useEffect(() => {
-    if (players && players.length > 0) {
-      availablePlayers.current = [...players];
-      
-      // Only initialize once when players are first loaded
-      if (!isInitialized.current && !currentPlayer) {
-        isInitialized.current = true;
-        const randomIndex = Math.floor(Math.random() * players.length);
-        const player = { ...players[randomIndex] };
-        player.image_url = getReliableImageUrl(player);
-        setCurrentPlayer(player);
-      }
+    if (players && players.length > 0 && !isInitialized.current) {
+      console.log('🎮 Inicializando com primeiro jogador dos', players.length, 'disponíveis');
+      isInitialized.current = true;
+      const randomIndex = Math.floor(Math.random() * players.length);
+      const selectedPlayer = players[randomIndex];
+      console.log('🎯 Jogador selecionado:', selectedPlayer.name);
+      setCurrentPlayer(selectedPlayer);
     }
   }, [players]);
 
   // Select a random player
   const selectRandomPlayer = useCallback(() => {
-    if (!availablePlayers.current || availablePlayers.current.length === 0) {
+    if (!players || players.length === 0) {
+      console.warn('⚠️ Nenhum jogador disponível para seleção');
       return;
     }
     
-    const randomIndex = Math.floor(Math.random() * availablePlayers.current.length);
-    const player = { ...availablePlayers.current[randomIndex] };
-    
-    // Make sure we have a valid image
-    if (player) {
-      player.image_url = getReliableImageUrl(player);
-    }
-    
-    setCurrentPlayer(player);
-  }, []);
+    const randomIndex = Math.floor(Math.random() * players.length);
+    const selectedPlayer = players[randomIndex];
+    console.log('🔄 Novo jogador selecionado:', selectedPlayer.name);
+    setCurrentPlayer(selectedPlayer);
+  }, [players]);
 
-  // Handle image fixes
+  // Handle image fixes - just log for now
   const handlePlayerImageFixed = useCallback(() => {
-    // Refresh the current player with fixed image
-    if (currentPlayer) {
-      setCurrentPlayer(prevPlayer => {
-        if (!prevPlayer) return null;
-        return {
-          ...prevPlayer,
-          image_url: getReliableImageUrl(prevPlayer)
-        };
-      });
-    }
+    console.log('🖼️ Imagem corrigida para:', currentPlayer?.name);
   }, [currentPlayer]);
 
   return {
