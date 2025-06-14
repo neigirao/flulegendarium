@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getGameStats } from "@/services/statsService";
 import { SEOHead } from "@/components/SEOHead";
 import { StructuredData } from "@/components/StructuredData";
-import { GamepadIcon, UsersIcon, AwardIcon } from "lucide-react";
+import { GamepadIcon, UsersIcon, AwardIcon, PlayIcon, TrophyIcon, StarIcon } from "lucide-react";
 
 export default function Index() {
   const { user } = useAuth();
@@ -57,45 +57,114 @@ export default function Index() {
           </div>
         </header>
 
-        {/* Hero Section */}
-        <section className="relative py-20 px-4 bg-gradient-to-r from-flu-verde to-flu-grena overflow-hidden">
+        {/* Hero Section Redesigned */}
+        <section className="relative py-16 px-4 bg-gradient-to-br from-flu-grena via-flu-grena/90 to-flu-verde overflow-hidden min-h-[90vh] flex items-center">
+          {/* Background Pattern */}
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/5 to-transparent"></div>
+          
           <div className="container mx-auto relative z-10">
-            <div className="flex items-center justify-between">
-              <div className="flex-1 text-white max-w-2xl">
-                <h1 className="text-5xl md:text-6xl font-black leading-tight mb-6">
-                  Desafie-se no<br />
-                  Lendas do Flu
-                </h1>
-                <p className="text-xl mb-4 opacity-90 leading-relaxed">
-                  Descubra Se Você Conhece os Maiores<br />
-                  Ídolos do Fluzão!
-                </p>
-                <p className="text-lg mb-8 opacity-80 leading-relaxed">
-                  Veja a foto, Adivinhe o jogador<br />
-                  e suba no ranking tricolor!
-                </p>
-                
-                <div className="flex gap-4">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Content Side */}
+              <div className="text-white space-y-8">
+                {/* Badge/Tag */}
+                <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">
+                  <StarIcon className="w-4 h-4 text-yellow-300" />
+                  <span>Jogo oficial dos tricolores</span>
+                </div>
+
+                {/* Main Headline */}
+                <div className="space-y-4">
+                  <h1 className="text-5xl lg:text-7xl font-black leading-tight">
+                    Você Conhece as
+                    <span className="block text-yellow-300">Lendas do Flu?</span>
+                  </h1>
+                  
+                  <p className="text-xl lg:text-2xl text-white/90 leading-relaxed max-w-xl">
+                    Desafie seu conhecimento tricolor! Veja a foto, adivinhe o jogador e prove que é um verdadeiro fluminense.
+                  </p>
+                </div>
+
+                {/* Social Proof */}
+                <div className="flex items-center gap-6 text-white/80">
+                  <div className="flex items-center gap-2">
+                    <UsersIcon className="w-5 h-5" />
+                    <span className="text-lg font-semibold">{stats?.activePlayers?.toLocaleString() || '567'}+</span>
+                    <span>jogadores</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <GamepadIcon className="w-5 h-5" />
+                    <span className="text-lg font-semibold">{stats?.totalMatches?.toLocaleString() || '1.234'}+</span>
+                    <span>partidas</span>
+                  </div>
+                </div>
+
+                {/* Call to Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button 
                     size="lg" 
-                    className="bg-white text-flu-grena hover:bg-gray-100 font-bold px-8 py-4 rounded-lg text-lg shadow-lg"
+                    className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-8 py-4 rounded-xl text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
                     asChild
                   >
-                    <Link to="/select-mode">
-                      Começar Jogo
+                    <Link to="/select-mode" className="flex items-center gap-3">
+                      <PlayIcon className="w-6 h-6" />
+                      Jogar Agora - Grátis
+                    </Link>
+                  </Button>
+                  
+                  <Button 
+                    size="lg" 
+                    variant="outline"
+                    className="border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-lg backdrop-blur-sm"
+                    asChild
+                  >
+                    <Link to="#ranking" className="flex items-center gap-3">
+                      <TrophyIcon className="w-5 h-5" />
+                      Ver Ranking
                     </Link>
                   </Button>
                 </div>
+
+                {/* Trust Indicators */}
+                <div className="flex items-center gap-4 pt-6 text-white/70 text-sm">
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>100% Gratuito</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>Sem cadastro obrigatório</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <span>Jogue no celular</span>
+                  </div>
+                </div>
               </div>
               
-              <div className="hidden lg:block flex-1">
-                <div className="relative w-96 h-96 mx-auto">
-                  <div className="relative w-full h-full">
+              {/* Image Side */}
+              <div className="relative flex justify-center lg:justify-end">
+                <div className="relative">
+                  {/* Glow Effect */}
+                  <div className="absolute inset-0 bg-yellow-300/20 rounded-full blur-3xl scale-150"></div>
+                  
+                  {/* Main Image Container */}
+                  <div className="relative w-80 h-80 lg:w-96 lg:h-96">
+                    <div className="absolute inset-0 bg-white/10 rounded-3xl backdrop-blur-sm border border-white/20"></div>
                     <img 
                       src="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png" 
-                      alt="Jogador do Fluminense com ponto de interrogação" 
-                      className="w-full h-full object-contain"
+                      alt="Desafio: Adivinhe o jogador do Fluminense" 
+                      className="relative w-full h-full object-contain p-8 drop-shadow-2xl"
                     />
+                    
+                    {/* Floating Elements */}
+                    <div className="absolute -top-4 -right-4 bg-yellow-500 text-black px-4 py-2 rounded-full font-bold text-sm shadow-lg animate-bounce">
+                      Quem é?
+                    </div>
+                    
+                    <div className="absolute -bottom-2 -left-4 bg-white/90 text-flu-grena px-4 py-2 rounded-full font-semibold text-sm shadow-lg">
+                      Lenda Tricolor
+                    </div>
                   </div>
                 </div>
               </div>
