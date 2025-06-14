@@ -1,7 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { RankingForm } from "./RankingForm";
-import { Timer, Trophy, Clock } from "lucide-react";
+import { GameTimer } from "./GameTimer";
+import { GameProgress } from "./GameProgress";
+import { Timer, Trophy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface GameStatusProps {
@@ -11,6 +13,10 @@ interface GameStatusProps {
   gameOver: boolean;
   timeRemaining: number;
   onNextPlayer: () => void;
+  isTimerRunning?: boolean;
+  gamesPlayed?: number;
+  currentStreak?: number;
+  maxStreak?: number;
 }
 
 export const GameStatus = ({ 
@@ -19,7 +25,11 @@ export const GameStatus = ({
   score,
   gameOver,
   timeRemaining,
-  onNextPlayer
+  onNextPlayer,
+  isTimerRunning = false,
+  gamesPlayed = 0,
+  currentStreak = 0,
+  maxStreak = 0
 }: GameStatusProps) => {
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [prevTime, setPrevTime] = useState(timeRemaining);
@@ -52,27 +62,47 @@ export const GameStatus = ({
     onNextPlayer();
   };
 
-  // Formatar tempo em MM:SS
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Timer destacado no topo */}
+      <div className="flex justify-center">
+        <GameTimer 
+          timeRemaining={timeRemaining}
+          isRunning={isTimerRunning}
+          gameOver={gameOver}
+        />
+      </div>
+
+      {/* Progresso do jogo */}
+      <GameProgress 
+        currentScore={score}
+        gamesPlayed={gamesPlayed}
+        currentStreak={currentStreak}
+        maxStreak={maxStreak}
+      />
+
+      {/* Regras do jogo - mais compacta */}
+      <div className="text-center bg-flu-grena/10 p-3 rounded-lg border border-flu-grena/20">
+        <div className="text-sm font-medium text-flu-grena flex items-center justify-center gap-2">
+          <Timer className="w-4 h-4" />
+          <span>Uma tentativa por jogador • 60 segundos • 5 pontos por acerto</span>
+        </div>
+      </div>
+
+      {/* Botão de salvar pontuação quando o jogo termina */}
       {gameOver && !showRankingForm && (
-        <div className="text-center mt-4 animate-fade-in">
+        <div className="text-center animate-fade-in">
           <button
             onClick={handleShowRankingForm}
-            className="bg-flu-grena text-white px-4 md:px-6 py-2 rounded-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto flu-shadow text-sm md:text-base"
+            className="bg-flu-grena text-white px-6 py-3 rounded-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto flu-shadow text-base font-semibold"
           >
-            <Trophy className="w-4 h-4 md:w-5 md:h-5" />
+            <Trophy className="w-5 h-5" />
             Salvar Pontuação
           </button>
         </div>
       )}
       
+      {/* Formulário de ranking */}
       {gameOver && showRankingForm && (
         <RankingForm 
           score={score}
@@ -80,33 +110,6 @@ export const GameStatus = ({
           onCancel={handleNextPlayer}
         />
       )}
-
-      {/* Status sempre visível com destaque para pontuação - Responsivo */}
-      <div className="space-y-4 p-4 md:p-6 rounded-lg bg-white/95 shadow-lg border-2 border-flu-verde/30">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          {/* Timer */}
-          <div className="flex items-center gap-2 md:gap-3">
-            <Clock className="w-5 h-5 md:w-6 md:h-6 text-flu-verde" />
-            <span className={`font-bold text-lg md:text-xl ${timeRemaining <= 10 ? 'text-red-500 animate-pulse' : 'text-flu-verde'}`}>
-              {formatTime(timeRemaining)}
-            </span>
-          </div>
-
-          {/* Pontuação com destaque maior - Responsivo */}
-          <div className="flex items-center gap-2 md:gap-3 bg-yellow-50 px-4 md:px-6 py-2 md:py-3 rounded-lg border-2 border-yellow-300 shadow-md">
-            <Trophy className="w-5 h-5 md:w-7 md:h-7 text-yellow-600" />
-            <span className="font-bold text-xl md:text-2xl text-flu-grena">{score} pontos</span>
-          </div>
-        </div>
-
-        {/* Aviso de tentativa única */}
-        <div className="text-center">
-          <div className="text-xs md:text-sm font-medium text-flu-grena flex items-center justify-center gap-1">
-            <Timer className="w-3 h-3 md:w-4 md:h-4" />
-            <span>Apenas uma tentativa por jogador!</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

@@ -289,6 +289,10 @@ export const useGuessGame = (players: Player[] | undefined) => {
     hasLost,
     startGameForPlayer,
     isTimerRunning: isRunning,
-    resetScore
+    resetScore,
+    // Expondo informações de progresso
+    gamesPlayed,
+    currentStreak,
+    maxStreak: Math.max(currentStreak, 0) // Pode ser melhorado para rastrear o máximo histórico
   };
 };

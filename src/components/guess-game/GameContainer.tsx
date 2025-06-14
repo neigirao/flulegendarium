@@ -2,6 +2,7 @@
 import { useCallback, useEffect } from "react";
 import { GuessForm } from "./GuessForm";
 import { GameStatus } from "./GameStatus";
+import { GameLoadingState } from "./GameLoadingState";
 import { Player } from "@/types/guess-game";
 import { PlayerImage } from "./PlayerImage";
 import { usePerformance } from "@/hooks/use-performance";
@@ -20,6 +21,9 @@ interface GameContainerProps {
   hasLost: boolean;
   startGameForPlayer: () => void;
   isTimerRunning: boolean;
+  gamesPlayed?: number;
+  currentStreak?: number;
+  maxStreak?: number;
 }
 
 export const GameContainer = ({
@@ -35,7 +39,10 @@ export const GameContainer = ({
   isProcessingGuess,
   hasLost,
   startGameForPlayer,
-  isTimerRunning
+  isTimerRunning,
+  gamesPlayed = 0,
+  currentStreak = 0,
+  maxStreak = 0
 }: GameContainerProps) => {
   const { trackCustomMetric } = usePerformance();
   
@@ -80,15 +87,28 @@ export const GameContainer = ({
   console.log('- Game Over:', gameOver);
   console.log('- Timer Running:', isTimerRunning);
 
+  // Loading state quando não há jogador
+  if (!currentPlayer) {
+    return (
+      <div className="space-y-4 md:space-y-6">
+        <GameLoadingState type="player" />
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-4 md:space-y-6">
-      {/* Game Status - Sempre visível com timer e pontuação */}
+    <div className="space-y-6 md:space-y-8">
+      {/* Game Status - Sempre visível com timer destacado e progresso */}
       <GameStatus
         score={score}
         timeRemaining={timeRemaining}
         attempts={attempts}
         maxAttempts={MAX_ATTEMPTS}
         gameOver={gameOver}
+        isTimerRunning={isTimerRunning}
+        gamesPlayed={gamesPlayed}
+        currentStreak={currentStreak}
+        maxStreak={maxStreak}
         onNextPlayer={selectRandomPlayer}
       />
 
@@ -102,14 +122,23 @@ export const GameContainer = ({
         />
       </div>
 
+      {/* Loading state durante processamento */}
+      {isProcessingGuess && (
+        <div className="w-full max-w-md md:max-w-lg mx-auto">
+          <GameLoadingState type="processing" />
+        </div>
+      )}
+
       {/* Guess Form - Responsivo */}
-      <div className="w-full max-w-md md:max-w-lg mx-auto">
-        <GuessForm
-          disabled={gameOver}
-          onSubmitGuess={handleGuess}
-          isProcessing={isProcessingGuess}
-        />
-      </div>
+      {!isProcessingGuess && (
+        <div className="w-full max-w-md md:max-w-lg mx-auto">
+          <GuessForm
+            disabled={gameOver}
+            onSubmitGuess={handleGuess}
+            isProcessing={isProcessingGuess}
+          />
+        </div>
+      )}
       
       {/* Debug info detalhado - Responsivo */}
       {process.env.NODE_ENV === 'development' && (
@@ -120,6 +149,8 @@ export const GameContainer = ({
           <p>Running = {isTimerRunning ? 'Sim' : 'Não'}</p>
           <p>Player = {currentPlayer?.name || 'Nenhum'}</p>
           <p>Game Over = {gameOver ? 'Sim' : 'Não'}</p>
+          <p>Games Played = {gamesPlayed}</p>
+          <p>Current Streak = {currentStreak}</p>
         </div>
       )}
     </div>
