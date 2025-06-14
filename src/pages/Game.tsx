@@ -108,7 +108,9 @@ const Game = () => {
     selectRandomPlayer,
     handlePlayerImageFixed,
     isProcessingGuess,
-    hasLost
+    hasLost,
+    startGameForPlayer,
+    isTimerRunning
   } = useGuessGame(gameStarted && players.length > 0 ? players : undefined);
 
   const handleResetScore = useCallback(() => {
@@ -269,6 +271,8 @@ const Game = () => {
               handlePlayerImageFixed={handlePlayerImageFixed}
               isProcessingGuess={isProcessingGuess}
               hasLost={hasLost}
+              startGameForPlayer={startGameForPlayer}
+              isTimerRunning={isTimerRunning}
             />
           )}
         </div>

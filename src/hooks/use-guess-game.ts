@@ -17,7 +17,6 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [gameOver, setGameOver] = useState(false);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
   const [hasLost, setHasLost] = useState(false);
-  const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
   
   // Player selection hook
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed } = usePlayerSelection(players);
@@ -25,6 +24,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   // Handle time up callback
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer) {
+      console.log('⏰ Tempo esgotado para:', currentPlayer.name);
       setGameOver(true);
       setHasLost(true);
       
@@ -43,32 +43,28 @@ export const useGuessGame = (players: Player[] | undefined) => {
   }, [currentPlayer, gameOver, toast, trackEvent]);
   
   // Game timer hook
-  const { timeRemaining, startTimer, clearGameTimer } = useGameTimer(gameOver, handleTimeUp);
+  const { timeRemaining, isRunning, startTimer, stopTimer } = useGameTimer(gameOver, handleTimeUp);
 
-  // Start timer only when a NEW player is selected
-  useEffect(() => {
-    if (currentPlayer && currentPlayer.id !== currentPlayerId && !gameOver) {
-      console.log('🎮 Novo jogador detectado, iniciando timer:', currentPlayer.name);
-      setCurrentPlayerId(currentPlayer.id);
+  // Start timer when a new player is selected and ready
+  const startGameForPlayer = useCallback(() => {
+    if (currentPlayer && !gameOver && !isRunning) {
+      console.log('🎮 Iniciando jogo para novo jogador:', currentPlayer.name);
       
       // Reset states for new player
       setAttempts(0);
       setGameOver(false);
       setHasLost(false);
       
-      // Start timer after a brief delay to ensure UI is ready
-      const timeoutId = setTimeout(() => {
-        startTimer();
-        trackEvent({
-          action: 'new_player_shown',
-          category: 'Game',
-          label: currentPlayer.name
-        });
-      }, 100);
+      // Start timer
+      startTimer();
       
-      return () => clearTimeout(timeoutId);
+      trackEvent({
+        action: 'new_player_shown',
+        category: 'Game',
+        label: currentPlayer.name
+      });
     }
-  }, [currentPlayer?.id, currentPlayerId, gameOver, startTimer, trackEvent]);
+  }, [currentPlayer, gameOver, isRunning, startTimer, trackEvent]);
 
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
@@ -106,7 +102,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
           description: `Você acertou e ganhou ${points} pontos!`,
         });
         
-        clearGameTimer();
+        stopTimer();
         selectRandomPlayer();
       } else {
         setGameOver(true);
@@ -114,7 +110,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         
         trackIncorrectGuess(currentPlayer.name, guess);
         
-        clearGameTimer();
+        stopTimer();
         
         toast({
           variant: "destructive",
@@ -136,12 +132,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
           description: `Você acertou e ganhou ${points} pontos!`,
         });
         
-        clearGameTimer();
+        stopTimer();
         selectRandomPlayer();
       } else {
         setGameOver(true);
         setHasLost(true);
-        clearGameTimer();
+        stopTimer();
         
         trackIncorrectGuess(currentPlayer.name, guess);
         
@@ -154,7 +150,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     } finally {
       setIsProcessingGuess(false);
     }
-  }, [currentPlayer, gameOver, clearGameTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent]);
+  }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent]);
 
   return {
     currentPlayer,
@@ -169,6 +165,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     isProcessingGuess,
     TIME_LIMIT_SECONDS,
     hasLost,
-    handleImageLoaded: () => {} // Removido pois não é mais necessário
+    startGameForPlayer,
+    isTimerRunning: isRunning
   };
 };

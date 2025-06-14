@@ -1,5 +1,5 @@
 
-import { memo, useRef, useEffect, useState } from "react";
+import { memo, useRef, useEffect } from "react";
 import { usePlayerImage } from "@/hooks/use-player-image";
 import { ImageLoader } from "./ImageLoader";
 import { ImageErrorDisplay } from "./ImageErrorDisplay";
@@ -11,40 +11,22 @@ interface PlayerImageProps {
     image_url: string;
   } | null;
   onImageFixed: () => void;
+  onImageLoaded?: () => void;
 }
 
-export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => {
+export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: PlayerImageProps) => {
   const imgRef = useRef<HTMLImageElement>(null);
-  const [isInView, setIsInView] = useState(false);
   const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded } = 
     usePlayerImage({ 
       player, 
       onImageFixed
     });
 
-  // Intersection Observer for lazy loading
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const [entry] = entries;
-        if (entry.isIntersecting) {
-          console.log(`👁️ Imagem entrou na viewport: ${player?.name}`);
-          setIsInView(true);
-          observer.disconnect();
-        }
-      },
-      {
-        rootMargin: '50px',
-        threshold: 0.1
-      }
-    );
-
-    if (imgRef.current) {
-      observer.observe(imgRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [player?.name]);
+  // Handle image load event
+  const handleImageLoadComplete = () => {
+    handleImageLoaded();
+    onImageLoaded?.();
+  };
 
   if (!player) {
     return (
@@ -76,7 +58,7 @@ export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => 
             }}
             onLoad={() => {
               console.log(`🎉 Evento onLoad para ${player.name}`);
-              handleImageLoaded();
+              handleImageLoadComplete();
             }}
             loading="lazy" 
             decoding="async"

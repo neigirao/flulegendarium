@@ -1,13 +1,12 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
 
 export const TIME_LIMIT_SECONDS = 60; // 1 minute timer
 
 export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
   const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
+  const [isRunning, setIsRunning] = useState(false);
   const timerRef = useRef<number | null>(null);
-  const { toast } = useToast();
 
   // Cleanup function for timer
   const clearGameTimer = useCallback(() => {
@@ -15,23 +14,28 @@ export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
       window.clearInterval(timerRef.current);
       timerRef.current = null;
     }
+    setIsRunning(false);
   }, []);
 
   // Start timer
   const startTimer = useCallback(() => {
-    if (gameOver) return;
+    if (gameOver || isRunning) return;
+    
+    console.log('⏰ Iniciando timer');
     
     // Clear any existing timer
     clearGameTimer();
     
-    // Reset time
+    // Reset time and start
     setTimeRemaining(TIME_LIMIT_SECONDS);
+    setIsRunning(true);
     
     // Start new timer
     timerRef.current = window.setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
           // Time's up
+          console.log('⏰ Tempo esgotado!');
           clearGameTimer();
           onTimeUp();
           return 0;
@@ -39,7 +43,14 @@ export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
         return prev - 1;
       });
     }, 1000);
-  }, [gameOver, clearGameTimer, onTimeUp]);
+  }, [gameOver, isRunning, clearGameTimer, onTimeUp]);
+
+  // Stop timer
+  const stopTimer = useCallback(() => {
+    console.log('⏰ Parando timer');
+    clearGameTimer();
+    setTimeRemaining(TIME_LIMIT_SECONDS);
+  }, [clearGameTimer]);
 
   // Clear timer when game is over
   useEffect(() => {
@@ -55,7 +66,9 @@ export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
 
   return {
     timeRemaining,
+    isRunning,
     startTimer,
+    stopTimer,
     clearGameTimer,
   };
 };

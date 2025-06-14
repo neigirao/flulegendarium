@@ -1,4 +1,5 @@
-import { useState, Suspense, lazy } from "react";
+
+import { useState, Suspense, lazy, useEffect } from "react";
 import { PlayerImage } from "@/components/guess-game/PlayerImage";
 import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
@@ -24,7 +25,8 @@ interface GameContainerProps {
   handlePlayerImageFixed: () => void;
   isProcessingGuess: boolean;
   hasLost: boolean;
-  handleImageLoaded?: () => void; // Nova prop
+  startGameForPlayer: () => void;
+  isTimerRunning: boolean;
 }
 
 export const GameContainer = ({
@@ -38,10 +40,31 @@ export const GameContainer = ({
   selectRandomPlayer,
   handlePlayerImageFixed,
   isProcessingGuess,
-  hasLost
-}: Omit<GameContainerProps, 'handleImageLoaded'>) => {
+  hasLost,
+  startGameForPlayer,
+  isTimerRunning
+}: GameContainerProps) => {
   const [showRanking, setShowRanking] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { trackEvent } = useAnalytics();
+
+  // Start game when image is loaded and player is ready
+  useEffect(() => {
+    if (currentPlayer && imageLoaded && !isTimerRunning && !gameOver) {
+      console.log('🎮 Imagem carregada, iniciando jogo para:', currentPlayer.name);
+      startGameForPlayer();
+    }
+  }, [currentPlayer, imageLoaded, isTimerRunning, gameOver, startGameForPlayer]);
+
+  // Reset image loaded state when player changes
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [currentPlayer?.id]);
+
+  const handleImageLoaded = () => {
+    console.log('🖼️ Imagem carregada para:', currentPlayer?.name);
+    setImageLoaded(true);
+  };
 
   const toggleRanking = () => {
     const newShowRanking = !showRanking;
@@ -93,7 +116,7 @@ export const GameContainer = ({
       {currentPlayer && (
         <div className="space-y-6">
           {/* Timer acima da imagem */}
-          {!gameOver && (
+          {!gameOver && isTimerRunning && (
             <div className="bg-white/90 rounded-lg p-4 shadow-sm border border-flu-verde/30">
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
@@ -121,9 +144,10 @@ export const GameContainer = ({
           <PlayerImage 
             player={currentPlayer} 
             onImageFixed={handlePlayerImageFixed}
+            onImageLoaded={handleImageLoaded}
           />
 
-          {!hasLost && (
+          {!hasLost && isTimerRunning && (
             <GuessForm 
               disabled={gameOver}
               onSubmitGuess={handleGuess}
