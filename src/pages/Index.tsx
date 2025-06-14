@@ -120,8 +120,12 @@ export default function Index() {
                       Quem é?
                     </div>
                     
-                    <div className="absolute -bottom-2 -left-4 bg-white/90 text-flu-grena px-4 py-2 rounded-full font-semibold text-sm shadow-lg">
-                      Lenda Tricolor
+                    <div className="absolute -bottom-2 -left-4 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg border border-white/20">
+                      <img 
+                        src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
+                        alt="Escudo do Fluminense" 
+                        className="w-8 h-8 object-contain"
+                      />
                     </div>
                   </div>
                 </div>
