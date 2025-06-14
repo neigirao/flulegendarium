@@ -102,9 +102,4 @@ export const useAnalytics = () => {
   };
 };
 
-// Extend Window interface for gtag
-declare global {
-  interface Window {
-    gtag: (...args: any[]) => void;
-  }
-}
+// Note: Window interface extension is handled in PerformanceMetrics component

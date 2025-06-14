@@ -1,12 +1,6 @@
 
 import { useEffect } from 'react';
 
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-  }
-}
-
 export const PerformanceMetrics = () => {
   useEffect(() => {
     // Web Vitals tracking
@@ -62,9 +56,11 @@ export const PerformanceMetrics = () => {
       // Track First Input Delay (FID) when available
       const fidObserver = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
-          if (window.gtag) {
+          // Type assertion for PerformanceEventTiming which has processingStart
+          const eventEntry = entry as PerformanceEventTiming;
+          if (window.gtag && eventEntry.processingStart) {
             window.gtag('event', 'first_input_delay', {
-              custom_parameter: Math.round(entry.processingStart - entry.startTime),
+              custom_parameter: Math.round(eventEntry.processingStart - eventEntry.startTime),
               event_category: 'Performance'
             });
           }

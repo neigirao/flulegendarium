@@ -32,7 +32,7 @@ const queryClient = new QueryClient({
         return failureCount < 3;
       },
       refetchOnWindowFocus: false,
-      refetchOnMount: 'smart',
+      refetchOnMount: true, // Changed from 'smart' to boolean
     },
   },
 });
