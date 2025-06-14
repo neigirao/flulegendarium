@@ -37,8 +37,7 @@ const Game = () => {
 
   // DEBUG: log transitions
   useEffect(() => {
-    console.log("showTutorial:", showTutorial);
-    console.log("gameStarted:", gameStarted);
+    console.log("🎮 Game State:", { showTutorial, gameStarted });
   }, [showTutorial, gameStarted]);
 
   // Track page view
@@ -50,17 +49,17 @@ const Game = () => {
     queryKey: ['players'],
     queryFn: async () => {
       try {
-        console.log("Iniciando busca de jogadores...");
+        console.log("🔍 Iniciando busca de jogadores...");
         const { data, error } = await supabase
           .from('players')
           .select('*');
         if (error) {
-          console.error("Erro ao buscar jogadores:", error);
+          console.error("❌ Erro ao buscar jogadores:", error);
           throw error;
         }
-        console.log("Jogadores carregados com sucesso:", data?.length || 0, "jogadores");
+        console.log("✅ Jogadores carregados:", data?.length || 0);
         if (data && data.length > 0) {
-          console.log("Primeiro jogador:", data[0].name);
+          console.log("👤 Primeiro jogador:", data[0].name);
           const enhancedPlayers = data.map((player: Player) => ({
             ...player,
             image_url: getReliableImageUrl(player)
@@ -69,7 +68,7 @@ const Game = () => {
         }
         return data as Player[];
       } catch (err) {
-        console.error("Exceção ao buscar jogadores:", err);
+        console.error("💥 Exceção ao buscar jogadores:", err);
         throw err;
       }
     },
@@ -77,6 +76,11 @@ const Game = () => {
     retry: 3,
     refetchOnWindowFocus: false,
   });
+
+  // DEBUG: Log when players are loaded
+  useEffect(() => {
+    console.log("📊 Players loaded:", players.length, "jogadores");
+  }, [players]);
 
   // Preload player images when data is loaded
   useEffect(() => {
@@ -94,7 +98,7 @@ const Game = () => {
           const batch = players.slice(i, i + batchSize);
           const delay = (i - 8) * 1000;
           setTimeout(() => {
-            console.log(`Iniciando pré-carregamento em background de lote ${i / batchSize + 1}`);
+            console.log(`🖼️ Pré-carregando lote ${i / batchSize + 1}`);
             batch.forEach((player) => {
               const img = new Image();
               img.src = getReliableImageUrl(player);
@@ -108,6 +112,10 @@ const Game = () => {
 
   const [score, setScore] = useState(0);
 
+  // Pass players only when game has started
+  const playersForGame = gameStarted ? players : undefined;
+  console.log("🎯 Players for game:", playersForGame?.length || 0);
+
   const {
     currentPlayer,
     attempts,
@@ -119,18 +127,16 @@ const Game = () => {
     handlePlayerImageFixed,
     isProcessingGuess,
     hasLost
-  } = useGuessGame(gameStarted ? players : undefined);
+  } = useGuessGame(playersForGame);
 
   const handleResetScore = useCallback(() => {
     setScore(0);
   }, []);
 
   useEffect(() => {
-    // DEBUG: Log currentPlayer changes
-    console.log("currentPlayer:", currentPlayer);
-    // DEBUG: Log se imagem está correta
+    console.log("🎮 Current Player:", currentPlayer?.name || "nenhum");
     if (currentPlayer) {
-      console.log("URL da imagem do jogador:", currentPlayer?.image_url);
+      console.log("🖼️ URL da imagem:", currentPlayer.image_url);
     }
   }, [currentPlayer]);
 
@@ -170,7 +176,7 @@ const Game = () => {
   }, [currentPlayer, players]);
 
   const handleTutorialComplete = () => {
-    console.log("Tutorial completado, iniciando jogo");
+    console.log("✅ Tutorial completado, iniciando jogo");
     setShowTutorial(false);
     setGameStarted(true);
     setIsAuthenticatedGame(!!user);
@@ -178,7 +184,7 @@ const Game = () => {
   };
 
   const handleSkipTutorial = () => {
-    console.log("Tutorial pulado, iniciando jogo");
+    console.log("⏭️ Tutorial pulado, iniciando jogo");
     setShowTutorial(false);
     setGameStarted(true);
     setIsAuthenticatedGame(!!user);
@@ -281,6 +287,8 @@ const Game = () => {
           <div className="mb-4 rounded bg-yellow-100 text-xs px-4 py-2 text-yellow-900">
             <div><b>showTutorial:</b> {String(showTutorial)}</div>
             <div><b>gameStarted:</b> {String(gameStarted)}</div>
+            <div><b>players:</b> {players.length}</div>
+            <div><b>currentPlayer:</b> {currentPlayer?.name || 'nenhum'}</div>
           </div>
 
           {gameStarted && (
