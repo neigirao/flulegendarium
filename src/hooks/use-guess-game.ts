@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
@@ -49,9 +48,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const startGameForPlayer = useCallback(() => {
     if (currentPlayer && !gameOver && !isRunning) {
       console.log('🎮 Iniciando jogo para novo jogador:', currentPlayer.name);
-      console.log('🎯 Score atual antes do reset:', score);
+      console.log('🎯 Score atual:', score);
       
-      // Reset states for new player (mas não reset o score)
+      // Reset states for new player (but keep the score)
       setAttempts(0);
       setGameOver(false);
       setHasLost(false);
@@ -66,6 +65,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
       });
     }
   }, [currentPlayer, gameOver, isRunning, startTimer, trackEvent, score]);
+
+  // Reset score function
+  const resetScore = useCallback(() => {
+    console.log('🎯 Resetando pontuação de', score, 'para 0');
+    setScore(0);
+  }, [score]);
 
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
@@ -89,9 +94,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
       
       if (isCorrect) {
         const points = 5;
-        setScore(prev => {
-          const newScore = prev + points;
-          console.log('🎯 ACERTOU! Pontuação atualizada de', prev, 'para', newScore);
+        setScore(prevScore => {
+          const newScore = prevScore + points;
+          console.log('🎯 ACERTOU! Pontuação atualizada de', prevScore, 'para', newScore);
           return newScore;
         });
         
@@ -133,9 +138,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
       
       if (isCorrectGuess(guess, currentPlayer.name)) {
         const points = 5;
-        setScore(prev => {
-          const newScore = prev + points;
-          console.log('🎯 ACERTOU (fallback)! Pontuação atualizada de', prev, 'para', newScore);
+        setScore(prevScore => {
+          const newScore = prevScore + points;
+          console.log('🎯 ACERTOU (fallback)! Pontuação atualizada de', prevScore, 'para', newScore);
           return newScore;
         });
         
@@ -192,6 +197,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     TIME_LIMIT_SECONDS,
     hasLost,
     startGameForPlayer,
-    isTimerRunning: isRunning
+    isTimerRunning: isRunning,
+    resetScore
   };
 };
