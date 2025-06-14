@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +9,7 @@ import { Player } from "@/types/guess-game";
 import { EditPlayerForm } from "./EditPlayerForm";
 import { useToast } from "@/components/ui/use-toast";
 import { Database } from "@/integrations/supabase/types";
+import { convertStatistics } from "@/utils/statistics-converter";
 
 type PlayerRow = Database['public']['Tables']['players']['Row'];
 
@@ -28,7 +28,7 @@ export const PlayersManagement = () => {
       
       if (error) throw error;
       
-      // Convert Supabase row data to Player type
+      // Convert Supabase row data to Player type with robust statistics conversion
       return (data || []).map((player: PlayerRow): Player => ({
         id: player.id,
         name: player.name,
@@ -38,9 +38,7 @@ export const PlayersManagement = () => {
         fun_fact: player.fun_fact || '',
         achievements: player.achievements || [],
         nicknames: player.nicknames || [],
-        statistics: typeof player.statistics === 'object' && player.statistics !== null 
-          ? player.statistics as { gols: number; jogos: number }
-          : { gols: 0, jogos: 0 }
+        statistics: convertStatistics(player.statistics)
       }));
     },
   });

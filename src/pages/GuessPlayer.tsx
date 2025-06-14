@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { 
@@ -22,6 +23,7 @@ import { GameHeader } from "@/components/guess-game/GameHeader";
 import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { GameContainer } from "@/components/guess-game/GameContainer";
 import { useDebug } from "@/hooks/use-debug";
+import { convertStatistics } from "@/utils/statistics-converter";
 
 const GuessPlayer = () => {
   const { user } = useAuth();
@@ -53,13 +55,17 @@ const GuessPlayer = () => {
           console.log("Primeiro jogador:", data[0].name);
           
           const enhancedPlayers: Player[] = data.map((player) => {
-            // Convert the player data to proper Player type
+            // Convert the player data to proper Player type with robust statistics conversion
             const enhancedPlayer: Player = {
-              ...player,
-              image_url: player.image_url, // Will be enhanced below
-              statistics: typeof player.statistics === 'object' && player.statistics !== null 
-                ? player.statistics as { gols: number; jogos: number }
-                : { gols: 0, jogos: 0 }
+              id: player.id,
+              name: player.name,
+              position: player.position,
+              image_url: player.image_url,
+              year_highlight: player.year_highlight || '',
+              fun_fact: player.fun_fact || '',
+              achievements: player.achievements || [],
+              nicknames: player.nicknames || [],
+              statistics: convertStatistics(player.statistics)
             };
             
             // Now enhance the image URL

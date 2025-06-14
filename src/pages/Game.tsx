@@ -25,6 +25,7 @@ import {
   prepareNextBatch 
 } from "@/utils/player-image";
 import { Player } from "@/types/guess-game";
+import { convertStatistics } from "@/utils/statistics-converter";
 
 const Game = () => {
   const { user } = useAuth();
@@ -53,13 +54,17 @@ const Game = () => {
         }
         if (data && data.length > 0) {
           const enhancedPlayers: Player[] = data.map((player) => {
-            // Convert the player data to proper Player type
+            // Convert the player data to proper Player type with robust statistics conversion
             const enhancedPlayer: Player = {
-              ...player,
-              image_url: player.image_url, // Will be enhanced below
-              statistics: typeof player.statistics === 'object' && player.statistics !== null 
-                ? player.statistics as { gols: number; jogos: number }
-                : { gols: 0, jogos: 0 }
+              id: player.id,
+              name: player.name,
+              position: player.position,
+              image_url: player.image_url,
+              year_highlight: player.year_highlight || '',
+              fun_fact: player.fun_fact || '',
+              achievements: player.achievements || [],
+              nicknames: player.nicknames || [],
+              statistics: convertStatistics(player.statistics)
             };
             
             // Now enhance the image URL
