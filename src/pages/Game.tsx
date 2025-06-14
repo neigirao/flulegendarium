@@ -28,7 +28,7 @@ import { AuthButton } from "@/components/auth/AuthButton";
 const Game = () => {
   const { user } = useAuth();
   const { preloadImages } = usePreload();
-  const { trackGameStart, trackGameEnd, trackPageView } = useAnalytics();
+  const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
   const [showGameOverDialog, setShowGameOverDialog] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
