@@ -85,20 +85,6 @@ export default function Index() {
                   </p>
                 </div>
 
-                {/* Social Proof */}
-                <div className="flex items-center gap-6 text-white/80">
-                  <div className="flex items-center gap-2">
-                    <UsersIcon className="w-5 h-5" />
-                    <span className="text-lg font-semibold">{stats?.activePlayers?.toLocaleString() || '567'}+</span>
-                    <span>jogadores</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <GamepadIcon className="w-5 h-5" />
-                    <span className="text-lg font-semibold">{stats?.totalMatches?.toLocaleString() || '1.234'}+</span>
-                    <span>partidas</span>
-                  </div>
-                </div>
-
                 {/* Call to Actions */}
                 <div className="flex flex-col sm:flex-row gap-4 pt-4">
                   <Button 
@@ -111,34 +97,6 @@ export default function Index() {
                       Jogar Agora - Grátis
                     </Link>
                   </Button>
-                  
-                  <Button 
-                    size="lg" 
-                    variant="outline"
-                    className="border-white/30 text-white hover:bg-white/10 font-semibold px-8 py-4 rounded-xl text-lg backdrop-blur-sm"
-                    asChild
-                  >
-                    <Link to="#ranking" className="flex items-center gap-3">
-                      <TrophyIcon className="w-5 h-5" />
-                      Ver Ranking
-                    </Link>
-                  </Button>
-                </div>
-
-                {/* Trust Indicators */}
-                <div className="flex items-center gap-4 pt-6 text-white/70 text-sm">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                    <span>100% Gratuito</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                    <span>Sem cadastro obrigatório</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                    <span>Jogue no celular</span>
-                  </div>
                 </div>
               </div>
               
