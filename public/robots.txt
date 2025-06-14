@@ -1,0 +1,26 @@
+
+User-agent: *
+Allow: /
+Allow: /game
+Allow: /select-mode
+Allow: /profile
+
+# Block admin pages from search engines
+Disallow: /admin/
+Disallow: /admin/login
+
+# Sitemap location
+Sitemap: https://flulegendarium.lovable.app/sitemap.xml
+
+# Crawl delay to be respectful
+Crawl-delay: 1
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /

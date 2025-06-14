@@ -33,7 +33,7 @@ export const PlayerRanking = () => {
       <h3 className="text-lg font-semibold text-flu-grena mb-4 text-center">Top 5 Tricolores</h3>
       <div className="space-y-3">
         {rankings.map((rank, index) => (
-          <div key={rank.id} className="flex items-center gap-3 p-3 bg-white/50 rounded-lg">
+          <div key={`${rank.id}-${rank.player_id}-${index}`} className="flex items-center gap-3 p-3 bg-white/50 rounded-lg">
             <div className="flex items-center justify-center w-8 h-8">
               {index === 0 && <Medal className="text-yellow-500" size={20} />}
               {index === 1 && <Medal className="text-gray-400" size={20} />}

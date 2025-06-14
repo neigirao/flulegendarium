@@ -1,27 +1,80 @@
 
 {
-  "name": "Lendas do Flu",
+  "name": "Lendas do Flu - Quiz dos Ídolos Tricolores",
   "short_name": "Lendas Flu",
-  "description": "Teste seus conhecimentos sobre os ídolos tricolores do Fluminense",
+  "description": "Teste seus conhecimentos sobre os ídolos tricolores do Fluminense. Adivinhe o jogador pela foto e prove que é um verdadeiro tricolor!",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#800020",
   "orientation": "portrait-primary",
   "scope": "/",
+  "categories": ["games", "sports", "entertainment", "education"],
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "/favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any"
     },
     {
-      "src": "/placeholder.svg",
-      "type": "image/svg+xml",
-      "sizes": "192x192",
+      "src": "/og-image.png",
+      "type": "image/png",
+      "sizes": "512x512",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/og-image.png",
+      "type": "image/png", 
+      "sizes": "192x192",
+      "purpose": "any"
     }
   ],
-  "categories": ["games", "sports", "entertainment"],
-  "lang": "pt-BR"
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Tela inicial do Lendas do Flu"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Jogar Agora",
+      "short_name": "Jogar",
+      "description": "Começar um novo jogo",
+      "url": "/game",
+      "icons": [
+        {
+          "src": "/og-image.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Ranking",
+      "short_name": "Ranking", 
+      "description": "Ver ranking dos jogadores",
+      "url": "/#ranking",
+      "icons": [
+        {
+          "src": "/og-image.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "share_target": {
+    "action": "/",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
 }
