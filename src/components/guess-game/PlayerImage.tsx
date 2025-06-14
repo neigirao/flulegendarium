@@ -13,13 +13,18 @@ interface PlayerImageProps {
     image_url: string;
   } | null;
   onImageFixed: () => void;
-  onImageLoaded?: () => void; // Nova prop
+  onImageLoaded?: () => void;
 }
 
 const getOptimizedImageUrl = (url: string): string => {
+  // Check if browser supports WebP
   const supportsWebP = (() => {
-    const elem = document.createElement('canvas');
-    return elem.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    try {
+      const elem = document.createElement('canvas');
+      return elem.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    } catch (e) {
+      return false;
+    }
   })();
 
   if (!supportsWebP) return url;
@@ -40,6 +45,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
       (entries) => {
         const [entry] = entries;
         if (entry.isIntersecting) {
+          console.log(`👁️ Imagem entrou na viewport: ${player?.name}`);
           setIsInView(true);
           observer.disconnect();
         }
@@ -55,16 +61,18 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
     }
 
     return () => observer.disconnect();
-  }, []);
+  }, [player?.name]);
 
   useEffect(() => {
     return () => cleanupObserver();
   }, [cleanupObserver]);
 
+  // Preload critical images
   useEffect(() => {
     const prefetchDefault = new Image();
     prefetchDefault.src = defaultPlayerImage;
     
+    // Preload first few fallback images
     Object.values(playerImagesFallbacksMap).slice(0, 5).forEach(url => {
       const img = new Image();
       img.src = url;
@@ -72,6 +80,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
   }, []);
 
   if (!imageSrc) {
+    console.warn(`⚠️ Nenhuma imagem disponível para: ${player?.name}`);
     return (
       <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-gray-100 border-2 border-flu-verde flex items-center justify-center">
         <p className="text-gray-500">Imagem não disponível</p>
@@ -80,6 +89,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
   }
 
   const optimizedImageSrc = getOptimizedImageUrl(imageSrc);
+  console.log(`🎨 Renderizando imagem otimizada para ${player?.name}: ${optimizedImageSrc}`);
 
   return (
     <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300 hover:shadow-lg border-2 border-flu-verde">
@@ -91,15 +101,22 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
           <img
             ref={imgRef}
             src={optimizedImageSrc}
-            alt="Imagem do jogador"
+            alt={`Imagem de ${player?.name || 'jogador'}`}
             className={`max-w-full max-h-full object-contain transition-all duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
-            onError={handleImageError}
-            onLoad={handleImageLoaded}
+            onError={(e) => {
+              console.error(`🚫 Evento onError disparado para ${player?.name}:`, e);
+              handleImageError();
+            }}
+            onLoad={(e) => {
+              console.log(`🎉 Evento onLoad disparado para ${player?.name}:`, e);
+              handleImageLoaded();
+            }}
             loading="lazy" 
             decoding="async"
             referrerPolicy="no-referrer"
             onContextMenu={(e) => e.preventDefault()}
             draggable="false"
+            crossOrigin="anonymous"
           />
         )}
       </div>
