@@ -21,28 +21,86 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Optimize chunk splitting for better caching
+    // Optimize chunk splitting for better caching and performance budget
     rollupOptions: {
       output: {
         manualChunks: {
+          // Core React libraries - loaded first
           vendor: ['react', 'react-dom'],
+          
+          // Router - separate chunk for navigation
           router: ['react-router-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-toast'],
+          
+          // UI components - separate chunk to allow caching
+          ui: [
+            '@radix-ui/react-dialog', 
+            '@radix-ui/react-toast',
+            '@radix-ui/react-select',
+            '@radix-ui/react-dropdown-menu'
+          ],
+          
+          // Data fetching - separate chunk
           query: ['@tanstack/react-query'],
-          supabase: ['@supabase/supabase-js']
-        }
+          
+          // Database - separate chunk
+          supabase: ['@supabase/supabase-js'],
+          
+          // Game logic - separate chunk for better code splitting
+          game: [
+            'src/hooks/use-guess-game.ts',
+            'src/hooks/use-game-timer.ts',
+            'src/hooks/use-player-selection.ts'
+          ],
+          
+          // Utilities - separate chunk
+          utils: [
+            'src/utils/player-image/index.ts',
+            'src/utils/name-processor.ts'
+          ]
+        },
+        
+        // Optimize chunk naming for better caching
+        chunkFileNames: (chunkInfo) => {
+          const facadeModuleId = chunkInfo.facadeModuleId 
+            ? chunkInfo.facadeModuleId.split('/').pop().replace('.tsx', '').replace('.ts', '')
+            : 'chunk';
+          return `assets/${facadeModuleId}-[hash].js`;
+        },
+        
+        // Optimize asset naming
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+        
+        // Optimize entry naming
+        entryFileNames: 'assets/[name]-[hash].js'
       }
     },
-    // Enable minification for production
+    
+    // Enable minification for production with better performance
     minify: mode === 'production' ? 'esbuild' : false,
+    
     // Optimize asset handling
     assetsDir: 'assets',
-    // Generate source maps for debugging
+    
+    // Generate source maps only in development for better performance
     sourcemap: mode === 'development',
-    // Set chunk size warning limit
-    chunkSizeWarningLimit: 1000
+    
+    // Set chunk size warning limit (performance budget)
+    chunkSizeWarningLimit: 800, // 800KB limit
+    
+    // Optimize CSS
+    cssCodeSplit: true,
+    
+    // Target modern browsers for better performance
+    target: 'esnext',
+    
+    // Optimize for production
+    ...(mode === 'production' && {
+      reportCompressedSize: false, // Faster builds
+      cssMinify: 'esbuild',
+    })
   },
-  // Optimize dependencies
+  
+  // Optimize dependencies for better performance budget
   optimizeDeps: {
     include: [
       'react',
@@ -50,6 +108,16 @@ export default defineConfig(({ mode }) => ({
       'react-router-dom',
       '@tanstack/react-query',
       '@supabase/supabase-js'
+    ],
+    exclude: [
+      // Exclude large dependencies that should be lazy loaded
+      'lucide-react'
     ]
+  },
+  
+  // Performance optimizations
+  esbuild: {
+    // Remove console logs in production
+    drop: mode === 'production' ? ['console', 'debugger'] : [],
   }
 }));

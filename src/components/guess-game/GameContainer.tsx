@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect } from "react";
 import { GuessForm } from "./GuessForm";
 import { GameStatus } from "./GameStatus";
@@ -77,7 +78,7 @@ export const GameContainer = ({
         attempts={attempts}
         maxAttempts={MAX_ATTEMPTS}
         gameOver={gameOver}
-        isTimerRunning={isTimerRunning}
+        onNextPlayer={selectRandomPlayer}
       />
 
       {/* Player Image - now with priority and performance tracking */}
@@ -90,7 +91,7 @@ export const GameContainer = ({
 
       {/* Guess Form */}
       <GuessForm
-        handleGuess={handleGuess}
+        onGuess={handleGuess}
         isProcessingGuess={isProcessingGuess}
         gameOver={gameOver}
         hasLost={hasLost}

@@ -8,10 +8,26 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { AuthProvider } from "@/hooks/useAuth";
 import { usePerformance } from "@/hooks/use-performance";
+import { useBundleAnalyzer } from "@/hooks/use-bundle-analyzer";
 
-// Lazy load pages with better loading
-const Index = lazy(() => import("./pages/Index"));
-const GameModeSelection = lazy(() => import("./pages/GameModeSelection"));
+// Lazy load pages with better loading and preloading
+const Index = lazy(() => 
+  import("./pages/Index").then(module => {
+    // Preload critical pages after Index loads
+    import("./pages/GameModeSelection");
+    import("./pages/Game");
+    return module;
+  })
+);
+
+const GameModeSelection = lazy(() => 
+  import("./pages/GameModeSelection").then(module => {
+    // Preload Game page when user is selecting mode
+    import("./pages/Game");
+    return module;
+  })
+);
+
 const Game = lazy(() => import("./pages/Game"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AdminLogin = lazy(() => import("./pages/AdminLogin"));
@@ -30,19 +46,25 @@ const PageLoader = () => {
   );
 };
 
-// Optimized QueryClient configuration
+// Optimized QueryClient configuration for better performance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes cache
+      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
       refetchOnWindowFocus: false,
+      refetchOnReconnect: 'always',
       retry: (failureCount, error: any) => {
         // Don't retry on 4xx errors
         if (error?.status >= 400 && error?.status < 500) {
           return false;
         }
-        return failureCount < 3;
+        return failureCount < 2; // Reduced retries for better performance
       },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+    mutations: {
+      retry: 1,
     },
   },
 });
@@ -50,6 +72,7 @@ const queryClient = new QueryClient({
 // Performance monitoring component
 const PerformanceMonitor = () => {
   usePerformance();
+  useBundleAnalyzer();
   return null;
 };
 

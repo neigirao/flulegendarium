@@ -82,15 +82,15 @@ export const usePerformance = () => {
       }).observe({ entryTypes: ['paint'] });
     }
 
-    // Monitor resource loading
+    // Monitor resource loading with corrected properties
     if ('performance' in window) {
       window.addEventListener('load', () => {
         const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         
         const metrics = {
           ttfb: perfData.responseStart - perfData.requestStart,
-          domComplete: perfData.domComplete - perfData.navigationStart,
-          loadComplete: perfData.loadEventEnd - perfData.navigationStart
+          domComplete: perfData.domComplete - perfData.fetchStart,
+          loadComplete: perfData.loadEventEnd - perfData.fetchStart
         };
         
         console.log('Performance Metrics:', metrics);

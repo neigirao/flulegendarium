@@ -8,28 +8,76 @@ interface AnalyticsEvent {
   value?: number;
 }
 
+// Optimized analytics with performance considerations
 export const useAnalytics = () => {
+  // Queue events to batch send them
+  const eventQueue: AnalyticsEvent[] = [];
+  let batchTimer: NodeJS.Timeout | null = null;
+  
+  const flushEvents = () => {
+    if (eventQueue.length === 0) return;
+    
+    // Send batched events
+    eventQueue.forEach(event => {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', event.action, {
+          event_category: event.category,
+          event_label: event.label,
+          value: event.value,
+        });
+      }
+    });
+    
+    // Clear queue
+    eventQueue.length = 0;
+  };
+  
   const trackEvent = ({ action, category, label, value }: AnalyticsEvent) => {
-    // Google Analytics 4
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('event', action, {
-        event_category: category,
-        event_label: label,
-        value: value,
-      });
-    }
-
+    // Add to queue instead of sending immediately
+    eventQueue.push({ action, category, label, value });
+    
+    // Batch events every 2 seconds
+    if (batchTimer) clearTimeout(batchTimer);
+    batchTimer = setTimeout(flushEvents, 2000);
+    
     // Console log for development
     if (process.env.NODE_ENV === 'development') {
-      console.log('Analytics Event:', { action, category, label, value });
+      console.log('Analytics Event Queued:', { action, category, label, value });
     }
   };
+  
+  // Flush events on page unload
+  useEffect(() => {
+    const handleUnload = () => {
+      flushEvents();
+    };
+    
+    window.addEventListener('beforeunload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+      if (batchTimer) clearTimeout(batchTimer);
+    };
+  }, []);
 
   const trackPageView = (page: string) => {
-    if (typeof window !== 'undefined' && window.gtag) {
-      window.gtag('config', 'G-X2VE77MEYC', {
-        page_path: page,
+    // Use requestIdleCallback for non-critical analytics
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('config', 'G-X2VE77MEYC', {
+            page_path: page,
+          });
+        }
       });
+    } else {
+      // Fallback for browsers without requestIdleCallback
+      setTimeout(() => {
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('config', 'G-X2VE77MEYC', {
+            page_path: page,
+          });
+        }
+      }, 100);
     }
   };
 
