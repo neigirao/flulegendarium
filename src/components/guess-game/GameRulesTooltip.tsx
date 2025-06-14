@@ -24,6 +24,7 @@ export const GameRulesTooltip = () => {
             <p>• Use nomes oficiais ou apelidos</p>
             <p>• Acerto: +5 pontos</p>
             <p>• Erro ou tempo esgotado: Game Over</p>
+            <p className="text-red-600 font-semibold">• ⚠️ Não troque de aba: Game Over</p>
           </div>
         </TooltipContent>
       </Tooltip>

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Clock, Trophy, Target, X } from "lucide-react";
+import { ArrowRight, Clock, Trophy, Target, X, AlertTriangle } from "lucide-react";
 
 interface GameTutorialProps {
   onComplete: () => void;
@@ -47,12 +47,25 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
       )
     },
     {
+      title: "⚠️ REGRA IMPORTANTE",
+      icon: <AlertTriangle className="w-8 h-8 text-red-600" />,
+      content: (
+        <div className="space-y-4 p-4 bg-red-50 rounded-lg border border-red-200">
+          <p className="font-bold text-red-800">NÃO TROQUE DE ABA!</p>
+          <p>Se você trocar de aba, minimizar ou sair da janela durante o jogo, será <strong>Game Over</strong> automaticamente.</p>
+          <p>Esta regra evita que você consulte outras fontes durante o jogo.</p>
+          <p className="text-sm text-red-700">⚠️ Mantenha o foco na aba do jogo!</p>
+        </div>
+      )
+    },
+    {
       title: "Sistema de Pontuação",
       icon: <Trophy className="w-8 h-8 text-flu-grena" />,
       content: (
         <div className="space-y-4">
           <p><strong>Acertou:</strong> +5 pontos</p>
           <p><strong>Errou ou tempo esgotou:</strong> Game Over</p>
+          <p><strong>Trocou de aba:</strong> Game Over</p>
           <p>Tente fazer o maior número de acertos consecutivos!</p>
           <p>Seu recorde será salvo no ranking.</p>
         </div>
@@ -67,6 +80,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
           <p><strong>✓</strong> Exemplo: "Fred", "Frederico" ou "Chaves Guedes"</p>
           <p><strong>✓</strong> Não é necessário ser exato, nomes parciais funcionam</p>
           <p><strong>✓</strong> Foque nos jogadores mais famosos da história</p>
+          <p><strong>⚠️</strong> Lembre-se: não saia da aba durante o jogo!</p>
         </div>
       )
     }

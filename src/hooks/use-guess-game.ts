@@ -1,8 +1,10 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
 import { usePlayerSelection } from "./use-player-selection";
 import { useGameTimer, TIME_LIMIT_SECONDS } from "./use-game-timer";
+import { useTabVisibility } from "./use-tab-visibility";
 import { processPlayerName, isCorrectGuess } from "@/utils/name-processor";
 import { useAnalytics } from "./use-analytics";
 
@@ -16,17 +18,19 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [gameOver, setGameOver] = useState(false);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
   const [hasLost, setHasLost] = useState(false);
+  const [gameActive, setGameActive] = useState(false);
   
   // Player selection hook
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed } = usePlayerSelection(players);
   
   // Handle time up callback
   const handleTimeUp = useCallback(() => {
-    if (!gameOver && currentPlayer) {
+    if (!gameOver && currentPlayer && gameActive) {
       console.log('⏰ Tempo esgotado para:', currentPlayer.name);
       console.log('🎯 Score final por tempo:', score);
       setGameOver(true);
       setHasLost(true);
+      setGameActive(false);
       
       trackEvent({
         action: 'game_timeout',
@@ -40,7 +44,29 @@ export const useGuessGame = (players: Player[] | undefined) => {
         description: `O jogador era ${currentPlayer.name}. Pontuação final: ${score}`,
       });
     }
-  }, [currentPlayer, gameOver, score, toast, trackEvent]);
+  }, [currentPlayer, gameOver, score, toast, trackEvent, gameActive]);
+
+  // Handle tab change callback
+  const handleTabChange = useCallback(() => {
+    if (gameActive && !gameOver) {
+      console.log('🚫 Jogo encerrado por mudança de aba');
+      setGameOver(true);
+      setHasLost(true);
+      setGameActive(false);
+      
+      trackEvent({
+        action: 'game_tab_change',
+        category: 'Game',
+        label: 'tab_switch_violation'
+      });
+    }
+  }, [gameActive, gameOver, trackEvent]);
+  
+  // Tab visibility hook
+  useTabVisibility({ 
+    onTabChange: handleTabChange, 
+    isGameActive: gameActive 
+  });
   
   // Game timer hook
   const { timeRemaining, isRunning, startTimer, stopTimer } = useGameTimer(gameOver, handleTimeUp);
@@ -55,6 +81,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
       setAttempts(0);
       setGameOver(false);
       setHasLost(false);
+      setGameActive(true);
       
       // Start timer
       startTimer();
@@ -71,11 +98,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const resetScore = useCallback(() => {
     console.log('🎯 Resetando pontuação de', score, 'para 0');
     setScore(0);
+    setGameActive(false);
   }, [score]);
 
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
-    if (!currentPlayer || !guess || gameOver || isProcessingGuess) return;
+    if (!currentPlayer || !guess || gameOver || isProcessingGuess || !gameActive) return;
     
     console.log('🎮 Processando palpite:', guess, 'para jogador:', currentPlayer.name);
     console.log('🎯 Score antes do palpite:', score);
@@ -117,6 +145,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         });
         
         stopTimer();
+        setGameActive(false);
         
         // Delay para mostrar a pontuação antes de selecionar novo jogador
         setTimeout(() => {
@@ -128,6 +157,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         console.log('🎯 Score final por erro:', score);
         setGameOver(true);
         setHasLost(true);
+        setGameActive(false);
         
         trackIncorrectGuess(currentPlayer.name, guess);
         
@@ -159,6 +189,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         });
         
         stopTimer();
+        setGameActive(false);
         setTimeout(() => {
           selectRandomPlayer();
         }, 2000);
@@ -166,6 +197,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         console.log('❌ ERROU (fallback)! Score final:', score);
         setGameOver(true);
         setHasLost(true);
+        setGameActive(false);
         stopTimer();
         
         trackIncorrectGuess(currentPlayer.name, guess);
@@ -179,7 +211,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     } finally {
       setIsProcessingGuess(false);
     }
-  }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent, score]);
+  }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent, score, gameActive]);
 
   // Debug logs detalhados para rastrear o estado
   useEffect(() => {
@@ -189,7 +221,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
     console.log('- Time Remaining:', timeRemaining);
     console.log('- Game Over:', gameOver);
     console.log('- Timer Running:', isRunning);
-  }, [currentPlayer, score, timeRemaining, gameOver, isRunning]);
+    console.log('- Game Active:', gameActive);
+  }, [currentPlayer, score, timeRemaining, gameOver, isRunning, gameActive]);
 
   return {
     currentPlayer,
