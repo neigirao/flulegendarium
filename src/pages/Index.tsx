@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -33,6 +34,7 @@ export default function Index() {
                 src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
                 alt="Fluminense FC" 
                 className="w-8 h-8 object-contain"
+                style={{ background: 'transparent' }}
               />
               <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
             </Link>
@@ -68,6 +70,7 @@ export default function Index() {
                       src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
                       alt="Fluminense FC" 
                       className="w-20 h-20 object-contain drop-shadow-2xl"
+                      style={{ background: 'transparent' }}
                     />
                   </div>
                   <div>
@@ -115,12 +118,24 @@ export default function Index() {
                 <div className="relative w-96 h-96 mx-auto">
                   <div className="absolute inset-0 bg-white/10 rounded-3xl backdrop-blur-md flex items-center justify-center border-2 border-white/20 shadow-2xl">
                     <div className="w-80 h-80 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center relative overflow-hidden border border-white/10">
-                      <div className="text-white text-9xl font-black opacity-30">?</div>
+                      {/* Imagem do jogador com ponto de interrogação */}
+                      <div className="relative w-full h-full">
+                        <img 
+                          src="/lovable-uploads/efaf362c-8726-4049-98bc-ebb26dcdd4e1.png" 
+                          alt="Jogador misterioso" 
+                          className="w-full h-full object-cover opacity-70 rounded-2xl"
+                        />
+                        {/* Overlay com ponto de interrogação */}
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-2xl">
+                          <div className="text-white text-9xl font-black drop-shadow-2xl">?</div>
+                        </div>
+                      </div>
                       <div className="absolute top-6 right-6">
                         <img 
                           src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
                           alt="Fluminense FC" 
-                          className="w-16 h-16 object-contain opacity-40 drop-shadow-lg"
+                          className="w-16 h-16 object-contain opacity-60 drop-shadow-lg"
+                          style={{ background: 'transparent' }}
                         />
                       </div>
                     </div>
@@ -141,6 +156,7 @@ export default function Index() {
                   src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
                   alt="Fluminense FC" 
                   className="w-12 h-12 object-contain"
+                  style={{ background: 'transparent' }}
                 />
                 <h2 className="text-5xl font-black text-flu-grena">
                   RANKING TRICOLOR
@@ -164,6 +180,7 @@ export default function Index() {
                   src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
                   alt="Fluminense FC" 
                   className="w-12 h-12 object-contain drop-shadow-lg"
+                  style={{ background: 'transparent' }}
                 />
                 <h2 className="text-4xl font-black">ESTATÍSTICAS DO JOGO</h2>
               </div>
@@ -274,6 +291,7 @@ export default function Index() {
                 src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
                 alt="Fluminense FC" 
                 className="w-10 h-10"
+                style={{ background: 'transparent' }}
               />
               <span className="text-2xl font-bold">Lendas do Flu</span>
             </div>
