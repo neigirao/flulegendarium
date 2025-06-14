@@ -89,21 +89,6 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
     }
   };
 
-  const handleCancel = () => {
-    trackEvent({
-      action: 'ranking_form_cancelled',
-      category: 'Game',
-      label: 'score_not_saved'
-    });
-    
-    // Se não está autenticado (jogador convidado), redireciona para home
-    if (!isAuthenticated) {
-      navigate("/");
-    } else {
-      onCancel();
-    }
-  };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="text-center">
@@ -135,24 +120,13 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleCancel}
-          disabled={isLoading}
-          className="flex-1"
-        >
-          Pular
-        </Button>
-        <Button
-          type="submit"
-          disabled={isLoading || !name.trim()}
-          className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
-        >
-          {isLoading ? "Salvando..." : "Salvar"}
-        </Button>
-      </div>
+      <Button
+        type="submit"
+        disabled={isLoading || !name.trim()}
+        className="w-full bg-flu-grena hover:bg-flu-grena/90"
+      >
+        {isLoading ? "Salvando..." : "Salvar"}
+      </Button>
     </form>
   );
 };
