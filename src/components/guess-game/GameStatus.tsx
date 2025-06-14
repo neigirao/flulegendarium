@@ -26,10 +26,9 @@ export const GameStatus = ({
   const { toast } = useToast();
   
   // Debug logs
-  console.log('🎮 GameStatus Props:');
-  console.log('- Score:', score);
-  console.log('- Time Remaining:', timeRemaining);
-  console.log('- Game Over:', gameOver);
+  console.log('🎮 GameStatus - Score recebido:', score);
+  console.log('🎮 GameStatus - Game Over:', gameOver);
+  console.log('🎮 GameStatus - Time Remaining:', timeRemaining);
   
   // Efeito para alertar quando o tempo estiver acabando
   useEffect(() => {
@@ -82,21 +81,21 @@ export const GameStatus = ({
         />
       )}
 
-      {/* Status sempre visível */}
-      <div className="space-y-4 p-4 rounded-lg bg-white/90 shadow-sm border border-flu-verde/30">
+      {/* Status sempre visível com destaque para pontuação */}
+      <div className="space-y-4 p-6 rounded-lg bg-white/95 shadow-lg border-2 border-flu-verde/30">
         <div className="flex items-center justify-between">
           {/* Timer */}
-          <div className="flex items-center gap-2">
-            <Clock className="w-5 h-5 text-flu-verde" />
-            <span className={`font-bold text-lg ${timeRemaining <= 10 ? 'text-red-500 animate-pulse' : 'text-flu-verde'}`}>
+          <div className="flex items-center gap-3">
+            <Clock className="w-6 h-6 text-flu-verde" />
+            <span className={`font-bold text-xl ${timeRemaining <= 10 ? 'text-red-500 animate-pulse' : 'text-flu-verde'}`}>
               {formatTime(timeRemaining)}
             </span>
           </div>
 
-          {/* Pontuação */}
-          <div className="flex items-center gap-2">
-            <Trophy className="w-5 h-5 text-yellow-500" />
-            <span className="font-medium text-lg text-flu-grena">{score} pontos</span>
+          {/* Pontuação com destaque */}
+          <div className="flex items-center gap-3 bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200">
+            <Trophy className="w-6 h-6 text-yellow-600" />
+            <span className="font-bold text-xl text-flu-grena">{score || 0} pontos</span>
           </div>
         </div>
 

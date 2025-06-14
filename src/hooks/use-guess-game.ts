@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
@@ -94,9 +95,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
       
       if (isCorrect) {
         const points = 5;
+        console.log('🎯 ACERTOU! Adicionando', points, 'pontos ao score atual:', score);
+        
+        // Update score immediately
         setScore(prevScore => {
           const newScore = prevScore + points;
-          console.log('🎯 ACERTOU! Pontuação atualizada de', prevScore, 'para', newScore);
+          console.log('🎯 Score atualizado de', prevScore, 'para', newScore);
           return newScore;
         });
         
@@ -114,10 +118,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
         });
         
         stopTimer();
+        
         // Delay para mostrar a pontuação antes de selecionar novo jogador
         setTimeout(() => {
+          console.log('🔄 Selecionando próximo jogador após acerto');
           selectRandomPlayer();
-        }, 1500);
+        }, 2000);
       } else {
         console.log('❌ ERROU! Resposta:', guess, 'Esperado:', currentPlayer.name);
         setGameOver(true);
@@ -136,11 +142,14 @@ export const useGuessGame = (players: Player[] | undefined) => {
     } catch (error) {
       console.error("Erro ao processar palpite:", error);
       
+      // Fallback check
       if (isCorrectGuess(guess, currentPlayer.name)) {
         const points = 5;
+        console.log('🎯 ACERTOU (fallback)! Adicionando', points, 'pontos');
+        
         setScore(prevScore => {
           const newScore = prevScore + points;
-          console.log('🎯 ACERTOU (fallback)! Pontuação atualizada de', prevScore, 'para', newScore);
+          console.log('🎯 Score atualizado (fallback) de', prevScore, 'para', newScore);
           return newScore;
         });
         
@@ -154,7 +163,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         stopTimer();
         setTimeout(() => {
           selectRandomPlayer();
-        }, 1500);
+        }, 2000);
       } else {
         setGameOver(true);
         setHasLost(true);
@@ -171,7 +180,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     } finally {
       setIsProcessingGuess(false);
     }
-  }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent]);
+  }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent, score]);
 
   // Debug logs para rastrear o estado
   useEffect(() => {
