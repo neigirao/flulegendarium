@@ -1,12 +1,22 @@
+
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { PlayerRanking } from "@/components/PlayerRanking";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
+import { getGameStats } from "@/services/statsService";
 
 export default function Index() {
   const { user } = useAuth();
+
+  const { data: stats } = useQuery({
+    queryKey: ['game-stats'],
+    queryFn: getGameStats,
+    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    refetchOnWindowFocus: false,
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-flu-verde/50 to-white">
@@ -91,7 +101,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats Section with Real Data */}
       <section className="py-12 bg-flu-verde/10">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-bold text-flu-grena mb-8">
@@ -99,15 +109,21 @@ export default function Index() {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <p className="text-5xl font-bold text-flu-verde">1234</p>
+              <p className="text-5xl font-bold text-flu-verde">
+                {stats?.totalMatches?.toLocaleString() || '---'}
+              </p>
               <p className="text-lg text-gray-700">Partidas Jogadas</p>
             </div>
             <div>
-              <p className="text-5xl font-bold text-flu-verde">5678</p>
+              <p className="text-5xl font-bold text-flu-verde">
+                {stats?.activePlayers?.toLocaleString() || '---'}
+              </p>
               <p className="text-lg text-gray-700">Jogadores Ativos</p>
             </div>
             <div>
-              <p className="text-5xl font-bold text-flu-verde">9101</p>
+              <p className="text-5xl font-bold text-flu-verde">
+                {stats?.highestScore?.toLocaleString() || '---'}
+              </p>
               <p className="text-lg text-gray-700">Recorde de Pontos</p>
             </div>
           </div>

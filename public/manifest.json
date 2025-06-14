@@ -1,0 +1,27 @@
+
+{
+  "name": "Lendas do Flu",
+  "short_name": "Lendas Flu",
+  "description": "Teste seus conhecimentos sobre os ídolos tricolores do Fluminense",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#800020",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/placeholder.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["games", "sports", "entertainment"],
+  "lang": "pt-BR"
+}
