@@ -37,14 +37,17 @@ export default defineConfig(({ mode }) => ({
     chunkSizeWarningLimit: 1000,
     // Enable source maps for better debugging in production
     sourcemap: mode === 'development',
-    // Minification settings
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: mode === 'production',
-        drop_debugger: mode === 'production',
+    // Minification settings - only use terser in production
+    minify: mode === 'production' ? 'terser' : false,
+    // Only configure terser options for production
+    ...(mode === 'production' && {
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
       },
-    },
+    }),
     // CSS code splitting
     cssCodeSplit: true,
     // Asset inlining threshold
