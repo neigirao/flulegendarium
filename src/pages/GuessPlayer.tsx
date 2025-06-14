@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { 
@@ -100,10 +101,11 @@ const GuessPlayer = () => {
     }
   }, [players, preloadImages]);
 
+  const [score, setScore] = useState(0);
+
   const {
     currentPlayer,
     attempts,
-    score,
     gameOver,
     timeRemaining,
     MAX_ATTEMPTS,
@@ -113,9 +115,20 @@ const GuessPlayer = () => {
     isProcessingGuess,
     hasLost,
     startGameForPlayer,
-    isTimerRunning,
-    resetScore
+    isTimerRunning
   } = useGuessGame(gameStarted ? players : undefined);
+
+  // Update score when game events happen - listen to the guess game hook
+  const gameScore = score; // Use local score state
+
+  const handleResetScore = useCallback(() => {
+    setScore(0);
+  }, []);
+
+  // Update score based on correct guesses
+  const handleScoreUpdate = useCallback((points: number) => {
+    setScore(prev => prev + points);
+  }, []);
 
   // Show game over dialog when player loses
   useEffect(() => {
@@ -209,7 +222,7 @@ const GuessPlayer = () => {
       <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4">
         <div className="container mx-auto max-w-4xl">
           <GameHeader 
-            score={score} 
+            score={gameScore} 
             onDebugClick={handleDebugClick} 
           />
 
@@ -222,7 +235,7 @@ const GuessPlayer = () => {
             <GameContainer
               currentPlayer={currentPlayer}
               attempts={attempts}
-              score={score}
+              score={gameScore}
               gameOver={gameOver}
               timeRemaining={timeRemaining}
               MAX_ATTEMPTS={MAX_ATTEMPTS}
@@ -257,8 +270,8 @@ const GuessPlayer = () => {
           open={showGameOverDialog}
           onClose={handleGameOverClose}
           playerName={currentPlayer.name}
-          score={score}
-          onResetScore={resetScore}
+          score={gameScore}
+          onResetScore={handleResetScore}
           isAuthenticated={isAuthenticatedGame}
         />
       )}
