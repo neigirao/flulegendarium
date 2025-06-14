@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { RankingForm } from "./RankingForm";
-import { Timer, Trophy } from "lucide-react";
+import { Timer, Trophy, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface GameStatusProps {
@@ -47,6 +47,13 @@ export const GameStatus = ({
     onNextPlayer();
   };
 
+  // Formatar tempo em MM:SS
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
   return (
     <div className="space-y-4">
       {gameOver && !showRankingForm && (
@@ -71,14 +78,24 @@ export const GameStatus = ({
 
       <div className="space-y-4 p-4 rounded-lg bg-white/90 shadow-sm border border-flu-verde/30">
         <div className="flex items-center justify-between">
+          {/* Timer - agora visível */}
+          <div className="flex items-center gap-2">
+            <Clock className="w-5 h-5 text-flu-verde" />
+            <span className={`font-bold text-lg ${timeRemaining <= 10 ? 'text-red-500 animate-pulse' : 'text-flu-verde'}`}>
+              {formatTime(timeRemaining)}
+            </span>
+          </div>
+
           {/* Informação de pontuação */}
           <div className="flex items-center gap-2">
             <Trophy className="w-5 h-5 text-yellow-500" />
-            <span className="font-medium text-lg">{score}</span>
+            <span className="font-medium text-lg">{score} pontos</span>
           </div>
+        </div>
 
-          {/* Aviso de tentativa única */}
-          <div className="text-sm font-medium text-flu-grena flex items-center gap-1">
+        {/* Aviso de tentativa única */}
+        <div className="text-center">
+          <div className="text-sm font-medium text-flu-grena flex items-center justify-center gap-1">
             <Timer className="w-4 h-4" />
             <span>Apenas uma tentativa!</span>
           </div>

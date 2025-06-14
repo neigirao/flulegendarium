@@ -69,9 +69,11 @@ export const GameContainer = ({
     };
   }, [handleKeyDown]);
 
+  console.log('🎮 GameContainer - Score atual:', score, 'Timer:', timeRemaining);
+
   return (
     <div className="space-y-6">
-      {/* Game Status */}
+      {/* Game Status - com timer e pontuação visíveis */}
       <GameStatus
         score={score}
         timeRemaining={timeRemaining}

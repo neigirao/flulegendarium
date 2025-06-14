@@ -87,7 +87,11 @@ export const useGuessGame = (players: Player[] | undefined) => {
       
       if (isCorrect) {
         const points = 5;
-        setScore(prev => prev + points);
+        setScore(prev => {
+          const newScore = prev + points;
+          console.log('🎯 Pontuação atualizada:', newScore);
+          return newScore;
+        });
         
         trackCorrectGuess(currentPlayer.name);
         trackEvent({
@@ -103,7 +107,10 @@ export const useGuessGame = (players: Player[] | undefined) => {
         });
         
         stopTimer();
-        selectRandomPlayer();
+        // Pequeno delay para mostrar a pontuação antes de selecionar novo jogador
+        setTimeout(() => {
+          selectRandomPlayer();
+        }, 1500);
       } else {
         setGameOver(true);
         setHasLost(true);
@@ -123,7 +130,11 @@ export const useGuessGame = (players: Player[] | undefined) => {
       
       if (isCorrectGuess(guess, currentPlayer.name)) {
         const points = 5;
-        setScore(prev => prev + points);
+        setScore(prev => {
+          const newScore = prev + points;
+          console.log('🎯 Pontuação atualizada (fallback):', newScore);
+          return newScore;
+        });
         
         trackCorrectGuess(currentPlayer.name);
         
@@ -133,7 +144,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
         });
         
         stopTimer();
-        selectRandomPlayer();
+        setTimeout(() => {
+          selectRandomPlayer();
+        }, 1500);
       } else {
         setGameOver(true);
         setHasLost(true);
