@@ -41,6 +41,13 @@ export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
     }, 1000);
   }, [gameOver, clearGameTimer, onTimeUp]);
 
+  // Clear timer when game is over
+  useEffect(() => {
+    if (gameOver) {
+      clearGameTimer();
+    }
+  }, [gameOver, clearGameTimer]);
+
   // Cleanup timer when component unmounts
   useEffect(() => {
     return clearGameTimer;

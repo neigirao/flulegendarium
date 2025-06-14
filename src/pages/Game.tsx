@@ -13,7 +13,6 @@ import { useGuessGame } from "@/hooks/use-guess-game";
 import { usePreload } from "@/hooks/use-preload";
 import { useAuth } from "@/hooks/useAuth";
 import { useCallback, useEffect, useState } from "react";
-import { RootLayout } from "@/components/RootLayout";
 import { Player } from "@/types/guess-game";
 import { Loader } from "@/components/guess-game/Loader";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
@@ -22,6 +21,8 @@ import { GameHeader } from "@/components/guess-game/GameHeader";
 import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { GameContainer } from "@/components/guess-game/GameContainer";
 import { useDebug } from "@/hooks/use-debug";
+import { Link } from "react-router-dom";
+import { AuthButton } from "@/components/auth/AuthButton";
 
 const Game = () => {
   const { user } = useAuth();
@@ -167,7 +168,7 @@ const Game = () => {
   // Loading state
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Loader />
       </div>
     );
@@ -184,14 +185,41 @@ const Game = () => {
   }
 
   return (
-    <RootLayout>
-      <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4">
-        <div className="container mx-auto max-w-4xl">
-          <GameHeader 
-            score={score} 
-            onDebugClick={handleDebugClick} 
-          />
+    <div className="min-h-screen bg-gray-50">
+      {/* Header - mesmo da home */}
+      <header className="bg-white shadow-sm py-4 sticky top-0 z-50">
+        <div className="container mx-auto px-4 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3">
+            <img 
+              src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
+              alt="Fluminense FC" 
+              className="w-8 h-8 object-contain"
+            />
+            <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
+          </Link>
+          <nav className="flex items-center space-x-6">
+            <Link to="/" className="text-flu-verde hover:text-flu-grena transition-colors">
+              Início
+            </Link>
+            <Link to="/select-mode" className="text-flu-verde hover:text-flu-grena transition-colors">
+              Jogar
+            </Link>
+            {user && (
+              <Link to="/profile" className="text-flu-verde hover:text-flu-grena transition-colors">
+                Meu Perfil
+              </Link>
+            )}
+            <Link to="/admin/login" className="text-flu-verde hover:text-flu-grena transition-colors">
+              Admin
+            </Link>
+            <AuthButton />
+          </nav>
+        </div>
+      </header>
 
+      {/* Game Content */}
+      <div className="py-8 px-4">
+        <div className="container mx-auto max-w-4xl">
           <DebugInfo 
             show={showImageUrl} 
             imageUrl={currentPlayer?.image_url} 
@@ -232,7 +260,7 @@ const Game = () => {
           isAuthenticated={isAuthenticatedGame}
         />
       )}
-    </RootLayout>
+    </div>
   );
 };
 
