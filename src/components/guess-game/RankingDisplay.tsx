@@ -11,6 +11,9 @@ interface RankingItem {
   games_played: number;
   user_id: string | null;
   created_at: string;
+}
+
+interface VirtualizedRankingItem extends RankingItem {
   index: number;
 }
 
@@ -29,7 +32,7 @@ export const RankingDisplay = () => {
   });
 
   // Add index to rankings for virtualization
-  const rankingsWithIndex: RankingItem[] = rankings.map((ranking, index) => ({
+  const rankingsWithIndex: VirtualizedRankingItem[] = rankings.map((ranking, index) => ({
     ...ranking,
     index
   }));

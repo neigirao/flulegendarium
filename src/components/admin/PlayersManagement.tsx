@@ -9,6 +9,9 @@ import { Edit, Search, Trash2 } from "lucide-react";
 import { Player } from "@/types/guess-game";
 import { EditPlayerForm } from "./EditPlayerForm";
 import { useToast } from "@/components/ui/use-toast";
+import { Database } from "@/integrations/supabase/types";
+
+type PlayerRow = Database['public']['Tables']['players']['Row'];
 
 export const PlayersManagement = () => {
   const { toast } = useToast();
@@ -25,13 +28,20 @@ export const PlayersManagement = () => {
       
       if (error) throw error;
       
-      // Convert Json type to proper Player type
-      return (data || []).map(player => ({
-        ...player,
+      // Convert Supabase row data to Player type
+      return (data || []).map((player: PlayerRow): Player => ({
+        id: player.id,
+        name: player.name,
+        position: player.position,
+        image_url: player.image_url,
+        year_highlight: player.year_highlight || '',
+        fun_fact: player.fun_fact || '',
+        achievements: player.achievements || [],
+        nicknames: player.nicknames || [],
         statistics: typeof player.statistics === 'object' && player.statistics !== null 
           ? player.statistics as { gols: number; jogos: number }
           : { gols: 0, jogos: 0 }
-      })) as Player[];
+      }));
     },
   });
 

@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Medal, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 
 interface RankingEntry {
   id: string;
@@ -41,7 +41,7 @@ export const PlayerRanking = () => {
   };
 
   // Default ranking data if no real data is available
-  const defaultRankings = [
+  const defaultRankings: RankingEntry[] = [
     { id: '1', player_name: 'Braga', score: 135, games_played: 1, user_id: null, created_at: '' },
     { id: '2', player_name: 'Fulano', score: 92, games_played: 1, user_id: null, created_at: '' },
     { id: '3', player_name: 'Sicrano', score: 70, games_played: 1, user_id: null, created_at: '' },

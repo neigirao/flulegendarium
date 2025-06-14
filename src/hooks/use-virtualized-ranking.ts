@@ -1,15 +1,21 @@
 
 import { useState, useEffect } from 'react';
 
-interface VirtualizedItem {
+interface RankingItem {
   id: string;
-  index: number;
   player_name: string;
   score: number;
+  games_played: number;
+  user_id: string | null;
+  created_at: string;
 }
 
-export function useVirtualizedRanking(items: VirtualizedItem[], itemHeight: number = 60) {
-  const [visibleItems, setVisibleItems] = useState<VirtualizedItem[]>([]);
+interface VirtualizedRankingItem extends RankingItem {
+  index: number;
+}
+
+export function useVirtualizedRanking(items: VirtualizedRankingItem[], itemHeight: number = 60) {
+  const [visibleItems, setVisibleItems] = useState<VirtualizedRankingItem[]>([]);
   const [scrollTop, setScrollTop] = useState(0);
 
   useEffect(() => {
