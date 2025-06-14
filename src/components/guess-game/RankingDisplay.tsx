@@ -4,6 +4,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { Trophy } from "lucide-react";
 import { useVirtualizedRanking } from "@/hooks/use-virtualized-ranking";
 
+interface RankingItem {
+  id: string;
+  player_name: string;
+  score: number;
+  games_played: number;
+  user_id: string | null;
+  created_at: string;
+  index: number;
+}
+
 export const RankingDisplay = () => {
   const { data: rankings = [], isLoading } = useQuery({
     queryKey: ['rankings'],
@@ -18,7 +28,13 @@ export const RankingDisplay = () => {
     staleTime: 30000, // Cache for 30 seconds
   });
 
-  const { visibleItems, totalHeight, offset } = useVirtualizedRanking(rankings);
+  // Add index to rankings for virtualization
+  const rankingsWithIndex: RankingItem[] = rankings.map((ranking, index) => ({
+    ...ranking,
+    index
+  }));
+
+  const { visibleItems, totalHeight, offset } = useVirtualizedRanking(rankingsWithIndex);
 
   if (isLoading) {
     return (
@@ -32,7 +48,7 @@ export const RankingDisplay = () => {
     <div className="ranking-container relative overflow-auto" style={{ height: '400px' }}>
       <div style={{ height: `${totalHeight}px`, position: 'relative' }}>
         <div style={{ transform: `translateY(${offset}px)` }}>
-          {visibleItems.map((ranking, index) => (
+          {visibleItems.map((ranking) => (
             <div
               key={ranking.id}
               className="flex items-center justify-between p-3 border-b border-gray-100 hover:bg-gray-50 transition-colors"

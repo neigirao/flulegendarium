@@ -56,7 +56,9 @@ const Game = () => {
           const enhancedPlayers = data.map((player) => ({
             ...player,
             image_url: getReliableImageUrl(player),
-            statistics: player.statistics as { gols: number; jogos: number }
+            statistics: typeof player.statistics === 'object' && player.statistics !== null 
+              ? player.statistics as { gols: number; jogos: number }
+              : { gols: 0, jogos: 0 }
           }));
           return enhancedPlayers as Player[];
         }

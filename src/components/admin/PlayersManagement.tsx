@@ -24,7 +24,14 @@ export const PlayersManagement = () => {
         .order('name');
       
       if (error) throw error;
-      return data as Player[];
+      
+      // Convert Json type to proper Player type
+      return (data || []).map(player => ({
+        ...player,
+        statistics: typeof player.statistics === 'object' && player.statistics !== null 
+          ? player.statistics as { gols: number; jogos: number }
+          : { gols: 0, jogos: 0 }
+      })) as Player[];
     },
   });
 

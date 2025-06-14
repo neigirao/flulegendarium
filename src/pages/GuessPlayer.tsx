@@ -52,12 +52,15 @@ const GuessPlayer = () => {
         if (data && data.length > 0) {
           console.log("Primeiro jogador:", data[0].name);
           
-          const enhancedPlayers = data.map((player: Player) => ({
+          const enhancedPlayers = data.map((player) => ({
             ...player,
-            image_url: getReliableImageUrl(player)
+            image_url: getReliableImageUrl(player),
+            statistics: typeof player.statistics === 'object' && player.statistics !== null 
+              ? player.statistics as { gols: number; jogos: number }
+              : { gols: 0, jogos: 0 }
           }));
           
-          return enhancedPlayers;
+          return enhancedPlayers as Player[];
         }
         return data as Player[];
       } catch (err) {

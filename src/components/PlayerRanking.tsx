@@ -5,12 +5,11 @@ import { Medal, Trophy } from "lucide-react";
 
 interface RankingEntry {
   id: string;
-  player_id: string;
-  username: string;
+  player_name: string;
   score: number;
   games_played: number;
-  perfect_guesses: number;
-  player_name: string;
+  user_id: string | null;
+  created_at: string;
 }
 
 export const PlayerRanking = () => {
@@ -43,16 +42,16 @@ export const PlayerRanking = () => {
 
   // Default ranking data if no real data is available
   const defaultRankings = [
-    { id: '1', player_name: 'Braga', score: 135 },
-    { id: '2', player_name: 'Fulano', score: 92 },
-    { id: '3', player_name: 'Sicrano', score: 70 },
-    { id: '4', player_name: 'Rodrigo Costa', score: 60 },
-    { id: '5', player_name: 'João Silva', score: 55 },
-    { id: '6', player_name: 'Pedro Santos', score: 50 },
-    { id: '7', player_name: 'Carlos Lima', score: 45 },
-    { id: '8', player_name: 'Fernando Dias', score: 40 },
-    { id: '9', player_name: 'Rafael Costa', score: 35 },
-    { id: '10', player_name: 'Lucas Alves', score: 30 },
+    { id: '1', player_name: 'Braga', score: 135, games_played: 1, user_id: null, created_at: '' },
+    { id: '2', player_name: 'Fulano', score: 92, games_played: 1, user_id: null, created_at: '' },
+    { id: '3', player_name: 'Sicrano', score: 70, games_played: 1, user_id: null, created_at: '' },
+    { id: '4', player_name: 'Rodrigo Costa', score: 60, games_played: 1, user_id: null, created_at: '' },
+    { id: '5', player_name: 'João Silva', score: 55, games_played: 1, user_id: null, created_at: '' },
+    { id: '6', player_name: 'Pedro Santos', score: 50, games_played: 1, user_id: null, created_at: '' },
+    { id: '7', player_name: 'Carlos Lima', score: 45, games_played: 1, user_id: null, created_at: '' },
+    { id: '8', player_name: 'Fernando Dias', score: 40, games_played: 1, user_id: null, created_at: '' },
+    { id: '9', player_name: 'Rafael Costa', score: 35, games_played: 1, user_id: null, created_at: '' },
+    { id: '10', player_name: 'Lucas Alves', score: 30, games_played: 1, user_id: null, created_at: '' },
   ];
 
   const displayRankings = rankings.length > 0 ? rankings : defaultRankings;
