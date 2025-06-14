@@ -37,7 +37,7 @@ export const AuthButton = () => {
   return (
     <Button
       onClick={signInWithGoogle}
-      className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+      className="bg-flu-grena hover:bg-flu-grena/90 text-white flex items-center gap-2"
     >
       <LogIn size={16} />
       Entrar com Google
