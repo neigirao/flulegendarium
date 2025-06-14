@@ -34,7 +34,13 @@ const Game = () => {
   const [gameStarted, setGameStarted] = useState(false);
   const [isAuthenticatedGame, setIsAuthenticatedGame] = useState(false);
   const { showImageUrl, handleDebugClick } = useDebug();
-  
+
+  // DEBUG: log transitions
+  useEffect(() => {
+    console.log("showTutorial:", showTutorial);
+    console.log("gameStarted:", gameStarted);
+  }, [showTutorial, gameStarted]);
+
   // Track page view
   useEffect(() => {
     trackPageView('/game');
@@ -45,25 +51,20 @@ const Game = () => {
     queryFn: async () => {
       try {
         console.log("Iniciando busca de jogadores...");
-        
         const { data, error } = await supabase
           .from('players')
           .select('*');
-        
         if (error) {
           console.error("Erro ao buscar jogadores:", error);
           throw error;
         }
-        
         console.log("Jogadores carregados com sucesso:", data?.length || 0, "jogadores");
         if (data && data.length > 0) {
           console.log("Primeiro jogador:", data[0].name);
-          
           const enhancedPlayers = data.map((player: Player) => ({
             ...player,
             image_url: getReliableImageUrl(player)
           }));
-          
           return enhancedPlayers;
         }
         return data as Player[];
@@ -81,19 +82,17 @@ const Game = () => {
   useEffect(() => {
     if (players && players.length > 0) {
       preloadPlayerImages(players);
-      
+
       const imagesToPreload = players
         .slice(0, 8)
         .map(player => getReliableImageUrl(player));
-      
       preloadImages(imagesToPreload);
-      
+
       if (players.length > 8) {
         const batchSize = 5;
         for (let i = 8; i < players.length; i += batchSize) {
           const batch = players.slice(i, i + batchSize);
           const delay = (i - 8) * 1000;
-          
           setTimeout(() => {
             console.log(`Iniciando pré-carregamento em background de lote ${i / batchSize + 1}`);
             batch.forEach((player) => {
@@ -126,6 +125,15 @@ const Game = () => {
     setScore(0);
   }, []);
 
+  useEffect(() => {
+    // DEBUG: Log currentPlayer changes
+    console.log("currentPlayer:", currentPlayer);
+    // DEBUG: Log se imagem está correta
+    if (currentPlayer) {
+      console.log("URL da imagem do jogador:", currentPlayer?.image_url);
+    }
+  }, [currentPlayer]);
+
   // Show game over dialog when player loses
   useEffect(() => {
     if (hasLost) {
@@ -146,14 +154,12 @@ const Game = () => {
   useEffect(() => {
     if (players && players.length > 1 && currentPlayer) {
       prepareNextBatch(players, currentPlayer, 5);
-      
       const potentialNextPlayers = players.filter(p => p.id !== currentPlayer.id);
       if (potentialNextPlayers.length > 0) {
         const randomIndices = Array.from(
           { length: Math.min(3, potentialNextPlayers.length) },
           () => Math.floor(Math.random() * potentialNextPlayers.length)
         );
-        
         randomIndices.forEach((idx, i) => {
           setTimeout(() => {
             preloadNextPlayer(potentialNextPlayers[idx]);
@@ -164,6 +170,7 @@ const Game = () => {
   }, [currentPlayer, players]);
 
   const handleTutorialComplete = () => {
+    console.log("Tutorial completado, iniciando jogo");
     setShowTutorial(false);
     setGameStarted(true);
     setIsAuthenticatedGame(!!user);
@@ -171,6 +178,7 @@ const Game = () => {
   };
 
   const handleSkipTutorial = () => {
+    console.log("Tutorial pulado, iniciando jogo");
     setShowTutorial(false);
     setGameStarted(true);
     setIsAuthenticatedGame(!!user);
@@ -268,6 +276,12 @@ const Game = () => {
             show={showImageUrl} 
             imageUrl={currentPlayer?.image_url} 
           />
+
+          {/* DEBUG: mostrar estado */}
+          <div className="mb-4 rounded bg-yellow-100 text-xs px-4 py-2 text-yellow-900">
+            <div><b>showTutorial:</b> {String(showTutorial)}</div>
+            <div><b>gameStarted:</b> {String(gameStarted)}</div>
+          </div>
 
           {gameStarted && (
             <GameContainer
