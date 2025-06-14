@@ -66,6 +66,12 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, [currentPlayer, gameOver, isRunning, startTimer, trackEvent]);
 
+  // Reset score function
+  const resetScore = useCallback(() => {
+    console.log('🔄 Resetando pontuação');
+    setScore(0);
+  }, []);
+
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
     if (!currentPlayer || !guess || gameOver || isProcessingGuess) return;
@@ -166,6 +172,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     TIME_LIMIT_SECONDS,
     hasLost,
     startGameForPlayer,
-    isTimerRunning: isRunning
+    isTimerRunning: isRunning,
+    resetScore
   };
 };
