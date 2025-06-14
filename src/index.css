@@ -77,7 +77,7 @@
   box-shadow: 0 4px 20px rgba(122, 2, 19, 0.2), 0 2px 10px rgba(0, 97, 60, 0.15);
 }
 
-/* Animações adicionais */
+/* Animações aprimoradas */
 @keyframes pulse-flu {
   0%, 100% {
     box-shadow: 0 0 0 0 rgba(122, 2, 19, 0.4);
@@ -87,6 +87,117 @@
   }
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(122, 2, 19, 0.3), 0 0 10px rgba(122, 2, 19, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(122, 2, 19, 0.5), 0 0 20px rgba(122, 2, 19, 0.3);
+  }
+}
+
 .animate-pulse-flu {
   animation: pulse-flu 2s infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-bounce-gentle {
+  animation: bounce-gentle 2s infinite;
+}
+
+.animate-glow {
+  animation: glow 2s infinite;
+}
+
+/* Transições suaves para todos os elementos interativos */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effects melhorados */
+.hover-lift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Estados de foco melhorados */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flu-grena focus-visible:ring-offset-2;
+}
+
+/* Feedback visual para interações */
+.interactive-element {
+  @apply transition-all duration-200 hover:scale-105 active:scale-95 focus-ring;
+}
+
+/* Gradientes temáticos */
+.gradient-flu {
+  background: linear-gradient(135deg, #7A0213 0%, #00613C 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.gradient-danger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
 }
