@@ -8,13 +8,6 @@ interface BundleMetrics {
   cacheHitRate: number;
 }
 
-// Extend Window interface to include gtag
-declare global {
-  interface Window {
-    gtag?: (...args: any[]) => void;
-  }
-}
-
 export const useBundleAnalyzer = () => {
   useEffect(() => {
     // Track bundle loading performance
@@ -69,22 +62,22 @@ export const useBundleAnalyzer = () => {
       setTimeout(trackBundleMetrics, 1000);
     });
     
-    // Track dynamic imports - Fixed typing issue
-    const originalDynamicImport = (window as any).__vitePreload || window.import;
-    if (originalDynamicImport) {
-      (window as any).__vitePreload = async (...args: any[]) => {
+    // Track dynamic imports using Vite's preload mechanism
+    const originalVitePreload = window.__vitePreload;
+    if (originalVitePreload) {
+      window.__vitePreload = async (moduleId: string, ...args: any[]) => {
         const startTime = performance.now();
         try {
-          const result = await originalDynamicImport(...args);
+          const result = await originalVitePreload(moduleId, ...args);
           const loadTime = performance.now() - startTime;
           
-          console.log(`Dynamic import loaded in ${loadTime.toFixed(2)}ms:`, args[0]);
+          console.log(`Dynamic import loaded in ${loadTime.toFixed(2)}ms:`, moduleId);
           
           if (window.gtag) {
             window.gtag('event', 'dynamic_import', {
               event_category: 'Performance',
               value: Math.round(loadTime),
-              event_label: args[0]
+              event_label: moduleId
             });
           }
           
