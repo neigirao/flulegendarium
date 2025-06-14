@@ -65,11 +65,12 @@ export const useAnalytics = () => {
     });
   };
 
-  const trackIncorrectGuess = (playerName: string, userGuess: string) => {
+  const trackIncorrectGuess = (playerName: string, userGuess: string, attempts: number) => {
     trackEvent({
       action: 'incorrect_guess',
       category: 'Game',
       label: `${playerName} - guessed: ${userGuess}`,
+      value: attempts,
     });
   };
 

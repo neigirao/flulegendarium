@@ -126,7 +126,6 @@ export const useGuessGame = (players?: Player[]) => {
         // Salvar estatísticas do acerto
         await saveGameStats(newScore, true);
 
-        // FIX: Only pass currentPlayer.name (1 argument)
         trackCorrectGuess(currentPlayer.name);
 
         toast({
@@ -142,8 +141,7 @@ export const useGuessGame = (players?: Player[]) => {
       } else {
         setAttempts(newAttempts);
 
-        // FIX: Only pass currentPlayer.name and guess (2 arguments)
-        trackIncorrectGuess(currentPlayer.name, guess);
+        trackIncorrectGuess(currentPlayer.name, guess, newAttempts);
 
         if (newAttempts >= MAX_ATTEMPTS) {
           setHasLost(true);
