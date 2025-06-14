@@ -49,21 +49,29 @@ const Game = () => {
         const { data, error } = await supabase
           .from('players')
           .select('*');
+          
         if (error) {
+          console.error("Erro ao buscar jogadores:", error);
           throw error;
         }
-        if (data && data.length > 0) {
-          const enhancedPlayers: Player[] = data.map((player) => {
+        
+        if (!data || data.length === 0) {
+          console.warn("Nenhum jogador encontrado na base de dados");
+          return [] as Player[];
+        }
+        
+        const enhancedPlayers: Player[] = data.map((player) => {
+          try {
             // Convert the player data to proper Player type with robust statistics conversion
             const enhancedPlayer: Player = {
               id: player.id,
-              name: player.name,
-              position: player.position,
-              image_url: player.image_url,
+              name: player.name || 'Nome não informado',
+              position: player.position || 'Posição não informada',
+              image_url: player.image_url || '',
               year_highlight: player.year_highlight || '',
               fun_fact: player.fun_fact || '',
-              achievements: player.achievements || [],
-              nicknames: player.nicknames || [],
+              achievements: Array.isArray(player.achievements) ? player.achievements : [],
+              nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
               statistics: convertStatistics(player.statistics)
             };
             
@@ -71,11 +79,28 @@ const Game = () => {
             enhancedPlayer.image_url = getReliableImageUrl(enhancedPlayer);
             
             return enhancedPlayer;
-          });
-          
-          return enhancedPlayers;
-        }
-        return [] as Player[];
+          } catch (playerError) {
+            console.error(`Erro ao processar jogador ${player.name}:`, playerError);
+            // Return a fallback player object
+            return {
+              id: player.id,
+              name: player.name || 'Nome não informado',
+              position: player.position || 'Posição não informada',
+              image_url: getReliableImageUrl({ 
+                id: player.id, 
+                name: player.name || 'Nome não informado',
+                image_url: player.image_url || ''
+              } as Player),
+              year_highlight: '',
+              fun_fact: '',
+              achievements: [],
+              nicknames: [],
+              statistics: { gols: 0, jogos: 0 }
+            };
+          }
+        });
+        
+        return enhancedPlayers;
       } catch (err) {
         console.error("Erro ao buscar jogadores:", err);
         throw err;
