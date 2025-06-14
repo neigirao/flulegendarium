@@ -1,5 +1,5 @@
-
-import React, { useQuery } from "@tanstack/react-query";
+import React, { useCallback, useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { 
   getReliableImageUrl, 
@@ -13,7 +13,6 @@ import { useGuessGame } from "@/hooks/use-guess-game";
 import { usePreload } from "@/hooks/use-preload";
 import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/use-analytics";
-import { useCallback, useEffect, useState } from "react";
 import { Player } from "@/types/guess-game";
 import { Loader } from "@/components/guess-game/Loader";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
