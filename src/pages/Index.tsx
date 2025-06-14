@@ -92,8 +92,8 @@ export default function Index() {
                 <div className="relative w-96 h-96 mx-auto">
                   <div className="relative w-full h-full">
                     <img 
-                      src="/lovable-uploads/16398385-eef5-4e38-b90a-39630732acba.png" 
-                      alt="Jogador do Fluminense" 
+                      src="/lovable-uploads/16f7afff-6bba-4b39-a454-daa6c2373151.png" 
+                      alt="Jogador do Fluminense com ponto de interrogação" 
                       className="w-full h-full object-contain"
                     />
                   </div>
