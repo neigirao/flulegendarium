@@ -47,36 +47,41 @@ export const GuessForm = ({ disabled, onSubmitGuess, isProcessing }: GuessFormPr
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
-          <Input
-            type="text"
-            value={guess}
-            onChange={(e) => setGuess(e.target.value)}
-            placeholder="Digite o nome do jogador..."
-            disabled={disabled || isProcessing}
-            className="flex-1 text-base md:text-lg py-2 md:py-3 px-3 md:px-4 border-2 border-flu-verde/30 focus:border-flu-verde"
-            autoComplete="off"
-          />
-          <Button
-            type="submit"
-            disabled={!guess.trim() || disabled || isProcessing}
-            className="bg-flu-grena hover:bg-flu-grena/90 text-white px-4 md:px-6 py-2 md:py-3 text-base md:text-lg font-semibold sm:w-auto"
-          >
-            {isProcessing ? (
-              <Loader2 className="w-4 h-4 md:w-5 md:h-5 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4 md:w-5 md:h-5" />
-            )}
-          </Button>
-        </div>
-        
-        {guess.trim() && (
-          <p className="text-sm text-gray-600 text-center">
-            ⚠️ Lembre-se: você tem apenas uma tentativa por jogador!
-          </p>
-        )}
-      </form>
+      <div className="w-full max-w-md mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-2">
+            <Input
+              type="text"
+              value={guess}
+              onChange={(e) => setGuess(e.target.value)}
+              placeholder="Digite o nome do jogador..."
+              disabled={disabled || isProcessing}
+              className="flex-1 text-base py-3 px-4 border-2 border-flu-verde/30 focus:border-flu-verde rounded-lg"
+              autoComplete="off"
+            />
+            <Button
+              type="submit"
+              disabled={!guess.trim() || disabled || isProcessing}
+              className="bg-flu-grena hover:bg-flu-grena/90 text-white px-6 py-3 text-base font-semibold sm:w-auto w-full sm:min-w-[100px]"
+            >
+              {isProcessing ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <>
+                  <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-0" />
+                  <span className="sm:hidden">Enviar Palpite</span>
+                </>
+              )}
+            </Button>
+          </div>
+          
+          {guess.trim() && (
+            <p className="text-xs sm:text-sm text-gray-600 text-center px-2">
+              ⚠️ Lembre-se: você tem apenas uma tentativa por jogador!
+            </p>
+          )}
+        </form>
+      </div>
 
       <GuessConfirmDialog
         open={showConfirmDialog}

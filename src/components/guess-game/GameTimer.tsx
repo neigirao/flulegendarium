@@ -1,6 +1,6 @@
 
-import { Clock, AlertTriangle } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Timer, AlertTriangle } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface GameTimerProps {
   timeRemaining: number;
@@ -9,84 +9,45 @@ interface GameTimerProps {
 }
 
 export const GameTimer = ({ timeRemaining, isRunning, gameOver }: GameTimerProps) => {
-  const [pulseAlert, setPulseAlert] = useState(false);
-
-  // Formatar tempo em MM:SS
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  // Determinar cor e estado baseado no tempo
-  const getTimerState = () => {
-    if (gameOver) return 'stopped';
-    if (timeRemaining <= 10) return 'critical';
-    if (timeRemaining <= 20) return 'warning';
-    return 'normal';
-  };
-
-  const timerState = getTimerState();
-
-  // Efeito de pulso para alertas críticos
-  useEffect(() => {
-    if (timerState === 'critical' && isRunning) {
-      setPulseAlert(true);
-      const interval = setInterval(() => {
-        setPulseAlert(prev => !prev);
-      }, 500);
-      return () => clearInterval(interval);
-    } else {
-      setPulseAlert(false);
-    }
-  }, [timerState, isRunning]);
-
-  const getTimerClasses = () => {
-    const baseClasses = "flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold text-xl transition-all duration-300 shadow-lg";
-    
-    switch (timerState) {
-      case 'critical':
-        return `${baseClasses} bg-red-500 text-white ${pulseAlert ? 'scale-110 shadow-2xl' : 'scale-105'} animate-pulse border-4 border-red-300`;
-      case 'warning':
-        return `${baseClasses} bg-yellow-500 text-white shadow-yellow-200`;
-      case 'stopped':
-        return `${baseClasses} bg-gray-400 text-white`;
-      default:
-        return `${baseClasses} bg-flu-verde text-white shadow-green-200`;
-    }
-  };
+  const isUrgent = timeRemaining <= 10 && !gameOver;
+  const isCritical = timeRemaining <= 5 && !gameOver;
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className={getTimerClasses()}>
-        {timerState === 'critical' ? (
-          <AlertTriangle className="w-6 h-6 animate-bounce" />
-        ) : (
-          <Clock className="w-6 h-6" />
-        )}
-        <span className="text-2xl md:text-3xl font-mono tracking-wider">
-          {formatTime(timeRemaining)}
+    <div className={cn(
+      "flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl border-2 transition-all duration-300 shadow-lg",
+      "min-w-[140px] sm:min-w-[180px] text-center",
+      isCritical 
+        ? "bg-red-50 border-red-400 text-red-700 animate-pulse shadow-red-200" 
+        : isUrgent 
+        ? "bg-yellow-50 border-yellow-400 text-yellow-700 shadow-yellow-200"
+        : gameOver
+        ? "bg-gray-50 border-gray-300 text-gray-500"
+        : "bg-flu-grena/5 border-flu-grena/30 text-flu-grena shadow-flu-grena/20"
+    )}>
+      <Timer className={cn(
+        "transition-all duration-300",
+        "w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6",
+        isCritical ? "animate-bounce" : ""
+      )} />
+      <div className="flex flex-col items-center">
+        <span className={cn(
+          "font-bold tabular-nums leading-none",
+          "text-lg sm:text-xl md:text-2xl lg:text-3xl"
+        )}>
+          {timeRemaining}s
         </span>
-      </div>
-      
-      {/* Status do timer */}
-      <div className="text-center">
-        {timerState === 'critical' && (
-          <p className="text-red-600 font-semibold text-sm animate-pulse">
-            ⚠️ TEMPO CRÍTICO!
-          </p>
-        )}
-        {timerState === 'warning' && (
-          <p className="text-yellow-600 font-medium text-sm">
-            ⏰ Atenção ao tempo
-          </p>
-        )}
-        {!isRunning && !gameOver && (
-          <p className="text-gray-500 text-sm">
-            Timer pausado
-          </p>
+        {isUrgent && !gameOver && (
+          <span className="text-xs sm:text-sm font-medium opacity-80 mt-1">
+            {isCritical ? "URGENTE!" : "Pouco tempo!"}
+          </span>
         )}
       </div>
+      {isUrgent && !gameOver && (
+        <AlertTriangle className={cn(
+          "text-current animate-pulse",
+          "w-3 h-3 sm:w-4 sm:h-4"
+        )} />
+      )}
     </div>
   );
 };

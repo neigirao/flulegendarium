@@ -81,7 +81,7 @@ export const GameStatus = ({
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Timer destacado no topo */}
         <div className="flex justify-center">
           <GameTimer 
@@ -100,21 +100,23 @@ export const GameStatus = ({
         />
 
         {/* Regras do jogo e botão de sair */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-flu-grena/10 p-3 rounded-lg border border-flu-grena/20">
-          <div className="text-sm font-medium text-flu-grena flex items-center justify-center gap-2">
-            <Timer className="w-4 h-4" />
-            <span>Uma tentativa por jogador • 60 segundos • 5 pontos por acerto</span>
+        <div className="flex flex-col gap-3 sm:gap-4 bg-flu-grena/10 p-3 sm:p-4 rounded-lg border border-flu-grena/20">
+          <div className="text-xs sm:text-sm font-medium text-flu-grena flex items-center justify-center gap-2 text-center">
+            <Timer className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+            <span className="leading-tight">Uma tentativa por jogador • 60 segundos • 5 pontos por acerto</span>
           </div>
           
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExitGame}
-            className="border-red-300 text-red-600 hover:bg-red-50 flex items-center gap-2"
-          >
-            <Home className="w-4 h-4" />
-            Sair do Jogo
-          </Button>
+          <div className="flex justify-center">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExitGame}
+              className="border-red-300 text-red-600 hover:bg-red-50 flex items-center gap-2 text-xs sm:text-sm px-3 sm:px-4 py-2"
+            >
+              <Home className="w-3 h-3 sm:w-4 sm:h-4" />
+              Sair do Jogo
+            </Button>
+          </div>
         </div>
 
         {/* Botão de salvar pontuação quando o jogo termina */}
@@ -122,9 +124,9 @@ export const GameStatus = ({
           <div className="text-center animate-fade-in">
             <button
               onClick={handleShowRankingForm}
-              className="bg-flu-grena text-white px-6 py-3 rounded-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto flu-shadow text-base font-semibold"
+              className="bg-flu-grena text-white px-4 sm:px-6 py-3 sm:py-4 rounded-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto flu-shadow text-sm sm:text-base font-semibold w-full sm:w-auto max-w-xs"
             >
-              <Trophy className="w-5 h-5" />
+              <Trophy className="w-4 h-4 sm:w-5 sm:h-5" />
               Salvar Pontuação
             </button>
           </div>

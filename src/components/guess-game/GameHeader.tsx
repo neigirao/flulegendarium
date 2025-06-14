@@ -12,18 +12,20 @@ export const GameHeader = ({ score, onDebugClick }: GameHeaderProps) => {
   console.log('🎮 GameHeader - Score recebido e exibindo:', score);
   
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
+    <div className="flex flex-col space-y-4 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between mb-6 md:mb-8">
+      {/* Botão Voltar */}
       <Link
         to="/"
-        className="flex items-center text-flu-grena hover:opacity-80 transition-opacity text-sm md:text-base"
+        className="flex items-center text-flu-grena hover:opacity-80 transition-opacity text-sm md:text-base self-start"
       >
         <ArrowLeft className="mr-2 w-4 h-4 md:w-5 md:h-5" />
         Voltar
       </Link>
       
+      {/* Score e Informações */}
       <div className="flex flex-col items-center w-full sm:w-auto">
-        <div className="text-flu-grena font-bold text-lg md:text-xl bg-white/90 px-4 md:px-6 py-2 md:py-3 rounded-lg border border-flu-verde/30 shadow-lg">
-          {score} pontos
+        <div className="text-flu-grena font-bold text-lg sm:text-xl md:text-2xl bg-white/90 px-4 sm:px-6 py-2 sm:py-3 rounded-lg border border-flu-verde/30 shadow-lg min-w-[120px] text-center">
+          <span className="tabular-nums">{score}</span> pontos
         </div>
         <div className="flex items-center gap-2 mt-2">
           <GameRulesTooltip />

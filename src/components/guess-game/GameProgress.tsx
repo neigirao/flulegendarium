@@ -1,56 +1,62 @@
 
-import { Trophy, Target, TrendingUp } from "lucide-react";
+import { Trophy, Target, Zap, TrendingUp } from "lucide-react";
 
 interface GameProgressProps {
   currentScore: number;
-  gamesPlayed: number;
-  currentStreak: number;
-  maxStreak: number;
+  gamesPlayed?: number;
+  currentStreak?: number;
+  maxStreak?: number;
 }
 
-export const GameProgress = ({ 
-  currentScore, 
-  gamesPlayed, 
-  currentStreak, 
-  maxStreak 
+export const GameProgress = ({
+  currentScore,
+  gamesPlayed = 0,
+  currentStreak = 0,
+  maxStreak = 0
 }: GameProgressProps) => {
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 shadow-lg border-2 border-flu-verde/20">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {/* Pontuação atual */}
-        <div className="flex items-center gap-2 bg-yellow-50 p-3 rounded-lg">
-          <Trophy className="w-5 h-5 text-yellow-600" />
-          <div>
-            <p className="text-xs text-gray-600">Pontos</p>
-            <p className="font-bold text-lg text-flu-grena">{currentScore}</p>
-          </div>
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* Pontuação Atual */}
+      <div className="bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-lg border border-flu-grena/20 shadow-sm">
+        <div className="flex items-center justify-center gap-2 mb-1 sm:mb-2">
+          <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-flu-grena" />
+          <span className="text-xs sm:text-sm font-medium text-gray-600">Pontos</span>
         </div>
-
-        {/* Jogos jogados */}
-        <div className="flex items-center gap-2 bg-blue-50 p-3 rounded-lg">
-          <Target className="w-5 h-5 text-blue-600" />
-          <div>
-            <p className="text-xs text-gray-600">Jogadores</p>
-            <p className="font-bold text-lg text-flu-verde">{gamesPlayed}</p>
-          </div>
+        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-flu-grena text-center tabular-nums">
+          {currentScore}
         </div>
+      </div>
 
-        {/* Sequência atual */}
-        <div className="flex items-center gap-2 bg-green-50 p-3 rounded-lg">
-          <TrendingUp className="w-5 h-5 text-green-600" />
-          <div>
-            <p className="text-xs text-gray-600">Sequência</p>
-            <p className="font-bold text-lg text-green-700">{currentStreak}</p>
-          </div>
+      {/* Jogos Disputados */}
+      <div className="bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-lg border border-flu-verde/20 shadow-sm">
+        <div className="flex items-center justify-center gap-2 mb-1 sm:mb-2">
+          <Target className="w-4 h-4 sm:w-5 sm:h-5 text-flu-verde" />
+          <span className="text-xs sm:text-sm font-medium text-gray-600">Jogos</span>
         </div>
+        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-flu-verde text-center tabular-nums">
+          {gamesPlayed}
+        </div>
+      </div>
 
-        {/* Melhor sequência */}
-        <div className="flex items-center gap-2 bg-purple-50 p-3 rounded-lg">
-          <Trophy className="w-5 h-5 text-purple-600" />
-          <div>
-            <p className="text-xs text-gray-600">Recorde</p>
-            <p className="font-bold text-lg text-purple-700">{Math.max(maxStreak, currentStreak)}</p>
-          </div>
+      {/* Sequência Atual */}
+      <div className="bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-lg border border-orange-200 shadow-sm">
+        <div className="flex items-center justify-center gap-2 mb-1 sm:mb-2">
+          <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500" />
+          <span className="text-xs sm:text-sm font-medium text-gray-600">Sequência</span>
+        </div>
+        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-orange-500 text-center tabular-nums">
+          {currentStreak}
+        </div>
+      </div>
+
+      {/* Melhor Sequência */}
+      <div className="bg-white/80 backdrop-blur-sm p-3 sm:p-4 rounded-lg border border-purple-200 shadow-sm">
+        <div className="flex items-center justify-center gap-2 mb-1 sm:mb-2">
+          <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-purple-500" />
+          <span className="text-xs sm:text-sm font-medium text-gray-600">Recorde</span>
+        </div>
+        <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-500 text-center tabular-nums">
+          {maxStreak}
         </div>
       </div>
     </div>
