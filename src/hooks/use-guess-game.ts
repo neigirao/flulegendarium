@@ -127,7 +127,7 @@ export const useGuessGame = (players?: Player[]) => {
         // Salvar estatísticas do acerto
         await saveGameStats(newScore, true);
         
-        trackCorrectGuess(currentPlayer.name);
+        trackCorrectGuess(currentPlayer.name, guess, newAttempts);
         
         toast({
           title: "🎉 Parabéns!",
