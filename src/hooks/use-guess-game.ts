@@ -4,7 +4,7 @@ import { Player } from "@/types/guess-game";
 import { processPlayerName } from "@/utils/name-processor";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useGameTimer } from "@/hooks/use-game-timer";
 
@@ -89,7 +89,8 @@ export const useGuessGame = (players?: Player[]) => {
           is_correct: isCorrect,
           attempt_number: attempts + 1,
           player_name: user.user_metadata?.full_name || user.email || 'Anônimo',
-          guess: 'Finalizado'
+          guess: 'Finalizado',
+          score: finalScore
         });
 
       if (attemptError) {

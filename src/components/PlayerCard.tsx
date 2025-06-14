@@ -1,9 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
-import {
-
-Toast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { defaultPlayerImage } from "@/utils/player-image";
 import { OptimizedImage } from "@/components/performance/OptimizedImage";
