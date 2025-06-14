@@ -1,5 +1,5 @@
 
-import { useQuery } from "@tanstack/react-query";
+import React, { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { 
   getReliableImageUrl, 
@@ -95,12 +95,11 @@ const Game = () => {
     }
   }, [players, preloadImages]);
 
-  const [score, setScore] = useState(0);
-
   // Only pass players when game has actually started
   const {
     currentPlayer,
     attempts,
+    score,
     gameOver,
     timeRemaining,
     MAX_ATTEMPTS,
@@ -110,12 +109,9 @@ const Game = () => {
     isProcessingGuess,
     hasLost,
     startGameForPlayer,
-    isTimerRunning
+    isTimerRunning,
+    resetScore
   } = useGuessGame(gameStarted && players.length > 0 ? players : undefined);
-
-  const handleResetScore = useCallback(() => {
-    setScore(0);
-  }, []);
 
   // Show game over dialog when player loses
   useEffect(() => {
@@ -291,7 +287,7 @@ const Game = () => {
           onClose={handleGameOverClose}
           playerName={currentPlayer.name}
           score={score}
-          onResetScore={handleResetScore}
+          onResetScore={resetScore}
           isAuthenticated={isAuthenticatedGame}
         />
       )}
