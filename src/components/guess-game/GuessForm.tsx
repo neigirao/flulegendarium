@@ -1,104 +1,58 @@
 
-import { useState, memo, useRef, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2 } from "lucide-react";
-import { GuessConfirmDialog } from "./GuessConfirmDialog";
+import { Loader2, Send } from "lucide-react";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface GuessFormProps {
   disabled: boolean;
   onSubmitGuess: (guess: string) => void;
-  isProcessing?: boolean;
+  isProcessing: boolean;
 }
 
-// Memoized component to prevent unnecessary re-renders
-export const GuessForm = memo(({ disabled, onSubmitGuess, isProcessing = false }: GuessFormProps) => {
+export const GuessForm = ({ disabled, onSubmitGuess, isProcessing }: GuessFormProps) => {
   const [guess, setGuess] = useState("");
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [pendingGuess, setPendingGuess] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  
-  // Focus the input field when component mounts or is enabled
-  useEffect(() => {
-    if (!disabled && inputRef.current) {
-      // Small timeout to ensure the DOM is ready
-      const timer = setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [disabled]);
+  const { trackEvent } = useAnalytics();
 
-  const handleSubmit = () => {
-    if (guess.trim() && !isProcessing) {
-      setPendingGuess(guess.trim());
-      setShowConfirmDialog(true);
-    }
-  };
-
-  const handleConfirmGuess = () => {
-    onSubmitGuess(pendingGuess);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!guess.trim() || disabled || isProcessing) return;
+    
+    trackEvent({
+      action: 'guess_submitted',
+      category: 'Game',
+      label: 'player_guess'
+    });
+    
+    onSubmitGuess(guess.trim());
     setGuess("");
-    setPendingGuess("");
-    setShowConfirmDialog(false);
-  };
-
-  const handleCancelGuess = () => {
-    setPendingGuess("");
-    setShowConfirmDialog(false);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    // Only submit on Enter key
-    if (e.key === "Enter") {
-      e.preventDefault(); // Prevent form submission
-      handleSubmit();
-    }
   };
 
   return (
-    <>
-      <div className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex gap-2">
         <Input
-          ref={inputRef}
           type="text"
           value={guess}
           onChange={(e) => setGuess(e.target.value)}
-          placeholder="Nome ou apelido do jogador..."
-          className="w-full px-4 py-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-flu-grena"
-          onKeyDown={handleKeyDown}
+          placeholder="Digite o nome do jogador..."
           disabled={disabled || isProcessing}
+          className="flex-1 text-lg py-3 px-4 border-2 border-flu-verde/30 focus:border-flu-verde"
           autoComplete="off"
-          aria-label="Palpite do nome do jogador"
         />
-        
         <Button
-          onClick={handleSubmit}
-          disabled={!guess || disabled || isProcessing}
-          className="w-full bg-flu-grena text-white font-semibold flu-shadow"
-          size="lg"
-          type="button"
+          type="submit"
+          disabled={!guess.trim() || disabled || isProcessing}
+          className="bg-flu-grena hover:bg-flu-grena/90 text-white px-6 py-3 text-lg font-semibold"
         >
           {isProcessing ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Processando...
-            </>
+            <Loader2 className="w-5 h-5 animate-spin" />
           ) : (
-            'Adivinhar'
+            <Send className="w-5 h-5" />
           )}
         </Button>
       </div>
-
-      <GuessConfirmDialog
-        open={showConfirmDialog}
-        guess={pendingGuess}
-        onConfirm={handleConfirmGuess}
-        onCancel={handleCancelGuess}
-      />
-    </>
+    </form>
   );
-});
-
-GuessForm.displayName = 'GuessForm';
+};

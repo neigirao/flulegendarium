@@ -5,6 +5,7 @@ import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
 import { Player } from "@/types/guess-game";
 import { Clock } from "lucide-react";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 const LazyRankingDisplay = lazy(() => 
   import("@/components/guess-game/RankingDisplay").then(module => ({
@@ -40,9 +41,17 @@ export const GameContainer = ({
   hasLost
 }: GameContainerProps) => {
   const [showRanking, setShowRanking] = useState(false);
+  const { trackEvent } = useAnalytics();
 
   const toggleRanking = () => {
-    setShowRanking(prev => !prev);
+    const newShowRanking = !showRanking;
+    setShowRanking(newShowRanking);
+    
+    trackEvent({
+      action: newShowRanking ? 'ranking_opened' : 'ranking_closed',
+      category: 'UI',
+      label: 'ranking_toggle'
+    });
   };
 
   // Format time as MM:SS

@@ -12,6 +12,7 @@ import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { useGuessGame } from "@/hooks/use-guess-game";
 import { usePreload } from "@/hooks/use-preload";
 import { useAuth } from "@/hooks/useAuth";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { useCallback, useEffect, useState } from "react";
 import { Player } from "@/types/guess-game";
 import { Loader } from "@/components/guess-game/Loader";
@@ -27,11 +28,17 @@ import { AuthButton } from "@/components/auth/AuthButton";
 const Game = () => {
   const { user } = useAuth();
   const { preloadImages } = usePreload();
+  const { trackGameStart, trackGameEnd, trackPageView } = useAnalytics();
   const [showGameOverDialog, setShowGameOverDialog] = useState(false);
   const [showTutorial, setShowTutorial] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
   const [isAuthenticatedGame, setIsAuthenticatedGame] = useState(false);
   const { showImageUrl, handleDebugClick } = useDebug();
+  
+  // Track page view
+  useEffect(() => {
+    trackPageView('/game');
+  }, [trackPageView]);
   
   const { data: players = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
@@ -123,8 +130,11 @@ const Game = () => {
   useEffect(() => {
     if (hasLost) {
       setShowGameOverDialog(true);
+      // Track game end
+      const correctGuesses = Math.floor(score / 5); // Each correct guess gives 5 points
+      trackGameEnd(score, correctGuesses);
     }
-  }, [hasLost]);
+  }, [hasLost, score, trackGameEnd]);
 
   // Handle dialog close and select a new player
   const handleGameOverClose = useCallback(() => {
@@ -157,12 +167,14 @@ const Game = () => {
     setShowTutorial(false);
     setGameStarted(true);
     setIsAuthenticatedGame(!!user);
+    trackGameStart('authenticated_game');
   };
 
   const handleSkipTutorial = () => {
     setShowTutorial(false);
     setGameStarted(true);
     setIsAuthenticatedGame(!!user);
+    trackGameStart('guest_game');
   };
 
   // Loading state
@@ -185,9 +197,9 @@ const Game = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header - mesmo da home */}
-      <header className="bg-white shadow-sm py-4 sticky top-0 z-50">
+    <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white">
+      {/* Header */}
+      <header className="bg-white/90 backdrop-blur-sm shadow-sm py-4 sticky top-0 z-50">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <img 
@@ -198,18 +210,50 @@ const Game = () => {
             <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
           </Link>
           <nav className="flex items-center space-x-6">
-            <Link to="/" className="text-flu-verde hover:text-flu-grena transition-colors">
+            <Link 
+              to="/" 
+              className="text-flu-verde hover:text-flu-grena transition-colors"
+              onClick={() => trackEvent({
+                action: 'navigation_click',
+                category: 'Navigation',
+                label: 'home_from_game'
+              })}
+            >
               Início
             </Link>
-            <Link to="/select-mode" className="text-flu-verde hover:text-flu-grena transition-colors">
+            <Link 
+              to="/select-mode" 
+              className="text-flu-verde hover:text-flu-grena transition-colors"
+              onClick={() => trackEvent({
+                action: 'navigation_click',
+                category: 'Navigation',
+                label: 'select_mode_from_game'
+              })}
+            >
               Jogar
             </Link>
             {user && (
-              <Link to="/profile" className="text-flu-verde hover:text-flu-grena transition-colors">
+              <Link 
+                to="/profile" 
+                className="text-flu-verde hover:text-flu-grena transition-colors"
+                onClick={() => trackEvent({
+                  action: 'navigation_click',
+                  category: 'Navigation',
+                  label: 'profile_from_game'
+                })}
+              >
                 Meu Perfil
               </Link>
             )}
-            <Link to="/admin/login" className="text-flu-verde hover:text-flu-grena transition-colors">
+            <Link 
+              to="/admin/login" 
+              className="text-flu-verde hover:text-flu-grena transition-colors"
+              onClick={() => trackEvent({
+                action: 'navigation_click',
+                category: 'Navigation',
+                label: 'admin_from_game'
+              })}
+            >
               Admin
             </Link>
             <AuthButton />

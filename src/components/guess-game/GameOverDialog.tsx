@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Dialog, DialogContent, DialogTitle, DialogClose } from "@/components/ui/dialog";
 import { RankingForm } from "@/components/guess-game/RankingForm";
@@ -6,6 +5,7 @@ import { RankingDisplay } from "@/components/guess-game/RankingDisplay";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 interface GameOverDialogProps {
   open: boolean;
@@ -26,13 +26,26 @@ export const GameOverDialog = ({
 }: GameOverDialogProps) => {
   const [showRankingForm, setShowRankingForm] = useState(true);
   const navigate = useNavigate();
+  const { trackEvent } = useAnalytics();
   
   const handleRankingSaved = () => {
+    trackEvent({
+      action: 'ranking_saved',
+      category: 'Game',
+      label: 'score_saved',
+      value: score
+    });
     setShowRankingForm(false);
     onResetScore();
   };
 
   const handleDialogClose = () => {
+    trackEvent({
+      action: 'game_over_dialog_close',
+      category: 'Game',
+      label: showRankingForm ? 'without_saving' : 'after_saving'
+    });
+    
     if (showRankingForm) {
       // If user hasn't saved their score, redirect to home and reset score
       onResetScore();
@@ -42,10 +55,19 @@ export const GameOverDialog = ({
       onClose();
     }
   };
+
+  const handlePlayAgain = () => {
+    trackEvent({
+      action: 'play_again',
+      category: 'Game',
+      label: 'from_game_over'
+    });
+    onClose();
+  };
   
   return (
-    <Dialog open={open} onOpenChange={(isOpen) => {
-      if (!isOpen) handleDialogClose();
+    <Dialog open={open} onOpenChange={() => {
+      // Remove the automatic close behavior - keep dialog open
     }}>
       <DialogContent className="max-w-md">
         <DialogTitle className="text-center text-2xl font-bold text-flu-grena">
@@ -93,7 +115,7 @@ export const GameOverDialog = ({
                 </div>
                 
                 <button
-                  onClick={onClose}
+                  onClick={handlePlayAgain}
                   className="w-full bg-flu-grena text-white px-4 py-2 rounded-lg hover:opacity-90"
                 >
                   Jogar novamente

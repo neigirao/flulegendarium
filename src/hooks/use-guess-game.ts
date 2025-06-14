@@ -5,11 +5,13 @@ import { Player } from "@/types/guess-game";
 import { usePlayerSelection } from "./use-player-selection";
 import { useGameTimer, TIME_LIMIT_SECONDS } from "./use-game-timer";
 import { processPlayerName, isCorrectGuess } from "@/utils/name-processor";
+import { useAnalytics } from "./use-analytics";
 
 export const MAX_ATTEMPTS = 1;
 
 export const useGuessGame = (players: Player[] | undefined) => {
   const { toast } = useToast();
+  const { trackEvent, trackCorrectGuess, trackIncorrectGuess } = useAnalytics();
   const [attempts, setAttempts] = useState(0);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -24,13 +26,20 @@ export const useGuessGame = (players: Player[] | undefined) => {
     if (!gameOver && currentPlayer) {
       setGameOver(true);
       setHasLost(true); // Set hasLost when time is up
+      
+      trackEvent({
+        action: 'game_timeout',
+        category: 'Game',
+        label: currentPlayer.name
+      });
+      
       toast({
         variant: "destructive",
         title: "Tempo esgotado!",
         description: `O jogador era ${currentPlayer.name}`,
       });
     }
-  }, [currentPlayer, gameOver, toast]);
+  }, [currentPlayer, gameOver, toast, trackEvent]);
   
   // Game timer hook
   const { timeRemaining, startTimer, clearGameTimer } = useGameTimer(gameOver, handleTimeUp);
@@ -70,6 +79,14 @@ export const useGuessGame = (players: Player[] | undefined) => {
         const points = 5; // Always award 5 points since we only have one attempt now
         setScore(prev => prev + points);
         
+        trackCorrectGuess(currentPlayer.name);
+        trackEvent({
+          action: 'points_earned',
+          category: 'Game',
+          label: currentPlayer.name,
+          value: points
+        });
+        
         toast({
           title: "Parabéns!",
           description: `Você acertou e ganhou ${points} pontos!`,
@@ -83,6 +100,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
         // Wrong guess - game over immediately
         setGameOver(true);
         setHasLost(true); // Explicitly set hasLost when guess is incorrect
+        
+        trackIncorrectGuess(currentPlayer.name, guess);
         
         // Clear the timer
         clearGameTimer();
@@ -101,6 +120,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
         const points = 5;
         setScore(prev => prev + points);
         
+        trackCorrectGuess(currentPlayer.name);
+        
         toast({
           title: "Parabéns!",
           description: `Você acertou e ganhou ${points} pontos!`,
@@ -113,6 +134,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
         setHasLost(true); // Ensure hasLost is set when guess fails
         clearGameTimer();
         
+        trackIncorrectGuess(currentPlayer.name, guess);
+        
         toast({
           variant: "destructive",
           title: "Game Over!",
@@ -122,7 +145,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     } finally {
       setIsProcessingGuess(false);
     }
-  }, [currentPlayer, gameOver, clearGameTimer, selectRandomPlayer, toast, isProcessingGuess]);
+  }, [currentPlayer, gameOver, clearGameTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent]);
 
   // Reset game state for a new round
   const resetGameForNewRound = useCallback(() => {
@@ -135,9 +158,14 @@ export const useGuessGame = (players: Player[] | undefined) => {
   // Effect to handle state changes when a new player is selected
   useEffect(() => {
     if (currentPlayer) {
+      trackEvent({
+        action: 'new_player_shown',
+        category: 'Game',
+        label: currentPlayer.name
+      });
       resetGameForNewRound();
     }
-  }, [currentPlayer, resetGameForNewRound]);
+  }, [currentPlayer, resetGameForNewRound, trackEvent]);
 
   return {
     currentPlayer,
