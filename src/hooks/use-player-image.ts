@@ -21,25 +21,32 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
   useEffect(() => {
     if (player) {
       console.log(`🖼️ Carregando imagem para: ${player.name}`);
+      console.log(`🔗 URL original: ${player.image_url}`);
       
       setImageError(false);
       setIsLoading(true);
       setFallbackAttempted(false);
       
-      // Priority: try original image first
+      // Priority: try original image first, but validate URL
       let imageUrl = player.image_url;
       
-      // If original URL is obviously invalid, try fallback immediately
-      if (!imageUrl || imageUrl === defaultPlayerImage) {
+      // If original URL is obviously invalid or empty, try fallback immediately
+      if (!imageUrl || 
+          imageUrl === defaultPlayerImage || 
+          imageUrl === "" || 
+          imageUrl === "undefined" ||
+          imageUrl === "null") {
+        console.log(`⚠️ URL inválida para ${player.name}, tentando fallback`);
         imageUrl = getFallbackImage(player.name);
       }
       
       setImageSrc(imageUrl);
-      console.log(`🎯 URL inicial para ${player.name}: ${imageUrl}`);
+      console.log(`🎯 URL final para ${player.name}: ${imageUrl}`);
     } else {
       setImageSrc(null);
+      setIsLoading(false);
     }
-  }, [player?.id, player?.name]);
+  }, [player?.id, player?.name, player?.image_url]);
 
   const getFallbackImage = (playerName: string): string => {
     // Check for exact match first
@@ -48,10 +55,12 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
       return playerImagesFallbacksMap[playerName];
     }
     
-    // Check for partial matches
+    // Check for partial matches (case insensitive)
+    const normalizedPlayerName = playerName.toLowerCase().trim();
     for (const [key, url] of Object.entries(playerImagesFallbacksMap)) {
-      if (playerName.toLowerCase().includes(key.toLowerCase()) || 
-          key.toLowerCase().includes(playerName.toLowerCase())) {
+      const normalizedKey = key.toLowerCase().trim();
+      if (normalizedPlayerName.includes(normalizedKey) || 
+          normalizedKey.includes(normalizedPlayerName)) {
         console.log(`🔍 Fallback por similaridade para ${playerName}: ${key}`);
         return url;
       }
@@ -76,7 +85,7 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
       setFallbackAttempted(true);
       
       const fallbackUrl = getFallbackImage(player.name);
-      if (fallbackUrl !== imageSrc) {
+      if (fallbackUrl !== imageSrc && fallbackUrl !== defaultPlayerImage) {
         console.log(`🔄 Tentando fallback para ${player.name}: ${fallbackUrl}`);
         setImageSrc(fallbackUrl);
         setIsLoading(true);
@@ -94,9 +103,9 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
       return;
     }
     
-    // If all failed, still show something (don't show error)
-    console.log(`💥 Todas as tentativas falharam para ${player?.name}, mas continuando`);
-    setImageError(false); // Don't show error, just continue
+    // If all failed, show error state but continue
+    console.log(`💥 Todas as tentativas falharam para ${player?.name}`);
+    setImageError(true);
     setIsLoading(false);
     onImageFixed();
   };

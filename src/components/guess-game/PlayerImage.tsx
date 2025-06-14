@@ -35,7 +35,10 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
     return <PlayerImageSkeleton />;
   }
 
-  console.log(`🎨 Renderizando imagem para ${player.name}: ${imageSrc}`);
+  console.log(`🎨 Renderizando imagem para ${player.name}:`);
+  console.log(`   - imageSrc: ${imageSrc}`);
+  console.log(`   - isLoading: ${isLoading}`);
+  console.log(`   - imageError: ${imageError}`);
 
   return (
     <div className="relative w-full h-[280px] sm:h-[320px] md:h-[380px] lg:h-[450px] rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300 hover:shadow-lg border-2 border-flu-verde">
@@ -43,7 +46,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
       <ImageErrorDisplay imageError={imageError} />
       
       <div className="w-full h-full flex items-center justify-center p-2 md:p-3 lg:p-4 relative">
-        {imageSrc ? (
+        {imageSrc && !imageError ? (
           <OptimizedImage
             src={imageSrc}
             alt={`Imagem de ${player.name}`}
@@ -54,18 +57,27 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
             onError={() => {
-              console.error(`🚫 Evento onError para ${player.name}`);
+              console.error(`🚫 Evento onError para ${player.name} com URL: ${imageSrc}`);
               handleImageError();
             }}
             onLoad={() => {
-              console.log(`🎉 Evento onLoad para ${player.name}`);
+              console.log(`🎉 Evento onLoad para ${player.name} com URL: ${imageSrc}`);
               handleImageLoadComplete();
             }}
-            fallbackSrc="/placeholder.svg"
+            fallbackSrc="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png"
           />
         ) : (
           <div className="flex items-center justify-center w-full h-full">
-            <p className="text-gray-500 text-sm md:text-base">Carregando imagem...</p>
+            <div className="text-center">
+              <img 
+                src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
+                alt="Escudo do Fluminense" 
+                className="w-20 h-20 mx-auto mb-4 opacity-50"
+              />
+              <p className="text-gray-500 text-sm md:text-base">
+                {imageError ? 'Imagem não disponível' : 'Carregando imagem...'}
+              </p>
+            </div>
           </div>
         )}
       </div>
