@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -33,7 +32,7 @@ export default function Index() {
               <img 
                 src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
                 alt="Fluminense FC" 
-                className="w-8 h-8"
+                className="w-8 h-8 object-contain"
               />
               <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
             </Link>
@@ -58,28 +57,33 @@ export default function Index() {
         </header>
 
         {/* Hero Section */}
-        <section className="relative py-16 px-4 bg-gradient-to-r from-flu-verde to-flu-grena overflow-hidden">
-          <div className="container mx-auto">
+        <section className="relative py-20 px-4 bg-gradient-to-br from-flu-grena via-flu-verde to-flu-grena overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="container mx-auto relative z-10">
             <div className="flex items-center justify-between">
-              <div className="flex-1 text-white max-w-2xl">
-                <div className="flex items-center gap-4 mb-6">
-                  <img 
-                    src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
-                    alt="Fluminense FC" 
-                    className="w-16 h-16"
-                  />
+              <div className="flex-1 text-white max-w-3xl">
+                <div className="flex items-center gap-6 mb-8">
+                  <div className="relative">
+                    <img 
+                      src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                      alt="Fluminense FC" 
+                      className="w-20 h-20 object-contain drop-shadow-2xl"
+                    />
+                  </div>
                   <div>
-                    <h1 className="text-5xl md:text-6xl font-bold leading-tight">
-                      Lendas do<br />
-                      <span className="text-yellow-300">Fluminense</span>
+                    <h1 className="text-6xl md:text-7xl font-black leading-none">
+                      LENDAS
                     </h1>
+                    <h2 className="text-4xl md:text-5xl font-bold text-yellow-300 leading-none">
+                      DO FLUMINENSE
+                    </h2>
                   </div>
                 </div>
-                <p className="text-xl mb-4 opacity-90 leading-relaxed">
+                <p className="text-2xl mb-6 font-semibold leading-relaxed drop-shadow-lg">
                   Teste seus conhecimentos sobre os maiores<br />
                   ídolos da história tricolor!
                 </p>
-                <p className="text-lg mb-8 opacity-80">
+                <p className="text-lg mb-10 opacity-90 leading-relaxed">
                   Veja a foto, adivinhe o jogador e conquiste seu lugar<br />
                   entre os verdadeiros conhecedores do Fluzão!
                 </p>
@@ -109,14 +113,14 @@ export default function Index() {
               
               <div className="hidden lg:block flex-1">
                 <div className="relative w-96 h-96 mx-auto">
-                  <div className="absolute inset-0 bg-white/20 rounded-2xl backdrop-blur-sm flex items-center justify-center border border-white/30">
-                    <div className="w-80 h-80 bg-gradient-to-br from-white/30 to-white/10 rounded-xl flex items-center justify-center relative overflow-hidden border border-white/20">
-                      <div className="text-white text-9xl font-bold opacity-40">?</div>
-                      <div className="absolute top-4 right-4">
+                  <div className="absolute inset-0 bg-white/10 rounded-3xl backdrop-blur-md flex items-center justify-center border-2 border-white/20 shadow-2xl">
+                    <div className="w-80 h-80 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center relative overflow-hidden border border-white/10">
+                      <div className="text-white text-9xl font-black opacity-30">?</div>
+                      <div className="absolute top-6 right-6">
                         <img 
                           src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
                           alt="Fluminense FC" 
-                          className="w-12 h-12 opacity-60"
+                          className="w-16 h-16 object-contain opacity-40 drop-shadow-lg"
                         />
                       </div>
                     </div>
@@ -128,13 +132,21 @@ export default function Index() {
         </section>
 
         {/* Ranking Section */}
-        <section id="ranking" className="py-20 bg-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl font-bold text-flu-grena mb-4">
-                🏆 Ranking Tricolor
-              </h2>
-              <p className="text-xl text-gray-600">
+        <section id="ranking" className="py-24 bg-white relative">
+          <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-flu-grena/5 to-transparent"></div>
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-16">
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <img 
+                  src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                  alt="Fluminense FC" 
+                  className="w-12 h-12 object-contain"
+                />
+                <h2 className="text-5xl font-black text-flu-grena">
+                  RANKING TRICOLOR
+                </h2>
+              </div>
+              <p className="text-2xl text-gray-600 font-medium">
                 Os maiores conhecedores das lendas do Fluminense
               </p>
             </div>
@@ -143,10 +155,18 @@ export default function Index() {
         </section>
 
         {/* Stats Section */}
-        <section className="py-20 bg-gradient-to-r from-flu-grena to-flu-verde text-white">
-          <div className="container mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold mb-4">Estatísticas do Jogo</h2>
+        <section className="py-24 bg-gradient-to-br from-flu-grena via-flu-verde to-flu-grena text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-black/10"></div>
+          <div className="container mx-auto px-4 relative z-10">
+            <div className="text-center mb-16">
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <img 
+                  src="/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png" 
+                  alt="Fluminense FC" 
+                  className="w-12 h-12 object-contain drop-shadow-lg"
+                />
+                <h2 className="text-4xl font-black">ESTATÍSTICAS DO JOGO</h2>
+              </div>
               <p className="text-xl opacity-90">Acompanhe os números da nossa comunidade tricolor</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
