@@ -9,10 +9,9 @@ interface UsePlayerImageProps {
     image_url: string;
   } | null;
   onImageFixed: () => void;
-  onImageLoaded?: () => void;
 }
 
-export function usePlayerImage({ player, onImageFixed, onImageLoaded }: UsePlayerImageProps) {
+export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -106,10 +105,6 @@ export function usePlayerImage({ player, onImageFixed, onImageLoaded }: UsePlaye
     console.log(`✅ Imagem carregada com sucesso para ${player?.name}: ${imageSrc}`);
     setIsLoading(false);
     setImageError(false);
-    
-    if (onImageLoaded) {
-      onImageLoaded();
-    }
   };
 
   return {

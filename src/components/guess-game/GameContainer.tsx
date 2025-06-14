@@ -38,9 +38,8 @@ export const GameContainer = ({
   selectRandomPlayer,
   handlePlayerImageFixed,
   isProcessingGuess,
-  hasLost,
-  handleImageLoaded
-}: GameContainerProps) => {
+  hasLost
+}: Omit<GameContainerProps, 'handleImageLoaded'>) => {
   const [showRanking, setShowRanking] = useState(false);
   const { trackEvent } = useAnalytics();
 
@@ -122,7 +121,6 @@ export const GameContainer = ({
           <PlayerImage 
             player={currentPlayer} 
             onImageFixed={handlePlayerImageFixed}
-            onImageLoaded={handleImageLoaded}
           />
 
           {!hasLost && (

@@ -17,7 +17,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [gameOver, setGameOver] = useState(false);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
   const [hasLost, setHasLost] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
+  const [currentPlayerId, setCurrentPlayerId] = useState<string | null>(null);
   
   // Player selection hook
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed } = usePlayerSelection(players);
@@ -45,12 +45,18 @@ export const useGuessGame = (players: Player[] | undefined) => {
   // Game timer hook
   const { timeRemaining, startTimer, clearGameTimer } = useGameTimer(gameOver, handleTimeUp);
 
-  // Start timer when player changes (independent of image loading)
+  // Start timer only when a NEW player is selected
   useEffect(() => {
-    if (currentPlayer && !gameOver) {
-      console.log('🎮 Novo jogador selecionado, iniciando timer:', currentPlayer.name);
+    if (currentPlayer && currentPlayer.id !== currentPlayerId && !gameOver) {
+      console.log('🎮 Novo jogador detectado, iniciando timer:', currentPlayer.name);
+      setCurrentPlayerId(currentPlayer.id);
       
-      // Small delay to ensure UI is ready
+      // Reset states for new player
+      setAttempts(0);
+      setGameOver(false);
+      setHasLost(false);
+      
+      // Start timer after a brief delay to ensure UI is ready
       const timeoutId = setTimeout(() => {
         startTimer();
         trackEvent({
@@ -62,13 +68,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
       
       return () => clearTimeout(timeoutId);
     }
-  }, [currentPlayer?.id, gameOver, startTimer, trackEvent]);
-
-  // Callback para quando a imagem for carregada (apenas para tracking)
-  const handleImageLoaded = useCallback(() => {
-    console.log('🎯 Imagem carregada com sucesso');
-    setImageLoaded(true);
-  }, []);
+  }, [currentPlayer?.id, currentPlayerId, gameOver, startTimer, trackEvent]);
 
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
@@ -156,21 +156,6 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, [currentPlayer, gameOver, clearGameTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent]);
 
-  // Reset game state for a new round
-  const resetGameForNewRound = useCallback(() => {
-    setAttempts(0);
-    setGameOver(false);
-    setHasLost(false);
-    setImageLoaded(false);
-  }, []);
-
-  // Effect to handle state changes when a new player is selected
-  useEffect(() => {
-    if (currentPlayer && !gameOver) {
-      resetGameForNewRound();
-    }
-  }, [currentPlayer?.id, gameOver, resetGameForNewRound]);
-
   return {
     currentPlayer,
     attempts,
@@ -184,6 +169,6 @@ export const useGuessGame = (players: Player[] | undefined) => {
     isProcessingGuess,
     TIME_LIMIT_SECONDS,
     hasLost,
-    handleImageLoaded
+    handleImageLoaded: () => {} // Removido pois não é mais necessário
   };
 };

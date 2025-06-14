@@ -11,22 +11,15 @@ interface PlayerImageProps {
     image_url: string;
   } | null;
   onImageFixed: () => void;
-  onImageLoaded?: () => void;
 }
 
-export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: PlayerImageProps) => {
+export const PlayerImage = memo(({ player, onImageFixed }: PlayerImageProps) => {
   const imgRef = useRef<HTMLImageElement>(null);
   const [isInView, setIsInView] = useState(false);
   const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded } = 
     usePlayerImage({ 
       player, 
-      onImageFixed, 
-      onImageLoaded: () => {
-        console.log('🎯 PlayerImage: imagem carregada, chamando callback');
-        if (onImageLoaded) {
-          onImageLoaded();
-        }
-      }
+      onImageFixed
     });
 
   // Intersection Observer for lazy loading
