@@ -9,12 +9,23 @@
     <meta name="author" content="Lendas do Flu" />
     <meta name="keywords" content="Fluminense, tricolor, futebol, jogo, quiz, lendas, Fred, Castilho" />
     
+    <!-- DNS Prefetch for better performance -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//static.hotjar.com">
+    
     <!-- Preconnect to improve font loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Optimized font loading with display=swap -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <!-- Critical resource hints -->
+    <link rel="preload" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" as="image" type="image/png" fetchpriority="high">
+    <link rel="preload" href="/og-image.png" as="image" type="image/png">
+    
+    <!-- Optimized font loading with display=swap and preload -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'" fetchpriority="high">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
     
     <!-- Open Graph / Facebook -->
@@ -23,6 +34,8 @@
     <meta property="og:title" content="Lendas do Flu - Teste seus conhecimentos tricolores" />
     <meta property="og:description" content="Descubra se você realmente conhece as lendas do Fluminense. Adivinhe o jogador pela foto e prove que é um verdadeiro tricolor!" />
     <meta property="og:image" content="https://flulegendarium.lovable.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:site_name" content="Lendas do Flu" />
     <meta property="og:locale" content="pt_BR" />
 
@@ -42,20 +55,22 @@
     <meta name="apple-mobile-web-app-title" content="Lendas do Flu" />
     <link rel="apple-touch-icon" href="/og-image.png" />
     
-    <!-- Favicon -->
+    <!-- Optimized Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://flulegendarium.lovable.app/" />
     
-    <!-- Additional SEO -->
+    <!-- Enhanced SEO -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="language" content="Portuguese" />
     <meta name="revisit-after" content="7 days" />
+    <meta name="rating" content="general" />
+    <meta name="distribution" content="global" />
     
-    <!-- Google tag (gtag.js) - Updated with better loading -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <!-- Google tag (gtag.js) - Optimized loading -->
+    <link rel="preload" href="https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC" as="script">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -63,54 +78,146 @@
       gtag('js', new Date());
       gtag('config', 'G-X2VE77MEYC', {
         anonymize_ip: true,
-        cookie_flags: 'SameSite=None;Secure'
+        cookie_flags: 'SameSite=None;Secure',
+        // Performance optimizations
+        send_page_view: true,
+        custom_map: {
+          'custom_parameter': 'performance_metric'
+        }
       });
     </script>
 
-    <!-- Hotjar Tracking Code for Flu Legendarium -->
+    <!-- Hotjar Tracking Code - Optimized -->
     <script>
         (function(h,o,t,j,a,r){
             h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
             h._hjSettings={hjid:997810,hjsv:6};
             a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
+            r=o.createElement('script');r.async=1;r.defer=1;
             r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
             a.appendChild(r);
         })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
     </script>
 
-    <!-- Critical CSS inlined for faster rendering -->
+    <!-- Enhanced Critical CSS for better FCP and LCP -->
     <style>
-      /* Critical CSS for initial paint */
+      /* Critical CSS for initial paint - Enhanced */
+      :root {
+        --flu-grena: #800020;
+        --flu-verde: #10b981;
+      }
+      
+      * {
+        box-sizing: border-box;
+      }
+      
       body { 
         margin: 0; 
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
         background: linear-gradient(to bottom, #10b98150, #ffffff);
         min-height: 100vh;
+        line-height: 1.6;
+        color: #1f2937;
+        font-display: swap;
       }
-      .loader { 
+      
+      .critical-loading { 
         display: flex; 
         justify-content: center; 
         align-items: center; 
-        min-height: 100vh; 
+        min-height: 100vh;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      
+      .critical-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f4f6;
+        border-top: 4px solid var(--flu-grena);
+        border-radius: 50%;
+        animation: critical-spin 1s linear infinite;
+      }
+      
+      .critical-logo {
+        width: 60px;
+        height: 60px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+      }
+      
+      .critical-text {
+        color: var(--flu-grena);
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+      
+      @keyframes critical-spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      
+      /* Prevent layout shift */
+      .game-container {
+        min-height: 600px;
+        contain: layout style paint;
+      }
+      
+      .player-image-container {
+        aspect-ratio: 1;
+        min-height: 300px;
+        contain: layout style paint;
+      }
+      
+      /* Optimize font rendering */
+      .font-loading {
+        font-display: swap;
+        text-rendering: optimizeSpeed;
+      }
+      
+      /* Reduce CLS */
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+      
+      [loading="lazy"] {
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+      
+      [loading="lazy"].loaded {
+        opacity: 1;
+      }
+      
+      /* Performance optimizations */
+      .will-change-transform {
+        will-change: transform;
+      }
+      
+      .gpu-accelerated {
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        perspective: 1000px;
       }
     </style>
   </head>
 
   <body>
     <div id="root">
-      <!-- Fallback loading state -->
-      <div class="loader">
-        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #800020; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <!-- Enhanced fallback loading state with better UX -->
+      <div class="critical-loading">
+        <img 
+          src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
+          alt="Fluminense FC" 
+          class="critical-logo"
+          width="60"
+          height="60"
+        />
+        <div class="critical-spinner"></div>
+        <div class="critical-text">Carregando Lendas do Flu...</div>
       </div>
     </div>
-    
-    <style>
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    </style>
     
     <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
     <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
