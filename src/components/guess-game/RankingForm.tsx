@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/hooks/useAuth";
 import { Trophy, User } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useNavigate } from "react-router-dom";
 
 interface RankingFormProps {
   score: number;
@@ -21,6 +22,7 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
   const { toast } = useToast();
   const { user } = useAuth();
   const { trackEvent } = useAnalytics();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +64,12 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
         description: "Sua pontuação foi salva no ranking!",
       });
 
-      onSaved();
+      // Se não está autenticado (jogador convidado), redireciona para home
+      if (!isAuthenticated) {
+        navigate("/");
+      } else {
+        onSaved();
+      }
     } catch (error) {
       console.error('Erro ao salvar pontuação:', error);
       
@@ -88,7 +95,13 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
       category: 'Game',
       label: 'score_not_saved'
     });
-    onCancel();
+    
+    // Se não está autenticado (jogador convidado), redireciona para home
+    if (!isAuthenticated) {
+      navigate("/");
+    } else {
+      onCancel();
+    }
   };
 
   return (
