@@ -25,7 +25,13 @@ export default function Index() {
 
   return (
     <>
-      <SEOHead />
+      <SEOHead 
+        title="Lendas do Flu - Quiz Oficial dos Tricolores | Teste seu Conhecimento Fluminense"
+        description="🏆 Desafie seus conhecimentos sobre o Fluminense! Adivinhe os jogadores pelas fotos, compete no ranking e prove que é um verdadeiro tricolor. Jogue grátis agora!"
+        keywords="quiz fluminense, teste fluminense, jogo fluminense, tricolor, adivinhe jogador fluminense, ranking tricolor, quiz futebol, lendas do flu"
+        url="https://flulegendarium.lovable.app/"
+        canonical="https://flulegendarium.lovable.app/"
+      />
       <StructuredData type="WebSite" />
       <div className="min-h-screen bg-gray-50">
         {/* Responsive Header */}
@@ -34,7 +40,7 @@ export default function Index() {
             <Link to="/" className="flex items-center gap-2 md:gap-3">
               <img 
                 src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                alt="Fluminense FC" 
+                alt="Escudo do Fluminense FC" 
                 className="w-6 h-6 md:w-8 md:h-8 object-contain"
               />
               <span className="text-lg md:text-2xl font-bold text-flu-grena">Lendas do Flu</span>
@@ -46,7 +52,7 @@ export default function Index() {
                 Início
               </Link>
               <Link to="/select-mode" className="text-flu-verde hover:text-flu-grena transition-colors">
-                Jogar
+                Jogar Quiz
               </Link>
               {user && (
                 <Link to="/profile" className="text-flu-verde hover:text-flu-grena transition-colors">
@@ -63,6 +69,7 @@ export default function Index() {
             <button
               className="md:hidden p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Menu de navegação"
             >
               {mobileMenuOpen ? (
                 <X className="w-6 h-6 text-flu-grena" />
@@ -88,7 +95,7 @@ export default function Index() {
                   className="block text-flu-verde hover:text-flu-grena transition-colors"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Jogar
+                  Jogar Quiz
                 </Link>
                 {user && (
                   <Link 
@@ -126,7 +133,7 @@ export default function Index() {
                 {/* Badge/Tag */}
                 <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-2 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium">
                   <StarIcon className="w-3 h-3 md:w-4 md:h-4 text-yellow-300" />
-                  <span>Jogo oficial dos tricolores</span>
+                  <span>Quiz oficial dos tricolores</span>
                 </div>
 
                 {/* Main Headline */}
@@ -137,7 +144,7 @@ export default function Index() {
                   </h1>
                   
                   <p className="text-lg md:text-xl lg:text-2xl text-white/90 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                    Desafie seu conhecimento tricolor! Veja a foto, adivinhe o jogador e prove que é um verdadeiro fluminense.
+                    Desafie seu conhecimento tricolor! Veja a foto, adivinhe o jogador e prove que é um verdadeiro fluminense. 🏆
                   </p>
                 </div>
 
@@ -150,7 +157,7 @@ export default function Index() {
                   >
                     <Link to="/select-mode" className="flex items-center gap-2 md:gap-3">
                       <PlayIcon className="w-5 h-5 md:w-6 md:h-6" />
-                      Jogar Agora - Grátis
+                      Jogar Quiz Agora - Grátis
                     </Link>
                   </Button>
                 </div>
@@ -167,7 +174,7 @@ export default function Index() {
                     <div className="absolute inset-0 bg-white/10 rounded-3xl backdrop-blur-sm border border-white/20"></div>
                     <img 
                       src="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png" 
-                      alt="Desafio: Adivinhe o jogador do Fluminense" 
+                      alt="Desafio: Adivinhe o jogador do Fluminense - Quiz interativo" 
                       className="relative w-full h-full object-contain p-6 md:p-8 drop-shadow-2xl"
                     />
                     
@@ -179,7 +186,7 @@ export default function Index() {
                     <div className="absolute -bottom-1 -left-2 md:-bottom-2 md:-left-4 bg-white/90 backdrop-blur-sm rounded-full p-2 md:p-3 shadow-lg border border-white/20">
                       <img 
                         src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                        alt="Escudo do Fluminense" 
+                        alt="Escudo do Fluminense FC" 
                         className="w-6 h-6 md:w-8 md:h-8 object-contain"
                       />
                     </div>
@@ -213,7 +220,6 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Responsive Stats Section */}
         <section className="py-16 md:py-24 bg-gradient-to-br from-flu-grena via-flu-verde to-flu-grena text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="container mx-auto px-4 relative z-10">
@@ -260,7 +266,6 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Responsive Features Section */}
         <section className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12 md:mb-16">
@@ -268,11 +273,10 @@ export default function Index() {
                 Por que jogar Lendas do Flu?
               </h2>
               <p className="text-lg md:text-xl text-gray-600">
-                Descubra tudo que nosso jogo oferece para você
+                Descubra tudo que nosso quiz oferece para você
               </p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {/* Feature 1 */}
               <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
                 <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-flu-grena rounded-full mx-auto mb-4 md:mb-6">
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center">
@@ -287,7 +291,6 @@ export default function Index() {
                 </p>
               </div>
               
-              {/* Feature 2 */}
               <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-lg hover:shadow-xl transition-shadow border border-gray-100">
                 <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-flu-verde rounded-full mx-auto mb-4 md:mb-6">
                   <div className="w-8 h-8 md:w-10 md:h-10 bg-white rounded-full flex items-center justify-center">
@@ -302,7 +305,6 @@ export default function Index() {
                 </p>
               </div>
               
-              {/* Feature 3 */}
               <div className="bg-white rounded-2xl p-6 md:p-8 text-center shadow-lg hover:shadow-xl transition-shadow border border-gray-100 relative">
                 <div className="absolute top-4 md:top-6 right-4 md:right-6">
                   <span className="bg-orange-500 text-white text-xs md:text-sm px-2 md:px-3 py-1 rounded-full font-bold">
@@ -325,7 +327,6 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Responsive Footer */}
         <footer className="bg-flu-grena py-8 md:py-12 text-white">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-center gap-3 md:gap-4 mb-4 md:mb-6">

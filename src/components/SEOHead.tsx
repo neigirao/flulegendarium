@@ -7,6 +7,9 @@ interface SEOHeadProps {
   image?: string;
   url?: string;
   type?: string;
+  keywords?: string;
+  canonical?: string;
+  noindex?: boolean;
 }
 
 export const SEOHead = ({ 
@@ -14,7 +17,10 @@ export const SEOHead = ({
   description = "Descubra se você realmente conhece as lendas do Fluminense. Adivinhe o jogador pela foto e prove que é um verdadeiro tricolor!",
   image = "/og-image.png",
   url = "https://flulegendarium.lovable.app/",
-  type = "website"
+  type = "website",
+  keywords = "quiz fluminense, teste fluminense, jogo fluminense, tricolor, futebol, adivinhe jogador",
+  canonical,
+  noindex = false
 }: SEOHeadProps) => {
   useEffect(() => {
     // Update document title
@@ -38,17 +44,76 @@ export const SEOHead = ({
       metaTag.setAttribute('content', content);
     };
 
+    const updateLinkTag = (rel: string, href: string) => {
+      let linkTag = document.querySelector(`link[rel="${rel}"]`);
+      
+      if (!linkTag) {
+        linkTag = document.createElement('link');
+        linkTag.setAttribute('rel', rel);
+        document.head.appendChild(linkTag);
+      }
+      
+      linkTag.setAttribute('href', href);
+    };
+
+    // Basic SEO tags
     updateMetaTag('description', description);
+    updateMetaTag('keywords', keywords);
+    
+    // Robots tag
+    if (noindex) {
+      updateMetaTag('robots', 'noindex, nofollow');
+    } else {
+      updateMetaTag('robots', 'index, follow');
+    }
+
+    // Open Graph tags
     updateMetaTag('og:title', title);
     updateMetaTag('og:description', description);
     updateMetaTag('og:image', image);
     updateMetaTag('og:url', url);
     updateMetaTag('og:type', type);
+    updateMetaTag('og:site_name', 'Lendas do Flu');
+    updateMetaTag('og:locale', 'pt_BR');
+
+    // Twitter Card tags
+    updateMetaTag('twitter:card', 'summary_large_image');
     updateMetaTag('twitter:title', title);
     updateMetaTag('twitter:description', description);
     updateMetaTag('twitter:image', image);
     updateMetaTag('twitter:url', url);
-  }, [title, description, image, url, type]);
+    updateMetaTag('twitter:site', '@LendasDoFlu');
+
+    // Canonical URL
+    if (canonical) {
+      updateLinkTag('canonical', canonical);
+    }
+
+    // Structured data for the page
+    const structuredData = {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": title,
+      "description": description,
+      "url": url,
+      "image": image,
+      "inLanguage": "pt-BR",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Lendas do Flu",
+        "url": "https://flulegendarium.lovable.app/"
+      }
+    };
+
+    let jsonLdScript = document.querySelector('script[type="application/ld+json"]');
+    if (!jsonLdScript) {
+      jsonLdScript = document.createElement('script');
+      jsonLdScript.setAttribute('type', 'application/ld+json');
+      document.head.appendChild(jsonLdScript);
+    }
+    jsonLdScript.textContent = JSON.stringify(structuredData);
+
+  }, [title, description, image, url, type, keywords, canonical, noindex]);
 
   return null;
 };
