@@ -1,9 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import { defaultPlayerImage } from "@/utils/player-image";
-import { OptimizedImage } from "@/components/performance/OptimizedImage";
 
 interface PlayerStatistics {
   gols: number;
@@ -30,11 +29,12 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
   const [isFixingImage, setIsFixingImage] = useState(false);
 
   const fixPlayerImage = async () => {
-    if (isFixingImage) return;
+    if (isFixingImage) return; // Prevent multiple simultaneous corrections
     
     try {
       setIsFixingImage(true);
       
+      // Usar a imagem padrão como fallback
       const newImageUrl = defaultPlayerImage;
       
       const { error } = await supabase
@@ -44,7 +44,10 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
       
       if (error) throw error;
       
+      // Notificar o componente pai sobre a atualização
       onImageUpdate(player.id, newImageUrl);
+      
+      // Resetar o estado de erro
       setImageError(false);
       
       toast({
@@ -85,14 +88,11 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
               </button>
             </div>
           ) : (
-            <OptimizedImage
-              src={player.image_url || defaultPlayerImage}
+            <img 
+              src={player.image_url || defaultPlayerImage} 
               alt={player.name}
               className="w-full h-full object-cover"
-              width={80}
-              height={80}
               onError={handleImageError}
-              fallback={defaultPlayerImage}
             />
           )}
           <Button 

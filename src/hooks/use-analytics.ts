@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 
 interface AnalyticsEvent {
@@ -56,21 +57,19 @@ export const useAnalytics = () => {
     });
   };
 
-  const trackCorrectGuess = (playerName: string, attempts: number = 1) => {
+  const trackCorrectGuess = (playerName: string) => {
     trackEvent({
       action: 'correct_guess',
       category: 'Game',
       label: playerName,
-      value: attempts,
     });
   };
 
-  const trackIncorrectGuess = (playerName: string, userGuess: string, attempts: number) => {
+  const trackIncorrectGuess = (playerName: string, userGuess: string) => {
     trackEvent({
       action: 'incorrect_guess',
       category: 'Game',
       label: `${playerName} - guessed: ${userGuess}`,
-      value: attempts,
     });
   };
 
@@ -103,4 +102,9 @@ export const useAnalytics = () => {
   };
 };
 
-// Note: Window interface extension is handled in PerformanceMetrics component
+// Extend Window interface for gtag
+declare global {
+  interface Window {
+    gtag: (...args: any[]) => void;
+  }
+}
