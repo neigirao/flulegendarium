@@ -89,12 +89,11 @@ export const GameContainer = ({
         priority={true} // First image should have high priority
       />
 
-      {/* Guess Form */}
+      {/* Guess Form - Fixed prop names to match GuessForm interface */}
       <GuessForm
-        onGuess={handleGuess}
-        isProcessingGuess={isProcessingGuess}
-        gameOver={gameOver}
-        hasLost={hasLost}
+        disabled={gameOver}
+        onSubmitGuess={handleGuess}
+        isProcessing={isProcessingGuess}
       />
     </div>
   );

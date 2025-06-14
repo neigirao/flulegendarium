@@ -8,6 +8,13 @@ interface BundleMetrics {
   cacheHitRate: number;
 }
 
+// Extend Window interface to include gtag
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+
 export const useBundleAnalyzer = () => {
   useEffect(() => {
     // Track bundle loading performance
@@ -62,31 +69,32 @@ export const useBundleAnalyzer = () => {
       setTimeout(trackBundleMetrics, 1000);
     });
     
-    // Track dynamic imports
-    const originalImport = window.import || (() => {});
-    // @ts-ignore
-    window.import = async (...args) => {
-      const startTime = performance.now();
-      try {
-        const result = await originalImport(...args);
-        const loadTime = performance.now() - startTime;
-        
-        console.log(`Dynamic import loaded in ${loadTime.toFixed(2)}ms:`, args[0]);
-        
-        if (window.gtag) {
-          window.gtag('event', 'dynamic_import', {
-            event_category: 'Performance',
-            value: Math.round(loadTime),
-            event_label: args[0]
-          });
+    // Track dynamic imports - Fixed typing issue
+    const originalDynamicImport = (window as any).__vitePreload || window.import;
+    if (originalDynamicImport) {
+      (window as any).__vitePreload = async (...args: any[]) => {
+        const startTime = performance.now();
+        try {
+          const result = await originalDynamicImport(...args);
+          const loadTime = performance.now() - startTime;
+          
+          console.log(`Dynamic import loaded in ${loadTime.toFixed(2)}ms:`, args[0]);
+          
+          if (window.gtag) {
+            window.gtag('event', 'dynamic_import', {
+              event_category: 'Performance',
+              value: Math.round(loadTime),
+              event_label: args[0]
+            });
+          }
+          
+          return result;
+        } catch (error) {
+          console.error('Dynamic import failed:', error);
+          throw error;
         }
-        
-        return result;
-      } catch (error) {
-        console.error('Dynamic import failed:', error);
-        throw error;
-      }
-    };
+      };
+    }
   }, []);
   
   const trackChunkLoad = (chunkName: string, size: number, loadTime: number) => {

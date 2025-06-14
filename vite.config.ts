@@ -43,28 +43,17 @@ export default defineConfig(({ mode }) => ({
           query: ['@tanstack/react-query'],
           
           // Database - separate chunk
-          supabase: ['@supabase/supabase-js'],
-          
-          // Game logic - separate chunk for better code splitting
-          game: [
-            'src/hooks/use-guess-game.ts',
-            'src/hooks/use-game-timer.ts',
-            'src/hooks/use-player-selection.ts'
-          ],
-          
-          // Utilities - separate chunk
-          utils: [
-            'src/utils/player-image/index.ts',
-            'src/utils/name-processor.ts'
-          ]
+          supabase: ['@supabase/supabase-js']
         },
         
-        // Optimize chunk naming for better caching
+        // Optimize chunk naming for better caching - Fixed undefined check
         chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId 
-            ? chunkInfo.facadeModuleId.split('/').pop().replace('.tsx', '').replace('.ts', '')
-            : 'chunk';
-          return `assets/${facadeModuleId}-[hash].js`;
+          const facadeModuleId = chunkInfo.facadeModuleId;
+          if (facadeModuleId) {
+            const fileName = facadeModuleId.split('/').pop()?.replace('.tsx', '').replace('.ts', '') || 'chunk';
+            return `assets/${fileName}-[hash].js`;
+          }
+          return 'assets/chunk-[hash].js';
         },
         
         // Optimize asset naming
