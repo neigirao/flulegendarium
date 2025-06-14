@@ -9,13 +9,22 @@
     <meta name="author" content="Lendas do Flu" />
     <meta name="keywords" content="Fluminense, tricolor, futebol, jogo, quiz, lendas, Fred, Castilho" />
     
-    <!-- Preconnect to improve font loading -->
+    <!-- Preconnect to improve performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     
-    <!-- Optimized font loading with display=swap -->
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    
+    <!-- Optimized font loading with preload -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/og-image.png" as="image" type="image/png">
+    <link rel="preload" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" as="image" type="image/png">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -42,33 +51,46 @@
     <meta name="apple-mobile-web-app-title" content="Lendas do Flu" />
     <link rel="apple-touch-icon" href="/og-image.png" />
     
-    <!-- Favicon -->
+    <!-- Favicon with multiple sizes -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon.ico" />
     
     <!-- Canonical URL -->
     <link rel="canonical" href="https://flulegendarium.lovable.app/" />
     
-    <!-- Additional SEO -->
+    <!-- Enhanced SEO -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="language" content="Portuguese" />
     <meta name="revisit-after" content="7 days" />
+    <meta name="rating" content="general" />
+    <meta name="distribution" content="global" />
     
-    <!-- Google tag (gtag.js) - Updated with better loading -->
-    <link rel="preconnect" href="https://www.googletagmanager.com">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC"></script>
+    <!-- Performance hints -->
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    
+    <!-- Google tag (gtag.js) - Optimized loading -->
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-X2VE77MEYC', {
-        anonymize_ip: true,
-        cookie_flags: 'SameSite=None;Secure'
+      // Load analytics asynchronously after page load
+      window.addEventListener('load', function() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC';
+        document.head.appendChild(script);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-X2VE77MEYC', {
+          anonymize_ip: true,
+          cookie_flags: 'SameSite=None;Secure'
+        });
       });
     </script>
 
-    <!-- Hotjar Tracking Code for Flu Legendarium -->
+    <!-- Hotjar Tracking Code - Optimized loading -->
     <script>
+      window.addEventListener('load', function() {
         (function(h,o,t,j,a,r){
             h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
             h._hjSettings={hjid:997810,hjsv:6};
@@ -77,16 +99,18 @@
             r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
             a.appendChild(r);
         })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+      });
     </script>
 
     <!-- Critical CSS inlined for faster rendering -->
     <style>
-      /* Critical CSS for initial paint */
+      /* Critical CSS for initial paint - optimized */
       body { 
         margin: 0; 
-        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
         background: linear-gradient(to bottom, #10b98150, #ffffff);
         min-height: 100vh;
+        font-display: swap;
       }
       .loader { 
         display: flex; 
@@ -94,14 +118,24 @@
         align-items: center; 
         min-height: 100vh; 
       }
+      /* Prevent layout shift */
+      img { 
+        max-width: 100%; 
+        height: auto; 
+      }
+      /* Optimize button performance */
+      button, .button {
+        touch-action: manipulation;
+      }
     </style>
   </head>
 
   <body>
     <div id="root">
-      <!-- Fallback loading state -->
-      <div class="loader">
-        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #800020; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+      <!-- Enhanced fallback loading state -->
+      <div class="loader" role="status" aria-label="Carregando aplicação">
+        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #800020; border-radius: 50%; animation: spin 1s linear infinite;" aria-hidden="true"></div>
+        <span class="sr-only">Carregando...</span>
       </div>
     </div>
     
@@ -109,6 +143,17 @@
       @keyframes spin {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
+      }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
     </style>
     
