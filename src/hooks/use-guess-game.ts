@@ -42,13 +42,22 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, [currentPlayer, gameOver, toast, trackEvent]);
   
-  // Game timer hook - só inicia quando a imagem estiver carregada
+  // Game timer hook
   const { timeRemaining, startTimer, clearGameTimer } = useGameTimer(gameOver, handleTimeUp);
 
   // Callback para quando a imagem for carregada
   const handleImageLoaded = useCallback(() => {
+    console.log('🎮 Imagem carregada, iniciando timer');
     setImageLoaded(true);
-  }, []);
+    if (currentPlayer && !gameOver) {
+      startTimer();
+      trackEvent({
+        action: 'new_player_shown',
+        category: 'Game',
+        label: currentPlayer.name
+      });
+    }
+  }, [currentPlayer, gameOver, startTimer, trackEvent]);
 
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
@@ -141,22 +150,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
     setAttempts(0);
     setGameOver(false);
     setHasLost(false);
-    setImageLoaded(false); // Reset image loaded state
+    setImageLoaded(false);
   }, []);
-  
-  // Effect para iniciar o timer apenas quando a imagem estiver carregada
-  useEffect(() => {
-    if (currentPlayer && imageLoaded && !gameOver) {
-      console.log('🎮 Iniciando timer após carregamento da imagem');
-      startTimer();
-      
-      trackEvent({
-        action: 'new_player_shown',
-        category: 'Game',
-        label: currentPlayer.name
-      });
-    }
-  }, [currentPlayer?.id, imageLoaded, gameOver, startTimer, trackEvent]);
 
   // Effect to handle state changes when a new player is selected
   useEffect(() => {
