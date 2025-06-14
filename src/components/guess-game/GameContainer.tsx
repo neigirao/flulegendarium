@@ -4,6 +4,7 @@ import { PlayerImage } from "@/components/guess-game/PlayerImage";
 import { GuessForm } from "@/components/guess-game/GuessForm";
 import { GameStatus } from "@/components/guess-game/GameStatus";
 import { Player } from "@/types/guess-game";
+import { Clock } from "lucide-react";
 
 const LazyRankingDisplay = lazy(() => 
   import("@/components/guess-game/RankingDisplay").then(module => ({
@@ -44,6 +45,23 @@ export const GameContainer = ({
     setShowRanking(prev => !prev);
   };
 
+  // Format time as MM:SS
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  // Calcula a porcentagem de tempo restante (para a barra de progresso)
+  const timePercentage = (timeRemaining / 60) * 100;
+
+  // Determina a cor da barra de tempo com base no tempo restante
+  const getTimeBarColor = () => {
+    if (timeRemaining > 30) return 'bg-flu-verde';
+    if (timeRemaining > 10) return 'bg-yellow-500';
+    return 'bg-flu-grena';
+  };
+
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100">
       <div className="text-center mb-8">
@@ -64,7 +82,33 @@ export const GameContainer = ({
       </div>
 
       {currentPlayer && (
-        <div className="space-y-8">
+        <div className="space-y-6">
+          {/* Timer acima da imagem */}
+          {!gameOver && (
+            <div className="bg-white/90 rounded-lg p-4 shadow-sm border border-flu-verde/30">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-flu-grena" />
+                    <span className={`font-medium ${timeRemaining < 10 ? 'text-flu-grena' : 'text-flu-verde'}`}>
+                      {formatTime(timeRemaining)}
+                    </span>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {timeRemaining < 10 ? 'Tempo acabando!' : 'Tempo restante'}
+                  </div>
+                </div>
+                
+                <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className={`h-full rounded-full transition-all duration-1000 ${getTimeBarColor()} ${timeRemaining < 10 ? 'animate-pulse' : ''}`}
+                    style={{ width: `${timePercentage}%` }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           <PlayerImage 
             player={currentPlayer} 
             onImageFixed={handlePlayerImageFixed} 
