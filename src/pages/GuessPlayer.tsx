@@ -1,20 +1,11 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { 
-  getReliableImageUrl, 
-  preloadPlayerImages, 
-  preloadNextPlayer, 
-  prepareNextBatch 
-} from "@/utils/player-image";
+
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
 import { useGuessGame } from "@/hooks/use-guess-game";
-import { usePreload } from "@/hooks/use-preload";
 import { useAuth } from "@/hooks/useAuth";
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { Player } from "@/types/guess-game";
 import { Loader } from "@/components/guess-game/Loader";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { EmptyPlayersDisplay } from "@/components/guess-game/EmptyPlayersDisplay";
@@ -22,122 +13,17 @@ import { GameHeader } from "@/components/guess-game/GameHeader";
 import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { GameContainer } from "@/components/guess-game/GameContainer";
 import { useDebug } from "@/hooks/use-debug";
-import { convertStatistics } from "@/utils/statistics-converter";
+import { usePlayersData } from "@/hooks/use-players-data";
+import { usePlayerPreload } from "@/hooks/use-player-preload";
+import { useGameState } from "@/hooks/use-game-state";
 
 const GuessPlayer = () => {
   const { user } = useAuth();
-  const { preloadImages } = usePreload();
-  const [showGameOverDialog, setShowGameOverDialog] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(true);
   const [showAuthSelection, setShowAuthSelection] = useState(true);
-  const [gameStarted, setGameStarted] = useState(false);
-  const [isAuthenticatedGame, setIsAuthenticatedGame] = useState(false);
   const { showImageUrl, handleDebugClick } = useDebug();
   
-  const { data: players = [], isLoading, error: playersError } = useQuery({
-    queryKey: ['players'],
-    queryFn: async () => {
-      try {
-        console.log("Iniciando busca de jogadores...");
-        
-        const { data, error } = await supabase
-          .from('players')
-          .select('*');
-        
-        if (error) {
-          console.error("Erro ao buscar jogadores:", error);
-          throw error;
-        }
-        
-        console.log("Jogadores carregados com sucesso:", data?.length || 0, "jogadores");
-        
-        if (!data || data.length === 0) {
-          console.warn("Nenhum jogador encontrado na base de dados");
-          return [] as Player[];
-        }
-
-        console.log("Primeiro jogador:", data[0].name);
-        
-        const enhancedPlayers: Player[] = data.map((player) => {
-          try {
-            // Convert the player data to proper Player type with robust statistics conversion
-            const enhancedPlayer: Player = {
-              id: player.id,
-              name: player.name || 'Nome não informado',
-              position: player.position || 'Posição não informada',
-              image_url: player.image_url || '',
-              year_highlight: player.year_highlight || '',
-              fun_fact: player.fun_fact || '',
-              achievements: Array.isArray(player.achievements) ? player.achievements : [],
-              nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
-              statistics: convertStatistics(player.statistics)
-            };
-            
-            // Now enhance the image URL
-            enhancedPlayer.image_url = getReliableImageUrl(enhancedPlayer);
-            
-            return enhancedPlayer;
-          } catch (playerError) {
-            console.error(`Erro ao processar jogador ${player.name}:`, playerError);
-            // Return a fallback player object
-            return {
-              id: player.id,
-              name: player.name || 'Nome não informado',
-              position: player.position || 'Posição não informada',
-              image_url: getReliableImageUrl({ 
-                id: player.id, 
-                name: player.name || 'Nome não informado',
-                image_url: player.image_url || ''
-              } as Player),
-              year_highlight: '',
-              fun_fact: '',
-              achievements: [],
-              nicknames: [],
-              statistics: { gols: 0, jogos: 0 }
-            };
-          }
-        });
-        
-        return enhancedPlayers;
-      } catch (err) {
-        console.error("Exceção ao buscar jogadores:", err);
-        throw err;
-      }
-    },
-    staleTime: 5 * 60 * 1000,
-    retry: 3,
-    refetchOnWindowFocus: false,
-  });
-
-  // Preload player images when data is loaded
-  useEffect(() => {
-    if (players && players.length > 0) {
-      preloadPlayerImages(players);
-      
-      const imagesToPreload = players
-        .slice(0, 8)
-        .map(player => getReliableImageUrl(player));
-      
-      preloadImages(imagesToPreload);
-      
-      if (players.length > 8) {
-        const batchSize = 5;
-        for (let i = 8; i < players.length; i += batchSize) {
-          const batch = players.slice(i, i + batchSize);
-          const delay = (i - 8) * 1000;
-          
-          setTimeout(() => {
-            console.log(`Iniciando pré-carregamento em background de lote ${i / batchSize + 1}`);
-            batch.forEach((player) => {
-              const img = new Image();
-              img.src = getReliableImageUrl(player);
-              img.fetchPriority = 'low';
-            });
-          }, delay);
-        }
-      }
-    }
-  }, [players, preloadImages]);
+  // Load players data
+  const { players, isLoading, playersError } = usePlayersData();
 
   const {
     currentPlayer,
@@ -154,58 +40,38 @@ const GuessPlayer = () => {
     startGameForPlayer,
     isTimerRunning,
     resetScore
-  } = useGuessGame(gameStarted ? players : undefined);
+  } = useGuessGame(undefined); // Always pass undefined initially
 
-  // Show game over dialog when player loses
-  useEffect(() => {
-    if (hasLost) {
-      setShowGameOverDialog(true);
-    }
-  }, [hasLost]);
+  // Manage game state
+  const {
+    showGameOverDialog,
+    showTutorial,
+    gameStarted,
+    isAuthenticatedGame,
+    setIsAuthenticatedGame,
+    setGameStarted,
+    handleGameOverClose,
+    handleTutorialComplete,
+    handleSkipTutorial
+  } = useGameState({ hasLost });
 
-  // Handle dialog close and select a new player
-  const handleGameOverClose = useCallback(() => {
-    setShowGameOverDialog(false);
-    selectRandomPlayer();
-  }, [selectRandomPlayer]);
+  // Preload next players
+  usePlayerPreload(players, currentPlayer);
 
-  // Prepare next batch of players for efficient loading
-  useEffect(() => {
-    if (players && players.length > 1 && currentPlayer) {
-      prepareNextBatch(players, currentPlayer, 5);
-      
-      const potentialNextPlayers = players.filter(p => p.id !== currentPlayer.id);
-      if (potentialNextPlayers.length > 0) {
-        const randomIndices = Array.from(
-          { length: Math.min(3, potentialNextPlayers.length) },
-          () => Math.floor(Math.random() * potentialNextPlayers.length)
-        );
-        
-        randomIndices.forEach((idx, i) => {
-          setTimeout(() => {
-            preloadNextPlayer(potentialNextPlayers[idx]);
-          }, i * 200);
-        });
-      }
-    }
-  }, [currentPlayer, players]);
-
-  const handleTutorialComplete = () => {
-    setShowTutorial(false);
+  const handleTutorialCompleteLocal = () => {
+    handleTutorialComplete(user);
     if (user) {
       setShowAuthSelection(false);
-      setGameStarted(true);
       setIsAuthenticatedGame(true);
     } else {
       setShowAuthSelection(true);
     }
   };
 
-  const handleSkipTutorial = () => {
-    setShowTutorial(false);
+  const handleSkipTutorialLocal = () => {
+    handleSkipTutorial(user);
     if (user) {
       setShowAuthSelection(false);
-      setGameStarted(true);
       setIsAuthenticatedGame(true);
     } else {
       setShowAuthSelection(true);
@@ -286,15 +152,15 @@ const GuessPlayer = () => {
 
       {showTutorial && (
         <GameTutorial
-          onComplete={handleTutorialComplete}
-          onSkip={handleSkipTutorial}
+          onComplete={handleTutorialCompleteLocal}
+          onSkip={handleSkipTutorialLocal}
         />
       )}
 
       {currentPlayer && gameStarted && (
         <GameOverDialog
           open={showGameOverDialog}
-          onClose={handleGameOverClose}
+          onClose={() => handleGameOverClose(selectRandomPlayer)}
           playerName={currentPlayer.name}
           score={score}
           onResetScore={resetScore}
