@@ -54,10 +54,10 @@ export const useAdminAuth = () => {
     setError(null);
 
     try {
-      // Simulação de login admin (substitua pela sua lógica real)
-      if (username === 'admin' && password === 'admin123') {
+      // Credenciais atualizadas
+      if (username === 'neigirao' && password === 'PCFClub!21') {
         const adminAuth: AdminAuth = {
-          userId: 'admin-id',
+          userId: 'admin-neigirao',
           username: username,
           loginTime: Date.now()
         };
