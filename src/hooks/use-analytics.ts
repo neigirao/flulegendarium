@@ -1,4 +1,3 @@
-
 import { useEffect } from 'react';
 
 interface AnalyticsEvent {
@@ -57,11 +56,12 @@ export const useAnalytics = () => {
     });
   };
 
-  const trackCorrectGuess = (playerName: string) => {
+  const trackCorrectGuess = (playerName: string, attempts: number = 1) => {
     trackEvent({
       action: 'correct_guess',
       category: 'Game',
       label: playerName,
+      value: attempts,
     });
   };
 
