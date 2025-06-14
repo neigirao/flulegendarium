@@ -1,4 +1,3 @@
-
 import React, { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -53,14 +52,23 @@ const Game = () => {
           throw error;
         }
         if (data && data.length > 0) {
-          const enhancedPlayers = data.map((player) => ({
-            ...player,
-            image_url: getReliableImageUrl(player),
-            statistics: typeof player.statistics === 'object' && player.statistics !== null 
-              ? player.statistics as { gols: number; jogos: number }
-              : { gols: 0, jogos: 0 }
-          }));
-          return enhancedPlayers as Player[];
+          const enhancedPlayers: Player[] = data.map((player) => {
+            // Convert the player data to proper Player type
+            const enhancedPlayer: Player = {
+              ...player,
+              image_url: player.image_url, // Will be enhanced below
+              statistics: typeof player.statistics === 'object' && player.statistics !== null 
+                ? player.statistics as { gols: number; jogos: number }
+                : { gols: 0, jogos: 0 }
+            };
+            
+            // Now enhance the image URL
+            enhancedPlayer.image_url = getReliableImageUrl(enhancedPlayer);
+            
+            return enhancedPlayer;
+          });
+          
+          return enhancedPlayers;
         }
         return [] as Player[];
       } catch (err) {
