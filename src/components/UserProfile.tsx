@@ -4,6 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getUserStats, getUserGameHistory } from "@/services/gameHistoryService";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Target, Calendar, TrendingUp } from "lucide-react";
+import { AchievementsGrid } from "@/components/achievements/AchievementsGrid";
 
 export const UserProfile = () => {
   const { user } = useAuth();
@@ -70,6 +71,9 @@ export const UserProfile = () => {
           </Card>
         </div>
       )}
+
+      {/* Achievements Section */}
+      <AchievementsGrid />
 
       {history.length > 0 && (
         <Card>

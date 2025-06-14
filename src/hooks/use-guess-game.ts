@@ -7,18 +7,25 @@ import { useGameTimer, TIME_LIMIT_SECONDS } from "./use-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
 import { processPlayerName, isCorrectGuess } from "@/utils/name-processor";
 import { useAnalytics } from "./use-analytics";
+import { useAchievements } from "./use-achievements";
+import { useAuth } from "./useAuth";
 
 export const MAX_ATTEMPTS = 1;
 
 export const useGuessGame = (players: Player[] | undefined) => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const { trackEvent, trackCorrectGuess, trackIncorrectGuess } = useAnalytics();
+  const { checkAndUnlockAchievements } = useAchievements();
   const [attempts, setAttempts] = useState(0);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
   const [hasLost, setHasLost] = useState(false);
   const [gameActive, setGameActive] = useState(false);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [gamesPlayed, setGamesPlayed] = useState(0);
+  const [gameStartTime, setGameStartTime] = useState<number | null>(null);
   
   // Player selection hook
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed } = usePlayerSelection(players);
@@ -31,6 +38,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
       setGameOver(true);
       setHasLost(true);
       setGameActive(false);
+      setCurrentStreak(0);
       
       trackEvent({
         action: 'game_timeout',
@@ -53,6 +61,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
       setGameOver(true);
       setHasLost(true);
       setGameActive(false);
+      setCurrentStreak(0);
       
       trackEvent({
         action: 'game_tab_change',
@@ -82,6 +91,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
       setGameOver(false);
       setHasLost(false);
       setGameActive(true);
+      setGameStartTime(Date.now());
       
       // Start timer
       startTimer();
@@ -98,6 +108,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const resetScore = useCallback(() => {
     console.log('🎯 Resetando pontuação de', score, 'para 0');
     setScore(0);
+    setCurrentStreak(0);
+    setGamesPlayed(0);
     setGameActive(false);
   }, [score]);
 
@@ -108,6 +120,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
     console.log('🎮 Processando palpite:', guess, 'para jogador:', currentPlayer.name);
     console.log('🎯 Score antes do palpite:', score);
     setIsProcessingGuess(true);
+    
+    const timeToAnswer = gameStartTime ? (Date.now() - gameStartTime) / 1000 : undefined;
     
     try {
       const processingResult = await processPlayerName(guess, currentPlayer.name, currentPlayer.id);
@@ -125,11 +139,27 @@ export const useGuessGame = (players: Player[] | undefined) => {
       if (isCorrect) {
         const points = 5;
         const newScore = score + points;
+        const newStreak = currentStreak + 1;
+        const newGamesPlayed = gamesPlayed + 1;
         
         console.log('🎯 ACERTOU! Score anterior:', score, '+ pontos:', points, '= novo score:', newScore);
         
-        // Update score
+        // Update score and streak
         setScore(newScore);
+        setCurrentStreak(newStreak);
+        setGamesPlayed(newGamesPlayed);
+        
+        // Check for achievements (only for authenticated users)
+        if (user) {
+          const accuracy = (newGamesPlayed > 0) ? (newGamesPlayed / newGamesPlayed) * 100 : 100; // 100% since they got it right
+          await checkAndUnlockAchievements({
+            score: newScore,
+            streak: newStreak,
+            gamesPlayed: newGamesPlayed,
+            accuracy,
+            timeToAnswer
+          });
+        }
         
         trackCorrectGuess(currentPlayer.name);
         trackEvent({
@@ -158,6 +188,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         setGameOver(true);
         setHasLost(true);
         setGameActive(false);
+        setCurrentStreak(0);
         
         trackIncorrectGuess(currentPlayer.name, guess);
         
@@ -176,10 +207,26 @@ export const useGuessGame = (players: Player[] | undefined) => {
       if (isCorrectGuess(guess, currentPlayer.name)) {
         const points = 5;
         const newScore = score + points;
+        const newStreak = currentStreak + 1;
+        const newGamesPlayed = gamesPlayed + 1;
         
         console.log('🎯 ACERTOU (fallback)! Score anterior:', score, '+ pontos:', points, '= novo score:', newScore);
         
         setScore(newScore);
+        setCurrentStreak(newStreak);
+        setGamesPlayed(newGamesPlayed);
+        
+        // Check for achievements (only for authenticated users)
+        if (user) {
+          const accuracy = (newGamesPlayed > 0) ? (newGamesPlayed / newGamesPlayed) * 100 : 100;
+          await checkAndUnlockAchievements({
+            score: newScore,
+            streak: newStreak,
+            gamesPlayed: newGamesPlayed,
+            accuracy,
+            timeToAnswer
+          });
+        }
         
         trackCorrectGuess(currentPlayer.name);
         
@@ -198,6 +245,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         setGameOver(true);
         setHasLost(true);
         setGameActive(false);
+        setCurrentStreak(0);
         stopTimer();
         
         trackIncorrectGuess(currentPlayer.name, guess);
@@ -211,18 +259,20 @@ export const useGuessGame = (players: Player[] | undefined) => {
     } finally {
       setIsProcessingGuess(false);
     }
-  }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent, score, gameActive]);
+  }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, trackCorrectGuess, trackIncorrectGuess, trackEvent, score, gameActive, currentStreak, gamesPlayed, gameStartTime, user, checkAndUnlockAchievements]);
 
   // Debug logs detalhados para rastrear o estado
   useEffect(() => {
     console.log('🎮 useGuessGame State Update:');
     console.log('- Current Player:', currentPlayer?.name);
     console.log('- Score:', score);
+    console.log('- Current Streak:', currentStreak);
+    console.log('- Games Played:', gamesPlayed);
     console.log('- Time Remaining:', timeRemaining);
     console.log('- Game Over:', gameOver);
     console.log('- Timer Running:', isRunning);
     console.log('- Game Active:', gameActive);
-  }, [currentPlayer, score, timeRemaining, gameOver, isRunning, gameActive]);
+  }, [currentPlayer, score, currentStreak, gamesPlayed, timeRemaining, gameOver, isRunning, gameActive]);
 
   return {
     currentPlayer,

@@ -340,31 +340,70 @@ export type Database = {
           },
         ]
       }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          created_at: string
+          id: string
+          max_progress: number | null
+          progress: number | null
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          created_at?: string
+          id?: string
+          max_progress?: number | null
+          progress?: number | null
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          created_at?: string
+          id?: string
+          max_progress?: number | null
+          progress?: number | null
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_game_history: {
         Row: {
           correct_guesses: number
           created_at: string
+          current_streak: number | null
           game_duration: number | null
           id: string
+          max_streak: number | null
           score: number
+          time_taken: number | null
           total_attempts: number
           user_id: string
         }
         Insert: {
           correct_guesses?: number
           created_at?: string
+          current_streak?: number | null
           game_duration?: number | null
           id?: string
+          max_streak?: number | null
           score?: number
+          time_taken?: number | null
           total_attempts?: number
           user_id: string
         }
         Update: {
           correct_guesses?: number
           created_at?: string
+          current_streak?: number | null
           game_duration?: number | null
           id?: string
+          max_streak?: number | null
           score?: number
+          time_taken?: number | null
           total_attempts?: number
           user_id?: string
         }
