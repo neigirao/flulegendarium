@@ -98,16 +98,6 @@ export default function Index() {
                       Começar Agora
                     </Link>
                   </Button>
-                  <Button 
-                    size="lg" 
-                    variant="outline"
-                    className="border-2 border-white text-white hover:bg-white hover:text-flu-grena font-semibold px-8 py-4 rounded-lg text-lg"
-                    asChild
-                  >
-                    <Link to="#ranking">
-                      Ver Ranking
-                    </Link>
-                  </Button>
                 </div>
               </div>
               
