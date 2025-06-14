@@ -3,6 +3,7 @@ import { memo, useRef, useEffect } from "react";
 import { usePlayerImage } from "@/hooks/use-player-image";
 import { ImageLoader } from "./ImageLoader";
 import { ImageErrorDisplay } from "./ImageErrorDisplay";
+import { OptimizedImage } from "@/components/performance/OptimizedImage";
 
 interface PlayerImageProps {
   player: {
@@ -15,7 +16,6 @@ interface PlayerImageProps {
 }
 
 export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: PlayerImageProps) => {
-  const imgRef = useRef<HTMLImageElement>(null);
   const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded } = 
     usePlayerImage({ 
       player, 
@@ -45,26 +45,24 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
       
       <div className="w-full h-full flex items-center justify-center p-2 relative">
         {imageSrc ? (
-          <img
-            ref={imgRef}
+          <OptimizedImage
             src={imageSrc}
             alt={`Imagem de ${player.name}`}
             className={`max-w-full max-h-full object-contain transition-all duration-300 ${
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}
-            onError={() => {
-              console.error(`🚫 Evento onError para ${player.name}`);
-              handleImageError();
-            }}
+            width={400}
+            height={450}
+            priority={true}
             onLoad={() => {
               console.log(`🎉 Evento onLoad para ${player.name}`);
               handleImageLoadComplete();
             }}
-            loading="lazy" 
-            decoding="async"
-            referrerPolicy="no-referrer"
-            onContextMenu={(e) => e.preventDefault()}
-            draggable="false"
+            onError={() => {
+              console.error(`🚫 Evento onError para ${player.name}`);
+              handleImageError();
+            }}
+            fallback="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png"
           />
         ) : (
           <div className="flex items-center justify-center w-full h-full">
