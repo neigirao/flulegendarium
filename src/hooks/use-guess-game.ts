@@ -1,4 +1,3 @@
-
 import { useState, useCallback, useRef, useEffect } from "react";
 import { Player } from "@/types/guess-game";
 import { processPlayerName } from "@/utils/name-processor";
@@ -123,34 +122,37 @@ export const useGuessGame = (players?: Player[]) => {
         setScore(newScore);
         setGameOver(true);
         stopTimer();
-        
+
         // Salvar estatísticas do acerto
         await saveGameStats(newScore, true);
-        
-        trackCorrectGuess(currentPlayer.name, guess, newAttempts);
-        
+
+        // FIX: Only pass currentPlayer.name (1 argument)
+        trackCorrectGuess(currentPlayer.name);
+
         toast({
           title: "🎉 Parabéns!",
           description: `Você acertou! Era ${currentPlayer.name}. +${POINTS_PER_CORRECT_GUESS} pontos!`,
           duration: 3000,
         });
-        
+
         // Selecionar próximo jogador após delay
         setTimeout(() => {
           selectRandomPlayer();
         }, 2000);
       } else {
         setAttempts(newAttempts);
+
+        // FIX: Only pass currentPlayer.name and guess (2 arguments)
         trackIncorrectGuess(currentPlayer.name, guess);
-        
+
         if (newAttempts >= MAX_ATTEMPTS) {
           setHasLost(true);
           setGameOver(true);
           stopTimer();
-          
+
           // Salvar estatísticas da derrota
           await saveGameStats(score, false);
-          
+
           toast({
             title: "😔 Você perdeu!",
             description: `Era ${currentPlayer.name}. Suas tentativas se esgotaram.`,
