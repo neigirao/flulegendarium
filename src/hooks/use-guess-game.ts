@@ -44,14 +44,6 @@ export const useGuessGame = (players: Player[] | undefined) => {
   // Game timer hook
   const { timeRemaining, startTimer, clearGameTimer } = useGameTimer(gameOver, handleTimeUp);
 
-  // Initialize game when players data is loaded
-  useEffect(() => {
-    if (players?.length > 0 && !currentPlayer) {
-      console.log("Selecionando jogador aleatório entre", players.length, "jogadores");
-      selectRandomPlayer();
-    }
-  }, [players, currentPlayer, selectRandomPlayer]);
-
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
     if (!currentPlayer || !guess || gameOver || isProcessingGuess) return;
@@ -155,9 +147,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
     startTimer();
   }, [startTimer]);
   
-  // Effect to handle state changes when a new player is selected
+  // Effect to handle state changes when a new player is selected - ONLY fire once per player
   useEffect(() => {
-    if (currentPlayer) {
+    if (currentPlayer && !gameOver) {
       trackEvent({
         action: 'new_player_shown',
         category: 'Game',
@@ -165,7 +157,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
       });
       resetGameForNewRound();
     }
-  }, [currentPlayer, resetGameForNewRound, trackEvent]);
+  }, [currentPlayer?.id, gameOver]); // Only depend on player ID and gameOver to prevent loops
 
   return {
     currentPlayer,

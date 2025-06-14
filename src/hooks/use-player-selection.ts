@@ -1,3 +1,4 @@
+
 import { useState, useRef, useCallback, useEffect } from "react";
 import { Player } from "@/types/guess-game";
 import { getReliableImageUrl } from "@/utils/player-image";
@@ -5,24 +6,32 @@ import { getReliableImageUrl } from "@/utils/player-image";
 export const usePlayerSelection = (players: Player[] | undefined) => {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const availablePlayers = useRef<Player[]>([]);
+  const isInitialized = useRef(false);
 
   // Cache available players
   useEffect(() => {
     if (players && players.length > 0) {
       availablePlayers.current = [...players];
+      
+      // Only initialize once when players are first loaded
+      if (!isInitialized.current && !currentPlayer) {
+        isInitialized.current = true;
+        const randomIndex = Math.floor(Math.random() * players.length);
+        const player = { ...players[randomIndex] };
+        player.image_url = getReliableImageUrl(player);
+        setCurrentPlayer(player);
+      }
     }
   }, [players]);
 
   // Select a random player
   const selectRandomPlayer = useCallback(() => {
     if (!availablePlayers.current || availablePlayers.current.length === 0) {
-      console.log("Não há jogadores disponíveis para selecionar");
       return;
     }
     
     const randomIndex = Math.floor(Math.random() * availablePlayers.current.length);
     const player = { ...availablePlayers.current[randomIndex] };
-    console.log("Jogador selecionado:", player?.name || "Desconhecido");
     
     // Make sure we have a valid image
     if (player) {
