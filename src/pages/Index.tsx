@@ -38,6 +38,9 @@ export default function Index() {
                 Meu Perfil
               </Link>
             )}
+            <Link to="/admin/login" className="text-flu-verde hover:text-flu-grena">
+              Admin
+            </Link>
             <AuthButton />
           </nav>
         </div>
@@ -67,26 +70,6 @@ export default function Index() {
                 Começar Jogo
               </Link>
             </Button>
-            
-            <Button 
-              variant="outline" 
-              size="lg" 
-              className="border-flu-verde text-flu-verde hover:bg-flu-verde hover:text-white font-semibold"
-              asChild
-            >
-              <Link to="/admin/login">
-                Área Admin
-              </Link>
-            </Button>
-          </div>
-
-          {/* Credenciais de teste */}
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 max-w-md mx-auto">
-            <h3 className="font-semibold text-yellow-800 mb-2">🔧 Credenciais de Teste (Admin)</h3>
-            <div className="text-sm text-yellow-700">
-              <p><strong>Usuário:</strong> admin</p>
-              <p><strong>Senha:</strong> admin123</p>
-            </div>
           </div>
         </div>
       </section>

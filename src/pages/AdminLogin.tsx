@@ -20,29 +20,12 @@ export default function AdminLogin() {
     setIsLoading(true);
 
     try {
-      // Verificar credenciais no banco
-      const { data: admin, error } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('username', username)
-        .single();
-
-      if (error || !admin) {
-        toast({
-          variant: "destructive",
-          title: "Erro de autenticação",
-          description: "Usuário ou senha incorretos.",
-        });
-        return;
-      }
-
-      // Por simplicidade, vamos verificar a senha em texto simples por enquanto
-      // Em produção, deveria usar hash
-      if (password === "admin123") {
+      // Verificar credenciais específicas
+      if (username === "neigirao@gmail.com" && password === "PCFClub!21") {
         // Salvar sessão admin no localStorage
         localStorage.setItem('adminAuth', JSON.stringify({
-          userId: admin.id,
-          username: admin.username,
+          userId: 'admin',
+          username: username,
           loginTime: Date.now()
         }));
         
@@ -77,19 +60,19 @@ export default function AdminLogin() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl text-flu-grena">Admin Login</CardTitle>
           <CardDescription>
-            Acesse a área administrativa do Flu Legendarium
+            Acesse a área administrativa do Lendas do Flu
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Usuário</Label>
+              <Label htmlFor="username">Email</Label>
               <Input
                 id="username"
-                type="text"
+                type="email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Digite o usuário"
+                placeholder="Digite o email"
                 required
               />
             </div>
