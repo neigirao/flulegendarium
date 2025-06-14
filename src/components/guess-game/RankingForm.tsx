@@ -58,7 +58,7 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
         .insert([
           {
             player_name: name.trim(),
-            score: score,
+            score: score, // Allow 0 scores to be saved
             user_id: user?.id || null,
             created_at: new Date().toISOString()
           }
@@ -75,7 +75,7 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
 
       toast({
         title: "Sucesso!",
-        description: "Sua pontuação foi salva no ranking!",
+        description: `Sua pontuação de ${score} pontos foi salva no ranking!`,
       });
 
       // Se não está autenticado (jogador convidado), redireciona para home
