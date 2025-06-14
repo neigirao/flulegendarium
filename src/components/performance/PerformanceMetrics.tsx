@@ -56,7 +56,7 @@ export const PerformanceMetrics = () => {
       // Track First Input Delay (FID) when available
       const fidObserver = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
-          // Fixed: proper type assertion and property access
+          // Type assertion for PerformanceEventTiming which has processingStart
           const eventEntry = entry as PerformanceEventTiming;
           if (window.gtag && eventEntry.processingStart) {
             window.gtag('event', 'first_input_delay', {
@@ -67,7 +67,6 @@ export const PerformanceMetrics = () => {
         });
       });
 
-      // Check if PerformanceEventTiming is available
       if ('PerformanceEventTiming' in window) {
         fidObserver.observe({ entryTypes: ['first-input'] });
       }

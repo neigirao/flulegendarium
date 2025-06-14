@@ -102,4 +102,4 @@ export const useAnalytics = () => {
   };
 };
 
-// Note: gtag declaration moved to src/types/global.d.ts to avoid conflicts
+// Note: Window interface extension is handled in PerformanceMetrics component
