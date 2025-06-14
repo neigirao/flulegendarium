@@ -27,70 +27,66 @@ export function usePlayerImage({ player, onImageFixed, onImageLoaded }: UsePlaye
       setIsLoading(true);
       setFallbackAttempted(false);
       
-      // Priority: original image_url first, then fallback, then default
+      // Priority: try original image first
       let imageUrl = player.image_url;
       
-      // If original URL is invalid or empty, try fallback immediately
-      if (!imageUrl || 
-          imageUrl === defaultPlayerImage || 
-          !(imageUrl.startsWith('http') || imageUrl.startsWith('https'))) {
-        
-        // Check if we have a specific fallback for this player
-        if (playerImagesFallbacksMap[player.name]) {
-          imageUrl = playerImagesFallbacksMap[player.name];
-          console.log(`✅ Usando fallback específico para ${player.name}: ${imageUrl}`);
-        } 
-        // Check for partial matches
-        else {
-          for (const [key, url] of Object.entries(playerImagesFallbacksMap)) {
-            if (player.name.toLowerCase().includes(key.toLowerCase()) || 
-                key.toLowerCase().includes(player.name.toLowerCase())) {
-              imageUrl = url;
-              console.log(`🔍 Fallback por similaridade para ${player.name}: ${url}`);
-              break;
-            }
-          }
-        }
+      // If original URL is obviously invalid, try fallback immediately
+      if (!imageUrl || imageUrl === defaultPlayerImage) {
+        imageUrl = getFallbackImage(player.name);
       }
       
       setImageSrc(imageUrl);
-      console.log(`🎯 URL final para ${player.name}: ${imageUrl}`);
+      console.log(`🎯 URL inicial para ${player.name}: ${imageUrl}`);
     } else {
       setImageSrc(null);
     }
   }, [player?.id, player?.name]);
 
+  const getFallbackImage = (playerName: string): string => {
+    // Check for exact match first
+    if (playerImagesFallbacksMap[playerName]) {
+      console.log(`✅ Fallback exato encontrado para ${playerName}`);
+      return playerImagesFallbacksMap[playerName];
+    }
+    
+    // Check for partial matches
+    for (const [key, url] of Object.entries(playerImagesFallbacksMap)) {
+      if (playerName.toLowerCase().includes(key.toLowerCase()) || 
+          key.toLowerCase().includes(playerName.toLowerCase())) {
+        console.log(`🔍 Fallback por similaridade para ${playerName}: ${key}`);
+        return url;
+      }
+    }
+    
+    // Return default as last resort
+    console.log(`🛡️ Usando imagem padrão para ${playerName}`);
+    return defaultPlayerImage;
+  };
+
   const handleImageError = () => {
     console.error(`❌ Erro no carregamento da imagem para ${player?.name}: ${imageSrc}`);
     
-    // If we haven't tried fallback yet and current image is not a fallback
-    if (!fallbackAttempted && player && imageSrc === player.image_url) {
+    if (!player) {
+      setImageError(true);
+      setIsLoading(false);
+      return;
+    }
+    
+    // If we haven't tried fallback yet and current image is the original
+    if (!fallbackAttempted && imageSrc === player.image_url) {
       setFallbackAttempted(true);
       
-      // Try specific fallback
-      if (playerImagesFallbacksMap[player.name]) {
-        const fallbackUrl = playerImagesFallbacksMap[player.name];
-        console.log(`🔄 Tentando fallback específico para ${player.name}: ${fallbackUrl}`);
+      const fallbackUrl = getFallbackImage(player.name);
+      if (fallbackUrl !== imageSrc) {
+        console.log(`🔄 Tentando fallback para ${player.name}: ${fallbackUrl}`);
         setImageSrc(fallbackUrl);
         setIsLoading(true);
         onImageFixed();
         return;
       }
-      
-      // Try partial match fallback
-      for (const [key, url] of Object.entries(playerImagesFallbacksMap)) {
-        if (player.name.toLowerCase().includes(key.toLowerCase()) || 
-            key.toLowerCase().includes(player.name.toLowerCase())) {
-          console.log(`🔄 Tentando fallback por similaridade para ${player.name}: ${url}`);
-          setImageSrc(url);
-          setIsLoading(true);
-          onImageFixed();
-          return;
-        }
-      }
     }
     
-    // Only use default image as absolute last resort
+    // If even fallback failed, use default
     if (imageSrc !== defaultPlayerImage) {
       console.log(`🛡️ Usando imagem padrão como último recurso para ${player?.name}`);
       setImageSrc(defaultPlayerImage);
@@ -99,9 +95,9 @@ export function usePlayerImage({ player, onImageFixed, onImageLoaded }: UsePlaye
       return;
     }
     
-    // If even default failed, show error
-    console.error(`💥 Falha total no carregamento para ${player?.name}`);
-    setImageError(true);
+    // If all failed, still show something (don't show error)
+    console.log(`💥 Todas as tentativas falharam para ${player?.name}, mas continuando`);
+    setImageError(false); // Don't show error, just continue
     setIsLoading(false);
     onImageFixed();
   };

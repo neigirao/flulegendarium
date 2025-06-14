@@ -53,11 +53,10 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
     return () => observer.disconnect();
   }, [player?.name]);
 
-  if (!player || !imageSrc) {
-    console.warn(`⚠️ Nenhuma imagem disponível para: ${player?.name}`);
+  if (!player) {
     return (
       <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-gray-100 border-2 border-flu-verde flex items-center justify-center">
-        <p className="text-gray-500">Imagem não disponível</p>
+        <p className="text-gray-500">Aguardando jogador...</p>
       </div>
     );
   }
@@ -70,28 +69,33 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded }: Player
       <ImageErrorDisplay imageError={imageError} />
       
       <div className="w-full h-full flex items-center justify-center p-2 relative">
-        <img
-          ref={imgRef}
-          src={imageSrc}
-          alt={`Imagem de ${player.name}`}
-          className={`max-w-full max-h-full object-contain transition-all duration-300 ${
-            isLoading ? 'opacity-0' : 'opacity-100'
-          }`}
-          onError={() => {
-            console.error(`🚫 Evento onError para ${player.name}`);
-            handleImageError();
-          }}
-          onLoad={() => {
-            console.log(`🎉 Evento onLoad para ${player.name}`);
-            handleImageLoaded();
-          }}
-          loading="lazy" 
-          decoding="async"
-          referrerPolicy="no-referrer"
-          onContextMenu={(e) => e.preventDefault()}
-          draggable="false"
-          crossOrigin="anonymous"
-        />
+        {imageSrc ? (
+          <img
+            ref={imgRef}
+            src={imageSrc}
+            alt={`Imagem de ${player.name}`}
+            className={`max-w-full max-h-full object-contain transition-all duration-300 ${
+              isLoading ? 'opacity-0' : 'opacity-100'
+            }`}
+            onError={() => {
+              console.error(`🚫 Evento onError para ${player.name}`);
+              handleImageError();
+            }}
+            onLoad={() => {
+              console.log(`🎉 Evento onLoad para ${player.name}`);
+              handleImageLoaded();
+            }}
+            loading="lazy" 
+            decoding="async"
+            referrerPolicy="no-referrer"
+            onContextMenu={(e) => e.preventDefault()}
+            draggable="false"
+          />
+        ) : (
+          <div className="flex items-center justify-center w-full h-full">
+            <p className="text-gray-500">Carregando imagem...</p>
+          </div>
+        )}
       </div>
     </div>
   );
