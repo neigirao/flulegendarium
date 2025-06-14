@@ -1,5 +1,5 @@
 
-import { memo, useRef, useEffect } from "react";
+import { memo } from "react";
 import { usePlayerImage } from "@/hooks/use-player-image";
 import { ImageLoader } from "./ImageLoader";
 import { ImageErrorDisplay } from "./ImageErrorDisplay";
@@ -18,7 +18,6 @@ interface PlayerImageProps {
 }
 
 export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority = false }: PlayerImageProps) => {
-  const imgRef = useRef<HTMLImageElement>(null);
   const { imageError, isLoading, imageSrc, handleImageError, handleImageLoaded } = 
     usePlayerImage({ 
       player, 
@@ -42,8 +41,11 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
 
   return (
     <div className="relative w-full h-[280px] sm:h-[320px] md:h-[380px] lg:h-[450px] rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300 hover:shadow-lg border-2 border-flu-verde">
-      <ImageLoader isLoading={isLoading && !imageError} />
-      <ImageErrorDisplay imageError={imageError} />
+      {/* Loading overlay */}
+      {isLoading && !imageError && <ImageLoader isLoading={true} />}
+      
+      {/* Error overlay */}
+      {imageError && <ImageErrorDisplay imageError={true} />}
       
       <div className="w-full h-full flex items-center justify-center p-2 md:p-3 lg:p-4 relative">
         {imageSrc && !imageError ? (
@@ -67,6 +69,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
             fallbackSrc="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png"
           />
         ) : (
+          // Fallback display when no image source or error
           <div className="flex items-center justify-center w-full h-full">
             <div className="text-center">
               <img 

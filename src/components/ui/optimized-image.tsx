@@ -29,45 +29,44 @@ export const OptimizedImage = ({
   const [hasError, setHasError] = useState(false);
   const [currentSrc, setCurrentSrc] = useState(src);
   const imgRef = useRef<HTMLImageElement>(null);
-
-  // Convert to WebP if supported and not already WebP
-  const getOptimizedSrc = (originalSrc: string) => {
-    if (originalSrc.includes('.webp') || originalSrc.startsWith('data:')) {
-      return originalSrc;
-    }
-    
-    // Check if browser supports WebP
-    const supportsWebP = () => {
-      const canvas = document.createElement('canvas');
-      return canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
-    };
-
-    if (supportsWebP() && originalSrc.includes('http')) {
-      // For external images, you might want to use a service like Cloudinary
-      return originalSrc;
-    }
-    
-    return originalSrc;
-  };
+  const errorAttempts = useRef(0);
 
   useEffect(() => {
-    setCurrentSrc(getOptimizedSrc(src));
+    setCurrentSrc(src);
     setIsLoaded(false);
     setHasError(false);
+    errorAttempts.current = 0;
   }, [src]);
 
   const handleLoad = () => {
+    console.log(`📸 OptimizedImage loaded successfully: ${currentSrc}`);
     setIsLoaded(true);
+    setHasError(false);
     onLoad?.();
   };
 
   const handleError = () => {
-    if (currentSrc !== fallbackSrc) {
+    console.error(`❌ OptimizedImage error for: ${currentSrc}`);
+    errorAttempts.current++;
+    
+    // Prevent infinite loops by limiting error attempts
+    if (errorAttempts.current >= 3) {
+      console.error(`🛑 Too many error attempts for: ${currentSrc}`);
+      setHasError(true);
+      setIsLoaded(false);
+      onError?.();
+      return;
+    }
+
+    // Try fallback only once
+    if (currentSrc !== fallbackSrc && errorAttempts.current === 1) {
+      console.log(`🔄 Trying fallback for: ${currentSrc} -> ${fallbackSrc}`);
       setCurrentSrc(fallbackSrc);
-      setHasError(false);
     } else {
       setHasError(true);
+      setIsLoaded(false);
     }
+    
     onError?.();
   };
 
@@ -80,33 +79,40 @@ export const OptimizedImage = ({
         <div className="absolute inset-0 bg-gray-200 animate-pulse rounded" />
       )}
       
-      <img
-        ref={imgRef}
-        src={currentSrc}
-        alt={alt}
-        width={width}
-        height={height}
-        loading={priority ? "eager" : "lazy"}
-        decoding="async"
-        fetchPriority={priority ? "high" : "low"}
-        className={cn(
-          "transition-opacity duration-300",
-          isLoaded ? "opacity-100" : "opacity-0",
-          hasError && "hidden",
-          className
-        )}
-        onLoad={handleLoad}
-        onError={handleError}
-        style={{
-          maxWidth: '100%',
-          height: 'auto',
-          aspectRatio: width && height ? `${width}/${height}` : undefined
-        }}
-      />
+      {!hasError && (
+        <img
+          ref={imgRef}
+          src={currentSrc}
+          alt={alt}
+          width={width}
+          height={height}
+          loading={priority ? "eager" : "lazy"}
+          decoding="async"
+          className={cn(
+            "transition-opacity duration-300",
+            isLoaded ? "opacity-100" : "opacity-0",
+            className
+          )}
+          onLoad={handleLoad}
+          onError={handleError}
+          style={{
+            maxWidth: '100%',
+            height: 'auto',
+            aspectRatio: width && height ? `${width}/${height}` : undefined
+          }}
+        />
+      )}
       
       {hasError && (
         <div className="absolute inset-0 flex items-center justify-center bg-gray-100 text-gray-500 text-sm">
-          Imagem não disponível
+          <div className="text-center">
+            <img 
+              src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
+              alt="Escudo do Fluminense" 
+              className="w-12 h-12 mx-auto mb-2 opacity-50"
+            />
+            <p>Imagem não disponível</p>
+          </div>
         </div>
       )}
     </div>
