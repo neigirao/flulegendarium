@@ -54,7 +54,7 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
 
     try {
       const { error } = await supabase
-        .from('ranking')
+        .from('rankings')
         .insert([
           {
             player_name: name.trim(),

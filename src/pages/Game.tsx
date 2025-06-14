@@ -53,13 +53,14 @@ const Game = () => {
           throw error;
         }
         if (data && data.length > 0) {
-          const enhancedPlayers = data.map((player: Player) => ({
+          const enhancedPlayers = data.map((player) => ({
             ...player,
-            image_url: getReliableImageUrl(player)
+            image_url: getReliableImageUrl(player),
+            statistics: player.statistics as { gols: number; jogos: number }
           }));
-          return enhancedPlayers;
+          return enhancedPlayers as Player[];
         }
-        return data as Player[];
+        return [] as Player[];
       } catch (err) {
         console.error("Erro ao buscar jogadores:", err);
         throw err;

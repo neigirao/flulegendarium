@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Trophy } from "lucide-react";
 import { useVirtualizedRanking } from "@/hooks/use-virtualized-ranking";
 

@@ -1,6 +1,6 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Target, Users, TrendingUp } from "lucide-react";
 
@@ -15,6 +15,13 @@ interface PlayerStats {
 interface PlayerProgressStats {
   step: number;
   count: number;
+}
+
+interface MostMissedPlayer {
+  player_name: string;
+  missed_count: number;
+  total_attempts: number;
+  miss_rate: string;
 }
 
 export const AdminDashboard = () => {
@@ -35,7 +42,7 @@ export const AdminDashboard = () => {
       }, {});
       
       return Object.entries(counts)
-        .map(([name, count]) => ({ player_name: name, correct_count: count }))
+        .map(([name, count]) => ({ player_name: name, correct_count: count as number }))
         .sort((a, b) => b.correct_count - a.correct_count)
         .slice(0, 10);
     },
@@ -44,7 +51,7 @@ export const AdminDashboard = () => {
   // Jogadores mais errados
   const { data: mostMissedPlayers = [] } = useQuery({
     queryKey: ['most-missed-players'],
-    queryFn: async () => {
+    queryFn: async (): Promise<MostMissedPlayer[]> => {
       const { data, error } = await supabase
         .from('game_attempts')
         .select('target_player_name, is_correct');
@@ -188,7 +195,7 @@ export const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {mostCorrectPlayers.map((player: any, index) => (
+              {mostCorrectPlayers.map((player, index) => (
                 <div key={player.player_name} className="flex justify-between items-center p-2 border rounded">
                   <span className="font-medium">#{index + 1} {player.player_name}</span>
                   <span className="text-green-600 font-bold">{player.correct_count} acertos</span>
@@ -206,7 +213,7 @@ export const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {mostMissedPlayers.map((player: any, index) => (
+              {mostMissedPlayers.map((player, index) => (
                 <div key={player.player_name} className="flex justify-between items-center p-2 border rounded">
                   <span className="font-medium">#{index + 1} {player.player_name}</span>
                   <span className="text-red-600 font-bold">{player.missed_count} erros ({player.miss_rate}%)</span>

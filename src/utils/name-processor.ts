@@ -1,5 +1,4 @@
-
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface NameProcessingResult {
   processedName: string | null;
