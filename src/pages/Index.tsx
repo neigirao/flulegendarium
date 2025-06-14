@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -57,45 +58,31 @@ export default function Index() {
         </header>
 
         {/* Hero Section */}
-        <section className="relative py-20 px-4 bg-gradient-to-br from-flu-grena via-flu-verde to-flu-grena overflow-hidden">
-          <div className="absolute inset-0 bg-black/10"></div>
+        <section className="relative py-20 px-4 bg-gradient-to-r from-flu-verde to-flu-grena overflow-hidden">
           <div className="container mx-auto relative z-10">
             <div className="flex items-center justify-between">
-              <div className="flex-1 text-white max-w-3xl">
-                <div className="flex items-center gap-6 mb-8">
-                  <div className="relative">
-                    <img 
-                      src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                      alt="Fluminense FC" 
-                      className="w-20 h-20 object-contain drop-shadow-2xl"
-                    />
-                  </div>
-                  <div>
-                    <h1 className="text-6xl md:text-7xl font-black leading-none">
-                      LENDAS
-                    </h1>
-                    <h2 className="text-4xl md:text-5xl font-bold text-yellow-300 leading-none">
-                      DO FLUMINENSE
-                    </h2>
-                  </div>
-                </div>
-                <p className="text-2xl mb-6 font-semibold leading-relaxed drop-shadow-lg">
-                  Teste seus conhecimentos sobre os maiores<br />
-                  ídolos da história tricolor!
+              <div className="flex-1 text-white max-w-2xl">
+                <h1 className="text-5xl md:text-6xl font-black leading-tight mb-6">
+                  Desafie-se no<br />
+                  Lendas do Flu
+                </h1>
+                <p className="text-xl mb-4 opacity-90 leading-relaxed">
+                  Descubra Se Você Conhece os Maiores<br />
+                  Ídolos do Fluzão!
                 </p>
-                <p className="text-lg mb-10 opacity-90 leading-relaxed">
-                  Veja a foto, adivinhe o jogador e conquiste seu lugar<br />
-                  entre os verdadeiros conhecedores do Fluzão!
+                <p className="text-lg mb-8 opacity-80 leading-relaxed">
+                  Veja a foto, Adivinhe o jogador<br />
+                  e suba no ranking tricolor!
                 </p>
                 
                 <div className="flex gap-4">
                   <Button 
                     size="lg" 
-                    className="bg-white text-flu-grena hover:bg-gray-100 font-semibold px-8 py-4 rounded-lg text-lg"
+                    className="bg-white text-flu-grena hover:bg-gray-100 font-bold px-8 py-4 rounded-lg text-lg shadow-lg"
                     asChild
                   >
                     <Link to="/select-mode">
-                      Começar Agora
+                      Começar Jogo
                     </Link>
                   </Button>
                 </div>
@@ -103,28 +90,12 @@ export default function Index() {
               
               <div className="hidden lg:block flex-1">
                 <div className="relative w-96 h-96 mx-auto">
-                  <div className="absolute inset-0 bg-white/10 rounded-3xl backdrop-blur-md flex items-center justify-center border-2 border-white/20 shadow-2xl">
-                    <div className="w-80 h-80 bg-gradient-to-br from-white/20 to-white/5 rounded-2xl flex items-center justify-center relative overflow-hidden border border-white/10">
-                      {/* Imagem do jogador com ponto de interrogação */}
-                      <div className="relative w-full h-full">
-                        <img 
-                          src="/lovable-uploads/efaf362c-8726-4049-98bc-ebb26dcdd4e1.png" 
-                          alt="Jogador misterioso" 
-                          className="w-full h-full object-cover opacity-70 rounded-2xl"
-                        />
-                        {/* Overlay com ponto de interrogação */}
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center rounded-2xl">
-                          <div className="text-white text-9xl font-black drop-shadow-2xl">?</div>
-                        </div>
-                      </div>
-                      <div className="absolute top-6 right-6">
-                        <img 
-                          src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                          alt="Fluminense FC" 
-                          className="w-16 h-16 object-contain opacity-60 drop-shadow-lg"
-                        />
-                      </div>
-                    </div>
+                  <div className="relative w-full h-full">
+                    <img 
+                      src="/lovable-uploads/16398385-eef5-4e38-b90a-39630732acba.png" 
+                      alt="Jogador do Fluminense" 
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                 </div>
               </div>
@@ -144,7 +115,7 @@ export default function Index() {
                   className="w-12 h-12 object-contain"
                 />
                 <h2 className="text-5xl font-black text-flu-grena">
-                  RANKING TRICOLOR
+                  TOP 10 TRICOLOR
                 </h2>
               </div>
               <p className="text-2xl text-gray-600 font-medium">
