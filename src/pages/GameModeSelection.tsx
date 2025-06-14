@@ -1,11 +1,12 @@
 
 import { useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { RootLayout } from "@/components/RootLayout";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
-import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 
 const GameModeSelection = () => {
   const navigate = useNavigate();

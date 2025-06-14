@@ -1,28 +1,30 @@
 import React, { useCallback, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Loader as GameLoader } from "lucide-react";
+
 import { supabase } from "@/lib/supabase";
-import { 
-  getReliableImageUrl, 
-  preloadPlayerImages, 
-  preloadNextPlayer, 
-  prepareNextBatch 
-} from "@/utils/player-image";
+import { AuthButton } from "@/components/auth/AuthButton";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
-import { useGuessGame } from "@/hooks/use-guess-game";
-import { usePreload } from "@/hooks/use-preload";
-import { useAuth } from "@/hooks/useAuth";
-import { useAnalytics } from "@/hooks/use-analytics";
-import { Player } from "@/types/guess-game";
 import { Loader } from "@/components/guess-game/Loader";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { EmptyPlayersDisplay } from "@/components/guess-game/EmptyPlayersDisplay";
 import { GameHeader } from "@/components/guess-game/GameHeader";
 import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { GameContainer } from "@/components/guess-game/GameContainer";
+import { useGuessGame } from "@/hooks/use-guess-game";
+import { usePreload } from "@/hooks/use-preload";
+import { useAuth } from "@/hooks/useAuth";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { useDebug } from "@/hooks/use-debug";
-import { Link } from "react-router-dom";
-import { AuthButton } from "@/components/auth/AuthButton";
+import { 
+  getReliableImageUrl, 
+  preloadPlayerImages, 
+  preloadNextPlayer, 
+  prepareNextBatch 
+} from "@/utils/player-image";
+import { Player } from "@/types/guess-game";
 
 const Game = () => {
   const { user } = useAuth();
@@ -165,7 +167,7 @@ const Game = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader />
+        <GameLoader />
       </div>
     );
   }
