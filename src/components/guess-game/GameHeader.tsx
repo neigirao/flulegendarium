@@ -9,7 +9,7 @@ interface GameHeaderProps {
 }
 
 export const GameHeader = ({ score, onDebugClick }: GameHeaderProps) => {
-  console.log('🎮 GameHeader - Score recebido:', score);
+  console.log('🎮 GameHeader - Score recebido e exibindo:', score);
   
   return (
     <div className="flex items-center justify-between mb-8">
@@ -21,8 +21,8 @@ export const GameHeader = ({ score, onDebugClick }: GameHeaderProps) => {
         Voltar
       </Link>
       <div className="flex flex-col items-center">
-        <div className="text-flu-grena font-bold text-lg bg-white/90 px-4 py-2 rounded-lg border border-flu-verde/30 shadow-sm">
-          {score || 0} pontos
+        <div className="text-flu-grena font-bold text-xl bg-white/90 px-6 py-3 rounded-lg border border-flu-verde/30 shadow-lg">
+          {score} pontos
         </div>
         <div className="flex items-center gap-2 mt-2">
           <GameRulesTooltip />

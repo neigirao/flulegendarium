@@ -25,8 +25,8 @@ export const GameStatus = ({
   const [prevTime, setPrevTime] = useState(timeRemaining);
   const { toast } = useToast();
   
-  // Debug logs
-  console.log('🎮 GameStatus - Score recebido:', score);
+  // Debug logs detalhados
+  console.log('🎮 GameStatus - Score recebido e exibindo:', score);
   console.log('🎮 GameStatus - Game Over:', gameOver);
   console.log('🎮 GameStatus - Time Remaining:', timeRemaining);
   
@@ -92,10 +92,10 @@ export const GameStatus = ({
             </span>
           </div>
 
-          {/* Pontuação com destaque */}
-          <div className="flex items-center gap-3 bg-yellow-50 px-4 py-2 rounded-lg border border-yellow-200">
-            <Trophy className="w-6 h-6 text-yellow-600" />
-            <span className="font-bold text-xl text-flu-grena">{score || 0} pontos</span>
+          {/* Pontuação com destaque maior */}
+          <div className="flex items-center gap-3 bg-yellow-50 px-6 py-3 rounded-lg border-2 border-yellow-300 shadow-md">
+            <Trophy className="w-7 h-7 text-yellow-600" />
+            <span className="font-bold text-2xl text-flu-grena">{score} pontos</span>
           </div>
         </div>
 

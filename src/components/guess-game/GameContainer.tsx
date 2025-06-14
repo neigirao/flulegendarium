@@ -48,6 +48,7 @@ export const GameContainer = ({
   useEffect(() => {
     if (currentPlayer) {
       console.log('🎮 GameContainer: Iniciando jogo para jogador:', currentPlayer.name);
+      console.log('🎯 GameContainer: Score atual:', score);
       startGameForPlayer();
     }
   }, [currentPlayer, startGameForPlayer]);
@@ -74,7 +75,7 @@ export const GameContainer = ({
   // Debug logs para verificar props
   console.log('🎮 GameContainer Props:');
   console.log('- Player:', currentPlayer?.name);
-  console.log('- Score:', score);
+  console.log('- Score propagado:', score);
   console.log('- Timer:', timeRemaining);
   console.log('- Game Over:', gameOver);
   console.log('- Timer Running:', isTimerRunning);
@@ -106,10 +107,15 @@ export const GameContainer = ({
         isProcessing={isProcessingGuess}
       />
       
-      {/* Debug info */}
+      {/* Debug info detalhado */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="mt-4 p-2 bg-gray-100 rounded text-xs">
-          <p>Debug: Score={score}, Timer={timeRemaining}, Running={isTimerRunning}</p>
+        <div className="mt-4 p-3 bg-gray-100 rounded text-sm border">
+          <p><strong>Debug Info:</strong></p>
+          <p>Score = {score}</p>
+          <p>Timer = {timeRemaining}s</p>
+          <p>Running = {isTimerRunning ? 'Sim' : 'Não'}</p>
+          <p>Player = {currentPlayer?.name || 'Nenhum'}</p>
+          <p>Game Over = {gameOver ? 'Sim' : 'Não'}</p>
         </div>
       )}
     </div>
