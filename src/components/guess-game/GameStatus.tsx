@@ -65,9 +65,9 @@ export const GameStatus = ({
         <div className="text-center mt-4 animate-fade-in">
           <button
             onClick={handleShowRankingForm}
-            className="bg-flu-grena text-white px-6 py-2 rounded-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto flu-shadow"
+            className="bg-flu-grena text-white px-4 md:px-6 py-2 rounded-lg hover:opacity-90 transition-all hover:scale-105 flex items-center justify-center gap-2 mx-auto flu-shadow text-sm md:text-base"
           >
-            <Trophy className="w-5 h-5" />
+            <Trophy className="w-4 h-4 md:w-5 md:h-5" />
             Salvar Pontuação
           </button>
         </div>
@@ -81,28 +81,28 @@ export const GameStatus = ({
         />
       )}
 
-      {/* Status sempre visível com destaque para pontuação */}
-      <div className="space-y-4 p-6 rounded-lg bg-white/95 shadow-lg border-2 border-flu-verde/30">
-        <div className="flex items-center justify-between">
+      {/* Status sempre visível com destaque para pontuação - Responsivo */}
+      <div className="space-y-4 p-4 md:p-6 rounded-lg bg-white/95 shadow-lg border-2 border-flu-verde/30">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           {/* Timer */}
-          <div className="flex items-center gap-3">
-            <Clock className="w-6 h-6 text-flu-verde" />
-            <span className={`font-bold text-xl ${timeRemaining <= 10 ? 'text-red-500 animate-pulse' : 'text-flu-verde'}`}>
+          <div className="flex items-center gap-2 md:gap-3">
+            <Clock className="w-5 h-5 md:w-6 md:h-6 text-flu-verde" />
+            <span className={`font-bold text-lg md:text-xl ${timeRemaining <= 10 ? 'text-red-500 animate-pulse' : 'text-flu-verde'}`}>
               {formatTime(timeRemaining)}
             </span>
           </div>
 
-          {/* Pontuação com destaque maior */}
-          <div className="flex items-center gap-3 bg-yellow-50 px-6 py-3 rounded-lg border-2 border-yellow-300 shadow-md">
-            <Trophy className="w-7 h-7 text-yellow-600" />
-            <span className="font-bold text-2xl text-flu-grena">{score} pontos</span>
+          {/* Pontuação com destaque maior - Responsivo */}
+          <div className="flex items-center gap-2 md:gap-3 bg-yellow-50 px-4 md:px-6 py-2 md:py-3 rounded-lg border-2 border-yellow-300 shadow-md">
+            <Trophy className="w-5 h-5 md:w-7 md:h-7 text-yellow-600" />
+            <span className="font-bold text-xl md:text-2xl text-flu-grena">{score} pontos</span>
           </div>
         </div>
 
         {/* Aviso de tentativa única */}
         <div className="text-center">
-          <div className="text-sm font-medium text-flu-grena flex items-center justify-center gap-1">
-            <Timer className="w-4 h-4" />
+          <div className="text-xs md:text-sm font-medium text-flu-grena flex items-center justify-center gap-1">
+            <Timer className="w-3 h-3 md:w-4 md:h-4" />
             <span>Apenas uma tentativa por jogador!</span>
           </div>
         </div>

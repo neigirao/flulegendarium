@@ -81,7 +81,7 @@ export const GameContainer = ({
   console.log('- Timer Running:', isTimerRunning);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* Game Status - Sempre visível com timer e pontuação */}
       <GameStatus
         score={score}
@@ -92,24 +92,28 @@ export const GameContainer = ({
         onNextPlayer={selectRandomPlayer}
       />
 
-      {/* Player Image */}
-      <PlayerImage
-        player={currentPlayer}
-        onImageFixed={handlePlayerImageFixed}
-        onImageLoaded={handleImageLoaded}
-        priority={true}
-      />
+      {/* Player Image - Responsivo */}
+      <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
+        <PlayerImage
+          player={currentPlayer}
+          onImageFixed={handlePlayerImageFixed}
+          onImageLoaded={handleImageLoaded}
+          priority={true}
+        />
+      </div>
 
-      {/* Guess Form */}
-      <GuessForm
-        disabled={gameOver}
-        onSubmitGuess={handleGuess}
-        isProcessing={isProcessingGuess}
-      />
+      {/* Guess Form - Responsivo */}
+      <div className="w-full max-w-md md:max-w-lg mx-auto">
+        <GuessForm
+          disabled={gameOver}
+          onSubmitGuess={handleGuess}
+          isProcessing={isProcessingGuess}
+        />
+      </div>
       
-      {/* Debug info detalhado */}
+      {/* Debug info detalhado - Responsivo */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="mt-4 p-3 bg-gray-100 rounded text-sm border">
+        <div className="mt-4 p-3 bg-gray-100 rounded text-xs md:text-sm border">
           <p><strong>Debug Info:</strong></p>
           <p>Score = {score}</p>
           <p>Timer = {timeRemaining}s</p>

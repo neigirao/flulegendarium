@@ -38,11 +38,11 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
   console.log(`🎨 Renderizando imagem para ${player.name}: ${imageSrc}`);
 
   return (
-    <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300 hover:shadow-lg border-2 border-flu-verde">
+    <div className="relative w-full h-[280px] sm:h-[320px] md:h-[380px] lg:h-[450px] rounded-lg overflow-hidden bg-white shadow-md transition-all duration-300 hover:shadow-lg border-2 border-flu-verde">
       <ImageLoader isLoading={isLoading && !imageError} />
       <ImageErrorDisplay imageError={imageError} />
       
-      <div className="w-full h-full flex items-center justify-center p-2 relative">
+      <div className="w-full h-full flex items-center justify-center p-2 md:p-3 lg:p-4 relative">
         {imageSrc ? (
           <OptimizedImage
             src={imageSrc}
@@ -65,7 +65,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
           />
         ) : (
           <div className="flex items-center justify-center w-full h-full">
-            <p className="text-gray-500">Carregando imagem...</p>
+            <p className="text-gray-500 text-sm md:text-base">Carregando imagem...</p>
           </div>
         )}
       </div>
