@@ -100,8 +100,6 @@ const GuessPlayer = () => {
     }
   }, [players, preloadImages]);
 
-  const [score, setScore] = useState(0);
-
   const {
     currentPlayer,
     attempts,
