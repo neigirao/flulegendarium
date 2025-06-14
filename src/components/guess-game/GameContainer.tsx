@@ -1,4 +1,3 @@
-
 import { useState, Suspense, lazy } from "react";
 import { PlayerImage } from "@/components/guess-game/PlayerImage";
 import { GuessForm } from "@/components/guess-game/GuessForm";
@@ -25,6 +24,7 @@ interface GameContainerProps {
   handlePlayerImageFixed: () => void;
   isProcessingGuess: boolean;
   hasLost: boolean;
+  handleImageLoaded?: () => void; // Nova prop
 }
 
 export const GameContainer = ({
@@ -38,7 +38,8 @@ export const GameContainer = ({
   selectRandomPlayer,
   handlePlayerImageFixed,
   isProcessingGuess,
-  hasLost
+  hasLost,
+  handleImageLoaded
 }: GameContainerProps) => {
   const [showRanking, setShowRanking] = useState(false);
   const { trackEvent } = useAnalytics();
@@ -120,7 +121,8 @@ export const GameContainer = ({
 
           <PlayerImage 
             player={currentPlayer} 
-            onImageFixed={handlePlayerImageFixed} 
+            onImageFixed={handlePlayerImageFixed}
+            onImageLoaded={handleImageLoaded}
           />
 
           {!hasLost && (

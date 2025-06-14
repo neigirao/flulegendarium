@@ -9,9 +9,10 @@ interface UsePlayerImageProps {
     image_url: string;
   } | null;
   onImageFixed: () => void;
+  onImageLoaded?: () => void; // Nova prop para notificar carregamento
 }
 
-export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
+export function usePlayerImage({ player, onImageFixed, onImageLoaded }: UsePlayerImageProps) {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
@@ -24,11 +25,9 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
       setIsLoading(true);
       setRetryCount(0);
       
-      // Check if we have a fallback image for this player directly
       if (player.name && playerImagesFallbacksMap[player.name]) {
         setImageSrc(playerImagesFallbacksMap[player.name]);
       } else {
-        // Otherwise use the provided image URL
         setImageSrc(player.image_url || defaultPlayerImage);
       }
     } else {
@@ -37,16 +36,12 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
   }, [player?.id, player?.name]);
 
   const handleImageError = () => {
-    // Log error without revealing the exact URL
     console.error(`Erro ao carregar imagem para ${player?.name || 'jogador desconhecido'} (tentativa ${retryCount + 1})`);
     
-    // First retry - check for fallbacks
     if (retryCount === 0) {
       setRetryCount(prev => prev + 1);
       
-      // Try to find fallback by player name
       if (player?.name) {
-        // First try exact match
         if (playerImagesFallbacksMap[player.name]) {
           console.log(`Tentando fallback para ${player.name}`);
           setImageSrc(playerImagesFallbacksMap[player.name]);
@@ -54,7 +49,6 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
           return;
         }
         
-        // Then try partial match
         for (const [key, url] of Object.entries(playerImagesFallbacksMap)) {
           if (player.name.includes(key) || key.includes(player.name)) {
             console.log(`Tentando fallback para ${player.name}`);
@@ -66,7 +60,6 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
       }
     }
     
-    // Second retry - use default image
     if (retryCount === 1) {
       console.log("Usando imagem padrão como último recurso");
       setImageSrc(defaultPlayerImage);
@@ -76,15 +69,18 @@ export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
       return;
     }
     
-    // Final failure - just show error state
     setImageError(true);
     setIsLoading(false);
     onImageFixed();
   };
 
   const handleImageLoaded = () => {
-    console.log(`Imagem carregada com sucesso: ${player?.name}`);
+    console.log(`✅ Imagem carregada com sucesso: ${player?.name}`);
     setIsLoading(false);
+    // Notificar que a imagem foi carregada
+    if (onImageLoaded) {
+      onImageLoaded();
+    }
   };
 
   return {

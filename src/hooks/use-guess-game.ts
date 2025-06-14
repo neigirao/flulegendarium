@@ -16,7 +16,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
-  const [hasLost, setHasLost] = useState(false); 
+  const [hasLost, setHasLost] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   
   // Player selection hook
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed } = usePlayerSelection(players);
@@ -25,7 +26,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer) {
       setGameOver(true);
-      setHasLost(true); // Set hasLost when time is up
+      setHasLost(true);
       
       trackEvent({
         action: 'game_timeout',
@@ -41,8 +42,13 @@ export const useGuessGame = (players: Player[] | undefined) => {
     }
   }, [currentPlayer, gameOver, toast, trackEvent]);
   
-  // Game timer hook
+  // Game timer hook - só inicia quando a imagem estiver carregada
   const { timeRemaining, startTimer, clearGameTimer } = useGameTimer(gameOver, handleTimeUp);
+
+  // Callback para quando a imagem for carregada
+  const handleImageLoaded = useCallback(() => {
+    setImageLoaded(true);
+  }, []);
 
   // Handle guess submission
   const handleGuess = useCallback(async (guess: string) => {
@@ -51,24 +57,20 @@ export const useGuessGame = (players: Player[] | undefined) => {
     setIsProcessingGuess(true);
     
     try {
-      // First try with the enhanced function that checks nicknames
       const processingResult = await processPlayerName(guess, currentPlayer.name, currentPlayer.id);
       
-      // Check if we got a match and if it matches our current player
       let isCorrect = false;
       
       if (processingResult.processedName) {
         isCorrect = processingResult.processedName.toLowerCase() === currentPlayer.name.toLowerCase();
       }
       
-      // If no match from the enhanced function, try local fallback
       if (!isCorrect) {
         isCorrect = isCorrectGuess(guess, currentPlayer.name);
       }
       
       if (isCorrect) {
-        // Correct guess!
-        const points = 5; // Always award 5 points since we only have one attempt now
+        const points = 5;
         setScore(prev => prev + points);
         
         trackCorrectGuess(currentPlayer.name);
@@ -84,18 +86,14 @@ export const useGuessGame = (players: Player[] | undefined) => {
           description: `Você acertou e ganhou ${points} pontos!`,
         });
         
-        // Clear the timer
         clearGameTimer();
-        
         selectRandomPlayer();
       } else {
-        // Wrong guess - game over immediately
         setGameOver(true);
-        setHasLost(true); // Explicitly set hasLost when guess is incorrect
+        setHasLost(true);
         
         trackIncorrectGuess(currentPlayer.name, guess);
         
-        // Clear the timer
         clearGameTimer();
         
         toast({
@@ -107,7 +105,6 @@ export const useGuessGame = (players: Player[] | undefined) => {
     } catch (error) {
       console.error("Erro ao processar palpite:", error);
       
-      // Fallback to basic matching if there's an error
       if (isCorrectGuess(guess, currentPlayer.name)) {
         const points = 5;
         setScore(prev => prev + points);
@@ -123,7 +120,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
         selectRandomPlayer();
       } else {
         setGameOver(true);
-        setHasLost(true); // Ensure hasLost is set when guess fails
+        setHasLost(true);
         clearGameTimer();
         
         trackIncorrectGuess(currentPlayer.name, guess);
@@ -143,21 +140,30 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const resetGameForNewRound = useCallback(() => {
     setAttempts(0);
     setGameOver(false);
-    setHasLost(false); // Reset hasLost
-    startTimer();
-  }, [startTimer]);
+    setHasLost(false);
+    setImageLoaded(false); // Reset image loaded state
+  }, []);
   
-  // Effect to handle state changes when a new player is selected - ONLY fire once per player
+  // Effect para iniciar o timer apenas quando a imagem estiver carregada
   useEffect(() => {
-    if (currentPlayer && !gameOver) {
+    if (currentPlayer && imageLoaded && !gameOver) {
+      console.log('🎮 Iniciando timer após carregamento da imagem');
+      startTimer();
+      
       trackEvent({
         action: 'new_player_shown',
         category: 'Game',
         label: currentPlayer.name
       });
+    }
+  }, [currentPlayer?.id, imageLoaded, gameOver, startTimer, trackEvent]);
+
+  // Effect to handle state changes when a new player is selected
+  useEffect(() => {
+    if (currentPlayer && !gameOver) {
       resetGameForNewRound();
     }
-  }, [currentPlayer?.id, gameOver]); // Only depend on player ID and gameOver to prevent loops
+  }, [currentPlayer?.id, gameOver, resetGameForNewRound]);
 
   return {
     currentPlayer,
@@ -171,6 +177,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     handlePlayerImageFixed,
     isProcessingGuess,
     TIME_LIMIT_SECONDS,
-    hasLost // Export hasLost state
+    hasLost,
+    handleImageLoaded
   };
 };
