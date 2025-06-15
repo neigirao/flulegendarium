@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
@@ -17,7 +16,7 @@ const GameModeSelection = () => {
     // Adiciona um pequeno delay para evitar loops de redirecionamento
     if (!loading && user) {
       const timer = setTimeout(() => {
-        navigate("/jogar-quiz-fluminense", { replace: true });
+        navigate("/quiz", { replace: true });
       }, 100);
       
       return () => clearTimeout(timer);
@@ -25,11 +24,11 @@ const GameModeSelection = () => {
   }, [user, loading, navigate]);
 
   const handleGuestPlay = () => {
-    navigate("/jogar-quiz-fluminense", { replace: true });
+    navigate("/quiz", { replace: true });
   };
 
   const handleAuthenticatedPlay = () => {
-    navigate("/jogar-quiz-fluminense", { replace: true });
+    navigate("/quiz", { replace: true });
   };
 
   // Mostra loading enquanto verifica autenticação
