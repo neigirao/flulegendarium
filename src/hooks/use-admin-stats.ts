@@ -37,19 +37,26 @@ interface AllStatsData {
 
 export const useAdminStats = () => {
   // Single optimized query to fetch all data at once
-  const { data: allStats, isLoading } = useQuery({
+  const { data: allStats, isLoading, error } = useQuery({
     queryKey: ['admin-stats-all'],
     queryFn: async (): Promise<AllStatsData> => {
       try {
         console.log('Fetching admin stats...');
         
         const [attemptsResult, sessionsResult, playersResult, rankingsResult, gameStartsResult] = await Promise.all([
-          supabase.from('game_attempts').select('target_player_name, is_correct'),
-          supabase.from('game_sessions').select('total_correct'),
+          supabase.from('game_attempts').select('*'),
+          supabase.from('game_sessions').select('*'),
           supabase.from('players').select('*', { count: 'exact', head: true }),
           supabase.from('rankings').select('*').order('score', { ascending: false }).limit(10),
           supabase.from('game_starts').select('*')
         ]);
+        
+        // Log results for debugging
+        console.log('Attempts data:', attemptsResult.data?.length || 0, attemptsResult.data);
+        console.log('Sessions data:', sessionsResult.data?.length || 0, sessionsResult.data);
+        console.log('Players count:', playersResult.count);
+        console.log('Rankings data:', rankingsResult.data?.length || 0, rankingsResult.data);
+        console.log('Game starts data:', gameStartsResult.data?.length || 0, gameStartsResult.data);
         
         // Log any errors but don't throw to prevent the entire stats from failing
         if (attemptsResult.error) {
@@ -67,14 +74,6 @@ export const useAdminStats = () => {
         if (gameStartsResult.error) {
           console.error('Error fetching game starts:', gameStartsResult.error);
         }
-        
-        console.log('Stats fetched successfully:', {
-          attempts: attemptsResult.data?.length || 0,
-          sessions: sessionsResult.data?.length || 0,
-          players: playersResult.count || 0,
-          rankings: rankingsResult.data?.length || 0,
-          gameStarts: gameStartsResult.data?.length || 0
-        });
         
         return {
           attempts: attemptsResult.data || [],
@@ -113,6 +112,7 @@ export const useAdminStats = () => {
           return 0;
         }
         
+        console.log('Players count result:', count);
         return count || 0;
       } catch (error) {
         console.error('Error in players count query:', error);
@@ -125,35 +125,60 @@ export const useAdminStats = () => {
 
   // Memoized calculations to prevent re-computation
   const mostCorrectPlayers = useMemo((): PlayerStats[] => {
-    if (!allStats?.attempts || allStats.attempts.length === 0) return [];
+    if (!allStats?.attempts || allStats.attempts.length === 0) {
+      console.log('No attempts data for mostCorrectPlayers');
+      return [];
+    }
     
-    const correctAttempts = allStats.attempts.filter(attempt => attempt.is_correct);
+    console.log('Calculating mostCorrectPlayers with', allStats.attempts.length, 'attempts');
+    
+    const correctAttempts = allStats.attempts.filter(attempt => attempt.is_correct === true);
+    console.log('Correct attempts:', correctAttempts.length);
+    
     const counts: Record<string, number> = correctAttempts.reduce((acc, attempt) => {
-      acc[attempt.target_player_name] = (acc[attempt.target_player_name] || 0) + 1;
+      const playerName = attempt.target_player_name;
+      if (playerName) {
+        acc[playerName] = (acc[playerName] || 0) + 1;
+      }
       return acc;
     }, {} as Record<string, number>);
     
-    return Object.entries(counts)
+    console.log('Player correct counts:', counts);
+    
+    const result = Object.entries(counts)
       .map(([name, count]) => ({ player_name: name, correct_count: count }))
       .sort((a, b) => b.correct_count - a.correct_count)
       .slice(0, 10);
+    
+    console.log('Most correct players result:', result);
+    return result;
   }, [allStats?.attempts]);
 
   const mostMissedPlayers = useMemo((): MostMissedPlayer[] => {
-    if (!allStats?.attempts || allStats.attempts.length === 0) return [];
+    if (!allStats?.attempts || allStats.attempts.length === 0) {
+      console.log('No attempts data for mostMissedPlayers');
+      return [];
+    }
+    
+    console.log('Calculating mostMissedPlayers with', allStats.attempts.length, 'attempts');
     
     const stats: Record<string, { total: number, missed: number }> = allStats.attempts.reduce((acc, attempt) => {
-      if (!acc[attempt.target_player_name]) {
-        acc[attempt.target_player_name] = { total: 0, missed: 0 };
-      }
-      acc[attempt.target_player_name].total++;
-      if (!attempt.is_correct) {
-        acc[attempt.target_player_name].missed++;
+      const playerName = attempt.target_player_name;
+      if (playerName) {
+        if (!acc[playerName]) {
+          acc[playerName] = { total: 0, missed: 0 };
+        }
+        acc[playerName].total++;
+        if (attempt.is_correct === false) {
+          acc[playerName].missed++;
+        }
       }
       return acc;
     }, {} as Record<string, { total: number, missed: number }>);
     
-    return Object.entries(stats)
+    console.log('Player miss stats:', stats);
+    
+    const result = Object.entries(stats)
       .filter(([_, data]) => data.total >= 3) // Only show players with at least 3 attempts
       .map(([name, data]) => ({
         player_name: name,
@@ -163,10 +188,18 @@ export const useAdminStats = () => {
       }))
       .sort((a, b) => b.missed_count - a.missed_count)
       .slice(0, 10);
+    
+    console.log('Most missed players result:', result);
+    return result;
   }, [allStats?.attempts]);
 
   const progressStats = useMemo((): ProgressStat[] => {
-    if (!allStats?.sessions || allStats.sessions.length === 0) return [];
+    if (!allStats?.sessions || allStats.sessions.length === 0) {
+      console.log('No sessions data for progressStats');
+      return [];
+    }
+    
+    console.log('Calculating progressStats with', allStats.sessions.length, 'sessions');
     
     const stepCounts: Record<number, number> = allStats.sessions.reduce((acc, session) => {
       const step = session.total_correct || 0;
@@ -174,32 +207,60 @@ export const useAdminStats = () => {
       return acc;
     }, {} as Record<number, number>);
     
-    return Object.entries(stepCounts)
+    const result = Object.entries(stepCounts)
       .map(([step, count]) => ({ step: parseInt(step), count }))
       .sort((a, b) => a.step - b.step);
+    
+    console.log('Progress stats result:', result);
+    return result;
   }, [allStats?.sessions]);
 
   const generalStats = useMemo((): GeneralStats | undefined => {
-    if (!allStats) return undefined;
+    if (!allStats) {
+      console.log('No allStats data for generalStats');
+      return undefined;
+    }
     
-    const correctAttempts = allStats.attempts.filter(a => a.is_correct).length;
+    console.log('Calculating generalStats');
     
-    // Use game_starts data for total matches instead of attempts
+    const correctAttempts = allStats.attempts.filter(a => a.is_correct === true).length;
     const totalMatches = allStats.gameStarts?.length || 0;
     
-    return {
-      totalAttempts: totalMatches, // Changed to use game_starts instead of attempts
+    const result = {
+      totalAttempts: totalMatches,
       totalSessions: allStats.sessions.length,
       totalPlayers: playersCount || 0,
       correctAttempts
     };
+    
+    console.log('General stats result:', result);
+    return result;
   }, [allStats, playersCount]);
 
   const successRate = useMemo(() => {
-    if (!allStats?.attempts || allStats.attempts.length === 0) return '0';
-    const correctAttempts = allStats.attempts.filter(a => a.is_correct).length;
-    return ((correctAttempts / allStats.attempts.length) * 100).toFixed(1);
+    if (!allStats?.attempts || allStats.attempts.length === 0) {
+      console.log('No attempts data for successRate');
+      return '0';
+    }
+    
+    const correctAttempts = allStats.attempts.filter(a => a.is_correct === true).length;
+    const rate = ((correctAttempts / allStats.attempts.length) * 100).toFixed(1);
+    
+    console.log('Success rate calculation:', correctAttempts, '/', allStats.attempts.length, '=', rate + '%');
+    return rate;
   }, [allStats?.attempts]);
+
+  // Log final results for debugging
+  console.log('Final hook results:', {
+    mostCorrectPlayers,
+    mostMissedPlayers,
+    playerRanking: allStats?.rankings || [],
+    progressStats,
+    generalStats,
+    successRate,
+    isLoading,
+    error
+  });
 
   return {
     mostCorrectPlayers,
