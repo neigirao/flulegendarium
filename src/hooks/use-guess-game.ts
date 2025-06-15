@@ -8,6 +8,7 @@ import { processPlayerName, isCorrectGuess } from "@/utils/name-processor";
 import { useAnalytics } from "./use-analytics";
 import { useAchievements } from "./use-achievements";
 import { useAuth } from "./useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 export const MAX_ATTEMPTS = 1;
 
@@ -26,6 +27,34 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [gameActive, setGameActive] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [gamesPlayed, setGamesPlayed] = useState(0);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+
+  // Register game start
+  const registerGameStart = useCallback(async () => {
+    try {
+      const newSessionId = crypto.randomUUID();
+      setSessionId(newSessionId);
+      
+      const { error } = await supabase
+        .from('game_starts')
+        .insert([
+          {
+            user_id: user?.id || null,
+            player_type: user ? 'authenticated' : 'guest',
+            session_id: newSessionId,
+            started_at: new Date().toISOString()
+          }
+        ]);
+
+      if (error) {
+        console.error('Erro ao registrar início da partida:', error);
+      } else {
+        console.log('✅ Início da partida registrado com sucesso');
+      }
+    } catch (error) {
+      console.error('Erro ao registrar início da partida:', error);
+    }
+  }, [user]);
 
   // Select random player function
   const selectRandomPlayer = useCallback(() => {
@@ -87,15 +116,21 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const { timeRemaining, isRunning, startTimer, stopTimer } = useGameTimer(gameOver, handleTimeUp);
 
   // Start timer when a new player is selected
-  const startGameForPlayer = useCallback(() => {
+  const startGameForPlayer = useCallback(async () => {
     if (currentPlayer && !gameOver && !isRunning) {
       console.log('🎮 Iniciando timer para:', currentPlayer.name);
       setGameOver(false);
       setHasLost(false);
       setGameActive(true);
+      
+      // Register game start only once per session
+      if (!sessionId) {
+        await registerGameStart();
+      }
+      
       startTimer();
     }
-  }, [currentPlayer, gameOver, isRunning, startTimer]);
+  }, [currentPlayer, gameOver, isRunning, startTimer, sessionId, registerGameStart]);
 
   // Reset score function
   const resetScore = useCallback(() => {
@@ -104,6 +139,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
     setCurrentStreak(0);
     setGamesPlayed(0);
     setGameActive(false);
+    setSessionId(null); // Reset session for new game
   }, []);
 
   // Handle guess submission

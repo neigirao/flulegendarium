@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 interface GameStats {
@@ -9,9 +10,9 @@ interface GameStats {
 
 export const getGameStats = async (): Promise<GameStats> => {
   try {
-    // Get total game sessions
+    // Get total game starts (todas as partidas iniciadas)
     const { count: totalMatches } = await supabase
-      .from('game_sessions')
+      .from('game_starts')
       .select('*', { count: 'exact', head: true });
 
     // Get unique active players (players who have rankings)
