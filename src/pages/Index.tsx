@@ -66,6 +66,9 @@ export default function Index() {
                   Meu Perfil
                 </Link>
               )}
+              <Link to="/faq" className="text-flu-verde hover:text-flu-grena transition-colors">
+                FAQ
+              </Link>
               <Link to="/admin/login-administrador" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Admin
               </Link>
@@ -121,6 +124,16 @@ export default function Index() {
                     </Link>
                   </UniversalTouchTarget>
                 )}
+                
+                <UniversalTouchTarget
+                  size="lg"
+                  className="w-full justify-start text-left hover:bg-gray-50"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Link to="/faq" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    FAQ
+                  </Link>
+                </UniversalTouchTarget>
                 
                 <UniversalTouchTarget
                   size="lg"

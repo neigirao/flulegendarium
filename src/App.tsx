@@ -17,6 +17,7 @@ const SelectGameMode = lazy(() => import("@/pages/GameModeSelection"))
 const Profile = lazy(() => import("@/pages/Profile"))
 const AdminLogin = lazy(() => import("@/pages/AdminLogin"))
 const AdminDashboard = lazy(() => import("@/pages/Admin"))
+const FAQ = lazy(() => import("@/pages/FAQ"))
 const NotFound = lazy(() => import("@/pages/NotFound"))
 
 const queryClient = new QueryClient({
@@ -64,6 +65,7 @@ function App() {
                       } 
                     />
                     <Route path="/meu-perfil-tricolor" element={<Profile />} />
+                    <Route path="/faq" element={<FAQ />} />
                     <Route path="/admin/login-administrador" element={<AdminLogin />} />
                     <Route 
                       path="/admin/dashboard" 
