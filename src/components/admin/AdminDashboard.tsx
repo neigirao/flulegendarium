@@ -1,5 +1,6 @@
 
 import { PlayerRecognitionStats } from "./PlayerRecognitionStats";
+import { PlayerPerformanceAnalysis } from "./PlayerPerformanceAnalysis";
 import { GeneralStatsCards } from "./stats/GeneralStatsCards";
 import { MostCorrectPlayersCard } from "./stats/MostCorrectPlayersCard";
 import { MostMissedPlayersCard } from "./stats/MostMissedPlayersCard";
@@ -49,7 +50,10 @@ export const AdminDashboard = memo(() => {
         successRate={successRate}
       />
 
-      {/* Novo Card de Reconhecimento por Jogador */}
+      {/* Nova Análise de Performance por Jogador */}
+      <PlayerPerformanceAnalysis />
+
+      {/* Card de Reconhecimento por Jogador (mantido para compatibilidade) */}
       <PlayerRecognitionStats />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
