@@ -2,7 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy } from "lucide-react";
 import { useVirtualizedRanking } from "@/hooks/use-virtualized-ranking";
-import { LoadingSkeleton, InlineError } from "@/components/ui/loading-states";
+import { LoadingSkeleton } from "@/components/ui/loading-states";
+import { InlineError } from "@/components/ui/error-states";
 
 interface RankingItem {
   id: string;
