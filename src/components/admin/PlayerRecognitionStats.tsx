@@ -90,16 +90,18 @@ export const PlayerRecognitionStats = memo(() => {
         throw error;
       }
       
-      console.log('✅ Tentativas carregadas:', data?.length || 0);
+      console.log('✅ Dados de tentativas carregados:', data?.length || 0);
+      console.log('📊 Amostra dos dados:', data?.slice(0, 5));
       
       if (!data || data.length === 0) {
-        console.log('⚠️ Nenhuma tentativa encontrada');
+        console.log('⚠️ Nenhuma tentativa encontrada na tabela game_attempts');
         return [];
       }
       
-      const stats = data.reduce((acc: Record<string, { total: number, correct: number }>, attempt) => {
+      // Agrupar por nome do jogador e contar tentativas
+      const playerStats = data.reduce((acc: Record<string, { total: number, correct: number }>, attempt) => {
         const playerName = attempt.target_player_name;
-        if (playerName) {
+        if (playerName && typeof playerName === 'string') {
           if (!acc[playerName]) {
             acc[playerName] = { total: 0, correct: 0 };
           }
@@ -111,9 +113,14 @@ export const PlayerRecognitionStats = memo(() => {
         return acc;
       }, {});
       
-      console.log('📈 Estatísticas por jogador:', stats);
+      console.log('📈 Estatísticas calculadas por jogador:', playerStats);
       
-      const result = Object.entries(stats)
+      if (Object.keys(playerStats).length === 0) {
+        console.log('⚠️ Nenhuma estatística válida encontrada');
+        return [];
+      }
+      
+      const result = Object.entries(playerStats)
         .map(([name, data]) => {
           const recognitionRate = data.total > 0 ? (data.correct / data.total) * 100 : 0;
           let difficultyLevel = 'Fácil';
@@ -136,11 +143,14 @@ export const PlayerRecognitionStats = memo(() => {
         })
         .sort((a, b) => b.total_attempts - a.total_attempts);
       
-      console.log('✅ Estatísticas finais calculadas:', result.length, 'jogadores');
+      console.log('✅ Resultado final do relatório:', result.length, 'jogadores');
+      console.log('📊 Top 3 jogadores:', result.slice(0, 3));
       return result;
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    refetchInterval: 3 * 60 * 1000, // Refetch a cada 3 minutos
+    staleTime: 30 * 1000, // 30 segundos - mais frequente para debug
+    gcTime: 2 * 60 * 1000, // 2 minutes
+    retry: 1,
+    refetchInterval: 60 * 1000, // Refetch a cada 1 minuto
     refetchOnWindowFocus: true,
   });
 
@@ -180,7 +190,7 @@ export const PlayerRecognitionStats = memo(() => {
         </CardHeader>
         <CardContent>
           <div className="text-center py-4 text-red-500">
-            Erro ao carregar estatísticas de reconhecimento
+            Erro ao carregar estatísticas de reconhecimento: {error.message}
           </div>
         </CardContent>
       </Card>
@@ -245,6 +255,14 @@ export const PlayerRecognitionStats = memo(() => {
           <p className="text-sm text-muted-foreground mt-2 text-center">
             Mostrando top 20 jogadores com mais tentativas (total: {recognitionStats.length})
           </p>
+        )}
+        
+        {recognitionStats.length > 0 && (
+          <div className="mt-4 pt-4 border-t">
+            <p className="text-sm text-gray-600 text-center">
+              Total de {recognitionStats.length} jogador{recognitionStats.length !== 1 ? 'es' : ''} com tentativas registradas
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>
