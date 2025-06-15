@@ -9,9 +9,11 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
 import { usePerformance } from "@/hooks/use-performance";
 import { useBundleAnalyzer } from "@/hooks/use-bundle-analyzer";
+import { useCoreWebVitals } from "@/hooks/use-core-web-vitals";
 import { ErrorBoundary } from "@/components/error-boundaries/ErrorBoundary";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
+import { CriticalMeta } from "@/components/CriticalMeta";
 
 // Lazy load pages with better loading and preloading
 const Index = lazy(() => 
@@ -76,6 +78,7 @@ const queryClient = new QueryClient({
 const PerformanceMonitor = () => {
   usePerformance();
   useBundleAnalyzer();
+  useCoreWebVitals(); // Add Core Web Vitals monitoring
   return null;
 };
 
@@ -84,6 +87,7 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <TooltipProvider>
+          <CriticalMeta />
           <PerformanceMonitor />
           <Toaster />
           <Sonner />
