@@ -32,6 +32,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
           <p><strong>2.</strong> Digite o nome ou apelido do jogador</p>
           <p><strong>3.</strong> Confirme seu palpite</p>
           <p><strong>4.</strong> Você tem apenas <strong>1 tentativa</strong> por jogador!</p>
+          <p><strong>5.</strong> Não há opção de pular - você deve tentar adivinhar!</p>
         </div>
       )
     },
@@ -42,7 +43,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
         <div className="space-y-4">
           <p>Você tem <strong>30 segundos</strong> para cada jogador!</p>
           <p>O cronômetro aparece no canto da tela.</p>
-          <p>Se o tempo acabar, você perde automaticamente.</p>
+          <p>Se o tempo acabar, é Game Over automaticamente.</p>
         </div>
       )
     },
@@ -81,6 +82,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
           <p><strong>✓</strong> Não é necessário ser exato, nomes parciais funcionam</p>
           <p><strong>✓</strong> Foque nos jogadores mais famosos da história</p>
           <p><strong>⚠️</strong> Lembre-se: não saia da aba durante o jogo!</p>
+          <p><strong>⚠️</strong> Não há como pular jogadores - cada um é um desafio!</p>
         </div>
       )
     }

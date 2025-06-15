@@ -13,19 +13,19 @@ const faqData = [
     questions: [
       {
         question: "O que é Lendas do Flu?",
-        answer: "Lendas do Flu é um quiz interativo onde você testa seus conhecimentos sobre os jogadores históricos e atuais do Fluminense FC. Veja a foto do jogador e tente adivinhar quem é!"
+        answer: "Lendas do Flu é um quiz interativo onde você testa seus conhecimentos sobre os jogadores históricos e atuais do Fluminense FC. Veja a foto do jogador e tente adivinhar quem é! É o desafio perfeito para todo tricolor que se preza."
       },
       {
         question: "Como funciona o jogo?",
-        answer: "É simples! Você verá a foto de um jogador do Fluminense e terá que adivinhar o nome correto. Cada acerto vale pontos e você pode competir no ranking global com outros tricolores."
+        answer: "É muito simples! Uma foto de um jogador do Fluminense aparece na tela e você tem que adivinhar o nome correto. Você tem apenas 30 segundos e UMA tentativa por jogador. Cada acerto vale pontos e você compete no ranking global com outros tricolores."
       },
       {
         question: "O jogo é gratuito?",
-        answer: "Sim! Lendas do Flu é completamente gratuito. Você só precisa criar uma conta para salvar seu progresso e participar do ranking."
+        answer: "Sim! Lendas do Flu é completamente gratuito. Você pode jogar sem criar conta, mas recomendamos fazer login para salvar seu progresso e participar do ranking oficial."
       },
       {
-        question: "Quantos jogadores estão disponíveis no jogo?",
-        answer: "Temos uma base de dados em constante crescimento com dezenas de jogadores históricos e atuais do Fluminense. Novos jogadores são adicionados regularmente."
+        question: "Quantos jogadores estão no jogo?",
+        answer: "Temos uma base crescente com dezenas de jogadores históricos e atuais do Fluminense, desde os clássicos como Castilho e Telê Santana até os ídolos mais recentes. Novos jogadores são adicionados regularmente!"
       }
     ]
   },
@@ -34,20 +34,42 @@ const faqData = [
     icon: Trophy,
     questions: [
       {
-        question: "Como posso começar a jogar?",
-        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha o modo de jogo desejado e comece a testar seus conhecimentos tricolores!"
+        question: "Como começar a jogar?",
+        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha entre jogar como convidado ou fazer login, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
       },
       {
-        question: "Existe limite de tentativas?",
-        answer: "Não há limite de tentativas! Você pode jogar quantas vezes quiser e tentar melhorar sua pontuação."
+        question: "Posso tentar mais de uma vez por jogador?",
+        answer: "Não! Você tem apenas UMA tentativa por jogador. Se errar ou o tempo esgotar, é Game Over. Isso torna o jogo mais desafiador e emocionante!"
+      },
+      {
+        question: "Quanto tempo tenho para responder?",
+        answer: "Você tem exatos 30 segundos para cada jogador. O cronômetro aparece na tela e quando chega a zero, é Game Over automaticamente."
       },
       {
         question: "Como funciona a pontuação?",
-        answer: "Você ganha pontos por cada resposta correta. A pontuação pode variar dependendo da dificuldade do jogador e do tempo que levou para responder."
+        answer: "Cada resposta correta vale 5 pontos. O objetivo é fazer o maior número de acertos consecutivos possível. Sua melhor sequência fica salva no ranking!"
       },
       {
-        question: "Posso pular uma pergunta?",
-        answer: "Sim, você pode pular perguntas se não souber a resposta, mas não ganhará pontos por ela."
+        question: "Posso usar nomes e apelidos?",
+        answer: "Sim! Você pode usar tanto nomes oficiais quanto apelidos famosos. Por exemplo: 'Fred', 'Frederico' ou 'Chaves Guedes' - todos funcionam. O sistema é inteligente e reconhece variações dos nomes."
+      }
+    ]
+  },
+  {
+    category: "Regras Importantes",
+    icon: Shield,
+    questions: [
+      {
+        question: "O que acontece se eu trocar de aba?",
+        answer: "GAME OVER IMEDIATO! Se você trocar de aba, minimizar ou sair da janela durante o jogo, o jogo termina automaticamente. Esta regra evita que você consulte outras fontes. Mantenha o foco!"
+      },
+      {
+        question: "Por que essa regra existe?",
+        answer: "Para manter a justiça e o desafio do jogo. Queremos testar seu conhecimento real sobre o Fluminense, não sua habilidade de pesquisar no Google!"
+      },
+      {
+        question: "E se minha conexão cair?",
+        answer: "Infelizmente, problemas de conexão também resultam em Game Over. Certifique-se de ter uma conexão estável antes de começar uma partida séria."
       }
     ]
   },
@@ -57,19 +79,19 @@ const faqData = [
     questions: [
       {
         question: "Preciso criar uma conta?",
-        answer: "Para jogar casualmente, não é necessário. Mas recomendamos criar uma conta para salvar seu progresso, participar do ranking e acompanhar suas estatísticas."
+        answer: "Não é obrigatório! Você pode jogar como convidado. Mas recomendamos fazer login para salvar seu progresso, participar do ranking oficial e acompanhar suas estatísticas detalhadas."
       },
       {
         question: "Como criar uma conta?",
-        answer: "Clique em 'Entrar' no topo da página e escolha entre fazer login com Google ou criar uma conta com email e senha."
+        answer: "Clique em 'Entrar' no topo da página e escolha entre fazer login com Google (mais rápido) ou criar uma conta com email e senha."
       },
       {
-        question: "Posso alterar meu nome de usuário?",
-        answer: "Sim, você pode alterar seu nome de usuário acessando seu perfil em 'Meu Perfil Tricolor'."
+        question: "Posso alterar meu nome no ranking?",
+        answer: "Sim! Acesse 'Meu Perfil Tricolor' e você pode alterar seu nome de exibição que aparece no ranking."
       },
       {
-        question: "Como vejo minhas estatísticas?",
-        answer: "Suas estatísticas estão disponíveis na página 'Meu Perfil Tricolor', onde você pode ver seu desempenho, conquistas e histórico de jogos."
+        question: "Onde vejo minhas estatísticas?",
+        answer: "Em 'Meu Perfil Tricolor' você encontra todas suas estatísticas: melhor sequência, total de jogos, pontuação média, jogadores que mais erra e muito mais!"
       }
     ]
   },
@@ -78,20 +100,24 @@ const faqData = [
     icon: Shield,
     questions: [
       {
-        question: "As imagens não estão carregando. O que fazer?",
-        answer: "Verifique sua conexão com a internet. Se o problema persistir, tente atualizar a página ou limpar o cache do navegador."
+        question: "As imagens não carregam. O que fazer?",
+        answer: "Verifique sua conexão com a internet primeiro. Se o problema persistir, tente atualizar a página (F5) ou limpar o cache do navegador (Ctrl+F5)."
       },
       {
         question: "O jogo está lento. Como resolver?",
-        answer: "Isso pode ser devido à sua conexão com a internet. Tente fechar outras abas do navegador ou verificar sua conexão. O jogo funciona melhor em navegadores atualizados."
+        answer: "Feche outras abas do navegador para liberar memória. O jogo funciona melhor em navegadores atualizados como Chrome, Firefox ou Safari. Evite usar navegadores muito antigos."
       },
       {
-        question: "Não consigo fazer login. O que fazer?",
-        answer: "Verifique se você está usando as credenciais corretas. Se esqueceu a senha, use a opção 'Esqueci minha senha'. Se o problema persistir, entre em contato conosco."
+        question: "Não consigo fazer login. E agora?",
+        answer: "Verifique se está usando as credenciais corretas. Se esqueceu a senha, use 'Esqueci minha senha'. Para login com Google, certifique-se de que pop-ups estão habilitados."
       },
       {
-        question: "O jogo funciona no celular?",
-        answer: "Sim! Lendas do Flu é totalmente otimizado para dispositivos móveis. Você pode jogar no seu smartphone ou tablet normalmente."
+        question: "Funciona no celular?",
+        answer: "Perfeitamente! Lendas do Flu é totalmente otimizado para celulares e tablets. A experiência mobile é tão boa quanto no desktop."
+      },
+      {
+        question: "Minha pontuação não foi salva!",
+        answer: "Isso pode acontecer se você estava jogando como convidado ou se houve problema de conexão. Faça login antes de jogar para garantir que tudo seja salvo corretamente."
       }
     ]
   }
