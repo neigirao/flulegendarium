@@ -1,3 +1,4 @@
+
 import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,15 +9,11 @@ import { CriticalMeta } from "@/components/CriticalMeta";
 import { MobileViewport } from "@/components/mobile/MobileViewport";
 
 const Index = lazy(() => import("@/pages/Index"))
-const GuessThePlayer = lazy(() => import("@/pages/GuessThePlayer"))
-const SelectGameMode = lazy(() => import("@/pages/SelectGameMode"))
+const GuessThePlayer = lazy(() => import("@/pages/GuessPlayer"))
+const SelectGameMode = lazy(() => import("@/pages/GameModeSelection"))
 const Profile = lazy(() => import("@/pages/Profile"))
 const AdminLogin = lazy(() => import("@/pages/AdminLogin"))
-const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"))
-const AdminPlayers = lazy(() => import("@/pages/AdminPlayers"))
-const AdminUploads = lazy(() => import("@/pages/AdminUploads"))
-const AdminUsers = lazy(() => import("@/pages/AdminUsers"))
-const AdminSettings = lazy(() => import("@/pages/AdminSettings"))
+const AdminDashboard = lazy(() => import("@/pages/Admin"))
 const NotFound = lazy(() => import("@/pages/NotFound"))
 
 const queryClient = new QueryClient({
@@ -46,10 +43,6 @@ function App() {
                   <Route path="/meu-perfil-tricolor" element={<Profile />} />
                   <Route path="/admin/login-administrador" element={<AdminLogin />} />
                   <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                  <Route path="/admin/jogadores" element={<AdminPlayers />} />
-                  <Route path="/admin/imagens" element={<AdminUploads />} />
-                  <Route path="/admin/usuarios" element={<AdminUsers />} />
-                  <Route path="/admin/configuracoes" element={<AdminSettings />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </Suspense>
