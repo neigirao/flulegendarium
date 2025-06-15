@@ -34,7 +34,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
   }
 
   console.log(`🎨 Renderizando imagem para ${player.name}:`);
-  console.log(`   - imageSrc: ${imageSrc}`);
+  console.log(`   - imageSrc: ${imageSrc || 'null'}`);
   console.log(`   - isLoading: ${isLoading}`);
   console.log(`   - imageError: ${imageError}`);
 

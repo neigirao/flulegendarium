@@ -4,10 +4,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { Player } from "@/types/guess-game";
 import { convertStatistics } from "@/utils/statistics-converter";
 
+interface DatabasePlayer {
+  id: string;
+  name: string | null;
+  position: string | null;
+  image_url: string;
+  year_highlight: string | null;
+  fun_fact: string | null;
+  achievements: string[] | null;
+  nicknames: string[] | null;
+  statistics: any;
+}
+
 export const usePlayersData = () => {
   const { data: players = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
-    queryFn: async () => {
+    queryFn: async (): Promise<Player[]> => {
       try {
         console.log("🔍 Buscando jogadores no banco...");
         
@@ -27,7 +39,7 @@ export const usePlayersData = () => {
 
         console.log("✅ Jogadores carregados do banco:", data.length);
         
-        const enhancedPlayers: Player[] = data.map((player) => {
+        const enhancedPlayers: Player[] = data.map((player: DatabasePlayer) => {
           const enhancedPlayer: Player = {
             id: player.id,
             name: player.name || 'Nome não informado',

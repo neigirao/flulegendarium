@@ -8,8 +8,8 @@ interface SimplePlayerImageProps {
 }
 
 export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerImageProps) => {
-  const [imageError, setImageError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [imageError, setImageError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleImageLoad = useCallback(() => {
     console.log('✅ Imagem carregada com sucesso:', player.name);

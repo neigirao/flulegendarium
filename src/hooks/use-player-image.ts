@@ -12,8 +12,8 @@ interface UsePlayerImageProps {
 }
 
 export function usePlayerImage({ player, onImageFixed }: UsePlayerImageProps) {
-  const [imageError, setImageError] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [imageError, setImageError] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imageSrc, setImageSrc] = useState<string | null>(null);
 
   // Reset states when player changes

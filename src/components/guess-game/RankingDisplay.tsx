@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy } from "lucide-react";
@@ -21,12 +22,17 @@ interface VirtualizedRankingItem extends RankingItem {
 export const RankingDisplay = () => {
   const { data: rankings = [], isLoading, error } = useQuery({
     queryKey: ['rankings'],
-    queryFn: async () => {
-      const { data } = await supabase
+    queryFn: async (): Promise<RankingItem[]> => {
+      const { data, error: queryError } = await supabase
         .from('rankings')
         .select('*')
         .order('score', { ascending: false })
         .limit(100);
+      
+      if (queryError) {
+        throw queryError;
+      }
+      
       return data || [];
     },
     staleTime: 30000,

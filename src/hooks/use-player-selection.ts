@@ -4,7 +4,7 @@ import { Player } from "@/types/guess-game";
 
 export const usePlayerSelection = (players: Player[] | undefined) => {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const isInitialized = useRef(false);
+  const isInitialized = useRef<boolean>(false);
 
   // Initialize with first player when players are loaded
   useEffect(() => {
@@ -13,8 +13,10 @@ export const usePlayerSelection = (players: Player[] | undefined) => {
       isInitialized.current = true;
       const randomIndex = Math.floor(Math.random() * players.length);
       const selectedPlayer = players[randomIndex];
-      console.log('🎯 Jogador selecionado:', selectedPlayer.name);
-      setCurrentPlayer(selectedPlayer);
+      if (selectedPlayer) {
+        console.log('🎯 Jogador selecionado:', selectedPlayer.name);
+        setCurrentPlayer(selectedPlayer);
+      }
     }
   }, [players]);
 
@@ -27,13 +29,17 @@ export const usePlayerSelection = (players: Player[] | undefined) => {
     
     const randomIndex = Math.floor(Math.random() * players.length);
     const selectedPlayer = players[randomIndex];
-    console.log('🔄 Novo jogador selecionado:', selectedPlayer.name);
-    setCurrentPlayer(selectedPlayer);
+    if (selectedPlayer) {
+      console.log('🔄 Novo jogador selecionado:', selectedPlayer.name);
+      setCurrentPlayer(selectedPlayer);
+    }
   }, [players]);
 
   // Handle image fixes - just log for now
   const handlePlayerImageFixed = useCallback(() => {
-    console.log('🖼️ Imagem corrigida para:', currentPlayer?.name);
+    if (currentPlayer) {
+      console.log('🖼️ Imagem corrigida para:', currentPlayer.name);
+    }
   }, [currentPlayer]);
 
   return {
