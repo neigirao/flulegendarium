@@ -73,10 +73,14 @@ export const FeedbackReport = () => {
             id: item.id,
             rating: item.rating,
             comment: item.comment || undefined,
-            category: item.category || 'gameplay',
+            category: (['gameplay', 'ui', 'performance', 'content', 'bug', 'suggestion'].includes(item.category) 
+              ? item.category 
+              : 'gameplay') as 'gameplay' | 'ui' | 'performance' | 'content' | 'bug' | 'suggestion',
             created_at: item.created_at,
             user_email: item.user_email || undefined,
-            status: item.status || 'new'
+            status: (['new', 'reviewed', 'resolved'].includes(item.status) 
+              ? item.status 
+              : 'new') as 'new' | 'reviewed' | 'resolved'
           }));
         }
 

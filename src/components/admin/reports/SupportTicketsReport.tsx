@@ -92,9 +92,15 @@ export const SupportTicketsReport = () => {
             id: item.id,
             title: item.title,
             description: item.description,
-            priority: item.priority || 'medium',
-            status: item.status || 'open',
-            category: item.category || 'technical',
+            priority: (['low', 'medium', 'high', 'urgent'].includes(item.priority) 
+              ? item.priority 
+              : 'medium') as 'low' | 'medium' | 'high' | 'urgent',
+            status: (['open', 'in_progress', 'resolved', 'closed'].includes(item.status) 
+              ? item.status 
+              : 'open') as 'open' | 'in_progress' | 'resolved' | 'closed',
+            category: (['technical', 'gameplay', 'account', 'billing', 'feature_request'].includes(item.category) 
+              ? item.category 
+              : 'technical') as 'technical' | 'gameplay' | 'account' | 'billing' | 'feature_request',
             created_at: item.created_at,
             updated_at: item.updated_at || item.created_at,
             user_email: item.user_email || undefined,
