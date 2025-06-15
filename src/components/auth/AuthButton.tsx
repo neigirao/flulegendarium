@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { LogIn, LogOut, User } from "lucide-react";
+import { LoadingSpinner } from "@/components/ui/loading-states";
 
 export const AuthButton = () => {
   const { user, signInWithGoogle, signOut, loading } = useAuth();
@@ -9,7 +10,7 @@ export const AuthButton = () => {
   if (loading) {
     return (
       <Button variant="outline" disabled className="border-flu-grena/20">
-        <div className="w-4 h-4 border-2 border-flu-grena border-t-transparent rounded-full animate-spin mr-2"></div>
+        <LoadingSpinner size="sm" className="mr-2" />
         Carregando...
       </Button>
     );

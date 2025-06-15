@@ -1,8 +1,8 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy } from "lucide-react";
 import { useVirtualizedRanking } from "@/hooks/use-virtualized-ranking";
+import { LoadingSkeleton, InlineError } from "@/components/ui/loading-states";
 
 interface RankingItem {
   id: string;
@@ -18,7 +18,7 @@ interface VirtualizedRankingItem extends RankingItem {
 }
 
 export const RankingDisplay = () => {
-  const { data: rankings = [], isLoading } = useQuery({
+  const { data: rankings = [], isLoading, error } = useQuery({
     queryKey: ['rankings'],
     queryFn: async () => {
       const { data } = await supabase
@@ -28,7 +28,7 @@ export const RankingDisplay = () => {
         .limit(100);
       return data || [];
     },
-    staleTime: 30000, // Cache for 30 seconds
+    staleTime: 30000,
   });
 
   // Add index to rankings for virtualization
@@ -41,9 +41,20 @@ export const RankingDisplay = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center p-4">
-        <div className="w-6 h-6 border-2 border-flu-grena border-t-transparent rounded-full animate-spin" />
+      <div className="space-y-2 p-4">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <LoadingSkeleton key={i} variant="card" />
+        ))}
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <InlineError 
+        message="Erro ao carregar ranking"
+        onRetry={() => window.location.reload()}
+      />
     );
   }
 

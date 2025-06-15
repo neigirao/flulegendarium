@@ -52,7 +52,13 @@ export const usePlayersData = () => {
       }
     },
     staleTime: 5 * 60 * 1000,
-    retry: 2,
+    retry: (failureCount, error: any) => {
+      // Don't retry on 4xx errors  
+      if (error?.status >= 400 && error?.status < 500) {
+        return false;
+      }
+      return failureCount < 2;
+    },
     refetchOnWindowFocus: false,
   });
 
