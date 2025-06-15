@@ -1,8 +1,8 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Target, Users, TrendingUp } from "lucide-react";
+import { PlayerRecognitionStats } from "./PlayerRecognitionStats";
 
 interface PlayerStats {
   player_name: string;
@@ -186,8 +186,11 @@ export const AdminDashboard = () => {
         </Card>
       </div>
 
+      {/* Novo Card de Reconhecimento por Jogador */}
+      <PlayerRecognitionStats />
+
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Jogadores Mais Acertados */}
+        
         <Card>
           <CardHeader>
             <CardTitle>Jogadores Mais Acertados</CardTitle>
@@ -205,7 +208,6 @@ export const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Jogadores Mais Errados */}
         <Card>
           <CardHeader>
             <CardTitle>Jogadores Mais Difíceis</CardTitle>
@@ -223,7 +225,6 @@ export const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Ranking de Jogadores */}
         <Card>
           <CardHeader>
             <CardTitle>Ranking de Jogadores</CardTitle>
@@ -241,7 +242,6 @@ export const AdminDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Estatísticas de Progresso */}
         <Card>
           <CardHeader>
             <CardTitle>Progresso dos Jogadores</CardTitle>
