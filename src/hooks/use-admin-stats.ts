@@ -51,7 +51,8 @@ export const useAdminStats = () => {
         ]);
         
         // Log results for debugging
-        console.log('Attempts data:', attemptsResult.data?.length || 0);
+        console.log('📊 Admin Stats Results:');
+        console.log('Attempts data:', attemptsResult.data?.length || 0, attemptsResult.data);
         console.log('Sessions data:', sessionsResult.data?.length || 0);
         console.log('Players count:', playersResult.count);
         console.log('Rankings data:', rankingsResult.data?.length || 0);
@@ -60,18 +61,6 @@ export const useAdminStats = () => {
         // Log any errors but don't throw to prevent the entire stats from failing
         if (attemptsResult.error) {
           console.error('Error fetching attempts:', attemptsResult.error);
-        }
-        if (sessionsResult.error) {
-          console.error('Error fetching sessions:', sessionsResult.error);
-        }
-        if (playersResult.error) {
-          console.error('Error fetching players:', playersResult.error);
-        }
-        if (rankingsResult.error) {
-          console.error('Error fetching rankings:', rankingsResult.error);
-        }
-        if (gameStartsResult.error) {
-          console.error('Error fetching game starts:', gameStartsResult.error);
         }
         
         return {
@@ -92,10 +81,10 @@ export const useAdminStats = () => {
         };
       }
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes - mais frequente para dados do admin
-    gcTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 30 * 1000, // 30 seconds - mais frequente para debug
+    gcTime: 2 * 60 * 1000, // 2 minutes
     retry: 1,
-    refetchInterval: 3 * 60 * 1000, // Refetch a cada 3 minutos
+    refetchInterval: 60 * 1000, // Refetch a cada 1 minuto para debug
     refetchOnWindowFocus: true,
   });
 
@@ -127,31 +116,56 @@ export const useAdminStats = () => {
   // Memoized calculations to prevent re-computation
   const mostCorrectPlayers = useMemo((): PlayerStats[] => {
     if (!allStats?.attempts || allStats.attempts.length === 0) {
-      console.log('No attempts data for mostCorrectPlayers');
+      console.log('❌ No attempts data for mostCorrectPlayers');
       return [];
     }
     
-    console.log('Calculating mostCorrectPlayers with', allStats.attempts.length, 'attempts');
+    console.log('📊 Calculating mostCorrectPlayers with', allStats.attempts.length, 'attempts');
+    console.log('📊 Sample attempts:', allStats.attempts.slice(0, 3));
     
-    const correctAttempts = allStats.attempts.filter(attempt => attempt.is_correct === true);
-    console.log('Correct attempts:', correctAttempts.length);
-    
-    const counts: Record<string, number> = correctAttempts.reduce((acc, attempt) => {
-      const playerName = attempt.target_player_name;
-      if (playerName) {
-        acc[playerName] = (acc[playerName] || 0) + 1;
+    // Filtrar apenas tentativas corretas
+    const correctAttempts = allStats.attempts.filter(attempt => {
+      const isCorrect = attempt.is_correct === true;
+      if (isCorrect) {
+        console.log('✅ Correct attempt found:', attempt.target_player_name, attempt.is_correct);
       }
-      return acc;
-    }, {} as Record<string, number>);
+      return isCorrect;
+    });
     
-    console.log('Player correct counts:', counts);
+    console.log('✅ Correct attempts found:', correctAttempts.length);
+    console.log('✅ Sample correct attempts:', correctAttempts.slice(0, 3));
+    
+    if (correctAttempts.length === 0) {
+      console.log('⚠️ No correct attempts found');
+      return [];
+    }
+    
+    // Contar por jogador
+    const counts: Record<string, number> = {};
+    correctAttempts.forEach(attempt => {
+      const playerName = attempt.target_player_name;
+      if (playerName && typeof playerName === 'string') {
+        counts[playerName] = (counts[playerName] || 0) + 1;
+        console.log('📈 Adding count for', playerName, '- now has', counts[playerName]);
+      }
+    });
+    
+    console.log('📊 Final player correct counts:', counts);
+    
+    if (Object.keys(counts).length === 0) {
+      console.log('⚠️ No valid player names found in correct attempts');
+      return [];
+    }
     
     const result = Object.entries(counts)
-      .map(([name, count]) => ({ player_name: name, correct_count: count }))
+      .map(([name, count]) => ({ 
+        player_name: name, 
+        correct_count: count 
+      }))
       .sort((a, b) => b.correct_count - a.correct_count)
       .slice(0, 10);
     
-    console.log('Most correct players result:', result);
+    console.log('🏆 Most correct players result:', result);
     return result;
   }, [allStats?.attempts]);
 
@@ -252,15 +266,16 @@ export const useAdminStats = () => {
   }, [allStats?.attempts]);
 
   // Log final results for debugging
-  console.log('Final hook results:', {
-    mostCorrectPlayers,
-    mostMissedPlayers,
-    playerRanking: allStats?.rankings || [],
-    progressStats,
+  console.log('🎯 Final hook results:', {
+    mostCorrectPlayersCount: mostCorrectPlayers.length,
+    mostCorrectPlayers: mostCorrectPlayers.slice(0, 3),
+    mostMissedPlayersCount: mostMissedPlayers.length,
+    playerRankingCount: allStats?.rankings?.length || 0,
+    progressStatsCount: progressStats.length,
     generalStats,
     successRate,
     isLoading,
-    error
+    hasError: !!error
   });
 
   return {
