@@ -2,6 +2,7 @@
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
+import { GuestNameForm } from "@/components/guess-game/GuestNameForm";
 import { useSimpleGuessGame } from "@/hooks/use-simple-guess-game";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
@@ -27,7 +28,7 @@ const GuessPlayer = () => {
   // Enhanced game hook
   const {
     currentPlayer,
-    gameKey, // NEW
+    gameKey,
     attempts,
     score,
     gameOver,
@@ -35,7 +36,7 @@ const GuessPlayer = () => {
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
-    forceRefresh, // NEW
+    forceRefresh,
     handlePlayerImageFixed,
     isProcessingGuess,
     hasLost,
@@ -45,7 +46,7 @@ const GuessPlayer = () => {
     gamesPlayed,
     currentStreak,
     maxStreak,
-    playerChangeCount, // NEW
+    playerChangeCount,
     TIME_LIMIT_SECONDS
   } = useSimpleGuessGame(players);
 
@@ -54,33 +55,25 @@ const GuessPlayer = () => {
     showTutorial,
     gameStarted,
     isAuthenticatedGame,
+    showGuestNameForm,
+    guestPlayerName,
     setIsAuthenticatedGame,
     setGameStarted,
     handleGameOverClose,
     handleTutorialComplete,
-    handleSkipTutorial
+    handleSkipTutorial,
+    handleGuestNameSubmitted,
+    handleGuestNameCancel
   } = useGameState({ hasLost });
 
   usePlayerPreload(players, currentPlayer);
 
   const handleTutorialCompleteLocal = () => {
     handleTutorialComplete(user);
-    if (user) {
-      setShowAuthSelection(false);
-      setIsAuthenticatedGame(true);
-    } else {
-      setShowAuthSelection(true);
-    }
   };
 
   const handleSkipTutorialLocal = () => {
     handleSkipTutorial(user);
-    if (user) {
-      setShowAuthSelection(false);
-      setIsAuthenticatedGame(true);
-    } else {
-      setShowAuthSelection(true);
-    }
   };
 
   const handleGuestPlay = () => {
@@ -115,7 +108,8 @@ const GuessPlayer = () => {
     playerName: currentPlayer?.name,
     gameKey,
     gameStarted,
-    changeCount: playerChangeCount
+    changeCount: playerChangeCount,
+    guestPlayerName
   });
 
   return (
@@ -172,6 +166,13 @@ const GuessPlayer = () => {
         />
       )}
 
+      {showGuestNameForm && (
+        <GuestNameForm
+          onNameSubmitted={handleGuestNameSubmitted}
+          onCancel={handleGuestNameCancel}
+        />
+      )}
+
       {currentPlayer && gameStarted && (
         <GameOverDialog
           open={showGameOverDialog}
@@ -180,6 +181,7 @@ const GuessPlayer = () => {
           score={score}
           onResetScore={resetScore}
           isAuthenticated={isAuthenticatedGame}
+          guestPlayerName={guestPlayerName}
         />
       )}
     </RootLayout>

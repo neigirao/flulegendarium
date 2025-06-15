@@ -13,6 +13,7 @@ import { Trophy, RotateCcw, Play, Home } from "lucide-react";
 import { GameConfirmDialog } from "./GameConfirmDialog";
 import { useGameConfirmations } from "@/hooks/use-game-confirmations";
 import { RankingForm } from "./RankingForm";
+import { QuickShareButton } from "../social/QuickShareButton";
 import { Link } from "react-router-dom";
 
 interface GameOverDialogProps {
@@ -22,6 +23,7 @@ interface GameOverDialogProps {
   score: number;
   onResetScore: () => void;
   isAuthenticated: boolean;
+  guestPlayerName?: string; // NEW: Nome do jogador convidado
 }
 
 export const GameOverDialog = ({
@@ -30,7 +32,8 @@ export const GameOverDialog = ({
   playerName,
   score,
   onResetScore,
-  isAuthenticated
+  isAuthenticated,
+  guestPlayerName
 }: GameOverDialogProps) => {
   const { confirmation, hideConfirmation, confirmResetScore, confirmExitGame } = useGameConfirmations();
   const [showRankingForm, setShowRankingForm] = useState(true);
@@ -54,6 +57,10 @@ export const GameOverDialog = ({
     window.location.href = '/';
   };
 
+  // Para jogadores convidados, mostrar apenas pontuação e compartilhamento
+  const isGuestPlayer = !isAuthenticated && guestPlayerName;
+  const displayName = guestPlayerName || playerName;
+
   return (
     <>
       <Dialog open={open} onOpenChange={() => {}}>
@@ -64,47 +71,97 @@ export const GameOverDialog = ({
               Game Over
             </DialogTitle>
             <DialogDescription className="text-center py-4">
-              O jogador era <strong className="text-flu-grena">{playerName}</strong>
-              <br />
-              <span className="text-2xl font-bold text-flu-verde mt-2 block">
-                Pontuação Final: {score} pontos
-              </span>
+              {isGuestPlayer ? (
+                <>
+                  Parabéns <strong className="text-flu-grena">{displayName}</strong>!
+                  <br />
+                  <span className="text-2xl font-bold text-flu-verde mt-2 block">
+                    Você fez {score} pontos
+                  </span>
+                </>
+              ) : (
+                <>
+                  O jogador era <strong className="text-flu-grena">{playerName}</strong>
+                  <br />
+                  <span className="text-2xl font-bold text-flu-verde mt-2 block">
+                    Pontuação Final: {score} pontos
+                  </span>
+                </>
+              )}
             </DialogDescription>
           </DialogHeader>
           
           <div className="py-4">
-            {showRankingForm ? (
-              <RankingForm 
-                score={score}
-                onSaved={handleRankingSaved}
-                onCancel={handleSkipRanking}
-                isAuthenticated={isAuthenticated}
-              />
+            {isGuestPlayer ? (
+              // Layout simplificado para jogadores convidados
+              <div className="space-y-4">
+                <div className="text-center">
+                  <QuickShareButton
+                    score={score}
+                    correctGuesses={Math.floor(score / 5)}
+                    playerName={guestPlayerName}
+                    gameMode="Convidado"
+                    size="lg"
+                    className="w-full bg-flu-grena hover:bg-flu-grena/90 text-white"
+                  />
+                </div>
+                
+                <DialogFooter className="flex flex-col gap-3 sm:flex-col">
+                  <Button
+                    onClick={handleNewGame}
+                    className="bg-flu-verde hover:bg-flu-verde/90 text-white flex items-center gap-2"
+                  >
+                    <Play className="w-4 h-4" />
+                    Novo Jogo
+                  </Button>
+                  
+                  <Button
+                    variant="outline"
+                    onClick={handleExitToHome}
+                    className="border-flu-grena text-flu-grena hover:bg-flu-grena/10 flex items-center gap-2"
+                  >
+                    <Home className="w-4 h-4" />
+                    Voltar ao Início
+                  </Button>
+                </DialogFooter>
+              </div>
             ) : (
-              <DialogFooter className="flex flex-col gap-3 sm:flex-col">
-                <Button
-                  onClick={handleNewGame}
-                  className="bg-flu-verde hover:bg-flu-verde/90 text-white flex items-center gap-2"
-                >
-                  <Play className="w-4 h-4" />
-                  Novo Jogo
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  onClick={handleExitToHome}
-                  className="border-flu-grena text-flu-grena hover:bg-flu-grena/10 flex items-center gap-2"
-                >
-                  <Home className="w-4 h-4" />
-                  Voltar ao Início
-                </Button>
-                
-                {isAuthenticated && (
-                  <p className="text-xs text-gray-500 text-center mt-2">
-                    Sua pontuação será salva automaticamente
-                  </p>
+              // Layout original para usuários autenticados
+              <>
+                {showRankingForm ? (
+                  <RankingForm 
+                    score={score}
+                    onSaved={handleRankingSaved}
+                    onCancel={handleSkipRanking}
+                    isAuthenticated={isAuthenticated}
+                  />
+                ) : (
+                  <DialogFooter className="flex flex-col gap-3 sm:flex-col">
+                    <Button
+                      onClick={handleNewGame}
+                      className="bg-flu-verde hover:bg-flu-verde/90 text-white flex items-center gap-2"
+                    >
+                      <Play className="w-4 h-4" />
+                      Novo Jogo
+                    </Button>
+                    
+                    <Button
+                      variant="outline"
+                      onClick={handleExitToHome}
+                      className="border-flu-grena text-flu-grena hover:bg-flu-grena/10 flex items-center gap-2"
+                    >
+                      <Home className="w-4 h-4" />
+                      Voltar ao Início
+                    </Button>
+                    
+                    {isAuthenticated && (
+                      <p className="text-xs text-gray-500 text-center mt-2">
+                        Sua pontuação será salva automaticamente
+                      </p>
+                    )}
+                  </DialogFooter>
                 )}
-              </DialogFooter>
+              </>
             )}
           </div>
         </DialogContent>

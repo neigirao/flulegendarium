@@ -6,6 +6,7 @@ import { Loader as GameLoader } from "lucide-react";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
+import { GuestNameForm } from "@/components/guess-game/GuestNameForm";
 import { Loader } from "@/components/guess-game/Loader";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { EmptyPlayersDisplay } from "@/components/guess-game/EmptyPlayersDisplay";
@@ -38,7 +39,7 @@ const Game = () => {
   // Now use the enhanced game hook with the loaded players
   const {
     currentPlayer,
-    gameKey, // NEW: Now we have gameKey
+    gameKey,
     attempts,
     score,
     gameOver,
@@ -46,7 +47,7 @@ const Game = () => {
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
-    forceRefresh, // NEW
+    forceRefresh,
     handlePlayerImageFixed,
     isProcessingGuess,
     hasLost,
@@ -56,7 +57,7 @@ const Game = () => {
     gamesPlayed,
     currentStreak,
     maxStreak,
-    playerChangeCount, // NEW
+    playerChangeCount,
     TIME_LIMIT_SECONDS
   } = useSimpleGuessGame(players);
 
@@ -66,9 +67,13 @@ const Game = () => {
     showTutorial,
     gameStarted,
     isAuthenticatedGame,
+    showGuestNameForm,
+    guestPlayerName,
     handleGameOverClose,
     handleTutorialComplete,
-    handleSkipTutorial
+    handleSkipTutorial,
+    handleGuestNameSubmitted,
+    handleGuestNameCancel
   } = useGameState({ hasLost });
 
   // Preload next players
@@ -200,7 +205,7 @@ const Game = () => {
             {gameStarted && (
               <GameContainer
                 currentPlayer={currentPlayer}
-                gameKey={gameKey} // NOW INCLUDED
+                gameKey={gameKey}
                 attempts={attempts}
                 score={score}
                 gameOver={gameOver}
@@ -230,6 +235,13 @@ const Game = () => {
           />
         )}
 
+        {showGuestNameForm && (
+          <GuestNameForm
+            onNameSubmitted={handleGuestNameSubmitted}
+            onCancel={handleGuestNameCancel}
+          />
+        )}
+
         {currentPlayer && gameStarted && (
           <GameOverDialog
             open={showGameOverDialog}
@@ -238,6 +250,7 @@ const Game = () => {
             score={score}
             onResetScore={resetScore}
             isAuthenticated={isAuthenticatedGame}
+            guestPlayerName={guestPlayerName}
           />
         )}
       </div>
@@ -246,4 +259,3 @@ const Game = () => {
 };
 
 export default Game;
-

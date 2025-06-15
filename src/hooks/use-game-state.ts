@@ -10,6 +10,8 @@ export const useGameState = ({ hasLost }: UseGameStateProps) => {
   const [showTutorial, setShowTutorial] = useState(true);
   const [gameStarted, setGameStarted] = useState(false);
   const [isAuthenticatedGame, setIsAuthenticatedGame] = useState(false);
+  const [showGuestNameForm, setShowGuestNameForm] = useState(false);
+  const [guestPlayerName, setGuestPlayerName] = useState<string>("");
 
   // Show game over dialog when player loses
   useEffect(() => {
@@ -26,14 +28,36 @@ export const useGameState = ({ hasLost }: UseGameStateProps) => {
 
   const handleTutorialComplete = useCallback((user: any) => {
     setShowTutorial(false);
-    setGameStarted(true);
-    setIsAuthenticatedGame(!!user);
+    if (user) {
+      setGameStarted(true);
+      setIsAuthenticatedGame(true);
+    } else {
+      // Para convidados, mostrar formulário de nome
+      setShowGuestNameForm(true);
+    }
   }, []);
 
   const handleSkipTutorial = useCallback((user: any) => {
     setShowTutorial(false);
+    if (user) {
+      setGameStarted(true);
+      setIsAuthenticatedGame(true);
+    } else {
+      // Para convidados, mostrar formulário de nome
+      setShowGuestNameForm(true);
+    }
+  }, []);
+
+  const handleGuestNameSubmitted = useCallback((name: string) => {
+    setGuestPlayerName(name);
+    setShowGuestNameForm(false);
     setGameStarted(true);
-    setIsAuthenticatedGame(!!user);
+    setIsAuthenticatedGame(false);
+  }, []);
+
+  const handleGuestNameCancel = useCallback(() => {
+    setShowGuestNameForm(false);
+    setShowTutorial(true);
   }, []);
 
   return {
@@ -44,8 +68,12 @@ export const useGameState = ({ hasLost }: UseGameStateProps) => {
     setGameStarted,
     isAuthenticatedGame,
     setIsAuthenticatedGame,
+    showGuestNameForm,
+    guestPlayerName,
     handleGameOverClose,
     handleTutorialComplete,
-    handleSkipTutorial
+    handleSkipTutorial,
+    handleGuestNameSubmitted,
+    handleGuestNameCancel
   };
 };
