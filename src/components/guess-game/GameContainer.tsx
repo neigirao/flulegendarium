@@ -90,7 +90,7 @@ export const GameContainer = ({
 
   return (
     <div className="space-y-6 md:space-y-8">
-      {/* Game Status */}
+      {/* Game Status - PRIMEIRO (pontuação e timer) */}
       <GameStatus
         score={score}
         timeRemaining={timeRemaining}
@@ -104,7 +104,7 @@ export const GameContainer = ({
         onNextPlayer={selectRandomPlayer}
       />
 
-      {/* Player Image */}
+      {/* Player Image - SEGUNDO (abaixo do timer) */}
       <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
         <SimplePlayerImage
           player={currentPlayer}
@@ -119,7 +119,7 @@ export const GameContainer = ({
         </div>
       )}
 
-      {/* Guess Form */}
+      {/* Guess Form - TERCEIRO (abaixo da imagem) */}
       {!isProcessingGuess && (
         <div className="w-full max-w-md md:max-w-lg mx-auto">
           <GuessForm
