@@ -19,21 +19,27 @@ export const GeneralStatsCards = ({
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total de Jogadas</CardTitle>
+          <CardTitle className="text-sm font-medium">Partidas Iniciadas</CardTitle>
           <Target className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalAttempts}</div>
+          <p className="text-xs text-muted-foreground">
+            Total de jogos iniciados
+          </p>
         </CardContent>
       </Card>
       
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Sessões de Jogo</CardTitle>
+          <CardTitle className="text-sm font-medium">Sessões Completas</CardTitle>
           <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalSessions}</div>
+          <p className="text-xs text-muted-foreground">
+            Jogos finalizados
+          </p>
         </CardContent>
       </Card>
       
@@ -44,6 +50,9 @@ export const GeneralStatsCards = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{successRate}%</div>
+          <p className="text-xs text-muted-foreground">
+            Palpites corretos
+          </p>
         </CardContent>
       </Card>
       
@@ -54,6 +63,9 @@ export const GeneralStatsCards = ({
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalPlayers}</div>
+          <p className="text-xs text-muted-foreground">
+            No banco de dados
+          </p>
         </CardContent>
       </Card>
     </div>
