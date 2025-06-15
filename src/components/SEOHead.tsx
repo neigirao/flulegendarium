@@ -15,7 +15,7 @@ interface SEOHeadProps {
 export const SEOHead = ({ 
   title = "Lendas do Flu - Teste seus conhecimentos tricolores",
   description = "Descubra se você realmente conhece as lendas do Fluminense. Adivinhe o jogador pela foto e prove que é um verdadeiro tricolor!",
-  image = "/og-image.png",
+  image = "/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png",
   url = "https://flulegendarium.lovable.app/",
   type = "website",
   keywords = "quiz fluminense, teste fluminense, jogo fluminense, tricolor, futebol, adivinhe jogador",
