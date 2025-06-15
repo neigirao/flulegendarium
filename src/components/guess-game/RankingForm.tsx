@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Trophy, User, X } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
-import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface RankingFormProps {
   score: number;
@@ -22,7 +22,7 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
   const { toast } = useToast();
   const { user } = useAuth();
   const { trackEvent } = useAnalytics();
-  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Auto-fill name if user is authenticated
   useEffect(() => {
@@ -53,6 +53,12 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
     setIsLoading(true);
 
     try {
+      console.log('💾 Salvando ranking no banco:', {
+        player_name: name.trim(),
+        score: score,
+        user_id: user?.id || null
+      });
+
       const { error } = await supabase
         .from('rankings')
         .insert([
@@ -65,6 +71,14 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
         ]);
 
       if (error) throw error;
+
+      console.log('✅ Ranking salvo com sucesso!');
+
+      // Invalidate all ranking queries to force refresh
+      queryClient.invalidateQueries({ queryKey: ['rankings'] });
+      queryClient.invalidateQueries({ queryKey: ['rankings-home'] });
+      queryClient.invalidateQueries({ queryKey: ['rankings-game'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-stats-all'] });
 
       trackEvent({
         action: 'score_saved_to_ranking',
@@ -80,7 +94,7 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
 
       onSaved();
     } catch (error) {
-      console.error('Erro ao salvar pontuação:', error);
+      console.error('❌ Erro ao salvar pontuação:', error);
       
       trackEvent({
         action: 'score_save_error',

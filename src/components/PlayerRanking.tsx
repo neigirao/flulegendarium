@@ -27,13 +27,22 @@ const RankingItem = memo(({ rank, index }: { rank: RankingEntry; index: number }
     }
   };
 
+  const isGuest = !rank.user_id;
+
   return (
     <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {getRankIcon(index)}
           <div>
-            <div className="font-bold text-xl text-flu-grena">{rank.player_name}</div>
+            <div className="font-bold text-xl text-flu-grena flex items-center gap-2">
+              {rank.player_name}
+              {isGuest && (
+                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                  Convidado
+                </span>
+              )}
+            </div>
             <div className="text-sm text-gray-600 font-medium">{rank.score} pontos</div>
           </div>
         </div>
@@ -49,19 +58,28 @@ const RankingItem = memo(({ rank, index }: { rank: RankingEntry; index: number }
 RankingItem.displayName = 'RankingItem';
 
 export const PlayerRanking = memo(() => {
-  const { data: rankings = [] } = useQuery({
-    queryKey: ['rankings'],
+  const { data: rankings = [], isLoading, error } = useQuery({
+    queryKey: ['rankings-home'],
     queryFn: async () => {
+      console.log('🏆 Buscando ranking para a home...');
+      
       const { data, error } = await supabase
         .from('rankings')
         .select('*')
         .order('score', { ascending: false })
         .limit(10);
       
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Erro ao buscar rankings:', error);
+        throw error;
+      }
+      
+      console.log('✅ Rankings carregados:', data?.length || 0);
       return data as RankingEntry[];
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 30 * 1000, // 30 seconds - mais frequente para atualizações rápidas
+    refetchInterval: 60 * 1000, // Refetch a cada 1 minuto
+    refetchOnWindowFocus: true,
   });
 
   // Default ranking data if no real data is available
@@ -82,6 +100,22 @@ export const PlayerRanking = memo(() => {
     rankings.length > 0 ? rankings : defaultRankings,
     [rankings, defaultRankings]
   );
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="bg-gray-200 rounded-xl p-6 animate-pulse h-24" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    console.error('Erro no ranking:', error);
+  }
 
   return (
     <div className="max-w-4xl mx-auto">

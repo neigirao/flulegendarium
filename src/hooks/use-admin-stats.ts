@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
@@ -41,22 +40,22 @@ export const useAdminStats = () => {
     queryKey: ['admin-stats-all'],
     queryFn: async (): Promise<AllStatsData> => {
       try {
-        console.log('Fetching admin stats...');
+        console.log('📊 Fetching admin stats...');
         
         const [attemptsResult, sessionsResult, playersResult, rankingsResult, gameStartsResult] = await Promise.all([
           supabase.from('game_attempts').select('*'),
           supabase.from('game_sessions').select('*'),
           supabase.from('players').select('*', { count: 'exact', head: true }),
-          supabase.from('rankings').select('*').order('score', { ascending: false }).limit(10),
+          supabase.from('rankings').select('*').order('score', { ascending: false }),
           supabase.from('game_starts').select('*')
         ]);
         
         // Log results for debugging
-        console.log('Attempts data:', attemptsResult.data?.length || 0, attemptsResult.data);
-        console.log('Sessions data:', sessionsResult.data?.length || 0, sessionsResult.data);
+        console.log('Attempts data:', attemptsResult.data?.length || 0);
+        console.log('Sessions data:', sessionsResult.data?.length || 0);
         console.log('Players count:', playersResult.count);
-        console.log('Rankings data:', rankingsResult.data?.length || 0, rankingsResult.data);
-        console.log('Game starts data:', gameStartsResult.data?.length || 0, gameStartsResult.data);
+        console.log('Rankings data:', rankingsResult.data?.length || 0);
+        console.log('Game starts data:', gameStartsResult.data?.length || 0);
         
         // Log any errors but don't throw to prevent the entire stats from failing
         if (attemptsResult.error) {
@@ -93,9 +92,11 @@ export const useAdminStats = () => {
         };
       }
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
-    retry: 1
+    staleTime: 2 * 60 * 1000, // 2 minutes - mais frequente para dados do admin
+    gcTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
+    refetchInterval: 3 * 60 * 1000, // Refetch a cada 3 minutos
+    refetchOnWindowFocus: true,
   });
 
   // Get players count separately
