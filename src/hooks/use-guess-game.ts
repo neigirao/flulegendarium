@@ -68,7 +68,6 @@ export const useGuessGame = (players: Player[] | undefined) => {
     onCorrectGuess: (points: number) => {
       console.log('✅ Resposta correta! Adicionando pontos:', points);
       addScore(points);
-      // Não resetar o gameOver aqui, deixar o hook de lógica cuidar da sequência
     },
     onIncorrectGuess: () => {
       resetStreak();
@@ -84,7 +83,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
 
   // Start timer when a new player is selected and game is not over
   const startGameForPlayer = useCallback(async () => {
-    if (currentPlayer && !isRunning && !gameOver) {
+    if (currentPlayer && !isRunning && !gameOver && !isProcessingGuess) {
       console.log('🎮 Iniciando timer para:', currentPlayer.name);
       setGameOver(false);
       setHasLost(false);
@@ -97,15 +96,15 @@ export const useGuessGame = (players: Player[] | undefined) => {
       
       startTimer();
     }
-  }, [currentPlayer, isRunning, gameOver, startTimer, sessionId, registerGameStart]);
+  }, [currentPlayer, isRunning, gameOver, isProcessingGuess, startTimer, sessionId, registerGameStart]);
 
-  // Quando um novo jogador é selecionado após acerto, reiniciar o jogo
+  // Quando um novo jogador é selecionado, reiniciar o jogo
   useEffect(() => {
-    if (currentPlayer && gameActive && !gameOver && !isProcessingGuess) {
-      console.log('🔄 Novo jogador selecionado, reiniciando timer:', currentPlayer.name);
+    if (currentPlayer && !gameOver && !isProcessingGuess) {
+      console.log('🔄 Novo jogador detectado, reiniciando timer:', currentPlayer.name);
       startGameForPlayer();
     }
-  }, [currentPlayer, gameActive, gameOver, isProcessingGuess, startGameForPlayer]);
+  }, [currentPlayer, gameOver, isProcessingGuess, startGameForPlayer]);
 
   // Reset score function
   const resetScore = useCallback(() => {
