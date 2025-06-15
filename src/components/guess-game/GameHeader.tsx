@@ -31,86 +31,85 @@ export const GameHeader = ({ score, onDebugClick }: GameHeaderProps) => {
   };
   
   return (
-    <header className="relative">
+    <header className="w-full">
       {/* Background decorativo */}
-      <div className="absolute inset-0 bg-gradient-to-r from-flu-verde/5 via-transparent to-flu-grena/5 rounded-2xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-flu-verde/5 via-transparent to-flu-grena/5 rounded-2xl pointer-events-none"></div>
       
-      <div className="relative flex flex-col space-y-6 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between p-4 sm:p-6">
+      <div className="relative flex items-center justify-between p-3 sm:p-4 md:p-6 gap-3 sm:gap-4">
         
-        {/* Botão Voltar com visual melhorado */}
+        {/* Botão Voltar otimizado para mobile */}
         <Link
           to="/"
-          className="group flex items-center text-flu-grena hover:text-flu-grena/80 transition-all duration-200 text-base font-medium self-start"
+          className="group flex items-center text-flu-grena hover:text-flu-grena/80 transition-all duration-200 shrink-0"
         >
-          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/70 hover:bg-white/90 border border-flu-grena/20 hover:border-flu-grena/30 transition-all duration-200 hover:shadow-md">
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-200" />
-            <span>Voltar ao Menu</span>
+          <div className="flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-2 rounded-xl bg-white/80 hover:bg-white/95 border border-flu-grena/20 hover:border-flu-grena/40 transition-all duration-200 hover:shadow-lg backdrop-blur-sm">
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform duration-200" />
+            <span className="hidden xs:inline text-sm sm:text-base font-medium">Voltar</span>
+            <span className="xs:hidden text-xs font-medium">Menu</span>
           </div>
         </Link>
         
-        {/* Container central com score e informações */}
-        <div className="flex flex-col items-center space-y-4 flex-1 sm:flex-initial">
-          
-          {/* Score principal com visual aprimorado */}
+        {/* Score principal centralizado e responsivo */}
+        <div className="flex-1 flex justify-center">
           <div className={cn(
-            "relative px-8 py-4 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 cursor-default",
-            "min-w-[180px] text-center border backdrop-blur-sm",
+            "relative px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 rounded-xl sm:rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 cursor-default",
+            "text-center border backdrop-blur-sm min-w-[120px] sm:min-w-[160px] md:min-w-[180px]",
             scoreStyles[variant]
           )}>
             {/* Efeito de brilho para scores altos */}
             {score >= 30 && (
-              <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
             )}
             
-            <div className="relative z-10 flex items-center justify-center gap-2">
-              {score >= 50 && <Star className="w-5 h-5 animate-spin" />}
-              {score >= 30 && <Trophy className="w-5 h-5" />}
+            <div className="relative z-10 flex items-center justify-center gap-1 sm:gap-2">
+              {score >= 50 && <Star className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 animate-spin" />}
+              {score >= 30 && score < 50 && <Trophy className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5" />}
               
               <div className="flex flex-col items-center">
-                <span className="text-2xl sm:text-3xl font-bold tabular-nums">
+                <span className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold tabular-nums leading-tight">
                   {score}
                 </span>
-                <span className="text-sm opacity-90 font-medium">
+                <span className="text-xs sm:text-sm opacity-90 font-medium leading-tight">
                   {score === 1 ? "ponto" : "pontos"}
                 </span>
               </div>
               
-              {score >= 50 && <Star className="w-5 h-5 animate-spin" style={{ animationDirection: 'reverse' }} />}
+              {score >= 50 && <Star className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 animate-spin" style={{ animationDirection: 'reverse' }} />}
             </div>
 
-            {/* Badge de achievement */}
+            {/* Badge de achievement responsivo */}
             {score >= 50 && (
-              <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg animate-bounce">
-                LENDA!
+              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg animate-bounce">
+                <span className="hidden sm:inline">LENDA!</span>
+                <span className="sm:hidden">🏆</span>
               </div>
             )}
             {score >= 30 && score < 50 && (
-              <div className="absolute -top-2 -right-2 bg-green-400 text-green-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                EXPERT!
+              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-green-400 text-green-900 text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg">
+                <span className="hidden sm:inline">EXPERT!</span>
+                <span className="sm:hidden">⭐</span>
               </div>
             )}
             {score >= 15 && score < 30 && (
-              <div className="absolute -top-2 -right-2 bg-blue-400 text-blue-900 text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-                BOM!
+              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-blue-400 text-blue-900 text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg">
+                <span className="hidden sm:inline">BOM!</span>
+                <span className="sm:hidden">👍</span>
               </div>
             )}
           </div>
-          
-          {/* Controles e informações */}
-          <div className="flex items-center gap-4">
-            <GameRulesTooltip />
-            <div 
-              className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors cursor-pointer opacity-50 hover:opacity-70"
-              onClick={onDebugClick}
-              title="Informações de Debug"
-            >
-              <Info className="w-4 h-4 text-gray-600" />
-            </div>
+        </div>
+        
+        {/* Controles à direita otimizados */}
+        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
+          <GameRulesTooltip />
+          <div 
+            className="p-2 rounded-full bg-white/70 hover:bg-white/90 border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer opacity-60 hover:opacity-80 backdrop-blur-sm"
+            onClick={onDebugClick}
+            title="Informações de Debug"
+          >
+            <Info className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
           </div>
         </div>
-
-        {/* Espaço para balanceamento visual */}
-        <div className="hidden sm:block w-[120px]"></div>
       </div>
     </header>
   );
