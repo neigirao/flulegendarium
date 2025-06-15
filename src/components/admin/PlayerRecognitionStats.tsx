@@ -76,29 +76,46 @@ const PlayerStatRow = memo(({ stat }: { stat: PlayerRecognitionStat }) => {
 PlayerStatRow.displayName = 'PlayerStatRow';
 
 export const PlayerRecognitionStats = memo(() => {
-  const { data: recognitionStats = [], isLoading } = useQuery({
+  const { data: recognitionStats = [], isLoading, error } = useQuery({
     queryKey: ['player-recognition-stats'],
     queryFn: async (): Promise<PlayerRecognitionStat[]> => {
+      console.log('📊 Buscando estatísticas de reconhecimento de jogadores...');
+      
       const { data, error } = await supabase
         .from('game_attempts')
         .select('target_player_name, is_correct');
       
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Erro ao buscar tentativas:', error);
+        throw error;
+      }
+      
+      console.log('✅ Tentativas carregadas:', data?.length || 0);
+      
+      if (!data || data.length === 0) {
+        console.log('⚠️ Nenhuma tentativa encontrada');
+        return [];
+      }
       
       const stats = data.reduce((acc: Record<string, { total: number, correct: number }>, attempt) => {
-        if (!acc[attempt.target_player_name]) {
-          acc[attempt.target_player_name] = { total: 0, correct: 0 };
-        }
-        acc[attempt.target_player_name].total++;
-        if (attempt.is_correct) {
-          acc[attempt.target_player_name].correct++;
+        const playerName = attempt.target_player_name;
+        if (playerName) {
+          if (!acc[playerName]) {
+            acc[playerName] = { total: 0, correct: 0 };
+          }
+          acc[playerName].total++;
+          if (attempt.is_correct === true) {
+            acc[playerName].correct++;
+          }
         }
         return acc;
       }, {});
       
-      return Object.entries(stats)
+      console.log('📈 Estatísticas por jogador:', stats);
+      
+      const result = Object.entries(stats)
         .map(([name, data]) => {
-          const recognitionRate = (data.correct / data.total) * 100;
+          const recognitionRate = data.total > 0 ? (data.correct / data.total) * 100 : 0;
           let difficultyLevel = 'Fácil';
           
           if (recognitionRate < 30) {
@@ -118,17 +135,25 @@ export const PlayerRecognitionStats = memo(() => {
           };
         })
         .sort((a, b) => b.total_attempts - a.total_attempts);
+      
+      console.log('✅ Estatísticas finais calculadas:', result.length, 'jogadores');
+      return result;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchInterval: 3 * 60 * 1000, // Refetch a cada 3 minutos
+    refetchOnWindowFocus: true,
   });
 
-  const displayedStats = useMemo(() => recognitionStats.slice(0, 15), [recognitionStats]);
+  const displayedStats = useMemo(() => recognitionStats.slice(0, 20), [recognitionStats]);
 
   if (isLoading) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Reconhecimento por Jogador</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Eye className="h-5 w-5" />
+            Reconhecimento por Jogador
+          </CardTitle>
           <CardDescription>Carregando estatísticas...</CardDescription>
         </CardHeader>
         <CardContent>
@@ -136,6 +161,49 @@ export const PlayerRecognitionStats = memo(() => {
             {[...Array(5)].map((_, i) => (
               <div key={i} className="h-12 bg-gray-200 rounded" />
             ))}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    console.error('❌ Erro ao carregar estatísticas:', error);
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Eye className="h-5 w-5" />
+            Reconhecimento por Jogador
+          </CardTitle>
+          <CardDescription>Erro ao carregar dados</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-4 text-red-500">
+            Erro ao carregar estatísticas de reconhecimento
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (recognitionStats.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Eye className="h-5 w-5" />
+            Reconhecimento por Jogador
+          </CardTitle>
+          <CardDescription>
+            Taxa de acerto por jogador - quanto maior a taxa, mais fácil de reconhecer
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-gray-500">
+            <Eye className="w-12 h-12 mx-auto mb-4 opacity-50" />
+            <p className="text-lg">Nenhuma tentativa de jogo registrada ainda</p>
+            <p className="text-sm">As estatísticas aparecerão quando os jogadores começarem a jogar</p>
           </div>
         </CardContent>
       </Card>
@@ -173,9 +241,9 @@ export const PlayerRecognitionStats = memo(() => {
           </Table>
         </div>
         
-        {recognitionStats.length > 15 && (
+        {recognitionStats.length > 20 && (
           <p className="text-sm text-muted-foreground mt-2 text-center">
-            Mostrando top 15 jogadores com mais tentativas
+            Mostrando top 20 jogadores com mais tentativas (total: {recognitionStats.length})
           </p>
         )}
       </CardContent>
