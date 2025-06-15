@@ -16,33 +16,23 @@ export const useGeneralStats = () => {
       try {
         console.log('📊 Buscando estatísticas gerais otimizadas...');
         
-        // Query otimizada usando aggregate functions do PostgreSQL
-        const { data: statsData, error } = await supabase.rpc('get_admin_general_stats');
+        // Usar queries individuais mais otimizadas em paralelo
+        const [attemptsResult, sessionsResult, playersResult, correctResult] = await Promise.all([
+          supabase.from('game_starts').select('*', { count: 'exact', head: true }),
+          supabase.from('game_sessions').select('*', { count: 'exact', head: true }),
+          supabase.from('players').select('*', { count: 'exact', head: true }),
+          supabase.from('game_attempts').select('*', { count: 'exact', head: true }).eq('is_correct', true)
+        ]);
         
-        if (error) {
-          console.error('❌ Erro na função RPC, usando fallback:', error);
-          // Fallback para queries individuais mais otimizadas
-          const [attemptsResult, sessionsResult, playersResult, correctResult] = await Promise.all([
-            supabase.from('game_starts').select('*', { count: 'exact', head: true }),
-            supabase.from('game_sessions').select('*', { count: 'exact', head: true }),
-            supabase.from('players').select('*', { count: 'exact', head: true }),
-            supabase.from('game_attempts').select('*', { count: 'exact' }).eq('is_correct', true)
-          ]);
-          
-          return {
-            totalAttempts: attemptsResult.count || 0,
-            totalSessions: sessionsResult.count || 0,
-            totalPlayers: playersResult.count || 0,
-            correctAttempts: correctResult.count || 0
-          };
-        }
-        
-        return statsData || {
-          totalAttempts: 0,
-          totalSessions: 0,
-          totalPlayers: 0,
-          correctAttempts: 0
+        const stats = {
+          totalAttempts: attemptsResult.count || 0,
+          totalSessions: sessionsResult.count || 0,
+          totalPlayers: playersResult.count || 0,
+          correctAttempts: correctResult.count || 0
         };
+        
+        console.log('✅ Estatísticas gerais carregadas:', stats);
+        return stats;
       } catch (error) {
         console.error('❌ Erro nas estatísticas gerais:', error);
         return {

@@ -11,7 +11,7 @@ export const useRankingStats = () => {
         
         const { data, error } = await supabase
           .from('rankings')
-          .select('id, player_name, score, games_played, created_at')
+          .select('id, player_name, score, games_played, created_at, user_id')
           .order('score', { ascending: false })
           .limit(50); // Limitar para melhor performance
         
