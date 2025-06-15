@@ -2,7 +2,7 @@
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
-import { useGuessGame } from "@/hooks/use-guess-game";
+import { useSimpleGuessGame } from "@/hooks/use-simple-guess-game";
 import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { RootLayout } from "@/components/RootLayout";
@@ -22,9 +22,10 @@ const GuessPlayer = () => {
   const [showAuthSelection, setShowAuthSelection] = useState(true);
   const { showImageUrl, handleDebugClick } = useDebug();
   
-  // Load players data
+  // Carregar dados dos jogadores
   const { players, isLoading, playersError } = usePlayersData();
 
+  // Hook principal do jogo (simplificado)
   const {
     currentPlayer,
     attempts,
@@ -42,10 +43,11 @@ const GuessPlayer = () => {
     resetScore,
     gamesPlayed,
     currentStreak,
-    maxStreak
-  } = useGuessGame(players);
+    maxStreak,
+    TIME_LIMIT_SECONDS
+  } = useSimpleGuessGame(players);
 
-  // Manage game state
+  // Gerenciar estado do jogo
   const {
     showGameOverDialog,
     showTutorial,
@@ -58,7 +60,7 @@ const GuessPlayer = () => {
     handleSkipTutorial
   } = useGameState({ hasLost });
 
-  // Preload next players
+  // Precarregar próximos jogadores
   usePlayerPreload(players, currentPlayer);
 
   const handleTutorialCompleteLocal = () => {
@@ -93,7 +95,7 @@ const GuessPlayer = () => {
     setIsAuthenticatedGame(true);
   };
 
-  // Loading state
+  // Estado de carregamento
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4 flex items-center justify-center">
@@ -102,12 +104,12 @@ const GuessPlayer = () => {
     );
   }
 
-  // Error state
+  // Estado de erro
   if (playersError) {
     return <ErrorDisplay error={playersError} />;
   }
 
-  // Empty players state
+  // Estado sem jogadores
   if (!players || players.length === 0) {
     return <EmptyPlayersDisplay />;
   }
