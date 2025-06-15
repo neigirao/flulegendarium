@@ -92,7 +92,9 @@ export const RankingDisplay = () => {
                       {ranking.player_name}
                     </span>
                     {isGuest && (
-                      <User className="w-3 h-3 text-gray-400" title="Jogador convidado" />
+                      <div title="Jogador convidado">
+                        <User className="w-3 h-3 text-gray-400" />
+                      </div>
                     )}
                   </div>
                 </div>
