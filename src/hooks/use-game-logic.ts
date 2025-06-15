@@ -52,14 +52,13 @@ export const useGameLogic = ({
           description: `Você acertou! +${points} pontos`,
         });
         
-        // Seleciona próximo jogador imediatamente após acerto
-        console.log('🔄 Selecionando próximo jogador após acerto...');
-        selectRandomPlayer();
-        
-        // Finaliza o processamento
+        // Aguarda um momento e então seleciona próximo jogador
+        console.log('🔄 Preparando próximo jogador...');
         setTimeout(() => {
+          console.log('🔄 Selecionando próximo jogador após acerto...');
+          selectRandomPlayer();
           setIsProcessingGuess(false);
-        }, 500);
+        }, 800);
       } else {
         console.log('❌ ERROU! Resposta:', guess, 'Esperado:', currentPlayer.name);
         

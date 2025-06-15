@@ -83,7 +83,7 @@ export const useGuessGame = (players: Player[] | undefined) => {
 
   // Start timer when a new player is selected and game is not over
   const startGameForPlayer = useCallback(async () => {
-    if (currentPlayer && !isRunning && !gameOver && !isProcessingGuess) {
+    if (currentPlayer && !gameOver) {
       console.log('🎮 Iniciando timer para:', currentPlayer.name);
       setGameOver(false);
       setHasLost(false);
@@ -94,17 +94,22 @@ export const useGuessGame = (players: Player[] | undefined) => {
         await registerGameStart();
       }
       
-      startTimer();
+      // Aguarda um momento antes de iniciar timer para garantir que o componente renderizou
+      setTimeout(() => {
+        if (!isRunning) {
+          startTimer();
+        }
+      }, 100);
     }
-  }, [currentPlayer, isRunning, gameOver, isProcessingGuess, startTimer, sessionId, registerGameStart]);
+  }, [currentPlayer, gameOver, isRunning, startTimer, sessionId, registerGameStart]);
 
   // Quando um novo jogador é selecionado, reiniciar o jogo
   useEffect(() => {
-    if (currentPlayer && !gameOver && !isProcessingGuess) {
-      console.log('🔄 Novo jogador detectado, reiniciando timer:', currentPlayer.name);
+    if (currentPlayer) {
+      console.log('🔄 Novo jogador detectado, reiniciando jogo:', currentPlayer.name);
       startGameForPlayer();
     }
-  }, [currentPlayer, gameOver, isProcessingGuess, startGameForPlayer]);
+  }, [currentPlayer, startGameForPlayer]);
 
   // Reset score function
   const resetScore = useCallback(() => {
