@@ -67,10 +67,10 @@ export const useAdminStats = () => {
     if (!allStats?.attempts) return [];
     
     const correctAttempts = allStats.attempts.filter(attempt => attempt.is_correct);
-    const counts = correctAttempts.reduce((acc: Record<string, number>, attempt) => {
+    const counts: Record<string, number> = correctAttempts.reduce((acc, attempt) => {
       acc[attempt.target_player_name] = (acc[attempt.target_player_name] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
     
     return Object.entries(counts)
       .map(([name, count]) => ({ player_name: name, correct_count: count }))
@@ -81,7 +81,7 @@ export const useAdminStats = () => {
   const mostMissedPlayers = useMemo((): MostMissedPlayer[] => {
     if (!allStats?.attempts) return [];
     
-    const stats = allStats.attempts.reduce((acc: Record<string, { total: number, missed: number }>, attempt) => {
+    const stats: Record<string, { total: number, missed: number }> = allStats.attempts.reduce((acc, attempt) => {
       if (!acc[attempt.target_player_name]) {
         acc[attempt.target_player_name] = { total: 0, missed: 0 };
       }
@@ -90,7 +90,7 @@ export const useAdminStats = () => {
         acc[attempt.target_player_name].missed++;
       }
       return acc;
-    }, {});
+    }, {} as Record<string, { total: number, missed: number }>);
     
     return Object.entries(stats)
       .map(([name, data]) => ({
@@ -106,11 +106,11 @@ export const useAdminStats = () => {
   const progressStats = useMemo((): ProgressStat[] => {
     if (!allStats?.sessions) return [];
     
-    const stepCounts = allStats.sessions.reduce((acc: Record<number, number>, session) => {
+    const stepCounts: Record<number, number> = allStats.sessions.reduce((acc, session) => {
       const step = session.total_correct;
       acc[step] = (acc[step] || 0) + 1;
       return acc;
-    }, {});
+    }, {} as Record<number, number>);
     
     return Object.entries(stepCounts)
       .map(([step, count]) => ({ step: parseInt(step), count }))

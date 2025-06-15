@@ -95,7 +95,7 @@ export const usePerformance = () => {
     }
 
     // Monitor resource loading
-    if ('performance' in window) {
+    if ('performance' in window && typeof window !== 'undefined') {
       const handleLoad = () => {
         const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         
