@@ -39,32 +39,85 @@ export const useAdminStats = () => {
   const { data: allStats, isLoading } = useQuery({
     queryKey: ['admin-stats-all'],
     queryFn: async (): Promise<AllStatsData> => {
-      const [attemptsResult, sessionsResult, playersResult, rankingsResult] = await Promise.all([
-        supabase.from('game_attempts').select('target_player_name, is_correct'),
-        supabase.from('game_sessions').select('total_correct'),
-        supabase.from('players').select('*', { count: 'exact', head: true }),
-        supabase.from('rankings').select('*').order('score', { ascending: false }).limit(10)
-      ]);
-      
-      if (attemptsResult.error) throw attemptsResult.error;
-      if (sessionsResult.error) throw sessionsResult.error;
-      if (playersResult.error) throw playersResult.error;
-      if (rankingsResult.error) throw rankingsResult.error;
-      
-      return {
-        attempts: attemptsResult.data || [],
-        sessions: sessionsResult.data || [],
-        players: playersResult.data || [],
-        rankings: rankingsResult.data || []
-      };
+      try {
+        console.log('Fetching admin stats...');
+        
+        const [attemptsResult, sessionsResult, playersResult, rankingsResult] = await Promise.all([
+          supabase.from('game_attempts').select('target_player_name, is_correct'),
+          supabase.from('game_sessions').select('total_correct'),
+          supabase.from('players').select('*', { count: 'exact', head: true }),
+          supabase.from('rankings').select('*').order('score', { ascending: false }).limit(10)
+        ]);
+        
+        // Log any errors but don't throw to prevent the entire stats from failing
+        if (attemptsResult.error) {
+          console.error('Error fetching attempts:', attemptsResult.error);
+        }
+        if (sessionsResult.error) {
+          console.error('Error fetching sessions:', sessionsResult.error);
+        }
+        if (playersResult.error) {
+          console.error('Error fetching players:', playersResult.error);
+        }
+        if (rankingsResult.error) {
+          console.error('Error fetching rankings:', rankingsResult.error);
+        }
+        
+        console.log('Stats fetched successfully:', {
+          attempts: attemptsResult.data?.length || 0,
+          sessions: sessionsResult.data?.length || 0,
+          players: playersResult.count || 0,
+          rankings: rankingsResult.data?.length || 0
+        });
+        
+        return {
+          attempts: attemptsResult.data || [],
+          sessions: sessionsResult.data || [],
+          players: [],
+          rankings: rankingsResult.data || []
+        };
+      } catch (error) {
+        console.error('Error in admin stats query:', error);
+        return {
+          attempts: [],
+          sessions: [],
+          players: [],
+          rankings: []
+        };
+      }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
+    retry: 1
+  });
+
+  // Get players count separately
+  const { data: playersCount } = useQuery({
+    queryKey: ['players-count'],
+    queryFn: async () => {
+      try {
+        const { count, error } = await supabase
+          .from('players')
+          .select('*', { count: 'exact', head: true });
+        
+        if (error) {
+          console.error('Error fetching players count:', error);
+          return 0;
+        }
+        
+        return count || 0;
+      } catch (error) {
+        console.error('Error in players count query:', error);
+        return 0;
+      }
+    },
+    staleTime: 10 * 60 * 1000,
+    retry: 1
   });
 
   // Memoized calculations to prevent re-computation
   const mostCorrectPlayers = useMemo((): PlayerStats[] => {
-    if (!allStats?.attempts) return [];
+    if (!allStats?.attempts || allStats.attempts.length === 0) return [];
     
     const correctAttempts = allStats.attempts.filter(attempt => attempt.is_correct);
     const counts: Record<string, number> = correctAttempts.reduce((acc, attempt) => {
@@ -79,7 +132,7 @@ export const useAdminStats = () => {
   }, [allStats?.attempts]);
 
   const mostMissedPlayers = useMemo((): MostMissedPlayer[] => {
-    if (!allStats?.attempts) return [];
+    if (!allStats?.attempts || allStats.attempts.length === 0) return [];
     
     const stats: Record<string, { total: number, missed: number }> = allStats.attempts.reduce((acc, attempt) => {
       if (!acc[attempt.target_player_name]) {
@@ -93,6 +146,7 @@ export const useAdminStats = () => {
     }, {} as Record<string, { total: number, missed: number }>);
     
     return Object.entries(stats)
+      .filter(([_, data]) => data.total >= 3) // Only show players with at least 3 attempts
       .map(([name, data]) => ({
         player_name: name,
         missed_count: data.missed,
@@ -104,10 +158,10 @@ export const useAdminStats = () => {
   }, [allStats?.attempts]);
 
   const progressStats = useMemo((): ProgressStat[] => {
-    if (!allStats?.sessions) return [];
+    if (!allStats?.sessions || allStats.sessions.length === 0) return [];
     
     const stepCounts: Record<number, number> = allStats.sessions.reduce((acc, session) => {
-      const step = session.total_correct;
+      const step = session.total_correct || 0;
       acc[step] = (acc[step] || 0) + 1;
       return acc;
     }, {} as Record<number, number>);
@@ -125,13 +179,13 @@ export const useAdminStats = () => {
     return {
       totalAttempts: allStats.attempts.length,
       totalSessions: allStats.sessions.length,
-      totalPlayers: allStats.players.length,
+      totalPlayers: playersCount || 0,
       correctAttempts
     };
-  }, [allStats]);
+  }, [allStats, playersCount]);
 
   const successRate = useMemo(() => {
-    if (!generalStats?.totalAttempts) return '0';
+    if (!generalStats?.totalAttempts || generalStats.totalAttempts === 0) return '0';
     return ((generalStats.correctAttempts / generalStats.totalAttempts) * 100).toFixed(1);
   }, [generalStats]);
 

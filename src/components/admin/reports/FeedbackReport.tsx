@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,37 +28,8 @@ export const FeedbackReport = () => {
           .limit(50);
 
         if (error) {
-          console.log('Feedback table not ready yet, using simulated data:', error);
-          // Return simulated data until types are updated
-          return [
-            {
-              id: '1',
-              rating: 9,
-              comment: 'Ótimo jogo! Muito divertido reconhecer os jogadores históricos.',
-              category: 'gameplay',
-              created_at: new Date().toISOString(),
-              user_email: 'usuario1@example.com',
-              status: 'new'
-            },
-            {
-              id: '2',
-              rating: 7,
-              comment: 'Interface bonita, mas poderia ter mais dicas.',
-              category: 'ui',
-              created_at: new Date(Date.now() - 86400000).toISOString(),
-              user_email: 'usuario2@example.com',
-              status: 'reviewed'
-            },
-            {
-              id: '3',
-              rating: 5,
-              comment: 'Às vezes demora para carregar as imagens.',
-              category: 'performance',
-              created_at: new Date(Date.now() - 172800000).toISOString(),
-              user_email: 'usuario3@example.com',
-              status: 'resolved'
-            }
-          ];
+          console.error('Error fetching feedback data:', error);
+          return [];
         }
 
         // Validate and transform data to match our interface
@@ -67,7 +39,6 @@ export const FeedbackReport = () => {
             typeof item === 'object' && 
             'id' in item && 
             'rating' in item && 
-            'category' in item && 
             'created_at' in item
           ).map(item => ({
             id: item.id,
@@ -90,7 +61,8 @@ export const FeedbackReport = () => {
         return [];
       }
     },
-    staleTime: 5 * 60 * 1000
+    staleTime: 5 * 60 * 1000,
+    retry: 1
   });
 
   const getCategoryColor = (category: string) => {
@@ -203,40 +175,40 @@ export const FeedbackReport = () => {
         {/* Lista de Feedbacks */}
         <ScrollArea className="h-96">
           <div className="space-y-4">
-            {feedbacks?.map((feedback) => (
-              <div key={feedback.id} className="p-4 border rounded-lg space-y-2">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex">
-                      {renderStars(feedback.rating)}
+            {feedbacks && feedbacks.length > 0 ? (
+              feedbacks.map((feedback) => (
+                <div key={feedback.id} className="p-4 border rounded-lg space-y-2">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2">
+                      <div className="flex">
+                        {renderStars(feedback.rating)}
+                      </div>
+                      <Badge className={getCategoryColor(feedback.category)}>
+                        {getCategoryLabel(feedback.category)}
+                      </Badge>
+                      <Badge className={getStatusColor(feedback.status)}>
+                        {feedback.status}
+                      </Badge>
                     </div>
-                    <Badge className={getCategoryColor(feedback.category)}>
-                      {getCategoryLabel(feedback.category)}
-                    </Badge>
-                    <Badge className={getStatusColor(feedback.status)}>
-                      {feedback.status}
-                    </Badge>
+                    <span className="text-xs text-gray-500">
+                      {new Date(feedback.created_at).toLocaleDateString('pt-BR')}
+                    </span>
                   </div>
-                  <span className="text-xs text-gray-500">
-                    {new Date(feedback.created_at).toLocaleDateString('pt-BR')}
-                  </span>
+                  
+                  {feedback.comment && (
+                    <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded">
+                      "{feedback.comment}"
+                    </p>
+                  )}
+                  
+                  {feedback.user_email && (
+                    <p className="text-xs text-gray-500">
+                      Por: {feedback.user_email}
+                    </p>
+                  )}
                 </div>
-                
-                {feedback.comment && (
-                  <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded">
-                    "{feedback.comment}"
-                  </p>
-                )}
-                
-                {feedback.user_email && (
-                  <p className="text-xs text-gray-500">
-                    Por: {feedback.user_email}
-                  </p>
-                )}
-              </div>
-            ))}
-            
-            {(!feedbacks || feedbacks.length === 0) && (
+              ))
+            ) : (
               <div className="text-center py-8 text-gray-500">
                 <MessageSquare className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p>Nenhum feedback recebido ainda</p>

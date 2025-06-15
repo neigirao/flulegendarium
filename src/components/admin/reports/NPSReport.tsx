@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -20,22 +21,22 @@ export const NPSReport = () => {
     queryKey: ['nps-report'],
     queryFn: async (): Promise<NPSData> => {
       try {
-        // Try to get actual feedback data from the new table
+        // Try to get actual feedback data from the user_feedback table
         const { data: feedbacks, error } = await supabase
-          .from('user_feedback' as any)
+          .from('user_feedback')
           .select('rating, created_at')
           .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
 
         if (error) {
-          console.log('Feedback table not ready yet, using simulated data:', error);
-          // Return simulated data until types are updated
+          console.error('Error fetching NPS data:', error);
+          // Return default data if no feedback exists
           return {
-            score: 42,
-            total_responses: 156,
-            promoters: 89,
-            passives: 45,
-            detractors: 22,
-            trend: 'up'
+            score: 0,
+            total_responses: 0,
+            promoters: 0,
+            passives: 0,
+            detractors: 0,
+            trend: 'stable'
           };
         }
 
@@ -66,19 +67,19 @@ export const NPSReport = () => {
           trend: npsScore > 50 ? 'up' : npsScore < 30 ? 'down' : 'stable'
         };
       } catch (error) {
-        console.error('Error fetching NPS data:', error);
-        // Return simulated data as fallback
+        console.error('Error in NPS calculation:', error);
         return {
-          score: 42,
-          total_responses: 156,
-          promoters: 89,
-          passives: 45,
-          detractors: 22,
-          trend: 'up'
+          score: 0,
+          total_responses: 0,
+          promoters: 0,
+          passives: 0,
+          detractors: 0,
+          trend: 'stable'
         };
       }
     },
-    staleTime: 10 * 60 * 1000
+    staleTime: 10 * 60 * 1000,
+    retry: 1
   });
 
   if (isLoading) {
@@ -117,6 +118,11 @@ export const NPSReport = () => {
     return 'Precisa Melhorar';
   };
 
+  const safeTotal = npsData?.total_responses || 0;
+  const safePromoters = npsData?.promoters || 0;
+  const safePassives = npsData?.passives || 0;
+  const safeDetractors = npsData?.detractors || 0;
+
   return (
     <Card>
       <CardHeader>
@@ -138,44 +144,50 @@ export const NPSReport = () => {
           </Badge>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Promotores (9-10)</span>
-            <span className="text-sm font-medium text-green-600">
-              {npsData?.promoters || 0} ({Math.round(((npsData?.promoters || 0) / (npsData?.total_responses || 1)) * 100)}%)
-            </span>
-          </div>
-          <Progress 
-            value={((npsData?.promoters || 0) / (npsData?.total_responses || 1)) * 100} 
-            className="h-2"
-          />
+        {safeTotal > 0 ? (
+          <div className="space-y-3">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Promotores (9-10)</span>
+              <span className="text-sm font-medium text-green-600">
+                {safePromoters} ({Math.round((safePromoters / safeTotal) * 100)}%)
+              </span>
+            </div>
+            <Progress 
+              value={(safePromoters / safeTotal) * 100} 
+              className="h-2"
+            />
 
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Neutros (7-8)</span>
-            <span className="text-sm font-medium text-yellow-600">
-              {npsData?.passives || 0} ({Math.round(((npsData?.passives || 0) / (npsData?.total_responses || 1)) * 100)}%)
-            </span>
-          </div>
-          <Progress 
-            value={((npsData?.passives || 0) / (npsData?.total_responses || 1)) * 100} 
-            className="h-2"
-          />
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Neutros (7-8)</span>
+              <span className="text-sm font-medium text-yellow-600">
+                {safePassives} ({Math.round((safePassives / safeTotal) * 100)}%)
+              </span>
+            </div>
+            <Progress 
+              value={(safePassives / safeTotal) * 100} 
+              className="h-2"
+            />
 
-          <div className="flex justify-between items-center">
-            <span className="text-sm text-gray-600">Detratores (0-6)</span>
-            <span className="text-sm font-medium text-red-600">
-              {npsData?.detractors || 0} ({Math.round(((npsData?.detractors || 0) / (npsData?.total_responses || 1)) * 100)}%)
-            </span>
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-gray-600">Detratores (0-6)</span>
+              <span className="text-sm font-medium text-red-600">
+                {safeDetractors} ({Math.round((safeDetractors / safeTotal) * 100)}%)
+              </span>
+            </div>
+            <Progress 
+              value={(safeDetractors / safeTotal) * 100} 
+              className="h-2"
+            />
           </div>
-          <Progress 
-            value={((npsData?.detractors || 0) / (npsData?.total_responses || 1)) * 100} 
-            className="h-2"
-          />
-        </div>
+        ) : (
+          <div className="text-center py-4 text-gray-500">
+            <p>Nenhum feedback recebido ainda</p>
+          </div>
+        )}
 
         <div className="pt-4 border-t">
           <p className="text-sm text-gray-600">
-            Total de respostas: <span className="font-medium">{npsData?.total_responses || 0}</span>
+            Total de respostas: <span className="font-medium">{safeTotal}</span>
           </p>
         </div>
       </CardContent>

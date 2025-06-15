@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -39,44 +40,8 @@ export const SupportTicketsReport = () => {
           .limit(100);
 
         if (error) {
-          console.log('Support tickets table not ready yet, using simulated data:', error);
-          // Return simulated data until types are updated
-          return [
-            {
-              id: '1',
-              title: 'Problema para fazer login',
-              description: 'Não consigo entrar na minha conta, sempre dá erro de senha.',
-              priority: 'high',
-              status: 'open',
-              category: 'account',
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              user_email: 'usuario1@example.com'
-            },
-            {
-              id: '2',
-              title: 'Sugestão de novo jogador',
-              description: 'Poderiam adicionar o Marcelo ao jogo? Foi um ícone do Flu.',
-              priority: 'low',
-              status: 'in_progress',
-              category: 'feature_request',
-              created_at: new Date(Date.now() - 86400000).toISOString(),
-              updated_at: new Date(Date.now() - 43200000).toISOString(),
-              user_email: 'usuario2@example.com',
-              assigned_to: 'Admin'
-            },
-            {
-              id: '3',
-              title: 'Jogo trava no celular',
-              description: 'No iPhone 12, o jogo trava após 5 minutos de uso.',
-              priority: 'urgent',
-              status: 'resolved',
-              category: 'technical',
-              created_at: new Date(Date.now() - 172800000).toISOString(),
-              updated_at: new Date(Date.now() - 86400000).toISOString(),
-              user_email: 'usuario3@example.com'
-            }
-          ];
+          console.error('Error fetching support tickets:', error);
+          return [];
         }
 
         // Validate and transform data to match our interface
@@ -114,7 +79,8 @@ export const SupportTicketsReport = () => {
         return [];
       }
     },
-    staleTime: 2 * 60 * 1000 // 2 minutes
+    staleTime: 2 * 60 * 1000,
+    retry: 1
   });
 
   const getPriorityColor = (priority: string) => {
@@ -216,50 +182,50 @@ export const SupportTicketsReport = () => {
         {/* Tickets List */}
         <ScrollArea className="h-96">
           <div className="space-y-3">
-            {tickets?.map((ticket) => (
-              <div key={ticket.id} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    {getCategoryIcon(ticket.category)}
-                    <h4 className="font-medium text-sm truncate max-w-48">
-                      {ticket.title}
-                    </h4>
+            {tickets && tickets.length > 0 ? (
+              tickets.map((ticket) => (
+                <div key={ticket.id} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      {getCategoryIcon(ticket.category)}
+                      <h4 className="font-medium text-sm truncate max-w-48">
+                        {ticket.title}
+                      </h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className={getPriorityColor(ticket.priority)}>
+                        {ticket.priority}
+                      </Badge>
+                      <Badge className={getStatusColor(ticket.status)}>
+                        {ticket.status.replace('_', ' ')}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge className={getPriorityColor(ticket.priority)}>
-                      {ticket.priority}
-                    </Badge>
-                    <Badge className={getStatusColor(ticket.status)}>
-                      {ticket.status.replace('_', ' ')}
-                    </Badge>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                  {ticket.description}
-                </p>
-                
-                <div className="flex items-center justify-between text-xs text-gray-500">
-                  <div className="flex items-center gap-4">
-                    {ticket.user_email && (
+                  
+                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    {ticket.description}
+                  </p>
+                  
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <div className="flex items-center gap-4">
+                      {ticket.user_email && (
+                        <span className="flex items-center gap-1">
+                          <User className="w-3 h-3" />
+                          {ticket.user_email}
+                        </span>
+                      )}
                       <span className="flex items-center gap-1">
-                        <User className="w-3 h-3" />
-                        {ticket.user_email}
+                        <Calendar className="w-3 h-3" />
+                        {new Date(ticket.created_at).toLocaleDateString('pt-BR')}
                       </span>
-                    )}
-                    <span className="flex items-center gap-1">
-                      <Calendar className="w-3 h-3" />
-                      {new Date(ticket.created_at).toLocaleDateString('pt-BR')}
-                    </span>
+                    </div>
+                    <Button variant="ghost" size="sm">
+                      Ver Detalhes
+                    </Button>
                   </div>
-                  <Button variant="ghost" size="sm">
-                    Ver Detalhes
-                  </Button>
                 </div>
-              </div>
-            ))}
-            
-            {(!tickets || tickets.length === 0) && (
+              ))
+            ) : (
               <div className="text-center py-8 text-gray-500">
                 <LifeBuoy className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p>Nenhum ticket de suporte encontrado</p>
