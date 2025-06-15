@@ -1,7 +1,5 @@
 
 import { useEffect } from 'react';
-import { performanceBudgetMonitor } from '@/services/performance-budgets';
-import { addBreadcrumb, setContext } from '@/services/sentry';
 
 interface PerformanceMetrics {
   lcp?: number;
@@ -16,28 +14,19 @@ export const usePerformance = () => {
     // Early return if not in browser environment
     if (typeof window === 'undefined') return;
 
-    // Web Vitals tracking with budget monitoring
+    // Web Vitals tracking
     if ('PerformanceObserver' in window) {
       // Largest Contentful Paint (LCP)
       const lcpObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
-        const lcpValue = lastEntry.startTime;
-        
-        console.log('LCP:', lcpValue);
-        performanceBudgetMonitor.checkBudget('LCP', lcpValue);
-        
-        addBreadcrumb({
-          message: 'LCP Measured',
-          data: { value: lcpValue },
-          level: 'info'
-        });
+        console.log('LCP:', lastEntry.startTime);
         
         // Track to analytics
         if (window.gtag) {
           window.gtag('event', 'web_vitals', {
             name: 'LCP',
-            value: Math.round(lcpValue),
+            value: Math.round(lastEntry.startTime),
             event_category: 'Performance'
           });
         }
@@ -48,20 +37,12 @@ export const usePerformance = () => {
       const fidObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry: any) => {
-          const fidValue = entry.processingStart - entry.startTime;
-          console.log('FID:', fidValue);
-          performanceBudgetMonitor.checkBudget('FID', fidValue);
-          
-          addBreadcrumb({
-            message: 'FID Measured',
-            data: { value: fidValue },
-            level: 'info'
-          });
+          console.log('FID:', entry.processingStart - entry.startTime);
           
           if (window.gtag) {
             window.gtag('event', 'web_vitals', {
               name: 'FID',
-              value: Math.round(fidValue),
+              value: Math.round(entry.processingStart - entry.startTime),
               event_category: 'Performance'
             });
           }
@@ -79,13 +60,6 @@ export const usePerformance = () => {
           }
         });
         console.log('CLS:', clsValue);
-        performanceBudgetMonitor.checkBudget('CLS', clsValue);
-        
-        addBreadcrumb({
-          message: 'CLS Measured',
-          data: { value: clsValue },
-          level: 'info'
-        });
         
         if (window.gtag) {
           window.gtag('event', 'web_vitals', {
@@ -101,24 +75,14 @@ export const usePerformance = () => {
       const fcpObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
-          if (entry.name === 'first-contentful-paint') {
-            const fcpValue = entry.startTime;
-            console.log('FCP:', fcpValue);
-            performanceBudgetMonitor.checkBudget('FCP', fcpValue);
-            
-            addBreadcrumb({
-              message: 'FCP Measured',
-              data: { value: fcpValue },
-              level: 'info'
+          console.log('FCP:', entry.startTime);
+          
+          if (window.gtag) {
+            window.gtag('event', 'web_vitals', {
+              name: 'FCP',
+              value: Math.round(entry.startTime),
+              event_category: 'Performance'
             });
-            
-            if (window.gtag) {
-              window.gtag('event', 'web_vitals', {
-                name: 'FCP',
-                value: Math.round(fcpValue),
-                event_category: 'Performance'
-              });
-            }
           }
         });
       });
@@ -149,16 +113,8 @@ export const usePerformance = () => {
       
       console.log('Performance Metrics:', metrics);
       
-      // Check budgets
-      performanceBudgetMonitor.checkBudget('TTFB', metrics.ttfb);
-      
-      // Set performance context in Sentry
-      setContext('performanceMetrics', metrics);
-      
       // Track slow loading
       if (metrics.loadComplete > 3000) {
-        performanceBudgetMonitor.checkBudget('Page Load Time', metrics.loadComplete);
-        
         if (window.gtag) {
           window.gtag('event', 'slow_loading', {
             event_category: 'Performance',
@@ -174,15 +130,6 @@ export const usePerformance = () => {
 
   const trackCustomMetric = (name: string, value: number) => {
     console.log(`Custom Metric - ${name}:`, value);
-    
-    // Check if it's a known budget metric
-    performanceBudgetMonitor.checkBudget(name, value);
-    
-    addBreadcrumb({
-      message: 'Custom Metric Tracked',
-      data: { name, value },
-      level: 'info'
-    });
     
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'custom_metric', {

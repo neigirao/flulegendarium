@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect } from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Loader } from "lucide-react";
@@ -12,7 +12,6 @@ import { useBundleAnalyzer } from "@/hooks/use-bundle-analyzer";
 import { ErrorBoundary } from "@/components/error-boundaries/ErrorBoundary";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
-import { initializeSentry } from "@/services/sentry";
 
 // Lazy load pages with better loading and preloading
 const Index = lazy(() => 
@@ -80,62 +79,55 @@ const PerformanceMonitor = () => {
   return null;
 };
 
-const App = () => {
-  // Initialize Sentry on app start
-  useEffect(() => {
-    initializeSentry();
-  }, []);
-
-  return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <PerformanceMonitor />
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Suspense fallback={<PageLoader />}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  
-                  {/* URLs Semânticas Otimizadas para SEO */}
-                  <Route path="/selecionar-modo-jogo" element={<GameModeSelection />} />
-                  <Route 
-                    path="/jogar-quiz-fluminense" 
-                    element={
-                      <GameErrorBoundary>
-                        <Game />
-                      </GameErrorBoundary>
-                    } 
-                  />
-                  <Route path="/meu-perfil-tricolor" element={<Profile />} />
-                  <Route 
-                    path="/admin/painel-controle" 
-                    element={
-                      <AdminErrorBoundary>
-                        <Admin />
-                      </AdminErrorBoundary>
-                    } 
-                  />
-                  <Route path="/admin/login-administrador" element={<AdminLogin />} />
-                  
-                  {/* Redirects das URLs antigas para manter compatibilidade */}
-                  <Route path="/select-mode" element={<Navigate to="/selecionar-modo-jogo" replace />} />
-                  <Route path="/game" element={<Navigate to="/jogar-quiz-fluminense" replace />} />
-                  <Route path="/profile" element={<Navigate to="/meu-perfil-tricolor" replace />} />
-                  <Route path="/admin" element={<Navigate to="/admin/painel-controle" replace />} />
-                  <Route path="/admin/login" element={<Navigate to="/admin/login-administrador" replace />} />
-                  
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
-  );
-};
+const App = () => (
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <TooltipProvider>
+          <PerformanceMonitor />
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                
+                {/* URLs Semânticas Otimizadas para SEO */}
+                <Route path="/selecionar-modo-jogo" element={<GameModeSelection />} />
+                <Route 
+                  path="/jogar-quiz-fluminense" 
+                  element={
+                    <GameErrorBoundary>
+                      <Game />
+                    </GameErrorBoundary>
+                  } 
+                />
+                <Route path="/meu-perfil-tricolor" element={<Profile />} />
+                <Route 
+                  path="/admin/painel-controle" 
+                  element={
+                    <AdminErrorBoundary>
+                      <Admin />
+                    </AdminErrorBoundary>
+                  } 
+                />
+                <Route path="/admin/login-administrador" element={<AdminLogin />} />
+                
+                {/* Redirects das URLs antigas para manter compatibilidade */}
+                <Route path="/select-mode" element={<Navigate to="/selecionar-modo-jogo" replace />} />
+                <Route path="/game" element={<Navigate to="/jogar-quiz-fluminense" replace />} />
+                <Route path="/profile" element={<Navigate to="/meu-perfil-tricolor" replace />} />
+                <Route path="/admin" element={<Navigate to="/admin/painel-controle" replace />} />
+                <Route path="/admin/login" element={<Navigate to="/admin/login-administrador" replace />} />
+                
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
+);
 
 export default App;
