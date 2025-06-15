@@ -46,87 +46,104 @@ export const LoggedUsersView = () => {
     queryKey: ['logged-users'],
     queryFn: async (): Promise<LoggedUser[]> => {
       try {
-        console.log('Fetching logged users data...');
+        console.log('🔍 Buscando usuários logados...');
         
-        // Get profiles with their game history
+        // Buscar todos os perfis de usuários
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
           .select('*');
         
         if (profilesError) {
-          console.error('Error fetching profiles:', profilesError);
+          console.error('❌ Erro ao buscar perfis:', profilesError);
           return [];
         }
 
-        // Get game history for all users
+        console.log('👥 Perfis encontrados:', profiles?.length || 0);
+
+        if (!profiles || profiles.length === 0) {
+          console.log('⚠️ Nenhum perfil encontrado');
+          return [];
+        }
+
+        // Buscar histórico de jogos para todos os usuários
         const { data: gameHistory, error: gameHistoryError } = await supabase
           .from('user_game_history')
           .select('*');
         
         if (gameHistoryError) {
-          console.error('Error fetching game history:', gameHistoryError);
+          console.error('❌ Erro ao buscar histórico de jogos:', gameHistoryError);
         }
 
-        // Get game starts for authenticated users
-        const { data: gameStarts, error: gameStartsError } = await supabase
-          .from('game_starts')
+        console.log('🎮 Histórico de jogos encontrado:', gameHistory?.length || 0);
+
+        // Buscar rankings para obter dados adicionais
+        const { data: rankings, error: rankingsError } = await supabase
+          .from('rankings')
           .select('*')
-          .eq('player_type', 'authenticated')
           .not('user_id', 'is', null);
         
-        if (gameStartsError) {
-          console.error('Error fetching game starts:', gameStartsError);
+        if (rankingsError) {
+          console.error('❌ Erro ao buscar rankings:', rankingsError);
         }
 
-        console.log('Profiles:', profiles?.length || 0);
-        console.log('Game history:', gameHistory?.length || 0);
-        console.log('Game starts (authenticated):', gameStarts?.length || 0);
+        console.log('🏆 Rankings encontrados:', rankings?.length || 0);
 
-        // Process data to create logged users view
+        // Processar dados para criar a visualização de usuários logados
         const usersWithGames: LoggedUser[] = [];
         
-        if (profiles) {
-          profiles.forEach(profile => {
-            // Check if user has game history or game starts
-            const userGameHistory = gameHistory?.filter(gh => gh.user_id === profile.id) || [];
-            const userGameStarts = gameStarts?.filter(gs => gs.user_id === profile.id) || [];
-            
-            // Only include users who have played games
-            if (userGameHistory.length > 0 || userGameStarts.length > 0) {
-              const totalGames = userGameHistory.length;
-              const bestScore = totalGames > 0 ? Math.max(...userGameHistory.map(gh => gh.score)) : 0;
-              const totalAttempts = userGameHistory.reduce((sum, gh) => sum + gh.total_attempts, 0);
-              const correctGuesses = userGameHistory.reduce((sum, gh) => sum + gh.correct_guesses, 0);
-              const accuracyRate = totalAttempts > 0 ? (correctGuesses / totalAttempts) * 100 : 0;
+        profiles.forEach(profile => {
+          // Buscar histórico de jogos do usuário
+          const userGameHistory = gameHistory?.filter(gh => gh.user_id === profile.id) || [];
+          const userRankings = rankings?.filter(r => r.user_id === profile.id) || [];
+          
+          // Se o usuário tem jogos ou rankings, incluir na lista
+          if (userGameHistory.length > 0 || userRankings.length > 0) {
+            const totalGames = userGameHistory.length;
+            let bestScore = 0;
+            let totalAttempts = 0;
+            let correctGuesses = 0;
+            let lastPlayedDate = new Date();
+
+            // Calcular estatísticas do histórico de jogos
+            if (userGameHistory.length > 0) {
+              bestScore = Math.max(...userGameHistory.map(gh => gh.score || 0));
+              totalAttempts = userGameHistory.reduce((sum, gh) => sum + (gh.total_attempts || 0), 0);
+              correctGuesses = userGameHistory.reduce((sum, gh) => sum + (gh.correct_guesses || 0), 0);
               
-              // Get last played date
-              const lastPlayedDate = userGameHistory.length > 0 
-                ? new Date(Math.max(...userGameHistory.map(gh => new Date(gh.created_at).getTime())))
-                : userGameStarts.length > 0 
-                  ? new Date(Math.max(...userGameStarts.map(gs => new Date(gs.started_at).getTime())))
-                  : new Date();
-
-              usersWithGames.push({
-                id: profile.id,
-                full_name: profile.full_name,
-                email: profile.email,
-                avatar_url: profile.avatar_url,
-                created_at: profile.created_at,
-                total_games: totalGames,
-                best_score: bestScore,
-                last_played: lastPlayedDate.toISOString(),
-                total_attempts: totalAttempts,
-                correct_guesses: correctGuesses,
-                accuracy_rate: Math.round(accuracyRate * 100) / 100
-              });
+              const dates = userGameHistory.map(gh => new Date(gh.created_at));
+              lastPlayedDate = new Date(Math.max(...dates.map(d => d.getTime())));
             }
-          });
-        }
 
-        console.log('Users with games:', usersWithGames.length);
+            // Se não há histórico, usar dados dos rankings
+            if (userGameHistory.length === 0 && userRankings.length > 0) {
+              bestScore = Math.max(...userRankings.map(r => r.score || 0));
+              const rankingDates = userRankings.map(r => new Date(r.created_at));
+              lastPlayedDate = new Date(Math.max(...rankingDates.map(d => d.getTime())));
+            }
+
+            const accuracyRate = totalAttempts > 0 ? (correctGuesses / totalAttempts) * 100 : 0;
+
+            usersWithGames.push({
+              id: profile.id,
+              full_name: profile.full_name,
+              email: profile.email,
+              avatar_url: profile.avatar_url,
+              created_at: profile.created_at,
+              total_games: totalGames || userRankings.length,
+              best_score: bestScore,
+              last_played: lastPlayedDate.toISOString(),
+              total_attempts: totalAttempts,
+              correct_guesses: correctGuesses,
+              accuracy_rate: Math.round(accuracyRate * 100) / 100
+            });
+          }
+        });
+
+        console.log('✅ Usuários com jogos processados:', usersWithGames.length);
         return usersWithGames.sort((a, b) => new Date(b.last_played).getTime() - new Date(a.last_played).getTime());
+        
       } catch (error) {
-        console.error('Error in logged users query:', error);
+        console.error('❌ Erro na consulta de usuários logados:', error);
         return [];
       }
     },
