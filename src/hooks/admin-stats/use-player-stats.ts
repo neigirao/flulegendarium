@@ -1,7 +1,8 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
+import { useCacheManager } from "./use-cache-manager";
+import { useOptimizedQueries } from "./use-optimized-queries";
 
 interface PlayerStats {
   player_name: string;
@@ -16,46 +17,20 @@ interface MostMissedPlayer {
 }
 
 export const usePlayerStats = () => {
+  const { getCacheConfig } = useCacheManager();
+  const { getPlayerAttempts } = useOptimizedQueries();
+
   const { data: playerStatsData, isLoading } = useQuery({
     queryKey: ['admin-player-stats'],
     queryFn: async () => {
       try {
-        console.log('📊 Buscando estatísticas de jogadores otimizadas...');
-        
-        // Query otimizada usando aggregate functions
-        const { data: mostCorrectData, error: correctError } = await supabase
-          .from('game_attempts')
-          .select('target_player_name, is_correct')
-          .eq('is_correct', true);
-        
-        const { data: allAttemptsData, error: attemptsError } = await supabase
-          .from('game_attempts')
-          .select('target_player_name, is_correct');
-
-        if (correctError || attemptsError) {
-          console.error('❌ Erro ao buscar dados dos jogadores:', correctError || attemptsError);
-          return { mostCorrectData: [], allAttemptsData: [], successRate: '0' };
-        }
-
-        // Calcular taxa de sucesso
-        const totalAttempts = allAttemptsData?.length || 0;
-        const correctAttempts = mostCorrectData?.length || 0;
-        const successRate = totalAttempts > 0 ? ((correctAttempts / totalAttempts) * 100).toFixed(1) : '0';
-
-        return {
-          mostCorrectData: mostCorrectData || [],
-          allAttemptsData: allAttemptsData || [],
-          successRate
-        };
+        return await getPlayerAttempts();
       } catch (error) {
         console.error('❌ Erro nas estatísticas de jogadores:', error);
         return { mostCorrectData: [], allAttemptsData: [], successRate: '0' };
       }
     },
-    staleTime: 3 * 60 * 1000, // 3 minutos de cache
-    gcTime: 6 * 60 * 1000,
-    retry: 2,
-    refetchOnWindowFocus: false
+    ...getCacheConfig('medium')
   });
 
   const mostCorrectPlayers = useMemo((): PlayerStats[] => {
@@ -98,7 +73,7 @@ export const usePlayerStats = () => {
     });
     
     return Object.entries(stats)
-      .filter(([_, data]) => data.total >= 5) // Aumentei para 5 para ter mais dados significativos
+      .filter(([_, data]) => data.total >= 5)
       .map(([name, data]) => {
         const missRate = data.total > 0 ? (data.missed / data.total * 100).toFixed(1) : '0.0';
         return {

@@ -1,7 +1,8 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
+import { useCacheManager } from "./use-cache-manager";
+import { useOptimizedQueries } from "./use-optimized-queries";
 
 interface ProgressStat {
   step: number;
@@ -9,23 +10,14 @@ interface ProgressStat {
 }
 
 export const useProgressStats = () => {
+  const { getCacheConfig } = useCacheManager();
+  const { getProgressData } = useOptimizedQueries();
+
   const { data: sessions = [], isLoading } = useQuery({
     queryKey: ['admin-progress-stats'],
     queryFn: async () => {
       try {
-        console.log('📈 Buscando estatísticas de progresso otimizadas...');
-        
-        const { data, error } = await supabase
-          .from('game_sessions')
-          .select('total_correct')
-          .not('total_correct', 'is', null)
-          .order('total_correct');
-        
-        if (error) {
-          console.error('❌ Erro ao buscar sessões:', error);
-          return [];
-        }
-        
+        const data = await getProgressData();
         console.log('✅ Sessões carregadas:', data?.length || 0);
         return data || [];
       } catch (error) {
@@ -33,10 +25,7 @@ export const useProgressStats = () => {
         return [];
       }
     },
-    staleTime: 3 * 60 * 1000, // 3 minutos de cache
-    gcTime: 6 * 60 * 1000,
-    retry: 2,
-    refetchOnWindowFocus: false
+    ...getCacheConfig('medium')
   });
 
   const progressStats = useMemo((): ProgressStat[] => {
@@ -53,7 +42,7 @@ export const useProgressStats = () => {
     return Object.entries(stepCounts)
       .map(([step, count]) => ({ step: parseInt(step), count }))
       .sort((a, b) => a.step - b.step)
-      .slice(0, 20); // Limitar para melhor performance
+      .slice(0, 20);
   }, [sessions]);
 
   return { progressStats, isLoading };
