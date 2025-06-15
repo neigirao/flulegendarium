@@ -5,7 +5,7 @@ import { Player } from "@/types/guess-game";
 import { useSimpleGameTimer, TIME_LIMIT_SECONDS } from "./use-simple-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
 import { useEnhancedPlayerSelection } from "./use-enhanced-player-selection";
-import { useGameSession } from "./use-game-session";
+import { useGameSession } from "./use-simple-game-session";
 import { useGameScore } from "./use-game-score";
 import { useSimpleGameLogic } from "./use-simple-game-logic";
 
@@ -27,13 +27,24 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     playerChangeCount
   } = useEnhancedPlayerSelection(players);
 
-  const { sessionId, registerGameStart, resetSession } = useGameSession();
+  const { 
+    sessionId, 
+    registerGameStart, 
+    saveGameSession, 
+    saveGameAttempt, 
+    resetSession 
+  } = useGameSession();
+  
   const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
 
   // Callback para quando o tempo acabar
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer && gameActive) {
       console.log('⏰ Tempo esgotado para:', currentPlayer.name);
+      
+      // Salvar sessão quando o jogo termina
+      saveGameSession(currentPlayer.name, Math.floor(score / 5), gamesPlayed + 1, maxStreak);
+      
       setGameOver(true);
       setHasLost(true);
       setGameActive(false);
@@ -45,17 +56,20 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         description: `O jogador era ${currentPlayer.name}. Pontuação final: ${score}`,
       });
     }
-  }, [currentPlayer, gameOver, score, toast, gameActive, resetStreak]);
+  }, [currentPlayer, gameOver, score, toast, gameActive, resetStreak, saveGameSession, gamesPlayed, maxStreak]);
 
   // Callback para mudança de aba
   const handleTabChange = useCallback(() => {
-    if (gameActive && !gameOver) {
+    if (gameActive && !gameOver && currentPlayer) {
+      // Salvar sessão quando o jogo é interrompido
+      saveGameSession(currentPlayer.name, Math.floor(score / 5), gamesPlayed + 1, maxStreak);
+      
       setGameOver(true);
       setHasLost(true);
       setGameActive(false);
       resetStreak();
     }
-  }, [gameActive, gameOver, resetStreak]);
+  }, [gameActive, gameOver, resetStreak, currentPlayer, saveGameSession, score, gamesPlayed, maxStreak]);
   
   useTabVisibility({ 
     onTabChange: handleTabChange, 
@@ -67,18 +81,32 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   // Enhanced callbacks for game logic
   const handleCorrectGuess = useCallback((points: number) => {
     console.log('✅ Resposta correta! Pontos:', points, 'Player atual:', currentPlayer?.name);
+    
+    if (currentPlayer) {
+      // Salvar tentativa correta
+      saveGameAttempt(currentPlayer.name, currentPlayer.name, true, 1);
+    }
+    
     addScore(points);
     stopTimer();
-  }, [addScore, stopTimer, currentPlayer]);
+  }, [addScore, stopTimer, currentPlayer, saveGameAttempt]);
 
-  const handleIncorrectGuess = useCallback(() => {
-    console.log('❌ Resposta incorreta! Player:', currentPlayer?.name);
+  const handleIncorrectGuess = useCallback((guess: string) => {
+    console.log('❌ Resposta incorreta! Player:', currentPlayer?.name, 'Palpite:', guess);
+    
+    if (currentPlayer) {
+      // Salvar tentativa incorreta
+      saveGameAttempt(currentPlayer.name, guess, false, 1);
+      // Salvar sessão completa quando o jogo termina
+      saveGameSession(currentPlayer.name, Math.floor(score / 5), gamesPlayed + 1, maxStreak);
+    }
+    
     setGameOver(true);
     setHasLost(true);
     setGameActive(false);
     resetStreak();
     stopTimer();
-  }, [resetStreak, stopTimer, currentPlayer]);
+  }, [resetStreak, stopTimer, currentPlayer, saveGameAttempt, saveGameSession, score, gamesPlayed, maxStreak]);
 
   const handleNextPlayer = useCallback(() => {
     console.log('🔄 Indo para próximo jogador... Player atual:', currentPlayer?.name);
@@ -143,7 +171,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   return {
     // Estado do jogo
     currentPlayer,
-    gameKey, // NEW: For forcing image refresh
+    gameKey,
     score,
     gameOver,
     hasLost,
@@ -162,7 +190,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     // Ações
     handleGuess,
     selectRandomPlayer,
-    forceRefresh, // NEW: For manual refresh
+    forceRefresh,
     handlePlayerImageFixed,
     startGameForPlayer,
     resetScore,

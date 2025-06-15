@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
@@ -40,7 +41,7 @@ export const useAdminStats = () => {
     queryKey: ['admin-stats-all'],
     queryFn: async (): Promise<AllStatsData> => {
       try {
-        console.log('📊 Fetching admin stats...');
+        console.log('📊 Buscando estatísticas administrativas...');
         
         const [attemptsResult, sessionsResult, playersResult, rankingsResult, gameStartsResult] = await Promise.all([
           supabase.from('game_attempts').select('*'),
@@ -50,17 +51,20 @@ export const useAdminStats = () => {
           supabase.from('game_starts').select('*')
         ]);
         
-        // Log results for debugging
-        console.log('📊 Admin Stats Results:');
-        console.log('Attempts data:', attemptsResult.data?.length || 0, attemptsResult.data);
-        console.log('Sessions data:', sessionsResult.data?.length || 0);
-        console.log('Players count:', playersResult.count);
-        console.log('Rankings data:', rankingsResult.data?.length || 0);
-        console.log('Game starts data:', gameStartsResult.data?.length || 0);
+        console.log('📊 Resultados das consultas:');
+        console.log('- Tentativas:', attemptsResult.data?.length || 0, attemptsResult.error ? 'ERRO' : 'OK');
+        console.log('- Sessões:', sessionsResult.data?.length || 0, sessionsResult.error ? 'ERRO' : 'OK');
+        console.log('- Players count:', playersResult.count, playersResult.error ? 'ERRO' : 'OK');
+        console.log('- Rankings:', rankingsResult.data?.length || 0, rankingsResult.error ? 'ERRO' : 'OK');
+        console.log('- Game starts:', gameStartsResult.data?.length || 0, gameStartsResult.error ? 'ERRO' : 'OK');
         
-        // Log any errors but don't throw to prevent the entire stats from failing
-        if (attemptsResult.error) {
-          console.error('Error fetching attempts:', attemptsResult.error);
+        // Log sample data for debugging
+        if (attemptsResult.data && attemptsResult.data.length > 0) {
+          console.log('📊 Amostra de tentativas:', attemptsResult.data.slice(0, 3));
+        }
+        
+        if (sessionsResult.data && sessionsResult.data.length > 0) {
+          console.log('📊 Amostra de sessões:', sessionsResult.data.slice(0, 3));
         }
         
         return {
@@ -71,7 +75,7 @@ export const useAdminStats = () => {
           gameStarts: gameStartsResult.data || []
         };
       } catch (error) {
-        console.error('Error in admin stats query:', error);
+        console.error('❌ Erro nas consultas administrativas:', error);
         return {
           attempts: [],
           sessions: [],
@@ -81,10 +85,10 @@ export const useAdminStats = () => {
         };
       }
     },
-    staleTime: 30 * 1000, // 30 seconds - mais frequente para debug
-    gcTime: 2 * 60 * 1000, // 2 minutes
-    retry: 1,
-    refetchInterval: 60 * 1000, // Refetch a cada 1 minuto para debug
+    staleTime: 30 * 1000,
+    gcTime: 2 * 60 * 1000,
+    retry: 2,
+    refetchInterval: 60 * 1000,
     refetchOnWindowFocus: true,
   });
 
@@ -98,14 +102,14 @@ export const useAdminStats = () => {
           .select('*', { count: 'exact', head: true });
         
         if (error) {
-          console.error('Error fetching players count:', error);
+          console.error('❌ Erro ao buscar contagem de jogadores:', error);
           return 0;
         }
         
-        console.log('Players count result:', count);
+        console.log('👥 Contagem de jogadores:', count);
         return count || 0;
       } catch (error) {
-        console.error('Error in players count query:', error);
+        console.error('❌ Erro na consulta de contagem:', error);
         return 0;
       }
     },
@@ -113,49 +117,36 @@ export const useAdminStats = () => {
     retry: 1
   });
 
-  // Memoized calculations to prevent re-computation
+  // Memoized calculations
   const mostCorrectPlayers = useMemo((): PlayerStats[] => {
     if (!allStats?.attempts || allStats.attempts.length === 0) {
-      console.log('❌ No attempts data for mostCorrectPlayers');
+      console.log('⚠️ Nenhuma tentativa para calcular jogadores mais acertados');
       return [];
     }
     
-    console.log('📊 Calculating mostCorrectPlayers with', allStats.attempts.length, 'attempts');
-    console.log('📊 Sample attempts:', allStats.attempts.slice(0, 3));
+    console.log('🏆 Calculando jogadores mais acertados com', allStats.attempts.length, 'tentativas');
     
-    // Filtrar apenas tentativas corretas
     const correctAttempts = allStats.attempts.filter(attempt => {
       const isCorrect = attempt.is_correct === true;
-      if (isCorrect) {
-        console.log('✅ Correct attempt found:', attempt.target_player_name, attempt.is_correct);
-      }
       return isCorrect;
     });
     
-    console.log('✅ Correct attempts found:', correctAttempts.length);
-    console.log('✅ Sample correct attempts:', correctAttempts.slice(0, 3));
+    console.log('✅ Tentativas corretas encontradas:', correctAttempts.length);
     
     if (correctAttempts.length === 0) {
-      console.log('⚠️ No correct attempts found');
+      console.log('⚠️ Nenhuma tentativa correta encontrada');
       return [];
     }
     
-    // Contar por jogador
     const counts: Record<string, number> = {};
     correctAttempts.forEach(attempt => {
       const playerName = attempt.target_player_name;
       if (playerName && typeof playerName === 'string') {
         counts[playerName] = (counts[playerName] || 0) + 1;
-        console.log('📈 Adding count for', playerName, '- now has', counts[playerName]);
       }
     });
     
-    console.log('📊 Final player correct counts:', counts);
-    
-    if (Object.keys(counts).length === 0) {
-      console.log('⚠️ No valid player names found in correct attempts');
-      return [];
-    }
+    console.log('📈 Contagem final por jogador:', counts);
     
     const result = Object.entries(counts)
       .map(([name, count]) => ({ 
@@ -165,20 +156,18 @@ export const useAdminStats = () => {
       .sort((a, b) => b.correct_count - a.correct_count)
       .slice(0, 10);
     
-    console.log('🏆 Most correct players result:', result);
+    console.log('🏆 Top jogadores mais acertados:', result);
     return result;
   }, [allStats?.attempts]);
 
   const mostMissedPlayers = useMemo((): MostMissedPlayer[] => {
     if (!allStats?.attempts || allStats.attempts.length === 0) {
-      console.log('❌ No attempts data for mostMissedPlayers');
+      console.log('⚠️ Nenhuma tentativa para calcular jogadores mais difíceis');
       return [];
     }
     
-    console.log('🎯 Calculating mostMissedPlayers with', allStats.attempts.length, 'attempts');
-    console.log('🎯 Sample attempts for missed calculation:', allStats.attempts.slice(0, 3));
+    console.log('🎯 Calculando jogadores mais difíceis com', allStats.attempts.length, 'tentativas');
     
-    // Calcular estatísticas por jogador
     const stats: Record<string, { total: number, missed: number }> = {};
     
     allStats.attempts.forEach(attempt => {
@@ -189,25 +178,16 @@ export const useAdminStats = () => {
         }
         stats[playerName].total++;
         
-        // Contar como erro se is_correct é false
         if (attempt.is_correct === false) {
           stats[playerName].missed++;
-          console.log('❌ Missed attempt for', playerName, '- total missed now:', stats[playerName].missed);
         }
       }
     });
     
-    console.log('🎯 Player miss stats calculated:', stats);
+    console.log('📊 Estatísticas de erro por jogador:', stats);
     
-    // Filtrar jogadores com pelo menos 3 tentativas e criar resultado
     const result = Object.entries(stats)
-      .filter(([_, data]) => {
-        const hasMinAttempts = data.total >= 3;
-        if (!hasMinAttempts) {
-          console.log('⚠️ Player with insufficient attempts (< 3):', _, data);
-        }
-        return hasMinAttempts;
-      })
+      .filter(([_, data]) => data.total >= 3)
       .map(([name, data]) => {
         const missRate = data.total > 0 ? (data.missed / data.total * 100).toFixed(1) : '0.0';
         return {
@@ -220,17 +200,17 @@ export const useAdminStats = () => {
       .sort((a, b) => b.missed_count - a.missed_count)
       .slice(0, 10);
     
-    console.log('🎯 Most missed players result:', result);
+    console.log('🎯 Top jogadores mais difíceis:', result);
     return result;
   }, [allStats?.attempts]);
 
   const progressStats = useMemo((): ProgressStat[] => {
     if (!allStats?.sessions || allStats.sessions.length === 0) {
-      console.log('No sessions data for progressStats');
+      console.log('⚠️ Nenhuma sessão para calcular progresso');
       return [];
     }
     
-    console.log('Calculating progressStats with', allStats.sessions.length, 'sessions');
+    console.log('📈 Calculando estatísticas de progresso com', allStats.sessions.length, 'sessões');
     
     const stepCounts: Record<number, number> = allStats.sessions.reduce((acc, session) => {
       const step = session.total_correct || 0;
@@ -242,17 +222,17 @@ export const useAdminStats = () => {
       .map(([step, count]) => ({ step: parseInt(step), count }))
       .sort((a, b) => a.step - b.step);
     
-    console.log('Progress stats result:', result);
+    console.log('📈 Estatísticas de progresso:', result);
     return result;
   }, [allStats?.sessions]);
 
   const generalStats = useMemo((): GeneralStats | undefined => {
     if (!allStats) {
-      console.log('No allStats data for generalStats');
+      console.log('⚠️ Nenhum dado para estatísticas gerais');
       return undefined;
     }
     
-    console.log('Calculating generalStats');
+    console.log('📊 Calculando estatísticas gerais');
     
     const correctAttempts = allStats.attempts.filter(a => a.is_correct === true).length;
     const totalMatches = allStats.gameStarts?.length || 0;
@@ -264,29 +244,27 @@ export const useAdminStats = () => {
       correctAttempts
     };
     
-    console.log('General stats result:', result);
+    console.log('📊 Estatísticas gerais calculadas:', result);
     return result;
   }, [allStats, playersCount]);
 
   const successRate = useMemo(() => {
     if (!allStats?.attempts || allStats.attempts.length === 0) {
-      console.log('No attempts data for successRate');
+      console.log('⚠️ Nenhuma tentativa para calcular taxa de sucesso');
       return '0';
     }
     
     const correctAttempts = allStats.attempts.filter(a => a.is_correct === true).length;
     const rate = ((correctAttempts / allStats.attempts.length) * 100).toFixed(1);
     
-    console.log('Success rate calculation:', correctAttempts, '/', allStats.attempts.length, '=', rate + '%');
+    console.log('📈 Taxa de sucesso calculada:', correctAttempts, '/', allStats.attempts.length, '=', rate + '%');
     return rate;
   }, [allStats?.attempts]);
 
   // Log final results for debugging
-  console.log('🎯 Final hook results:', {
+  console.log('🎯 Resultados finais do hook:', {
     mostCorrectPlayersCount: mostCorrectPlayers.length,
-    mostCorrectPlayers: mostCorrectPlayers.slice(0, 3),
     mostMissedPlayersCount: mostMissedPlayers.length,
-    mostMissedPlayers: mostMissedPlayers.slice(0, 3),
     playerRankingCount: allStats?.rankings?.length || 0,
     progressStatsCount: progressStats.length,
     generalStats,
