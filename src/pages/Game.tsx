@@ -13,7 +13,7 @@ import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { GameContainer } from "@/components/guess-game/GameContainer";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SEOHead } from "@/components/SEOHead";
-import { useGuessGame } from "@/hooks/use-guess-game";
+import { useSimpleGuessGame } from "@/hooks/use-simple-guess-game";
 import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useDebug } from "@/hooks/use-debug";
@@ -35,9 +35,10 @@ const Game = () => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
-  // Now use the game hook with the loaded players
+  // Now use the enhanced game hook with the loaded players
   const {
     currentPlayer,
+    gameKey, // NEW: Now we have gameKey
     attempts,
     score,
     gameOver,
@@ -45,13 +46,19 @@ const Game = () => {
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
+    forceRefresh, // NEW
     handlePlayerImageFixed,
     isProcessingGuess,
     hasLost,
     startGameForPlayer,
     isTimerRunning,
-    resetScore
-  } = useGuessGame(players);
+    resetScore,
+    gamesPlayed,
+    currentStreak,
+    maxStreak,
+    playerChangeCount, // NEW
+    TIME_LIMIT_SECONDS
+  } = useSimpleGuessGame(players);
 
   // Manage game state
   const {
@@ -104,7 +111,7 @@ const Game = () => {
     return <EmptyPlayersDisplay />;
   }
 
-  console.log('🎮 Game render - Current Player:', currentPlayer?.name || 'Nenhum');
+  console.log('🎮 Game render - Current Player:', currentPlayer?.name || 'Nenhum', 'GameKey:', gameKey);
   console.log('🎮 Game render - Players loaded:', players?.length || 0);
 
   return (
@@ -193,6 +200,7 @@ const Game = () => {
             {gameStarted && (
               <GameContainer
                 currentPlayer={currentPlayer}
+                gameKey={gameKey} // NOW INCLUDED
                 attempts={attempts}
                 score={score}
                 gameOver={gameOver}
@@ -205,6 +213,11 @@ const Game = () => {
                 hasLost={hasLost}
                 startGameForPlayer={startGameForPlayer}
                 isTimerRunning={isTimerRunning}
+                gamesPlayed={gamesPlayed}
+                currentStreak={currentStreak}
+                maxStreak={maxStreak}
+                forceRefresh={forceRefresh}
+                playerChangeCount={playerChangeCount}
               />
             )}
           </div>
@@ -233,3 +246,4 @@ const Game = () => {
 };
 
 export default Game;
+
