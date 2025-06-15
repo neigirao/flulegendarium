@@ -171,40 +171,56 @@ export const useAdminStats = () => {
 
   const mostMissedPlayers = useMemo((): MostMissedPlayer[] => {
     if (!allStats?.attempts || allStats.attempts.length === 0) {
-      console.log('No attempts data for mostMissedPlayers');
+      console.log('❌ No attempts data for mostMissedPlayers');
       return [];
     }
     
-    console.log('Calculating mostMissedPlayers with', allStats.attempts.length, 'attempts');
+    console.log('🎯 Calculating mostMissedPlayers with', allStats.attempts.length, 'attempts');
+    console.log('🎯 Sample attempts for missed calculation:', allStats.attempts.slice(0, 3));
     
-    const stats: Record<string, { total: number, missed: number }> = allStats.attempts.reduce((acc, attempt) => {
+    // Calcular estatísticas por jogador
+    const stats: Record<string, { total: number, missed: number }> = {};
+    
+    allStats.attempts.forEach(attempt => {
       const playerName = attempt.target_player_name;
-      if (playerName) {
-        if (!acc[playerName]) {
-          acc[playerName] = { total: 0, missed: 0 };
+      if (playerName && typeof playerName === 'string') {
+        if (!stats[playerName]) {
+          stats[playerName] = { total: 0, missed: 0 };
         }
-        acc[playerName].total++;
+        stats[playerName].total++;
+        
+        // Contar como erro se is_correct é false
         if (attempt.is_correct === false) {
-          acc[playerName].missed++;
+          stats[playerName].missed++;
+          console.log('❌ Missed attempt for', playerName, '- total missed now:', stats[playerName].missed);
         }
       }
-      return acc;
-    }, {} as Record<string, { total: number, missed: number }>);
+    });
     
-    console.log('Player miss stats:', stats);
+    console.log('🎯 Player miss stats calculated:', stats);
     
+    // Filtrar jogadores com pelo menos 3 tentativas e criar resultado
     const result = Object.entries(stats)
-      .filter(([_, data]) => data.total >= 3) // Only show players with at least 3 attempts
-      .map(([name, data]) => ({
-        player_name: name,
-        missed_count: data.missed,
-        total_attempts: data.total,
-        miss_rate: (data.missed / data.total * 100).toFixed(1)
-      }))
+      .filter(([_, data]) => {
+        const hasMinAttempts = data.total >= 3;
+        if (!hasMinAttempts) {
+          console.log('⚠️ Player with insufficient attempts (< 3):', _, data);
+        }
+        return hasMinAttempts;
+      })
+      .map(([name, data]) => {
+        const missRate = data.total > 0 ? (data.missed / data.total * 100).toFixed(1) : '0.0';
+        return {
+          player_name: name,
+          missed_count: data.missed,
+          total_attempts: data.total,
+          miss_rate: missRate
+        };
+      })
       .sort((a, b) => b.missed_count - a.missed_count)
       .slice(0, 10);
     
-    console.log('Most missed players result:', result);
+    console.log('🎯 Most missed players result:', result);
     return result;
   }, [allStats?.attempts]);
 
@@ -270,6 +286,7 @@ export const useAdminStats = () => {
     mostCorrectPlayersCount: mostCorrectPlayers.length,
     mostCorrectPlayers: mostCorrectPlayers.slice(0, 3),
     mostMissedPlayersCount: mostMissedPlayers.length,
+    mostMissedPlayers: mostMissedPlayers.slice(0, 3),
     playerRankingCount: allStats?.rankings?.length || 0,
     progressStatsCount: progressStats.length,
     generalStats,
