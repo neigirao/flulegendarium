@@ -2,7 +2,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
-import { usePlayerSelection } from "./use-player-selection";
 import { useGameTimer, TIME_LIMIT_SECONDS } from "./use-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
 import { processPlayerName, isCorrectGuess } from "@/utils/name-processor";
@@ -17,6 +16,9 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const { user } = useAuth();
   const { trackEvent, trackCorrectGuess, trackIncorrectGuess } = useAnalytics();
   const { checkAndUnlockAchievements } = useAchievements();
+  
+  // State management
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
@@ -24,10 +26,30 @@ export const useGuessGame = (players: Player[] | undefined) => {
   const [gameActive, setGameActive] = useState(false);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [gamesPlayed, setGamesPlayed] = useState(0);
-  
-  // Player selection hook
-  const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed } = usePlayerSelection(players);
-  
+
+  // Select random player function
+  const selectRandomPlayer = useCallback(() => {
+    if (!players || players.length === 0) {
+      console.warn('⚠️ Nenhum jogador disponível para seleção');
+      return;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * players.length);
+    const selectedPlayer = players[randomIndex];
+    console.log('🔄 Novo jogador selecionado:', selectedPlayer.name);
+    setCurrentPlayer(selectedPlayer);
+    setGameOver(false);
+    setHasLost(false);
+  }, [players]);
+
+  // Initialize with first player when players are loaded
+  useEffect(() => {
+    if (players && players.length > 0 && !currentPlayer) {
+      console.log('🎮 Inicializando com primeiro jogador dos', players.length, 'disponíveis');
+      selectRandomPlayer();
+    }
+  }, [players, currentPlayer, selectRandomPlayer]);
+
   // Handle time up callback
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer && gameActive) {
@@ -138,6 +160,11 @@ export const useGuessGame = (players: Player[] | undefined) => {
       setIsProcessingGuess(false);
     }
   }, [currentPlayer, gameOver, stopTimer, selectRandomPlayer, toast, isProcessingGuess, score, gameActive, currentStreak, gamesPlayed]);
+
+  // Handle player image fixed
+  const handlePlayerImageFixed = useCallback(() => {
+    console.log('🖼️ Imagem corrigida para:', currentPlayer?.name);
+  }, [currentPlayer]);
 
   return {
     currentPlayer,

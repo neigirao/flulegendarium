@@ -21,11 +21,11 @@ export const usePlayersData = () => {
         }
         
         if (!data || data.length === 0) {
-          console.warn("⚠️ Nenhum jogador encontrado");
+          console.warn("⚠️ Nenhum jogador encontrado no banco");
           return [] as Player[];
         }
 
-        console.log("✅ Jogadores carregados:", data.length);
+        console.log("✅ Jogadores carregados do banco:", data.length);
         
         const enhancedPlayers: Player[] = data.map((player) => {
           const enhancedPlayer: Player = {
@@ -40,10 +40,11 @@ export const usePlayersData = () => {
             statistics: convertStatistics(player.statistics)
           };
           
+          console.log(`🎯 Jogador processado: ${enhancedPlayer.name} - ${enhancedPlayer.image_url}`);
           return enhancedPlayer;
         });
         
-        console.log("🎯 Primeiro jogador processado:", enhancedPlayers[0]?.name);
+        console.log("🎮 Total de jogadores processados:", enhancedPlayers.length);
         return enhancedPlayers;
       } catch (err) {
         console.error("💥 Exceção ao buscar jogadores:", err);
@@ -54,6 +55,8 @@ export const usePlayersData = () => {
     retry: 2,
     refetchOnWindowFocus: false,
   });
+
+  console.log("🔄 Hook usePlayersData - Players:", players?.length || 0, "Loading:", isLoading, "Error:", !!playersError);
 
   return {
     players,

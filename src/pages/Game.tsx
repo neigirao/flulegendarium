@@ -27,7 +27,7 @@ const Game = () => {
   const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
   const { showImageUrl, handleDebugClick } = useDebug();
   
-  // Load players data
+  // Load players data first
   const { players, isLoading, playersError } = usePlayersData();
 
   // Track page view
@@ -35,7 +35,7 @@ const Game = () => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
-  // Only pass players when game has actually started
+  // Now use the game hook with the loaded players
   const {
     currentPlayer,
     attempts,
@@ -51,7 +51,7 @@ const Game = () => {
     startGameForPlayer,
     isTimerRunning,
     resetScore
-  } = useGuessGame(undefined); // Always pass undefined initially
+  } = useGuessGame(players);
 
   // Manage game state
   const {
@@ -103,6 +103,9 @@ const Game = () => {
   if (!players || players.length === 0) {
     return <EmptyPlayersDisplay />;
   }
+
+  console.log('🎮 Game render - Current Player:', currentPlayer?.name || 'Nenhum');
+  console.log('🎮 Game render - Players loaded:', players?.length || 0);
 
   return (
     <>
