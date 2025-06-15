@@ -65,7 +65,7 @@ export const useAdminAuth = () => {
         localStorage.setItem('adminAuth', JSON.stringify(adminAuth));
         setIsAuthenticated(true);
         setAdminData(adminAuth);
-        navigate('/admin');
+        navigate('/admin/dashboard');
       } else {
         setError('Credenciais inválidas');
       }
@@ -81,7 +81,7 @@ export const useAdminAuth = () => {
     localStorage.removeItem('adminAuth');
     setIsAuthenticated(false);
     setAdminData(null);
-    navigate('/admin/login');
+    navigate('/admin/login-administrador');
   };
 
   return {
