@@ -7,7 +7,7 @@ import { isCorrectGuess } from "@/utils/name-processor";
 interface UseSimpleGameLogicProps {
   currentPlayer: Player | null;
   onCorrectGuess: (points: number) => void;
-  onIncorrectGuess: () => void;
+  onIncorrectGuess: (guess: string) => void; // Updated to accept guess parameter
   onNextPlayer: () => void;
 }
 
@@ -53,7 +53,7 @@ export const useSimpleGameLogic = ({
       } else {
         console.log('❌ ERROU! Resposta:', guess, 'Correto:', currentPlayer.name);
         
-        onIncorrectGuess();
+        onIncorrectGuess(guess); // Now passing the guess parameter
         
         toast({
           variant: "destructive",
