@@ -5,6 +5,7 @@ import { getUserStats, getUserGameHistory } from "@/services/gameHistoryService"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Target, Calendar, TrendingUp } from "lucide-react";
 import { AchievementsGrid } from "@/components/achievements/AchievementsGrid";
+import { UserSpecialties } from "@/components/UserSpecialties";
 
 export const UserProfile = () => {
   const { user } = useAuth();
@@ -71,6 +72,9 @@ export const UserProfile = () => {
           </Card>
         </div>
       )}
+
+      {/* Nova seção de análise de especialidades */}
+      <UserSpecialties />
 
       {/* Achievements Section */}
       <AchievementsGrid />
