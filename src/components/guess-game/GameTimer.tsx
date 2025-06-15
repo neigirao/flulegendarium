@@ -33,23 +33,23 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver }: GameTimerProps
 
   return (
     <div className={cn(
-      "relative flex items-center justify-center gap-3 px-8 py-6 rounded-2xl border-2 transition-all duration-300",
-      "min-w-[200px] text-center transform hover:scale-105 backdrop-blur-sm",
+      "relative flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-6 rounded-xl sm:rounded-2xl border-2 transition-all duration-300",
+      "w-full max-w-[280px] sm:max-w-[320px] md:max-w-[400px] text-center transform hover:scale-105 backdrop-blur-sm",
       variantStyles[variant]
     )}>
       {/* Pulse effect para estados críticos */}
       {isCritical && (
-        <div className="absolute inset-0 rounded-2xl bg-red-400/20 animate-ping"></div>
+        <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-red-400/20 animate-ping"></div>
       )}
       
       {/* Ícone principal */}
       <div className="relative z-10 flex items-center justify-center">
         {isCritical ? (
-          <AlertTriangle className="w-7 h-7 animate-bounce" />
+          <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 animate-bounce" />
         ) : isUrgent ? (
-          <Clock className="w-7 h-7 animate-pulse" />
+          <Clock className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 animate-pulse" />
         ) : (
-          <Timer className="w-7 h-7" />
+          <Timer className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
         )}
       </div>
       
@@ -57,14 +57,14 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver }: GameTimerProps
       <div className="relative z-10 flex flex-col items-center">
         <div className={cn(
           "font-bold tabular-nums leading-none transition-all duration-200",
-          "text-3xl lg:text-4xl",
+          "text-xl sm:text-2xl md:text-3xl lg:text-4xl",
           isCritical && "animate-pulse"
         )}>
           {timeRemaining}s
         </div>
         
-        {/* Status text */}
-        <div className="mt-1 text-sm font-medium opacity-90">
+        {/* Status text - oculto em telas muito pequenas */}
+        <div className="mt-1 text-xs sm:text-sm font-medium opacity-90 hidden xs:block">
           {isCritical ? "CRÍTICO!" : 
            isUrgent ? "URGENTE!" : 
            isWarning ? "Atenção!" :
@@ -75,7 +75,7 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver }: GameTimerProps
 
       {/* Barra de progresso visual */}
       {!gameOver && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-2xl overflow-hidden">
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/20 rounded-b-xl sm:rounded-b-2xl overflow-hidden">
           <div 
             className={cn(
               "h-full transition-all duration-1000 ease-linear",
@@ -89,10 +89,10 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver }: GameTimerProps
         </div>
       )}
 
-      {/* Indicador de alerta */}
+      {/* Indicador de alerta - oculto em telas pequenas para não sobrecarregar */}
       {isUrgent && !gameOver && (
-        <div className="relative z-10">
-          <AlertTriangle className="w-5 h-5 text-white/90 animate-pulse" />
+        <div className="relative z-10 hidden sm:block">
+          <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-white/90 animate-pulse" />
         </div>
       )}
     </div>
