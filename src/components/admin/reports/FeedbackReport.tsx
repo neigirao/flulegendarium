@@ -21,7 +21,7 @@ export const FeedbackReport = () => {
     queryFn: async (): Promise<FeedbackItem[]> => {
       try {
         const { data, error } = await supabase
-          .from('user_feedback' as any)
+          .from('user_feedback')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(50);
@@ -60,7 +60,27 @@ export const FeedbackReport = () => {
           ];
         }
 
-        return (data as FeedbackItem[]) || [];
+        // Validate and transform data to match our interface
+        if (data && Array.isArray(data)) {
+          return data.filter(item => 
+            item && 
+            typeof item === 'object' && 
+            'id' in item && 
+            'rating' in item && 
+            'category' in item && 
+            'created_at' in item
+          ).map(item => ({
+            id: item.id,
+            rating: item.rating,
+            comment: item.comment || undefined,
+            category: item.category || 'gameplay',
+            created_at: item.created_at,
+            user_email: item.user_email || undefined,
+            status: item.status || 'new'
+          }));
+        }
+
+        return [];
       } catch (error) {
         console.error('Error fetching feedbacks:', error);
         return [];

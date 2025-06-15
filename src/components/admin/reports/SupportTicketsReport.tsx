@@ -33,7 +33,7 @@ export const SupportTicketsReport = () => {
     queryFn: async (): Promise<SupportTicket[]> => {
       try {
         const { data, error } = await supabase
-          .from('support_tickets' as any)
+          .from('support_tickets')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(100);
@@ -68,7 +68,7 @@ export const SupportTicketsReport = () => {
             {
               id: '3',
               title: 'Jogo trava no celular',
-              description: '    No iPhone 12, o jogo trava após 5 minutos de uso.',
+              description: 'No iPhone 12, o jogo trava após 5 minutos de uso.',
               priority: 'urgent',
               status: 'resolved',
               category: 'technical',
@@ -79,7 +79,30 @@ export const SupportTicketsReport = () => {
           ];
         }
 
-        return (data as SupportTicket[]) || [];
+        // Validate and transform data to match our interface
+        if (data && Array.isArray(data)) {
+          return data.filter(item => 
+            item && 
+            typeof item === 'object' && 
+            'id' in item && 
+            'title' in item && 
+            'description' in item && 
+            'created_at' in item
+          ).map(item => ({
+            id: item.id,
+            title: item.title,
+            description: item.description,
+            priority: item.priority || 'medium',
+            status: item.status || 'open',
+            category: item.category || 'technical',
+            created_at: item.created_at,
+            updated_at: item.updated_at || item.created_at,
+            user_email: item.user_email || undefined,
+            assigned_to: item.assigned_to || undefined
+          }));
+        }
+
+        return [];
       } catch (error) {
         console.error('Error fetching tickets:', error);
         return [];
