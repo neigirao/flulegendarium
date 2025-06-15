@@ -322,6 +322,48 @@ export type Database = {
         }
         Relationships: []
       }
+      support_tickets: {
+        Row: {
+          assigned_to: string | null
+          category: string
+          created_at: string
+          description: string
+          id: string
+          priority: string
+          status: string
+          title: string
+          updated_at: string
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description: string
+          id?: string
+          priority?: string
+          status?: string
+          title: string
+          updated_at?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          category?: string
+          created_at?: string
+          description?: string
+          id?: string
+          priority?: string
+          status?: string
+          title?: string
+          updated_at?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       tables: {
         Row: {
           area_id: string
@@ -394,6 +436,42 @@ export type Database = {
           progress?: number | null
           unlocked_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_feedback: {
+        Row: {
+          category: string
+          comment: string | null
+          created_at: string
+          id: string
+          rating: number
+          status: string
+          updated_at: string
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          category?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating: number
+          status?: string
+          updated_at?: string
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          comment?: string | null
+          created_at?: string
+          id?: string
+          rating?: number
+          status?: string
+          updated_at?: string
+          user_email?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }

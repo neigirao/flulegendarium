@@ -238,20 +238,26 @@ export const formatErrorForDisplay = (error: DetailedError): string => {
 
 // Função para log estruturado de erro
 export const logStructuredError = (error: DetailedError): void => {
-  const logLevel = {
+  const logMethods = {
     low: 'info',
     medium: 'warn',
     high: 'error',
     critical: 'error'
-  }[error.severity];
+  } as const;
 
-  console[logLevel as keyof Console](`🚨 [${error.code}] ${error.title}:`, {
-    message: error.message,
-    suggestion: error.suggestion,
-    severity: error.severity,
-    context: error.context,
-    timestamp: new Date().toISOString()
-  });
+  const logLevel = logMethods[error.severity];
+  
+  // Use type assertion to access console methods safely
+  const logMethod = (console as any)[logLevel];
+  if (typeof logMethod === 'function') {
+    logMethod(`🚨 [${error.code}] ${error.title}:`, {
+      message: error.message,
+      suggestion: error.suggestion,
+      severity: error.severity,
+      context: error.context,
+      timestamp: new Date().toISOString()
+    });
+  }
 };
 
 // Função para determinar se erro precisa de intervenção imediata
