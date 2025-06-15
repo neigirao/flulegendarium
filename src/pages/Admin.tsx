@@ -4,9 +4,10 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AddPlayerForm } from "@/components/AddPlayerForm";
 import { PlayersManagement } from "@/components/admin/PlayersManagement";
+import { ReportsOverview } from "@/components/admin/reports/ReportsOverview";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, BarChart3, UserPlus, Users } from "lucide-react";
+import { LogOut, BarChart3, UserPlus, Users, FileText } from "lucide-react";
 
 export default function Admin() {
   const { isAuthenticated, isLoading, adminData, logout } = useAdminAuth();
@@ -20,7 +21,7 @@ export default function Admin() {
   }
 
   if (!isAuthenticated) {
-    window.location.href = '/admin/login';
+    window.location.href = '/admin/login-administrador';
     return null;
   }
 
@@ -45,10 +46,14 @@ export default function Admin() {
       {/* Conteúdo Principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 max-w-lg">
+          <TabsList className="grid w-full grid-cols-4 max-w-2xl">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 size={16} />
               Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="flex items-center gap-2">
+              <FileText size={16} />
+              Relatórios
             </TabsTrigger>
             <TabsTrigger value="players" className="flex items-center gap-2">
               <Users size={16} />
@@ -62,6 +67,10 @@ export default function Admin() {
 
           <TabsContent value="dashboard">
             <AdminDashboard />
+          </TabsContent>
+
+          <TabsContent value="reports">
+            <ReportsOverview />
           </TabsContent>
 
           <TabsContent value="players">
