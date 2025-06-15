@@ -1,4 +1,3 @@
-
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
@@ -17,11 +16,16 @@ import { useDebug } from "@/hooks/use-debug";
 import { usePlayersData } from "@/hooks/use-players-data";
 import { usePlayerPreload } from "@/hooks/use-player-preload";
 import { useGameState } from "@/hooks/use-game-state";
+import { useObservability } from "@/hooks/use-observability";
+import { useGameMetrics } from "@/hooks/use-game-metrics";
+import { useEffect } from "react";
 
 const GuessPlayer = () => {
   const { user } = useAuth();
   const [showAuthSelection, setShowAuthSelection] = useState(true);
   const { showImageUrl, handleDebugClick } = useDebug();
+  const { trackError, log } = useObservability();
+  const { trackGameAbandonment, trackConversion } = useGameMetrics();
   
   const { players, isLoading, playersError } = usePlayersData();
 
@@ -68,25 +72,67 @@ const GuessPlayer = () => {
 
   usePlayerPreload(players, currentPlayer);
 
+  // Enhanced error handling
+  useEffect(() => {
+    if (playersError) {
+      trackError(playersError as Error, {
+        severity: 'critical',
+        component: 'GuessPlayer',
+        action: 'loadPlayers'
+      });
+    }
+  }, [playersError, trackError]);
+
+  // Track page navigation
+  useEffect(() => {
+    log('info', 'GuessPlayer page loaded', {
+      hasUser: !!user,
+      playersCount: players?.length || 0,
+      gameStarted
+    });
+  }, [log, user, players, gameStarted]);
+
   const handleTutorialCompleteLocal = () => {
+    log('info', 'Tutorial completed', { hasUser: !!user });
     handleTutorialComplete(user);
   };
 
   const handleSkipTutorialLocal = () => {
+    log('info', 'Tutorial skipped', { hasUser: !!user });
     handleSkipTutorial(user);
   };
 
   const handleGuestPlay = () => {
+    log('info', 'Guest play selected');
     setShowAuthSelection(false);
     setGameStarted(true);
     setIsAuthenticatedGame(false);
   };
 
   const handleAuthenticatedPlay = () => {
+    log('info', 'Authenticated play selected', { userId: user?.id });
+    trackConversion(false, 'login');
     setShowAuthSelection(false);
     setGameStarted(true);
     setIsAuthenticatedGame(true);
   };
+
+  // Track game abandonment on unmount
+  useEffect(() => {
+    return () => {
+      if (gameStarted && !gameOver) {
+        trackGameAbandonment(
+          {
+            sessionId: `session_${Date.now()}`,
+            startTime: Date.now(),
+            isAuthenticated: isAuthenticatedGame,
+            playerName: guestPlayerName
+          },
+          'gameplay'
+        );
+      }
+    };
+  }, [gameStarted, gameOver, isAuthenticatedGame, guestPlayerName, trackGameAbandonment]);
 
   if (isLoading) {
     return (
