@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Trophy, User } from "lucide-react";
+import { Trophy, User, X } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useNavigate } from "react-router-dom";
 
@@ -58,7 +58,7 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
         .insert([
           {
             player_name: name.trim(),
-            score: score, // Allow 0 scores to be saved
+            score: score,
             user_id: user?.id || null,
             created_at: new Date().toISOString()
           }
@@ -78,12 +78,7 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
         description: `Sua pontuação de ${score} pontos foi salva no ranking!`,
       });
 
-      // Se não está autenticado (jogador convidado), redireciona para home
-      if (!isAuthenticated) {
-        navigate("/");
-      } else {
-        onSaved();
-      }
+      onSaved();
     } catch (error) {
       console.error('Erro ao salvar pontuação:', error);
       
@@ -104,48 +99,70 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="text-center">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <Trophy className="w-6 h-6 text-flu-grena" />
-          <h3 className="text-xl font-bold text-flu-grena">Salvar Pontuação</h3>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Trophy className="w-5 h-5 text-flu-grena" />
+          <h3 className="text-lg font-bold text-flu-grena">Salvar no Ranking</h3>
         </div>
-        <p className="text-gray-600 mb-4">
-          Sua pontuação: <span className="font-bold text-flu-grena">{score}</span>
-        </p>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onCancel}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          <X className="w-4 h-4" />
+        </Button>
       </div>
+      
+      <p className="text-gray-600 text-center">
+        Sua pontuação: <span className="font-bold text-flu-grena">{score} pontos</span>
+      </p>
 
-      <div className="space-y-2">
-        <label htmlFor="playerName" className="block text-sm font-medium text-gray-700">
-          Seu nome
-        </label>
-        <div className="relative">
-          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            id="playerName"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Digite seu nome..."
-            className="pl-10"
-            disabled={isLoading}
-            autoFocus={!user} // Only auto-focus if not logged in (no auto-fill)
-          />
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <label htmlFor="playerName" className="block text-sm font-medium text-gray-700">
+            Seu nome
+          </label>
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              id="playerName"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Digite seu nome..."
+              className="pl-10"
+              disabled={isLoading}
+              autoFocus={!user}
+            />
+          </div>
+          {user && (
+            <p className="text-xs text-gray-500">
+              Nome preenchido automaticamente do seu perfil
+            </p>
+          )}
         </div>
-        {user && (
-          <p className="text-xs text-gray-500">
-            Nome preenchido automaticamente do seu perfil
-          </p>
-        )}
-      </div>
 
-      <Button
-        type="submit"
-        disabled={isLoading || !name.trim()}
-        className="w-full bg-flu-grena hover:bg-flu-grena/90"
-      >
-        {isLoading ? "Salvando..." : "Salvar"}
-      </Button>
-    </form>
+        <div className="flex gap-2">
+          <Button
+            type="submit"
+            disabled={isLoading || !name.trim()}
+            className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+          >
+            {isLoading ? "Salvando..." : "Salvar"}
+          </Button>
+          
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            className="border-gray-300 text-gray-600 hover:bg-gray-50"
+          >
+            Pular
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 };

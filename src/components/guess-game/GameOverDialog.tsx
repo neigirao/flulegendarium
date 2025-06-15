@@ -12,6 +12,7 @@ import {
 import { Trophy, RotateCcw, Play, Home } from "lucide-react";
 import { GameConfirmDialog } from "./GameConfirmDialog";
 import { useGameConfirmations } from "@/hooks/use-game-confirmations";
+import { RankingForm } from "./RankingForm";
 import { Link } from "react-router-dom";
 
 interface GameOverDialogProps {
@@ -32,6 +33,7 @@ export const GameOverDialog = ({
   isAuthenticated
 }: GameOverDialogProps) => {
   const { confirmation, hideConfirmation, confirmResetScore, confirmExitGame } = useGameConfirmations();
+  const [showRankingForm, setShowRankingForm] = useState(true);
 
   const handleNewGame = () => {
     onResetScore();
@@ -39,6 +41,16 @@ export const GameOverDialog = ({
   };
 
   const handleExitToHome = () => {
+    window.location.href = '/';
+  };
+
+  const handleRankingSaved = () => {
+    // After saving ranking, go to home
+    window.location.href = '/';
+  };
+
+  const handleSkipRanking = () => {
+    // Skip ranking and go to home
     window.location.href = '/';
   };
 
@@ -60,30 +72,41 @@ export const GameOverDialog = ({
             </DialogDescription>
           </DialogHeader>
           
-          <DialogFooter className="flex flex-col gap-3 sm:flex-col">
-            <Button
-              onClick={handleNewGame}
-              className="bg-flu-verde hover:bg-flu-verde/90 text-white flex items-center gap-2"
-            >
-              <Play className="w-4 h-4" />
-              Novo Jogo
-            </Button>
-            
-            <Button
-              variant="outline"
-              onClick={handleExitToHome}
-              className="border-flu-grena text-flu-grena hover:bg-flu-grena/10 flex items-center gap-2"
-            >
-              <Home className="w-4 h-4" />
-              Voltar ao Início
-            </Button>
-            
-            {isAuthenticated && (
-              <p className="text-xs text-gray-500 text-center mt-2">
-                Sua pontuação será salva automaticamente
-              </p>
+          <div className="py-4">
+            {showRankingForm ? (
+              <RankingForm 
+                score={score}
+                onSaved={handleRankingSaved}
+                onCancel={handleSkipRanking}
+                isAuthenticated={isAuthenticated}
+              />
+            ) : (
+              <DialogFooter className="flex flex-col gap-3 sm:flex-col">
+                <Button
+                  onClick={handleNewGame}
+                  className="bg-flu-verde hover:bg-flu-verde/90 text-white flex items-center gap-2"
+                >
+                  <Play className="w-4 h-4" />
+                  Novo Jogo
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  onClick={handleExitToHome}
+                  className="border-flu-grena text-flu-grena hover:bg-flu-grena/10 flex items-center gap-2"
+                >
+                  <Home className="w-4 h-4" />
+                  Voltar ao Início
+                </Button>
+                
+                {isAuthenticated && (
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    Sua pontuação será salva automaticamente
+                  </p>
+                )}
+              </DialogFooter>
             )}
-          </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 
