@@ -1,3 +1,4 @@
+
 import { Player } from './types';
 import { imageCache } from './cache';
 import { getReliableImageUrl } from './imageUtils';
@@ -7,8 +8,8 @@ export const preloadPlayerImages = (players: Player[]) => {
   if (!players || players.length === 0) return;
   
   const preloadCount = Math.min(
-    Math.max(5, navigator.hardwareConcurrency ? navigator.hardwareConcurrency * 2 : 6),
-    10
+    Math.max(3, navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4),
+    8
   );
   
   console.log(`Precarregando ${preloadCount} imagens de jogadores de forma sequencial`);
@@ -49,7 +50,9 @@ export const preloadPlayerImages = (players: Player[]) => {
   
   preloadSequentially();
   
-  [defaultImage, ...Object.values(playerImagesFallbacks).slice(0, 3)].forEach(url => {
+  // Preload default images with lower priority
+  const imagesToPreload = [defaultImage, ...Object.values(playerImagesFallbacks).slice(0, 2)];
+  imagesToPreload.forEach(url => {
     const img = new Image();
     img.src = url;
     img.fetchPriority = 'low';
@@ -96,7 +99,7 @@ export const preloadNextPlayer = (nextPlayer: Player | null) => {
   }
 };
 
-export const prepareNextBatch = (allPlayers: Player[], currentPlayer: Player | null, batchSize = 3) => {
+export const prepareNextBatch = (allPlayers: Player[], currentPlayer: Player | null, batchSize = 2) => {
   if (!allPlayers || allPlayers.length <= 1 || !currentPlayer) return;
   
   const currentIndex = allPlayers.findIndex(p => p.id === currentPlayer.id);
@@ -121,8 +124,8 @@ export const prepareNextBatch = (allPlayers: Player[], currentPlayer: Player | n
           const img = new Image();
           img.fetchPriority = 'low';
           img.src = imageUrl;
-        }, index * 150);
+        }, index * 200);
       });
-    }, 500);
+    }, 800);
   }
 };

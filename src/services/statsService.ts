@@ -8,37 +8,39 @@ interface GameStats {
   totalPlayers: number;
 }
 
+// Cache for stats to avoid frequent database calls
+let statsCache: { data: GameStats; timestamp: number } | null = null;
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
 export const getGameStats = async (): Promise<GameStats> => {
+  // Return cached data if available and not expired
+  if (statsCache && Date.now() - statsCache.timestamp < CACHE_DURATION) {
+    return statsCache.data;
+  }
+
   try {
-    // Get total game starts (todas as partidas iniciadas)
-    const { count: totalMatches } = await supabase
-      .from('game_starts')
-      .select('*', { count: 'exact', head: true });
+    // Batch all queries together for better performance
+    const [gameStartsResult, rankingsResult, highestScoreResult, playersResult] = await Promise.all([
+      supabase.from('game_starts').select('*', { count: 'exact', head: true }),
+      supabase.from('rankings').select('*', { count: 'exact', head: true }),
+      supabase.from('rankings').select('score').order('score', { ascending: false }).limit(1).single(),
+      supabase.from('players').select('*', { count: 'exact', head: true })
+    ]);
 
-    // Get unique active players (players who have rankings)
-    const { count: activePlayers } = await supabase
-      .from('rankings')
-      .select('*', { count: 'exact', head: true });
-
-    // Get highest score from rankings
-    const { data: highestScoreData } = await supabase
-      .from('rankings')
-      .select('score')
-      .order('score', { ascending: false })
-      .limit(1)
-      .single();
-
-    // Get total number of players in database
-    const { count: totalPlayers } = await supabase
-      .from('players')
-      .select('*', { count: 'exact', head: true });
-
-    return {
-      totalMatches: totalMatches || 0,
-      activePlayers: activePlayers || 0,
-      highestScore: highestScoreData?.score || 0,
-      totalPlayers: totalPlayers || 0
+    const stats = {
+      totalMatches: gameStartsResult.count || 0,
+      activePlayers: rankingsResult.count || 0,
+      highestScore: highestScoreResult.data?.score || 0,
+      totalPlayers: playersResult.count || 0
     };
+
+    // Update cache
+    statsCache = {
+      data: stats,
+      timestamp: Date.now()
+    };
+
+    return stats;
   } catch (error) {
     console.error('Erro ao buscar estatísticas:', error);
     // Return fallback values on error

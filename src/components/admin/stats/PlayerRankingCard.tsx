@@ -1,5 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { memo } from "react";
 
 interface RankingPlayer {
   id: string;
@@ -11,7 +12,7 @@ interface PlayerRankingCardProps {
   players: RankingPlayer[];
 }
 
-export const PlayerRankingCard = ({ players }: PlayerRankingCardProps) => {
+export const PlayerRankingCard = memo(({ players }: PlayerRankingCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -30,4 +31,6 @@ export const PlayerRankingCard = ({ players }: PlayerRankingCardProps) => {
       </CardContent>
     </Card>
   );
-};
+});
+
+PlayerRankingCard.displayName = 'PlayerRankingCard';

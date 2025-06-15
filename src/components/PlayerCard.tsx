@@ -100,6 +100,8 @@ const PlayerCard = memo(({ player, onImageUpdate }: PlayerCardProps) => {
               alt={player.name}
               className="w-full h-full object-cover"
               onError={handleImageError}
+              loading="lazy"
+              decoding="async"
             />
           )}
           <Button 

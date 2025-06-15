@@ -52,6 +52,7 @@ export const PlayerImage = memo(({ player, onImageFixed, onImageLoaded, priority
             src={imageSrc}
             alt={`Imagem de ${player.name}`}
             loading={priority ? "eager" : "lazy"}
+            decoding="async"
             className={`max-w-full max-h-full object-contain transition-all duration-300 ${
               isLoading ? 'opacity-0' : 'opacity-100'
             }`}

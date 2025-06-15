@@ -1,5 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { memo } from "react";
 
 interface Player {
   player_name: string;
@@ -10,7 +11,7 @@ interface MostCorrectPlayersCardProps {
   players: Player[];
 }
 
-export const MostCorrectPlayersCard = ({ players }: MostCorrectPlayersCardProps) => {
+export const MostCorrectPlayersCard = memo(({ players }: MostCorrectPlayersCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -29,4 +30,6 @@ export const MostCorrectPlayersCard = ({ players }: MostCorrectPlayersCardProps)
       </CardContent>
     </Card>
   );
-};
+});
+
+MostCorrectPlayersCard.displayName = 'MostCorrectPlayersCard';

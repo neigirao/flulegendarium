@@ -1,5 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { memo } from "react";
 
 interface ProgressStat {
   step: number;
@@ -10,7 +11,7 @@ interface ProgressStatsCardProps {
   stats: ProgressStat[];
 }
 
-export const ProgressStatsCard = ({ stats }: ProgressStatsCardProps) => {
+export const ProgressStatsCard = memo(({ stats }: ProgressStatsCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -29,4 +30,6 @@ export const ProgressStatsCard = ({ stats }: ProgressStatsCardProps) => {
       </CardContent>
     </Card>
   );
-};
+});
+
+ProgressStatsCard.displayName = 'ProgressStatsCard';

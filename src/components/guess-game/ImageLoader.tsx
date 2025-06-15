@@ -1,11 +1,12 @@
 
 import { Loader } from "lucide-react";
+import { memo } from "react";
 
 interface ImageLoaderProps {
   isLoading: boolean;
 }
 
-export const ImageLoader = ({ isLoading }: ImageLoaderProps) => {
+export const ImageLoader = memo(({ isLoading }: ImageLoaderProps) => {
   if (!isLoading) return null;
   
   return (
@@ -16,4 +17,6 @@ export const ImageLoader = ({ isLoading }: ImageLoaderProps) => {
       </div>
     </div>
   );
-};
+});
+
+ImageLoader.displayName = 'ImageLoader';

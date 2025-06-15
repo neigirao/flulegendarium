@@ -1,5 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { memo } from "react";
 
 interface MissedPlayer {
   player_name: string;
@@ -12,7 +13,7 @@ interface MostMissedPlayersCardProps {
   players: MissedPlayer[];
 }
 
-export const MostMissedPlayersCard = ({ players }: MostMissedPlayersCardProps) => {
+export const MostMissedPlayersCard = memo(({ players }: MostMissedPlayersCardProps) => {
   return (
     <Card>
       <CardHeader>
@@ -31,4 +32,6 @@ export const MostMissedPlayersCard = ({ players }: MostMissedPlayersCardProps) =
       </CardContent>
     </Card>
   );
-};
+});
+
+MostMissedPlayersCard.displayName = 'MostMissedPlayersCard';

@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -118,30 +119,10 @@ export const PlayerRecognitionStats = memo(() => {
         })
         .sort((a, b) => b.total_attempts - a.total_attempts);
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   const displayedStats = useMemo(() => recognitionStats.slice(0, 15), [recognitionStats]);
-
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Muito Difícil':
-        return 'destructive';
-      case 'Difícil':
-        return 'secondary';
-      case 'Médio':
-        return 'outline';
-      case 'Fácil':
-        return 'default';
-      default:
-        return 'outline';
-    }
-  };
-
-  const getDifficultyIcon = (difficulty: string) => {
-    return difficulty === 'Muito Difícil' || difficulty === 'Difícil' ? 
-      <EyeOff className="h-3 w-3" /> : 
-      <Eye className="h-3 w-3" />;
-  };
 
   if (isLoading) {
     return (
@@ -150,6 +131,13 @@ export const PlayerRecognitionStats = memo(() => {
           <CardTitle>Reconhecimento por Jogador</CardTitle>
           <CardDescription>Carregando estatísticas...</CardDescription>
         </CardHeader>
+        <CardContent>
+          <div className="animate-pulse space-y-2">
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className="h-12 bg-gray-200 rounded" />
+            ))}
+          </div>
+        </CardContent>
       </Card>
     );
   }

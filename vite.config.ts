@@ -21,7 +21,6 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    // Optimize chunk splitting for better caching and performance budget
     rollupOptions: {
       output: {
         manualChunks: {
@@ -43,10 +42,13 @@ export default defineConfig(({ mode }) => ({
           query: ['@tanstack/react-query'],
           
           // Database - separate chunk
-          supabase: ['@supabase/supabase-js']
+          supabase: ['@supabase/supabase-js'],
+          
+          // Icons - separate chunk since they're large
+          icons: ['lucide-react']
         },
         
-        // Optimize chunk naming for better caching - Fixed undefined check
+        // Optimize chunk naming for better caching
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId;
           if (facadeModuleId) {
@@ -74,7 +76,7 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     
     // Set chunk size warning limit (performance budget)
-    chunkSizeWarningLimit: 800, // 800KB limit
+    chunkSizeWarningLimit: 500, // Reduced from 800KB to 500KB
     
     // Optimize CSS
     cssCodeSplit: true,

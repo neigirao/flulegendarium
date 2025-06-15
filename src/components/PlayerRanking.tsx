@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy } from "lucide-react";
+import { memo, useMemo } from "react";
 
 interface RankingEntry {
   id: string;
@@ -12,21 +13,7 @@ interface RankingEntry {
   created_at: string;
 }
 
-export const PlayerRanking = () => {
-  const { data: rankings = [] } = useQuery({
-    queryKey: ['rankings'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('rankings')
-        .select('*')
-        .order('score', { ascending: false })
-        .limit(10);
-      
-      if (error) throw error;
-      return data as RankingEntry[];
-    },
-  });
-
+const RankingItem = memo(({ rank, index }: { rank: RankingEntry; index: number }) => {
   const getRankIcon = (index: number) => {
     switch (index) {
       case 0:
@@ -40,8 +27,45 @@ export const PlayerRanking = () => {
     }
   };
 
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          {getRankIcon(index)}
+          <div>
+            <div className="font-bold text-xl text-flu-grena">{rank.player_name}</div>
+            <div className="text-sm text-gray-600 font-medium">{rank.score} pontos</div>
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="text-3xl font-black text-flu-grena">{rank.score}</div>
+          <div className="text-sm text-gray-500 font-medium">pts</div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+RankingItem.displayName = 'RankingItem';
+
+export const PlayerRanking = memo(() => {
+  const { data: rankings = [] } = useQuery({
+    queryKey: ['rankings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('rankings')
+        .select('*')
+        .order('score', { ascending: false })
+        .limit(10);
+      
+      if (error) throw error;
+      return data as RankingEntry[];
+    },
+    staleTime: 2 * 60 * 1000, // 2 minutes
+  });
+
   // Default ranking data if no real data is available
-  const defaultRankings: RankingEntry[] = [
+  const defaultRankings: RankingEntry[] = useMemo(() => [
     { id: '1', player_name: 'Braga', score: 135, games_played: 1, user_id: null, created_at: '' },
     { id: '2', player_name: 'Fulano', score: 92, games_played: 1, user_id: null, created_at: '' },
     { id: '3', player_name: 'Sicrano', score: 70, games_played: 1, user_id: null, created_at: '' },
@@ -52,29 +76,18 @@ export const PlayerRanking = () => {
     { id: '8', player_name: 'Fernando Dias', score: 40, games_played: 1, user_id: null, created_at: '' },
     { id: '9', player_name: 'Rafael Costa', score: 35, games_played: 1, user_id: null, created_at: '' },
     { id: '10', player_name: 'Lucas Alves', score: 30, games_played: 1, user_id: null, created_at: '' },
-  ];
+  ], []);
 
-  const displayRankings = rankings.length > 0 ? rankings : defaultRankings;
+  const displayRankings = useMemo(() => 
+    rankings.length > 0 ? rankings : defaultRankings,
+    [rankings, defaultRankings]
+  );
 
   return (
     <div className="max-w-4xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {displayRankings.map((rank, index) => (
-          <div key={`${rank.id}-${index}`} className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                {getRankIcon(index)}
-                <div>
-                  <div className="font-bold text-xl text-flu-grena">{rank.player_name}</div>
-                  <div className="text-sm text-gray-600 font-medium">{rank.score} pontos</div>
-                </div>
-              </div>
-              <div className="text-right">
-                <div className="text-3xl font-black text-flu-grena">{rank.score}</div>
-                <div className="text-sm text-gray-500 font-medium">pts</div>
-              </div>
-            </div>
-          </div>
+          <RankingItem key={`${rank.id}-${index}`} rank={rank} index={index} />
         ))}
       </div>
       
@@ -86,4 +99,6 @@ export const PlayerRanking = () => {
       )}
     </div>
   );
-};
+});
+
+PlayerRanking.displayName = 'PlayerRanking';

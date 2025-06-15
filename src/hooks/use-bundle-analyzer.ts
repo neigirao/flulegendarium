@@ -35,7 +35,7 @@ export const useBundleAnalyzer = () => {
       });
       
       // Track to analytics if bundle is too large
-      if (totalJSSize > 500 * 1024) { // > 500KB
+      if (totalJSSize > 400 * 1024) { // Reduced threshold to 400KB
         if (window.gtag) {
           window.gtag('event', 'large_bundle', {
             event_category: 'Performance',

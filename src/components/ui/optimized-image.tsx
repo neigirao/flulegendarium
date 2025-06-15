@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
 interface OptimizedImageProps {
@@ -14,7 +14,7 @@ interface OptimizedImageProps {
   fallbackSrc?: string;
 }
 
-export const OptimizedImage = ({
+export const OptimizedImage = memo(({
   src,
   alt,
   width,
@@ -29,6 +29,7 @@ export const OptimizedImage = ({
   const [hasError, setHasError] = useState(false);
   const [currentSrc, setCurrentSrc] = useState(src);
   const hasTriedFallback = useRef(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     setCurrentSrc(src);
@@ -37,14 +38,14 @@ export const OptimizedImage = ({
     hasTriedFallback.current = false;
   }, [src]);
 
-  const handleLoad = () => {
+  const handleLoad = useCallback(() => {
     console.log(`📸 OptimizedImage loaded successfully: ${currentSrc}`);
     setIsLoaded(true);
     setHasError(false);
     onLoad?.();
-  };
+  }, [currentSrc, onLoad]);
 
-  const handleError = () => {
+  const handleError = useCallback(() => {
     console.error(`❌ OptimizedImage error for: ${currentSrc}`);
     
     // Try fallback only once
@@ -58,7 +59,33 @@ export const OptimizedImage = ({
     }
     
     onError?.();
-  };
+  }, [currentSrc, fallbackSrc, onError]);
+
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    if (!imgRef.current || priority) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const [entry] = entries;
+        if (entry.isIntersecting) {
+          const img = entry.target as HTMLImageElement;
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          }
+          observer.unobserve(img);
+        }
+      },
+      { rootMargin: '50px' }
+    );
+
+    if (imgRef.current) {
+      observer.observe(imgRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [priority]);
 
   return (
     <div 
@@ -71,7 +98,9 @@ export const OptimizedImage = ({
       
       {!hasError && (
         <img
-          src={currentSrc}
+          ref={imgRef}
+          src={priority ? currentSrc : undefined}
+          data-src={priority ? undefined : currentSrc}
           alt={alt}
           width={width}
           height={height}
@@ -106,4 +135,6 @@ export const OptimizedImage = ({
       )}
     </div>
   );
-};
+});
+
+OptimizedImage.displayName = 'OptimizedImage';

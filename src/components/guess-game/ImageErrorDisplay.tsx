@@ -1,9 +1,11 @@
 
+import { memo } from "react";
+
 interface ImageErrorDisplayProps {
   imageError: boolean;
 }
 
-export const ImageErrorDisplay = ({ imageError }: ImageErrorDisplayProps) => {
+export const ImageErrorDisplay = memo(({ imageError }: ImageErrorDisplayProps) => {
   if (!imageError) return null;
   
   return (
@@ -14,4 +16,6 @@ export const ImageErrorDisplay = ({ imageError }: ImageErrorDisplayProps) => {
       </div>
     </div>
   );
-};
+});
+
+ImageErrorDisplay.displayName = 'ImageErrorDisplay';

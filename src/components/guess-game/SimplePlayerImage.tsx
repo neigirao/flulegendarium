@@ -59,6 +59,8 @@ export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerIm
           className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${imageOpacity}`}
           onLoad={handleImageLoad}
           onError={handleImageError}
+          loading="lazy"
+          decoding="async"
           style={{ display: 'block' }}
         />
       </div>

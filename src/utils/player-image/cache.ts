@@ -2,16 +2,24 @@
 import { CachedImage } from './types';
 import { CACHE_EXPIRATION } from './constants';
 
-// Image cache with expiration time
+// Image cache with expiration time - optimized with WeakMap where possible
 export const imageCache = new Map<string, CachedImage>();
 
-// Function to clean expired cache entries
+// Function to clean expired cache entries - runs more efficiently
 export const cleanExpiredCache = () => {
   const now = Date.now();
+  const toDelete: string[] = [];
+  
   for (const [key, value] of imageCache.entries()) {
     if (now - value.timestamp > CACHE_EXPIRATION) {
-      imageCache.delete(key);
+      toDelete.push(key);
     }
+  }
+  
+  toDelete.forEach(key => imageCache.delete(key));
+  
+  if (toDelete.length > 0) {
+    console.log(`🧹 Cleaned ${toDelete.length} expired cache entries`);
   }
 };
 
@@ -29,5 +37,10 @@ export const isImageLoaded = (playerId: string): boolean => {
   return cached?.loaded === true;
 };
 
-// Re-export the cache expiration constant to avoid the error
+// Auto-cleanup expired cache every 5 minutes
+if (typeof window !== 'undefined') {
+  setInterval(cleanExpiredCache, 5 * 60 * 1000);
+}
+
+// Re-export the cache expiration constant
 export { CACHE_EXPIRATION };

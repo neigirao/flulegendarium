@@ -1,6 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useMemo } from "react";
 
 interface PlayerStats {
   player_name: string;
@@ -26,129 +27,121 @@ interface GeneralStats {
   correctAttempts: number;
 }
 
+interface AllStatsData {
+  attempts: any[];
+  sessions: any[];
+  players: any[];
+  rankings: any[];
+}
+
 export const useAdminStats = () => {
-  // Jogadores mais acertados
-  const { data: mostCorrectPlayers = [] } = useQuery({
-    queryKey: ['most-correct-players'],
-    queryFn: async (): Promise<PlayerStats[]> => {
-      const { data, error } = await supabase
-        .from('game_attempts')
-        .select('target_player_name')
-        .eq('is_correct', true);
-      
-      if (error) throw error;
-      
-      const counts = data.reduce((acc: Record<string, number>, attempt) => {
-        acc[attempt.target_player_name] = (acc[attempt.target_player_name] || 0) + 1;
-        return acc;
-      }, {});
-      
-      return Object.entries(counts)
-        .map(([name, count]) => ({ player_name: name, correct_count: count }))
-        .sort((a, b) => b.correct_count - a.correct_count)
-        .slice(0, 10);
-    },
-  });
-
-  // Jogadores mais errados
-  const { data: mostMissedPlayers = [] } = useQuery({
-    queryKey: ['most-missed-players'],
-    queryFn: async (): Promise<MostMissedPlayer[]> => {
-      const { data, error } = await supabase
-        .from('game_attempts')
-        .select('target_player_name, is_correct');
-      
-      if (error) throw error;
-      
-      const stats = data.reduce((acc: Record<string, { total: number, missed: number }>, attempt) => {
-        if (!acc[attempt.target_player_name]) {
-          acc[attempt.target_player_name] = { total: 0, missed: 0 };
-        }
-        acc[attempt.target_player_name].total++;
-        if (!attempt.is_correct) {
-          acc[attempt.target_player_name].missed++;
-        }
-        return acc;
-      }, {});
-      
-      return Object.entries(stats)
-        .map(([name, data]) => ({
-          player_name: name,
-          missed_count: data.missed,
-          total_attempts: data.total,
-          miss_rate: (data.missed / data.total * 100).toFixed(1)
-        }))
-        .sort((a, b) => b.missed_count - a.missed_count)
-        .slice(0, 10);
-    },
-  });
-
-  // Ranking de jogadores
-  const { data: playerRanking = [] } = useQuery({
-    queryKey: ['player-ranking'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('rankings')
-        .select('*')
-        .order('score', { ascending: false })
-        .limit(10);
-      
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  // Estatísticas de progresso
-  const { data: progressStats = [] } = useQuery({
-    queryKey: ['progress-stats'],
-    queryFn: async (): Promise<ProgressStat[]> => {
-      const { data, error } = await supabase
-        .from('game_sessions')
-        .select('total_correct');
-      
-      if (error) throw error;
-      
-      const stepCounts = data.reduce((acc: Record<number, number>, session) => {
-        const step = session.total_correct;
-        acc[step] = (acc[step] || 0) + 1;
-        return acc;
-      }, {});
-      
-      return Object.entries(stepCounts)
-        .map(([step, count]) => ({ step: parseInt(step), count }))
-        .sort((a, b) => a.step - b.step);
-    },
-  });
-
-  // Estatísticas gerais
-  const { data: generalStats } = useQuery({
-    queryKey: ['general-stats'],
-    queryFn: async (): Promise<GeneralStats> => {
-      const [attemptsResult, sessionsResult, playersResult] = await Promise.all([
-        supabase.from('game_attempts').select('*', { count: 'exact' }),
-        supabase.from('game_sessions').select('*', { count: 'exact' }),
-        supabase.from('players').select('*', { count: 'exact' })
+  // Single optimized query to fetch all data at once
+  const { data: allStats, isLoading } = useQuery({
+    queryKey: ['admin-stats-all'],
+    queryFn: async (): Promise<AllStatsData> => {
+      const [attemptsResult, sessionsResult, playersResult, rankingsResult] = await Promise.all([
+        supabase.from('game_attempts').select('target_player_name, is_correct'),
+        supabase.from('game_sessions').select('total_correct'),
+        supabase.from('players').select('*', { count: 'exact', head: true }),
+        supabase.from('rankings').select('*').order('score', { ascending: false }).limit(10)
       ]);
       
+      if (attemptsResult.error) throw attemptsResult.error;
+      if (sessionsResult.error) throw sessionsResult.error;
+      if (playersResult.error) throw playersResult.error;
+      if (rankingsResult.error) throw rankingsResult.error;
+      
       return {
-        totalAttempts: attemptsResult.count || 0,
-        totalSessions: sessionsResult.count || 0,
-        totalPlayers: playersResult.count || 0,
-        correctAttempts: attemptsResult.data?.filter(a => a.is_correct).length || 0
+        attempts: attemptsResult.data || [],
+        sessions: sessionsResult.data || [],
+        players: playersResult.data || [],
+        rankings: rankingsResult.data || []
       };
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
-  const successRate = generalStats?.totalAttempts 
-    ? ((generalStats.correctAttempts / generalStats.totalAttempts) * 100).toFixed(1)
-    : '0';
+  // Memoized calculations to prevent re-computation
+  const mostCorrectPlayers = useMemo((): PlayerStats[] => {
+    if (!allStats?.attempts) return [];
+    
+    const correctAttempts = allStats.attempts.filter(attempt => attempt.is_correct);
+    const counts = correctAttempts.reduce((acc: Record<string, number>, attempt) => {
+      acc[attempt.target_player_name] = (acc[attempt.target_player_name] || 0) + 1;
+      return acc;
+    }, {});
+    
+    return Object.entries(counts)
+      .map(([name, count]) => ({ player_name: name, correct_count: count }))
+      .sort((a, b) => b.correct_count - a.correct_count)
+      .slice(0, 10);
+  }, [allStats?.attempts]);
+
+  const mostMissedPlayers = useMemo((): MostMissedPlayer[] => {
+    if (!allStats?.attempts) return [];
+    
+    const stats = allStats.attempts.reduce((acc: Record<string, { total: number, missed: number }>, attempt) => {
+      if (!acc[attempt.target_player_name]) {
+        acc[attempt.target_player_name] = { total: 0, missed: 0 };
+      }
+      acc[attempt.target_player_name].total++;
+      if (!attempt.is_correct) {
+        acc[attempt.target_player_name].missed++;
+      }
+      return acc;
+    }, {});
+    
+    return Object.entries(stats)
+      .map(([name, data]) => ({
+        player_name: name,
+        missed_count: data.missed,
+        total_attempts: data.total,
+        miss_rate: (data.missed / data.total * 100).toFixed(1)
+      }))
+      .sort((a, b) => b.missed_count - a.missed_count)
+      .slice(0, 10);
+  }, [allStats?.attempts]);
+
+  const progressStats = useMemo((): ProgressStat[] => {
+    if (!allStats?.sessions) return [];
+    
+    const stepCounts = allStats.sessions.reduce((acc: Record<number, number>, session) => {
+      const step = session.total_correct;
+      acc[step] = (acc[step] || 0) + 1;
+      return acc;
+    }, {});
+    
+    return Object.entries(stepCounts)
+      .map(([step, count]) => ({ step: parseInt(step), count }))
+      .sort((a, b) => a.step - b.step);
+  }, [allStats?.sessions]);
+
+  const generalStats = useMemo((): GeneralStats | undefined => {
+    if (!allStats) return undefined;
+    
+    const correctAttempts = allStats.attempts.filter(a => a.is_correct).length;
+    
+    return {
+      totalAttempts: allStats.attempts.length,
+      totalSessions: allStats.sessions.length,
+      totalPlayers: allStats.players.length,
+      correctAttempts
+    };
+  }, [allStats]);
+
+  const successRate = useMemo(() => {
+    if (!generalStats?.totalAttempts) return '0';
+    return ((generalStats.correctAttempts / generalStats.totalAttempts) * 100).toFixed(1);
+  }, [generalStats]);
 
   return {
     mostCorrectPlayers,
     mostMissedPlayers,
-    playerRanking,
+    playerRanking: allStats?.rankings || [],
     progressStats,
     generalStats,
-    successRate
+    successRate,
+    isLoading
   };
 };

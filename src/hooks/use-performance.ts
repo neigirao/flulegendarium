@@ -14,7 +14,7 @@ export const usePerformance = () => {
     // Web Vitals tracking
     if ('PerformanceObserver' in window) {
       // Largest Contentful Paint (LCP)
-      new PerformanceObserver((list) => {
+      const lcpObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
         console.log('LCP:', lastEntry.startTime);
@@ -27,10 +27,11 @@ export const usePerformance = () => {
             event_category: 'Performance'
           });
         }
-      }).observe({ entryTypes: ['largest-contentful-paint'] });
+      });
+      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
 
       // First Input Delay (FID)
-      new PerformanceObserver((list) => {
+      const fidObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry: any) => {
           console.log('FID:', entry.processingStart - entry.startTime);
@@ -43,11 +44,12 @@ export const usePerformance = () => {
             });
           }
         });
-      }).observe({ entryTypes: ['first-input'] });
+      });
+      fidObserver.observe({ entryTypes: ['first-input'] });
 
       // Cumulative Layout Shift (CLS)
       let clsValue = 0;
-      new PerformanceObserver((list) => {
+      const clsObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry: any) => {
           if (!entry.hadRecentInput) {
@@ -63,10 +65,11 @@ export const usePerformance = () => {
             event_category: 'Performance'
           });
         }
-      }).observe({ entryTypes: ['layout-shift'] });
+      });
+      clsObserver.observe({ entryTypes: ['layout-shift'] });
 
       // First Contentful Paint (FCP)
-      new PerformanceObserver((list) => {
+      const fcpObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         entries.forEach((entry) => {
           console.log('FCP:', entry.startTime);
@@ -79,12 +82,21 @@ export const usePerformance = () => {
             });
           }
         });
-      }).observe({ entryTypes: ['paint'] });
+      });
+      fcpObserver.observe({ entryTypes: ['paint'] });
+
+      // Cleanup observers
+      return () => {
+        lcpObserver.disconnect();
+        fidObserver.disconnect();
+        clsObserver.disconnect();
+        fcpObserver.disconnect();
+      };
     }
 
-    // Monitor resource loading with corrected properties
+    // Monitor resource loading
     if ('performance' in window) {
-      window.addEventListener('load', () => {
+      const handleLoad = () => {
         const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         
         const metrics = {
@@ -104,7 +116,10 @@ export const usePerformance = () => {
             });
           }
         }
-      });
+      };
+
+      window.addEventListener('load', handleLoad);
+      return () => window.removeEventListener('load', handleLoad);
     }
   }, []);
 
