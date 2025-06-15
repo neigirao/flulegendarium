@@ -1,16 +1,16 @@
 
 import { useCallback, useEffect } from "react";
 import { GuessForm } from "./GuessForm";
-import { GameStatus } from "./GameStatus";
 import { GameLoadingState } from "./GameLoadingState";
 import { GameTimer } from "./GameTimer";
 import { Player } from "@/types/guess-game";
-import { SimplePlayerImage } from "./SimplePlayerImage";
+import { ReactivePlayerImage } from "./ReactivePlayerImage";
 import { usePerformance } from "@/hooks/use-performance";
 import { useErrorHandler } from "@/hooks/use-error-handler";
 
 interface GameContainerProps {
   currentPlayer: Player | null;
+  gameKey: string; // NEW: For forcing image refresh
   attempts: number;
   score: number;
   gameOver: boolean;
@@ -26,10 +26,13 @@ interface GameContainerProps {
   gamesPlayed?: number;
   currentStreak?: number;
   maxStreak?: number;
+  forceRefresh?: () => void; // NEW: For manual refresh
+  playerChangeCount?: number; // NEW: For debug
 }
 
 export const GameContainer = ({
   currentPlayer,
+  gameKey,
   attempts,
   score,
   gameOver,
@@ -44,12 +47,13 @@ export const GameContainer = ({
   isTimerRunning,
   gamesPlayed = 0,
   currentStreak = 0,
-  maxStreak = 0
+  maxStreak = 0,
+  forceRefresh,
+  playerChangeCount = 0
 }: GameContainerProps) => {
   const { trackCustomMetric } = usePerformance();
   const { handleError } = useErrorHandler();
   
-  // Track image loading performance with error handling
   const handleImageLoaded = useCallback(() => {
     try {
       trackCustomMetric('player_image_load', performance.now());
@@ -58,17 +62,21 @@ export const GameContainer = ({
     }
   }, [trackCustomMetric, handleError]);
 
-  // Start game for player when currentPlayer is available
   useEffect(() => {
     try {
       if (currentPlayer) {
-        console.log('🎮 GameContainer: Iniciando jogo para jogador:', currentPlayer.name);
+        console.log('🎮 GameContainer: Iniciando jogo para jogador:', {
+          name: currentPlayer.name,
+          id: currentPlayer.id,
+          gameKey,
+          changeCount: playerChangeCount
+        });
         startGameForPlayer();
       }
     } catch (error) {
       handleError(error as Error, 'GameContainer.startGameForPlayer');
     }
-  }, [currentPlayer, startGameForPlayer, handleError]);
+  }, [currentPlayer, gameKey, startGameForPlayer, handleError, playerChangeCount]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Enter') {
@@ -83,14 +91,17 @@ export const GameContainer = ({
     };
   }, [handleKeyDown]);
 
-  // Debug logs
-  console.log('🎮 GameContainer State:');
-  console.log('- Player:', currentPlayer?.name || 'Nenhum');
-  console.log('- Score:', score);
-  console.log('- Timer:', timeRemaining);
-  console.log('- Game Over:', gameOver);
+  // Enhanced debug logs
+  console.log('🎮 GameContainer Enhanced State:', {
+    playerName: currentPlayer?.name || 'Nenhum',
+    playerId: currentPlayer?.id || 'N/A',
+    gameKey,
+    score,
+    timer: timeRemaining,
+    gameOver,
+    changeCount: playerChangeCount
+  });
 
-  // Loading state quando não há jogador
   if (!currentPlayer) {
     return (
       <div className="space-y-4 md:space-y-6">
@@ -101,7 +112,7 @@ export const GameContainer = ({
 
   return (
     <div className="space-y-4 md:space-y-6">
-      {/* Timer - PRIMEIRO (acima da foto) */}
+      {/* Timer */}
       <div className="flex justify-center">
         <GameTimer
           timeRemaining={timeRemaining}
@@ -110,10 +121,11 @@ export const GameContainer = ({
         />
       </div>
 
-      {/* Player Image - SEGUNDO (abaixo do timer) */}
+      {/* Enhanced Player Image with gameKey */}
       <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
-        <SimplePlayerImage
+        <ReactivePlayerImage
           player={currentPlayer}
+          gameKey={gameKey}
           onImageLoaded={handleImageLoaded}
         />
       </div>
@@ -125,7 +137,7 @@ export const GameContainer = ({
         </div>
       )}
 
-      {/* Guess Form - TERCEIRO (abaixo da imagem) */}
+      {/* Guess Form */}
       {!isProcessingGuess && (
         <div className="w-full max-w-md md:max-w-lg mx-auto">
           <GuessForm
@@ -136,7 +148,7 @@ export const GameContainer = ({
         </div>
       )}
 
-      {/* Game Status - QUARTO (pontuação e progresso abaixo do formulário, sem timer) */}
+      {/* Game Status */}
       <div className="w-full max-w-md md:max-w-lg mx-auto">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-flu-verde/20">
           {/* Score */}
@@ -167,15 +179,33 @@ export const GameContainer = ({
           </div>
         </div>
       </div>
-      
-      {/* Debug info em desenvolvimento */}
+
+      {/* Debug controls em desenvolvimento */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="mt-4 p-3 bg-gray-100 rounded text-xs md:text-sm border">
-          <p><strong>Debug Info:</strong></p>
-          <p>Score = {score}</p>
-          <p>Timer = {timeRemaining}s</p>
-          <p>Player = {currentPlayer?.name}</p>
-          <p>Image URL = {currentPlayer?.image_url}</p>
+        <div className="mt-4 p-3 bg-gray-100 rounded text-xs border">
+          <p><strong>Enhanced Debug Info:</strong></p>
+          <p>Player: {currentPlayer?.name} ({currentPlayer?.id})</p>
+          <p>Game Key: {gameKey}</p>
+          <p>Change Count: {playerChangeCount}</p>
+          <p>Score: {score} | Timer: {timeRemaining}s</p>
+          <p className="break-all">Image URL: {currentPlayer?.image_url}</p>
+          
+          <div className="mt-2 flex gap-2">
+            <button 
+              onClick={selectRandomPlayer}
+              className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
+            >
+              Próximo Jogador
+            </button>
+            {forceRefresh && (
+              <button 
+                onClick={forceRefresh}
+                className="px-2 py-1 bg-green-500 text-white rounded text-xs"
+              >
+                Force Refresh
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>

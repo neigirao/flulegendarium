@@ -22,12 +22,12 @@ const GuessPlayer = () => {
   const [showAuthSelection, setShowAuthSelection] = useState(true);
   const { showImageUrl, handleDebugClick } = useDebug();
   
-  // Carregar dados dos jogadores
   const { players, isLoading, playersError } = usePlayersData();
 
-  // Hook principal do jogo (simplificado)
+  // Enhanced game hook
   const {
     currentPlayer,
+    gameKey, // NEW
     attempts,
     score,
     gameOver,
@@ -35,6 +35,7 @@ const GuessPlayer = () => {
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
+    forceRefresh, // NEW
     handlePlayerImageFixed,
     isProcessingGuess,
     hasLost,
@@ -44,10 +45,10 @@ const GuessPlayer = () => {
     gamesPlayed,
     currentStreak,
     maxStreak,
+    playerChangeCount, // NEW
     TIME_LIMIT_SECONDS
   } = useSimpleGuessGame(players);
 
-  // Gerenciar estado do jogo
   const {
     showGameOverDialog,
     showTutorial,
@@ -60,7 +61,6 @@ const GuessPlayer = () => {
     handleSkipTutorial
   } = useGameState({ hasLost });
 
-  // Precarregar próximos jogadores
   usePlayerPreload(players, currentPlayer);
 
   const handleTutorialCompleteLocal = () => {
@@ -95,7 +95,6 @@ const GuessPlayer = () => {
     setIsAuthenticatedGame(true);
   };
 
-  // Estado de carregamento
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4 flex items-center justify-center">
@@ -104,15 +103,20 @@ const GuessPlayer = () => {
     );
   }
 
-  // Estado de erro
   if (playersError) {
     return <ErrorDisplay error={playersError} />;
   }
 
-  // Estado sem jogadores
   if (!players || players.length === 0) {
     return <EmptyPlayersDisplay />;
   }
+
+  console.log('🎮 GuessPlayer Render:', {
+    playerName: currentPlayer?.name,
+    gameKey,
+    gameStarted,
+    changeCount: playerChangeCount
+  });
 
   return (
     <RootLayout>
@@ -131,6 +135,7 @@ const GuessPlayer = () => {
           {gameStarted && (
             <GameContainer
               currentPlayer={currentPlayer}
+              gameKey={gameKey}
               attempts={attempts}
               score={score}
               gameOver={gameOver}
@@ -146,6 +151,8 @@ const GuessPlayer = () => {
               gamesPlayed={gamesPlayed}
               currentStreak={currentStreak}
               maxStreak={maxStreak}
+              forceRefresh={forceRefresh}
+              playerChangeCount={playerChangeCount}
             />
           )}
 

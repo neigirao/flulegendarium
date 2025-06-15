@@ -4,7 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
 import { useSimpleGameTimer, TIME_LIMIT_SECONDS } from "./use-simple-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
-import { usePlayerSelection } from "./use-player-selection";
+import { useEnhancedPlayerSelection } from "./use-enhanced-player-selection";
 import { useGameSession } from "./use-game-session";
 import { useGameScore } from "./use-game-score";
 import { useSimpleGameLogic } from "./use-simple-game-logic";
@@ -17,8 +17,16 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const [hasLost, setHasLost] = useState(false);
   const [gameActive, setGameActive] = useState(false);
 
-  // Hooks compostos
-  const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed } = usePlayerSelection(players);
+  // Enhanced player selection hook
+  const { 
+    currentPlayer, 
+    gameKey, 
+    selectRandomPlayer, 
+    forceRefresh,
+    handlePlayerImageFixed,
+    playerChangeCount
+  } = useEnhancedPlayerSelection(players);
+
   const { sessionId, registerGameStart, resetSession } = useGameSession();
   const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
 
@@ -49,37 +57,37 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     }
   }, [gameActive, gameOver, resetStreak]);
   
-  // Hook de visibilidade da aba
   useTabVisibility({ 
     onTabChange: handleTabChange, 
     isGameActive: gameActive 
   });
   
-  // Hook do timer
   const { timeRemaining, isRunning, startTimer, stopTimer, resetTimer } = useSimpleGameTimer(handleTimeUp);
 
-  // Callbacks para a lógica do jogo
+  // Enhanced callbacks for game logic
   const handleCorrectGuess = useCallback((points: number) => {
-    console.log('✅ Resposta correta! Pontos:', points);
+    console.log('✅ Resposta correta! Pontos:', points, 'Player atual:', currentPlayer?.name);
     addScore(points);
     stopTimer();
-  }, [addScore, stopTimer]);
+  }, [addScore, stopTimer, currentPlayer]);
 
   const handleIncorrectGuess = useCallback(() => {
-    console.log('❌ Resposta incorreta!');
+    console.log('❌ Resposta incorreta! Player:', currentPlayer?.name);
     setGameOver(true);
     setHasLost(true);
     setGameActive(false);
     resetStreak();
     stopTimer();
-  }, [resetStreak, stopTimer]);
+  }, [resetStreak, stopTimer, currentPlayer]);
 
   const handleNextPlayer = useCallback(() => {
-    console.log('🔄 Indo para próximo jogador...');
-    selectRandomPlayer();
-  }, [selectRandomPlayer]);
+    console.log('🔄 Indo para próximo jogador... Player atual:', currentPlayer?.name);
+    // Delay to allow UI to update before changing player
+    setTimeout(() => {
+      selectRandomPlayer();
+    }, 100);
+  }, [selectRandomPlayer, currentPlayer]);
 
-  // Hook da lógica do jogo
   const { handleGuess, isProcessing } = useSimpleGameLogic({
     currentPlayer,
     onCorrectGuess: handleCorrectGuess,
@@ -87,37 +95,44 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     onNextPlayer: handleNextPlayer
   });
 
-  // Iniciar jogo quando há um jogador atual
+  // Start game with enhanced logging
   const startGameForPlayer = useCallback(async () => {
     if (currentPlayer && !gameOver) {
-      console.log('🎮 Iniciando jogo para:', currentPlayer.name);
+      console.log('🎮 Iniciando jogo para:', {
+        name: currentPlayer.name,
+        id: currentPlayer.id,
+        gameKey,
+        changeCount: playerChangeCount
+      });
       
       setGameOver(false);
       setHasLost(false);
       setGameActive(true);
       
-      // Registrar início do jogo se necessário
       if (!sessionId) {
         await registerGameStart();
       }
       
-      // Iniciar timer após um breve delay
       setTimeout(() => {
         resetTimer();
         startTimer();
       }, 500);
     }
-  }, [currentPlayer, gameOver, sessionId, registerGameStart, resetTimer, startTimer]);
+  }, [currentPlayer, gameOver, sessionId, registerGameStart, resetTimer, startTimer, gameKey, playerChangeCount]);
 
-  // Effect para iniciar jogo quando jogador muda
+  // Enhanced effect for game start
   useEffect(() => {
     if (currentPlayer) {
-      console.log('🔄 Novo jogador detectado:', currentPlayer.name);
+      console.log('🔄 Novo jogador detectado, iniciando jogo:', {
+        name: currentPlayer.name,
+        id: currentPlayer.id,
+        gameKey,
+        changeCount: playerChangeCount
+      });
       startGameForPlayer();
     }
-  }, [currentPlayer, startGameForPlayer]);
+  }, [currentPlayer, gameKey, startGameForPlayer, playerChangeCount]);
 
-  // Função para resetar pontuação
   const resetScore = useCallback(() => {
     console.log('🎯 Resetando pontuação');
     resetAll();
@@ -128,6 +143,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   return {
     // Estado do jogo
     currentPlayer,
+    gameKey, // NEW: For forcing image refresh
     score,
     gameOver,
     hasLost,
@@ -146,12 +162,16 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     // Ações
     handleGuess,
     selectRandomPlayer,
+    forceRefresh, // NEW: For manual refresh
     handlePlayerImageFixed,
     startGameForPlayer,
     resetScore,
     
     // Estados de carregamento
     isProcessingGuess: isProcessing,
+    
+    // Debug info
+    playerChangeCount,
     
     // Constantes
     attempts: 0,
