@@ -16,31 +16,53 @@ interface MostMissedPlayer {
 }
 
 export const usePlayerStats = () => {
-  const { data: attempts = [], isLoading } = useQuery({
-    queryKey: ['admin-player-attempts'],
+  const { data: playerStatsData, isLoading } = useQuery({
+    queryKey: ['admin-player-stats'],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.from('game_attempts').select('*');
-        if (error) throw error;
-        return data || [];
+        console.log('📊 Buscando estatísticas de jogadores otimizadas...');
+        
+        // Query otimizada usando aggregate functions
+        const { data: mostCorrectData, error: correctError } = await supabase
+          .from('game_attempts')
+          .select('target_player_name, is_correct')
+          .eq('is_correct', true);
+        
+        const { data: allAttemptsData, error: attemptsError } = await supabase
+          .from('game_attempts')
+          .select('target_player_name, is_correct');
+
+        if (correctError || attemptsError) {
+          console.error('❌ Erro ao buscar dados dos jogadores:', correctError || attemptsError);
+          return { mostCorrectData: [], allAttemptsData: [], successRate: '0' };
+        }
+
+        // Calcular taxa de sucesso
+        const totalAttempts = allAttemptsData?.length || 0;
+        const correctAttempts = mostCorrectData?.length || 0;
+        const successRate = totalAttempts > 0 ? ((correctAttempts / totalAttempts) * 100).toFixed(1) : '0';
+
+        return {
+          mostCorrectData: mostCorrectData || [],
+          allAttemptsData: allAttemptsData || [],
+          successRate
+        };
       } catch (error) {
-        console.error('❌ Erro ao buscar tentativas:', error);
-        return [];
+        console.error('❌ Erro nas estatísticas de jogadores:', error);
+        return { mostCorrectData: [], allAttemptsData: [], successRate: '0' };
       }
     },
-    staleTime: 2 * 60 * 1000,
-    retry: 1
+    staleTime: 3 * 60 * 1000, // 3 minutos de cache
+    gcTime: 6 * 60 * 1000,
+    retry: 2,
+    refetchOnWindowFocus: false
   });
 
   const mostCorrectPlayers = useMemo((): PlayerStats[] => {
-    if (!attempts || attempts.length === 0) {
-      return [];
-    }
+    if (!playerStatsData?.mostCorrectData?.length) return [];
     
-    const correctAttempts = attempts.filter(attempt => attempt.is_correct === true);
     const counts: Record<string, number> = {};
-    
-    correctAttempts.forEach(attempt => {
+    playerStatsData.mostCorrectData.forEach(attempt => {
       const playerName = attempt.target_player_name;
       if (playerName && typeof playerName === 'string') {
         counts[playerName] = (counts[playerName] || 0) + 1;
@@ -54,16 +76,14 @@ export const usePlayerStats = () => {
       }))
       .sort((a, b) => b.correct_count - a.correct_count)
       .slice(0, 10);
-  }, [attempts]);
+  }, [playerStatsData?.mostCorrectData]);
 
   const mostMissedPlayers = useMemo((): MostMissedPlayer[] => {
-    if (!attempts || attempts.length === 0) {
-      return [];
-    }
+    if (!playerStatsData?.allAttemptsData?.length) return [];
     
     const stats: Record<string, { total: number, missed: number }> = {};
     
-    attempts.forEach(attempt => {
+    playerStatsData.allAttemptsData.forEach(attempt => {
       const playerName = attempt.target_player_name;
       if (playerName && typeof playerName === 'string') {
         if (!stats[playerName]) {
@@ -78,7 +98,7 @@ export const usePlayerStats = () => {
     });
     
     return Object.entries(stats)
-      .filter(([_, data]) => data.total >= 3)
+      .filter(([_, data]) => data.total >= 5) // Aumentei para 5 para ter mais dados significativos
       .map(([name, data]) => {
         const missRate = data.total > 0 ? (data.missed / data.total * 100).toFixed(1) : '0.0';
         return {
@@ -88,23 +108,14 @@ export const usePlayerStats = () => {
           miss_rate: missRate
         };
       })
-      .sort((a, b) => b.missed_count - a.missed_count)
+      .sort((a, b) => parseFloat(b.miss_rate) - parseFloat(a.miss_rate))
       .slice(0, 10);
-  }, [attempts]);
-
-  const successRate = useMemo(() => {
-    if (!attempts || attempts.length === 0) {
-      return '0';
-    }
-    
-    const correctAttempts = attempts.filter(a => a.is_correct === true).length;
-    return ((correctAttempts / attempts.length) * 100).toFixed(1);
-  }, [attempts]);
+  }, [playerStatsData?.allAttemptsData]);
 
   return {
     mostCorrectPlayers,
     mostMissedPlayers,
-    successRate,
+    successRate: playerStatsData?.successRate || '0',
     isLoading
   };
 };

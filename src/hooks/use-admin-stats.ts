@@ -8,9 +8,9 @@ export const useAdminStats = () => {
   const { generalStats, isLoading: generalLoading } = useGeneralStats();
   const { mostCorrectPlayers, mostMissedPlayers, successRate, isLoading: playerLoading } = usePlayerStats();
   const { playerRanking, isLoading: rankingLoading } = useRankingStats();
-  const { progressStats, isLoading: progress } = useProgressStats();
+  const { progressStats, isLoading: progressLoading } = useProgressStats();
 
-  const isLoading = generalLoading || playerLoading || rankingLoading || progress;
+  const isLoading = generalLoading || playerLoading || rankingLoading || progressLoading;
 
   return {
     mostCorrectPlayers,

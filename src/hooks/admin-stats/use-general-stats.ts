@@ -14,22 +14,34 @@ export const useGeneralStats = () => {
     queryKey: ['admin-general-stats'],
     queryFn: async (): Promise<GeneralStats> => {
       try {
-        console.log('📊 Buscando estatísticas gerais...');
+        console.log('📊 Buscando estatísticas gerais otimizadas...');
         
-        const [gameStartsResult, sessionsResult, playersResult, attemptsResult] = await Promise.all([
-          supabase.from('game_starts').select('*', { count: 'exact', head: true }),
-          supabase.from('game_sessions').select('*', { count: 'exact', head: true }),
-          supabase.from('players').select('*', { count: 'exact', head: true }),
-          supabase.from('game_attempts').select('is_correct')
-        ]);
+        // Query otimizada usando aggregate functions do PostgreSQL
+        const { data: statsData, error } = await supabase.rpc('get_admin_general_stats');
         
-        const correctAttempts = attemptsResult.data?.filter(a => a.is_correct === true).length || 0;
+        if (error) {
+          console.error('❌ Erro na função RPC, usando fallback:', error);
+          // Fallback para queries individuais mais otimizadas
+          const [attemptsResult, sessionsResult, playersResult, correctResult] = await Promise.all([
+            supabase.from('game_starts').select('*', { count: 'exact', head: true }),
+            supabase.from('game_sessions').select('*', { count: 'exact', head: true }),
+            supabase.from('players').select('*', { count: 'exact', head: true }),
+            supabase.from('game_attempts').select('*', { count: 'exact' }).eq('is_correct', true)
+          ]);
+          
+          return {
+            totalAttempts: attemptsResult.count || 0,
+            totalSessions: sessionsResult.count || 0,
+            totalPlayers: playersResult.count || 0,
+            correctAttempts: correctResult.count || 0
+          };
+        }
         
-        return {
-          totalAttempts: gameStartsResult.count || 0,
-          totalSessions: sessionsResult.count || 0,
-          totalPlayers: playersResult.count || 0,
-          correctAttempts
+        return statsData || {
+          totalAttempts: 0,
+          totalSessions: 0,
+          totalPlayers: 0,
+          correctAttempts: 0
         };
       } catch (error) {
         console.error('❌ Erro nas estatísticas gerais:', error);
@@ -41,8 +53,10 @@ export const useGeneralStats = () => {
         };
       }
     },
-    staleTime: 2 * 60 * 1000,
-    retry: 1
+    staleTime: 5 * 60 * 1000, // 5 minutos de cache
+    gcTime: 10 * 60 * 1000, // 10 minutos no garbage collector
+    retry: 2,
+    refetchOnWindowFocus: false
   });
 
   return { generalStats, isLoading };

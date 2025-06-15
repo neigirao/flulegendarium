@@ -7,20 +7,30 @@ export const useRankingStats = () => {
     queryKey: ['admin-rankings'],
     queryFn: async () => {
       try {
+        console.log('🏆 Buscando rankings otimizados...');
+        
         const { data, error } = await supabase
           .from('rankings')
-          .select('*')
-          .order('score', { ascending: false });
+          .select('id, player_name, score, games_played, created_at')
+          .order('score', { ascending: false })
+          .limit(50); // Limitar para melhor performance
         
-        if (error) throw error;
+        if (error) {
+          console.error('❌ Erro ao buscar rankings:', error);
+          return [];
+        }
+        
+        console.log('✅ Rankings carregados:', data?.length || 0);
         return data || [];
       } catch (error) {
-        console.error('❌ Erro ao buscar rankings:', error);
+        console.error('❌ Erro nos rankings:', error);
         return [];
       }
     },
-    staleTime: 2 * 60 * 1000,
-    retry: 1
+    staleTime: 2 * 60 * 1000, // 2 minutos de cache
+    gcTime: 5 * 60 * 1000,
+    retry: 2,
+    refetchOnWindowFocus: false
   });
 
   return { playerRanking, isLoading };
