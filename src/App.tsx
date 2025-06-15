@@ -68,6 +68,14 @@ function App() {
                     <Route path="/faq" element={<FAQ />} />
                     <Route path="/admin/login-administrador" element={<AdminLogin />} />
                     <Route 
+                      path="/admin" 
+                      element={
+                        <AdminErrorBoundary>
+                          <AdminDashboard />
+                        </AdminErrorBoundary>
+                      } 
+                    />
+                    <Route 
                       path="/admin/dashboard" 
                       element={
                         <AdminErrorBoundary>
