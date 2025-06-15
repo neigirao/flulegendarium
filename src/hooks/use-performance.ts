@@ -11,6 +11,9 @@ interface PerformanceMetrics {
 
 export const usePerformance = () => {
   useEffect(() => {
+    // Early return if not in browser environment
+    if (typeof window === 'undefined') return;
+
     // Web Vitals tracking
     if ('PerformanceObserver' in window) {
       // Largest Contentful Paint (LCP)
@@ -93,40 +96,42 @@ export const usePerformance = () => {
         fcpObserver.disconnect();
       };
     }
+  }, []);
 
-    // Monitor resource loading
-    if ('performance' in window && typeof window !== 'undefined') {
-      const handleLoad = () => {
-        const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-        
-        const metrics = {
-          ttfb: perfData.responseStart - perfData.requestStart,
-          domComplete: perfData.domComplete - perfData.fetchStart,
-          loadComplete: perfData.loadEventEnd - perfData.fetchStart
-        };
-        
-        console.log('Performance Metrics:', metrics);
-        
-        // Track slow loading
-        if (metrics.loadComplete > 3000) {
-          if (window.gtag) {
-            window.gtag('event', 'slow_loading', {
-              event_category: 'Performance',
-              value: Math.round(metrics.loadComplete)
-            });
-          }
-        }
+  useEffect(() => {
+    // Monitor resource loading - separate useEffect to avoid type issues
+    if (typeof window === 'undefined' || !('performance' in window)) return;
+
+    const handleLoad = () => {
+      const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      
+      const metrics = {
+        ttfb: perfData.responseStart - perfData.requestStart,
+        domComplete: perfData.domComplete - perfData.fetchStart,
+        loadComplete: perfData.loadEventEnd - perfData.fetchStart
       };
+      
+      console.log('Performance Metrics:', metrics);
+      
+      // Track slow loading
+      if (metrics.loadComplete > 3000) {
+        if (window.gtag) {
+          window.gtag('event', 'slow_loading', {
+            event_category: 'Performance',
+            value: Math.round(metrics.loadComplete)
+          });
+        }
+      }
+    };
 
-      window.addEventListener('load', handleLoad);
-      return () => window.removeEventListener('load', handleLoad);
-    }
+    window.addEventListener('load', handleLoad);
+    return () => window.removeEventListener('load', handleLoad);
   }, []);
 
   const trackCustomMetric = (name: string, value: number) => {
     console.log(`Custom Metric - ${name}:`, value);
     
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'custom_metric', {
         event_category: 'Performance',
         event_label: name,
