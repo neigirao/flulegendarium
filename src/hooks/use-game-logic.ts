@@ -41,6 +41,10 @@ export const useGameLogic = ({
         const points = 5;
         console.log('🎯 ACERTOU! Pontos ganhos:', points);
         
+        // Para o timer primeiro
+        stopTimer();
+        
+        // Atualiza pontuação
         onCorrectGuess(points);
         
         toast({
@@ -48,11 +52,12 @@ export const useGameLogic = ({
           description: `Você acertou! +${points} pontos`,
         });
         
-        stopTimer();
-        
+        // Seleciona próximo jogador imediatamente após acertar
+        console.log('🔄 Selecionando próximo jogador...');
         setTimeout(() => {
           selectRandomPlayer();
-        }, 2000);
+          setIsProcessingGuess(false);
+        }, 1500); // Reduzido de 2000 para 1500ms
       } else {
         console.log('❌ ERROU! Resposta:', guess, 'Esperado:', currentPlayer.name);
         
@@ -65,10 +70,11 @@ export const useGameLogic = ({
           title: "Game Over!",
           description: `O jogador era ${currentPlayer.name}.`,
         });
+        
+        setIsProcessingGuess(false);
       }
     } catch (error) {
       console.error("Erro ao processar palpite:", error);
-    } finally {
       setIsProcessingGuess(false);
     }
   }, [currentPlayer, gameOver, gameActive, isProcessingGuess, onCorrectGuess, onIncorrectGuess, onGameEnd, selectRandomPlayer, stopTimer, toast]);
