@@ -7,6 +7,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CriticalMeta } from "@/components/CriticalMeta";
 import { MobileViewport } from "@/components/mobile/MobileViewport";
+import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBoundary";
+import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
+import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
 
 const Index = lazy(() => import("@/pages/Index"))
 const GuessThePlayer = lazy(() => import("@/pages/GuessPlayer"))
@@ -20,38 +23,66 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: (failureCount, error) => {
+        // Don't retry on 4xx errors
+        if (error && 'status' in error && typeof error.status === 'number') {
+          if (error.status >= 400 && error.status < 500) {
+            console.warn('⚠️ Não tentando novamente para erro 4xx:', error.status);
+            return false;
+          }
+        }
+        // Retry up to 3 times for other errors
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
   },
 });
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <AuthProvider>
-          <TooltipProvider>
-            <CriticalMeta />
-            <MobileViewport />
-            <div className="min-h-screen bg-background font-sans antialiased">
-              <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
-              </div>}>
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/selecionar-modo-jogo" element={<SelectGameMode />} />
-                  <Route path="/quiz" element={<GuessThePlayer />} />
-                  <Route path="/meu-perfil-tricolor" element={<Profile />} />
-                  <Route path="/admin/login-administrador" element={<AdminLogin />} />
-                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </Suspense>
-            </div>
-            <Toaster />
-          </TooltipProvider>
-        </AuthProvider>
-      </BrowserRouter>
-    </QueryClientProvider>
+    <RootErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <AuthProvider>
+            <TooltipProvider>
+              <CriticalMeta />
+              <MobileViewport />
+              <div className="min-h-screen bg-background font-sans antialiased">
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
+                </div>}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/selecionar-modo-jogo" element={<SelectGameMode />} />
+                    <Route 
+                      path="/quiz" 
+                      element={
+                        <GameErrorBoundary>
+                          <GuessThePlayer />
+                        </GameErrorBoundary>
+                      } 
+                    />
+                    <Route path="/meu-perfil-tricolor" element={<Profile />} />
+                    <Route path="/admin/login-administrador" element={<AdminLogin />} />
+                    <Route 
+                      path="/admin/dashboard" 
+                      element={
+                        <AdminErrorBoundary>
+                          <AdminDashboard />
+                        </AdminErrorBoundary>
+                      } 
+                    />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </div>
+              <Toaster />
+            </TooltipProvider>
+          </AuthProvider>
+        </BrowserRouter>
+      </QueryClientProvider>
+    </RootErrorBoundary>
   );
 }
 
