@@ -39,8 +39,11 @@ const GuessPlayer = () => {
     hasLost,
     startGameForPlayer,
     isTimerRunning,
-    resetScore
-  } = useGuessGame(undefined); // Always pass undefined initially
+    resetScore,
+    gamesPlayed,
+    currentStreak,
+    maxStreak
+  } = useGuessGame(players);
 
   // Manage game state
   const {
@@ -138,6 +141,9 @@ const GuessPlayer = () => {
               hasLost={hasLost}
               startGameForPlayer={startGameForPlayer}
               isTimerRunning={isTimerRunning}
+              gamesPlayed={gamesPlayed}
+              currentStreak={currentStreak}
+              maxStreak={maxStreak}
             />
           )}
 
