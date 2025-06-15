@@ -1,0 +1,109 @@
+
+/* Enhanced Responsive Utilities */
+
+/* Container queries support */
+@supports (container-type: inline-size) {
+  .responsive-container {
+    container-type: inline-size;
+  }
+}
+
+/* Touch optimizations */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile-first responsive typography */
+.responsive-text {
+  font-size: clamp(0.875rem, 2.5vw, 1rem);
+  line-height: 1.5;
+}
+
+.responsive-heading {
+  font-size: clamp(1.25rem, 4vw, 2rem);
+  line-height: 1.2;
+}
+
+/* Safe area support for notched devices */
+.safe-area-padding {
+  padding-top: env(safe-area-inset-top);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+}
+
+/* Improved touch targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile-optimized scrolling */
+.mobile-scroll {
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+}
+
+/* Landscape phone optimizations */
+@media screen and (max-height: 500px) and (orientation: landscape) {
+  .landscape-container {
+    padding: 0.5rem;
+  }
+  
+  .landscape-container .responsive-heading {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+  }
+}
+
+/* Extra small devices */
+@media screen and (max-width: 320px) {
+  .responsive-container {
+    padding: 0.75rem;
+  }
+  
+  .responsive-text {
+    font-size: 0.8rem;
+  }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .high-dpi-optimized {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Dark mode mobile optimizations */
+@media (prefers-color-scheme: dark) {
+  .mobile-container,
+  .tablet-container {
+    background-color: #0a0a0a;
+  }
+}
+
+/* Viewport height fix for mobile browsers */
+.full-height-mobile {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for modern browsers */
+}
+
+/* Focus visible for keyboard navigation */
+.focus-visible-enhanced:focus-visible {
+  outline: 2px solid #7A0213;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
