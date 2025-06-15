@@ -1,4 +1,3 @@
-
 import { useCallback, useEffect } from "react";
 import { GuessForm } from "./GuessForm";
 import { GameStatus } from "./GameStatus";
@@ -6,6 +5,7 @@ import { GameLoadingState } from "./GameLoadingState";
 import { Player } from "@/types/guess-game";
 import { SimplePlayerImage } from "./SimplePlayerImage";
 import { usePerformance } from "@/hooks/use-performance";
+import { useErrorHandler } from "@/hooks/use-error-handler";
 
 interface GameContainerProps {
   currentPlayer: Player | null;
@@ -45,19 +45,28 @@ export const GameContainer = ({
   maxStreak = 0
 }: GameContainerProps) => {
   const { trackCustomMetric } = usePerformance();
+  const { handleError } = useErrorHandler();
   
-  // Track image loading performance
-  const handleImageLoaded = () => {
-    trackCustomMetric('player_image_load', performance.now());
-  };
+  // Track image loading performance with error handling
+  const handleImageLoaded = useCallback(() => {
+    try {
+      trackCustomMetric('player_image_load', performance.now());
+    } catch (error) {
+      handleError(error as Error, 'GameContainer.handleImageLoaded');
+    }
+  }, [trackCustomMetric, handleError]);
 
   // Start game for player when currentPlayer is available
   useEffect(() => {
-    if (currentPlayer) {
-      console.log('🎮 GameContainer: Iniciando jogo para jogador:', currentPlayer.name);
-      startGameForPlayer();
+    try {
+      if (currentPlayer) {
+        console.log('🎮 GameContainer: Iniciando jogo para jogador:', currentPlayer.name);
+        startGameForPlayer();
+      }
+    } catch (error) {
+      handleError(error as Error, 'GameContainer.startGameForPlayer');
     }
-  }, [currentPlayer, startGameForPlayer]);
+  }, [currentPlayer, startGameForPlayer, handleError]);
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Enter') {
