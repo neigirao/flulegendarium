@@ -90,21 +90,7 @@ export const GameContainer = ({
 
   return (
     <div className="space-y-6 md:space-y-8">
-      {/* Game Status - PRIMEIRO (pontuação e timer) */}
-      <GameStatus
-        score={score}
-        timeRemaining={timeRemaining}
-        attempts={attempts}
-        maxAttempts={MAX_ATTEMPTS}
-        gameOver={gameOver}
-        isTimerRunning={isTimerRunning}
-        gamesPlayed={gamesPlayed}
-        currentStreak={currentStreak}
-        maxStreak={maxStreak}
-        onNextPlayer={selectRandomPlayer}
-      />
-
-      {/* Player Image - SEGUNDO (abaixo do timer) */}
+      {/* Player Image - PRIMEIRO (acima do progresso) */}
       <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
         <SimplePlayerImage
           player={currentPlayer}
@@ -119,7 +105,7 @@ export const GameContainer = ({
         </div>
       )}
 
-      {/* Guess Form - TERCEIRO (abaixo da imagem) */}
+      {/* Guess Form - SEGUNDO (abaixo da imagem) */}
       {!isProcessingGuess && (
         <div className="w-full max-w-md md:max-w-lg mx-auto">
           <GuessForm
@@ -129,6 +115,20 @@ export const GameContainer = ({
           />
         </div>
       )}
+
+      {/* Game Status - TERCEIRO (pontuação, timer e progresso abaixo do formulário) */}
+      <GameStatus
+        score={score}
+        timeRemaining={timeRemaining}
+        attempts={attempts}
+        maxAttempts={MAX_ATTEMPTS}
+        gameOver={gameOver}
+        isTimerRunning={isTimerRunning}
+        gamesPlayed={gamesPlayed}
+        currentStreak={currentStreak}
+        maxStreak={maxStreak}
+        onNextPlayer={selectRandomPlayer}
+      />
       
       {/* Debug info em desenvolvimento */}
       {process.env.NODE_ENV === 'development' && (
