@@ -1,5 +1,4 @@
-
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -10,13 +9,21 @@ import { getGameStats } from "@/services/statsService";
 import { SEOHead } from "@/components/SEOHead";
 import { StructuredData } from "@/components/StructuredData";
 import { GamepadIcon, UsersIcon, AwardIcon, PlayIcon, TrophyIcon, StarIcon, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { UniversalTouchTarget } from "@/components/mobile/UniversalTouchTarget";
+import { MobileSkeleton } from "@/components/mobile/MobileSkeleton";
+import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard";
 
 export default function Index() {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // Mobile keyboard handling
+  useMobileKeyboard({
+    onKeyboardShow: () => setMobileMenuOpen(false),
+    adjustViewport: true
+  });
 
-  const { data: stats } = useQuery({
+  const { data: stats, isLoading: isLoadingStats } = useQuery({
     queryKey: ['game-stats'],
     queryFn: getGameStats,
     staleTime: 5 * 60 * 1000,
@@ -33,7 +40,7 @@ export default function Index() {
         canonical="https://flulegendarium.lovable.app/"
       />
       <StructuredData type="WebSite" />
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 full-height-mobile">
         {/* Responsive Header */}
         <header className="bg-white shadow-sm py-3 md:py-4 sticky top-0 z-50">
           <div className="container mx-auto px-4 flex items-center justify-between">
@@ -65,54 +72,66 @@ export default function Index() {
               <AuthButton />
             </nav>
 
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden p-2"
+            {/* Mobile Menu Button - Touch Optimized */}
+            <UniversalTouchTarget
+              size="md"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="Menu de navegação"
+              className="md:hidden bg-transparent hover:bg-gray-100"
             >
               {mobileMenuOpen ? (
                 <X className="w-6 h-6 text-flu-grena" />
               ) : (
                 <Menu className="w-6 h-6 text-flu-grena" />
               )}
-            </button>
+            </UniversalTouchTarget>
           </div>
 
-          {/* Mobile Navigation */}
+          {/* Mobile Navigation - Touch Optimized */}
           {mobileMenuOpen && (
             <div className="md:hidden bg-white border-t shadow-lg">
-              <nav className="container mx-auto px-4 py-4 space-y-4">
-                <Link 
-                  to="/" 
-                  className="block text-flu-verde hover:text-flu-grena transition-colors"
+              <nav className="container mx-auto px-4 py-4 space-y-2">
+                <UniversalTouchTarget
+                  size="lg"
+                  className="w-full justify-start text-left hover:bg-gray-50"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Início
-                </Link>
-                <Link 
-                  to="/selecionar-modo-jogo" 
-                  className="block text-flu-verde hover:text-flu-grena transition-colors"
+                  <Link to="/" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    Início
+                  </Link>
+                </UniversalTouchTarget>
+                
+                <UniversalTouchTarget
+                  size="lg"
+                  className="w-full justify-start text-left hover:bg-gray-50"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Jogar Quiz
-                </Link>
+                  <Link to="/selecionar-modo-jogo" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    Jogar Quiz
+                  </Link>
+                </UniversalTouchTarget>
+                
                 {user && (
-                  <Link 
-                    to="/meu-perfil-tricolor" 
-                    className="block text-flu-verde hover:text-flu-grena transition-colors"
+                  <UniversalTouchTarget
+                    size="lg"
+                    className="w-full justify-start text-left hover:bg-gray-50"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Meu Perfil
-                  </Link>
+                    <Link to="/meu-perfil-tricolor" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                      Meu Perfil
+                    </Link>
+                  </UniversalTouchTarget>
                 )}
-                <Link 
-                  to="/admin/login-administrador" 
-                  className="block text-flu-verde hover:text-flu-grena transition-colors"
+                
+                <UniversalTouchTarget
+                  size="lg"
+                  className="w-full justify-start text-left hover:bg-gray-50"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Admin
-                </Link>
+                  <Link to="/admin/login-administrador" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    Admin
+                  </Link>
+                </UniversalTouchTarget>
+                
                 <div className="pt-2">
                   <AuthButton />
                 </div>
@@ -197,7 +216,7 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Responsive Ranking Section */}
+        {/* Responsive Ranking Section with Loading States */}
         <section id="ranking" className="py-16 md:py-24 bg-white relative">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-flu-grena/5 to-transparent"></div>
           <div className="container mx-auto px-4 relative z-10">
@@ -220,6 +239,7 @@ export default function Index() {
           </div>
         </section>
 
+        {/* Enhanced Stats Section with Loading States */}
         <section className="py-16 md:py-24 bg-gradient-to-br from-flu-grena via-flu-verde to-flu-grena text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="container mx-auto px-4 relative z-10">
@@ -235,33 +255,46 @@ export default function Index() {
               <p className="text-lg md:text-xl opacity-90">Acompanhe os números da nossa comunidade tricolor</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full mx-auto mb-4 md:mb-6">
-                  <GamepadIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                </div>
-                <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
-                  {stats?.totalMatches?.toLocaleString() || '1.234'}
-                </p>
-                <p className="text-lg md:text-xl opacity-80">partidas jogadas</p>
-              </div>
-              <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full mx-auto mb-4 md:mb-6">
-                  <UsersIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                </div>
-                <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
-                  {stats?.activePlayers?.toLocaleString() || '567'}
-                </p>
-                <p className="text-lg md:text-xl opacity-80">tricolores ativos</p>
-              </div>
-              <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-yellow-400/80 rounded-full mx-auto mb-4 md:mb-6">
-                  <AwardIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                </div>
-                <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
-                  {stats?.highestScore?.toLocaleString() || '9.101'}
-                </p>
-                <p className="text-lg md:text-xl opacity-80">maior pontuação</p>
-              </div>
+              {isLoadingStats ? (
+                // Loading skeletons
+                <>
+                  <MobileSkeleton variant="button" className="h-32 bg-white/20" />
+                  <MobileSkeleton variant="button" className="h-32 bg-white/20" />
+                  <MobileSkeleton variant="button" className="h-32 bg-white/20" />
+                </>
+              ) : (
+                <>
+                  <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                    <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full mx-auto mb-4 md:mb-6">
+                      <GamepadIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                    </div>
+                    <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
+                      {stats?.totalMatches?.toLocaleString() || '1.234'}
+                    </p>
+                    <p className="text-lg md:text-xl opacity-80">partidas jogadas</p>
+                  </div>
+                  
+                  <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                    <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full mx-auto mb-4 md:mb-6">
+                      <UsersIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                    </div>
+                    <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
+                      {stats?.activePlayers?.toLocaleString() || '567'}
+                    </p>
+                    <p className="text-lg md:text-xl opacity-80">tricolores ativos</p>
+                  </div>
+                  
+                  <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                    <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-yellow-400/80 rounded-full mx-auto mb-4 md:mb-6">
+                      <AwardIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                    </div>
+                    <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
+                      {stats?.highestScore?.toLocaleString() || '9.101'}
+                    </p>
+                    <p className="text-lg md:text-xl opacity-80">maior pontuação</p>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>

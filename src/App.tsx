@@ -1,137 +1,65 @@
-import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
-
+import { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
-import { usePerformance } from "@/hooks/use-performance";
-import { useBundleAnalyzer } from "@/hooks/use-bundle-analyzer";
-import { useCoreWebVitals } from "@/hooks/use-core-web-vitals";
-import { ErrorBoundary } from "@/components/error-boundaries/ErrorBoundary";
-import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
-import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
 import { CriticalMeta } from "@/components/CriticalMeta";
+import { MobileViewport } from "@/components/mobile/MobileViewport";
 
-// Lazy load pages with better loading and preloading
-const Index = lazy(() => 
-  import("./pages/Index").then(module => {
-    // Preload critical pages after Index loads
-    import("./pages/GameModeSelection");
-    import("./pages/Game");
-    return module;
-  })
-);
+const Index = lazy(() => import("@/pages/Index"))
+const GuessThePlayer = lazy(() => import("@/pages/GuessThePlayer"))
+const SelectGameMode = lazy(() => import("@/pages/SelectGameMode"))
+const Profile = lazy(() => import("@/pages/Profile"))
+const AdminLogin = lazy(() => import("@/pages/AdminLogin"))
+const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"))
+const AdminPlayers = lazy(() => import("@/pages/AdminPlayers"))
+const AdminUploads = lazy(() => import("@/pages/AdminUploads"))
+const AdminUsers = lazy(() => import("@/pages/AdminUsers"))
+const AdminSettings = lazy(() => import("@/pages/AdminSettings"))
+const NotFound = lazy(() => import("@/pages/NotFound"))
 
-const GameModeSelection = lazy(() => 
-  import("./pages/GameModeSelection").then(module => {
-    // Preload Game page when user is selecting mode
-    import("./pages/Game");
-    return module;
-  })
-);
-
-const Game = lazy(() => import("./pages/Game"));
-const Admin = lazy(() => import("./pages/Admin"));
-const AdminLogin = lazy(() => import("./pages/AdminLogin"));
-const Profile = lazy(() => import("./pages/Profile"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-
-// Enhanced loading fallback component
-const PageLoader = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-flu-verde/50 to-white">
-      <div className="flex flex-col items-center gap-4 p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
-        <Loader className="w-10 h-10 text-flu-grena animate-spin" />
-        <p className="text-flu-verde font-medium">Carregando...</p>
-      </div>
-    </div>
-  );
-};
-
-// Optimized QueryClient configuration for better performance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes cache
-      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: 'always',
-      retry: (failureCount, error: any) => {
-        // Don't retry on 4xx errors
-        if (error?.status >= 400 && error?.status < 500) {
-          return false;
-        }
-        return failureCount < 2; // Reduced retries for better performance
-      },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    },
-    mutations: {
-      retry: 1,
+      staleTime: 5 * 60 * 1000, // 5 minutes
     },
   },
 });
 
-// Performance monitoring component
-const PerformanceMonitor = () => {
-  usePerformance();
-  useBundleAnalyzer();
-  useCoreWebVitals(); // Add Core Web Vitals monitoring
-  return null;
-};
-
-const App = () => (
-  <ErrorBoundary>
+function App() {
+  return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <CriticalMeta />
-          <PerformanceMonitor />
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                
-                {/* URLs Semânticas Otimizadas para SEO */}
-                <Route path="/selecionar-modo-jogo" element={<GameModeSelection />} />
-                <Route 
-                  path="/jogar-quiz-fluminense" 
-                  element={
-                    <GameErrorBoundary>
-                      <Game />
-                    </GameErrorBoundary>
-                  } 
-                />
-                <Route path="/meu-perfil-tricolor" element={<Profile />} />
-                <Route 
-                  path="/admin/painel-controle" 
-                  element={
-                    <AdminErrorBoundary>
-                      <Admin />
-                    </AdminErrorBoundary>
-                  } 
-                />
-                <Route path="/admin/login-administrador" element={<AdminLogin />} />
-                
-                {/* Redirects das URLs antigas para manter compatibilidade */}
-                <Route path="/select-mode" element={<Navigate to="/selecionar-modo-jogo" replace />} />
-                <Route path="/game" element={<Navigate to="/jogar-quiz-fluminense" replace />} />
-                <Route path="/profile" element={<Navigate to="/meu-perfil-tricolor" replace />} />
-                <Route path="/admin" element={<Navigate to="/admin/painel-controle" replace />} />
-                <Route path="/admin/login" element={<Navigate to="/admin/login-administrador" replace />} />
-                
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <TooltipProvider>
+            <CriticalMeta />
+            <MobileViewport />
+            <div className="min-h-screen bg-background font-sans antialiased">
+              <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
+                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
+              </div>}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/selecionar-modo-jogo" element={<SelectGameMode />} />
+                  <Route path="/quiz" element={<GuessThePlayer />} />
+                  <Route path="/meu-perfil-tricolor" element={<Profile />} />
+                  <Route path="/admin/login-administrador" element={<AdminLogin />} />
+                  <Route path="/admin/dashboard" element={<AdminDashboard />} />
+                  <Route path="/admin/jogadores" element={<AdminPlayers />} />
+                  <Route path="/admin/imagens" element={<AdminUploads />} />
+                  <Route path="/admin/usuarios" element={<AdminUsers />} />
+                  <Route path="/admin/configuracoes" element={<AdminSettings />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </div>
+            <Toaster />
+          </TooltipProvider>
+        </AuthProvider>
+      </BrowserRouter>
     </QueryClientProvider>
-  </ErrorBoundary>
-);
+  );
+}
 
 export default App;
