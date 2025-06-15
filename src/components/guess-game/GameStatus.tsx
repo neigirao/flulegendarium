@@ -37,7 +37,7 @@ export const GameStatus = ({
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [prevTime, setPrevTime] = useState(timeRemaining);
   const { toast } = useToast();
-  const { confirmation, hideConfirmation, confirmExitGame, confirmNextPlayer } = useGameConfirmations();
+  const { confirmation, hideConfirmation, confirmExitGame } = useGameConfirmations();
   
   // Debug logs detalhados
   console.log('🎮 GameStatus - Score recebido e exibindo:', score);
@@ -61,16 +61,9 @@ export const GameStatus = ({
     setShowRankingForm(true);
   };
   
-  const handleNextPlayer = () => {
-    if (score > 0) {
-      confirmNextPlayer(() => {
-        setShowRankingForm(false);
-        onNextPlayer();
-      }, score);
-    } else {
-      setShowRankingForm(false);
-      onNextPlayer();
-    }
+  const handleAfterSave = () => {
+    // After saving ranking, go to home
+    window.location.href = '/';
   };
 
   const handleExitGame = () => {
@@ -139,23 +132,25 @@ export const GameStatus = ({
             </div>
           </div>
 
-          {/* Botão de sair com visual melhorado */}
-          <div className="p-4 bg-white border-t border-gray-200">
-            <div className="flex justify-center">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleExitGame}
-                className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-200 flex items-center gap-2 px-6 py-3 rounded-xl font-medium"
-              >
-                <Home className="w-4 h-4" />
-                Sair do Jogo
-              </Button>
+          {/* Botão de sair com visual melhorado - só mostra quando o jogo não acabou */}
+          {!gameOver && (
+            <div className="p-4 bg-white border-t border-gray-200">
+              <div className="flex justify-center">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleExitGame}
+                  className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-200 flex items-center gap-2 px-6 py-3 rounded-xl font-medium"
+                >
+                  <Home className="w-4 h-4" />
+                  Sair do Jogo
+                </Button>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
-        {/* Botão de salvar pontuação com animação */}
+        {/* Botão de salvar pontuação com animação - só quando o jogo acabar */}
         {gameOver && !showRankingForm && (
           <div className="text-center animate-fadeIn">
             <button
@@ -174,8 +169,8 @@ export const GameStatus = ({
           <div className="animate-fadeIn">
             <RankingForm 
               score={score}
-              onSaved={handleNextPlayer}
-              onCancel={handleNextPlayer}
+              onSaved={handleAfterSave}
+              onCancel={handleAfterSave}
             />
           </div>
         )}

@@ -33,22 +33,18 @@ export const GameOverDialog = ({
 }: GameOverDialogProps) => {
   const { confirmation, hideConfirmation, confirmResetScore, confirmExitGame } = useGameConfirmations();
 
-  const handleResetScore = () => {
-    confirmResetScore(() => {
-      onResetScore();
-      onClose();
-    });
+  const handleNewGame = () => {
+    onResetScore();
+    onClose();
   };
 
   const handleExitToHome = () => {
-    confirmExitGame(() => {
-      window.location.href = '/';
-    });
+    window.location.href = '/';
   };
 
   return (
     <>
-      <Dialog open={open} onOpenChange={onClose}>
+      <Dialog open={open} onOpenChange={() => {}}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-flu-grena">
@@ -64,34 +60,23 @@ export const GameOverDialog = ({
             </DialogDescription>
           </DialogHeader>
           
-          <DialogFooter className="flex flex-col gap-2 sm:flex-col">
+          <DialogFooter className="flex flex-col gap-3 sm:flex-col">
             <Button
-              onClick={onClose}
+              onClick={handleNewGame}
               className="bg-flu-verde hover:bg-flu-verde/90 text-white flex items-center gap-2"
             >
               <Play className="w-4 h-4" />
-              Continuar Jogando
+              Novo Jogo
             </Button>
             
-            <div className="flex gap-2">
-              <Button
-                variant="outline"
-                onClick={handleResetScore}
-                className="flex-1 border-orange-300 text-orange-600 hover:bg-orange-50 flex items-center gap-2"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Resetar Pontuação
-              </Button>
-              
-              <Button
-                variant="outline"
-                onClick={handleExitToHome}
-                className="flex-1 border-red-300 text-red-600 hover:bg-red-50 flex items-center gap-2"
-              >
-                <Home className="w-4 h-4" />
-                Sair
-              </Button>
-            </div>
+            <Button
+              variant="outline"
+              onClick={handleExitToHome}
+              className="border-flu-grena text-flu-grena hover:bg-flu-grena/10 flex items-center gap-2"
+            >
+              <Home className="w-4 h-4" />
+              Voltar ao Início
+            </Button>
             
             {isAuthenticated && (
               <p className="text-xs text-gray-500 text-center mt-2">

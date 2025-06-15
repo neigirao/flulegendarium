@@ -141,6 +141,8 @@ export const useGuessGame = (players: Player[] | undefined) => {
         }, 2000);
       } else {
         console.log('❌ ERROU! Resposta:', guess, 'Esperado:', currentPlayer.name);
+        
+        // Game ends immediately when player gets it wrong
         setGameOver(true);
         setHasLost(true);
         setGameActive(false);
