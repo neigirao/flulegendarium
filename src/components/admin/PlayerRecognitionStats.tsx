@@ -1,10 +1,10 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Eye, EyeOff } from "lucide-react";
+import { memo, useMemo } from "react";
 
 interface PlayerRecognitionStat {
   player_name: string;
@@ -14,7 +14,67 @@ interface PlayerRecognitionStat {
   difficulty_level: string;
 }
 
-export const PlayerRecognitionStats = () => {
+const PlayerStatRow = memo(({ stat }: { stat: PlayerRecognitionStat }) => {
+  const getDifficultyColor = useMemo(() => {
+    switch (stat.difficulty_level) {
+      case 'Muito Difícil':
+        return 'destructive';
+      case 'Difícil':
+        return 'secondary';
+      case 'Médio':
+        return 'outline';
+      case 'Fácil':
+        return 'default';
+      default:
+        return 'outline';
+    }
+  }, [stat.difficulty_level]);
+
+  const getDifficultyIcon = useMemo(() => {
+    return stat.difficulty_level === 'Muito Difícil' || stat.difficulty_level === 'Difícil' ? 
+      <EyeOff className="h-3 w-3" /> : 
+      <Eye className="h-3 w-3" />;
+  }, [stat.difficulty_level]);
+
+  const recognitionRateColor = useMemo(() => {
+    if (stat.recognition_rate >= 70) return 'text-green-600';
+    if (stat.recognition_rate >= 50) return 'text-yellow-600';
+    if (stat.recognition_rate >= 30) return 'text-orange-600';
+    return 'text-red-600';
+  }, [stat.recognition_rate]);
+
+  return (
+    <TableRow>
+      <TableCell className="font-medium">
+        {stat.player_name}
+      </TableCell>
+      <TableCell className="text-center">
+        {stat.total_attempts}
+      </TableCell>
+      <TableCell className="text-center">
+        {stat.correct_attempts}
+      </TableCell>
+      <TableCell className="text-center">
+        <span className={`font-semibold ${recognitionRateColor}`}>
+          {stat.recognition_rate.toFixed(1)}%
+        </span>
+      </TableCell>
+      <TableCell className="text-center">
+        <Badge 
+          variant={getDifficultyColor}
+          className="flex items-center gap-1 w-fit mx-auto"
+        >
+          {getDifficultyIcon}
+          {stat.difficulty_level}
+        </Badge>
+      </TableCell>
+    </TableRow>
+  );
+});
+
+PlayerStatRow.displayName = 'PlayerStatRow';
+
+export const PlayerRecognitionStats = memo(() => {
   const { data: recognitionStats = [], isLoading } = useQuery({
     queryKey: ['player-recognition-stats'],
     queryFn: async (): Promise<PlayerRecognitionStat[]> => {
@@ -59,6 +119,8 @@ export const PlayerRecognitionStats = () => {
         .sort((a, b) => b.total_attempts - a.total_attempts);
     },
   });
+
+  const displayedStats = useMemo(() => recognitionStats.slice(0, 15), [recognitionStats]);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -116,37 +178,8 @@ export const PlayerRecognitionStats = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {recognitionStats.slice(0, 15).map((stat) => (
-                <TableRow key={stat.player_name}>
-                  <TableCell className="font-medium">
-                    {stat.player_name}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {stat.total_attempts}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {stat.correct_attempts}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <span className={`font-semibold ${
-                      stat.recognition_rate >= 70 ? 'text-green-600' :
-                      stat.recognition_rate >= 50 ? 'text-yellow-600' :
-                      stat.recognition_rate >= 30 ? 'text-orange-600' :
-                      'text-red-600'
-                    }`}>
-                      {stat.recognition_rate.toFixed(1)}%
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-center">
-                    <Badge 
-                      variant={getDifficultyColor(stat.difficulty_level)}
-                      className="flex items-center gap-1 w-fit mx-auto"
-                    >
-                      {getDifficultyIcon(stat.difficulty_level)}
-                      {stat.difficulty_level}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
+              {displayedStats.map((stat) => (
+                <PlayerStatRow key={stat.player_name} stat={stat} />
               ))}
             </TableBody>
           </Table>
@@ -160,4 +193,6 @@ export const PlayerRecognitionStats = () => {
       </CardContent>
     </Card>
   );
-};
+});
+
+PlayerRecognitionStats.displayName = 'PlayerRecognitionStats';

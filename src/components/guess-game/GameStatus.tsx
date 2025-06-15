@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo, useMemo, useCallback } from "react";
 import { RankingForm } from "./RankingForm";
 import { GameTimer } from "./GameTimer";
 import { GameProgress } from "./GameProgress";
@@ -22,7 +22,41 @@ interface GameStatusProps {
   maxStreak?: number;
 }
 
-export const GameStatus = ({ 
+const GameRulesInfo = memo(() => (
+  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-sm">
+    <div className="bg-white/70 rounded-lg p-3 border border-flu-grena/20">
+      <div className="font-semibold text-flu-grena">1 Tentativa</div>
+      <div className="text-gray-600">por jogador</div>
+    </div>
+    <div className="bg-white/70 rounded-lg p-3 border border-flu-verde/20">
+      <div className="font-semibold text-flu-verde">60 Segundos</div>
+      <div className="text-gray-600">para responder</div>
+    </div>
+    <div className="bg-white/70 rounded-lg p-3 border border-orange-300">
+      <div className="font-semibold text-orange-600">5 Pontos</div>
+      <div className="text-gray-600">por acerto</div>
+    </div>
+  </div>
+));
+
+GameRulesInfo.displayName = 'GameRulesInfo';
+
+const SaveScoreButton = memo(({ onShowRankingForm }: { onShowRankingForm: () => void }) => (
+  <div className="text-center animate-fadeIn">
+    <button
+      onClick={onShowRankingForm}
+      className="bg-gradient-to-r from-flu-grena to-flu-grena/90 text-white px-8 py-4 rounded-2xl hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 mx-auto flu-shadow font-bold text-lg w-full sm:w-auto max-w-sm group"
+    >
+      <Trophy className="w-6 h-6 group-hover:animate-bounce" />
+      Salvar Pontuação
+      <div className="w-2 h-2 bg-white/30 rounded-full animate-pulse"></div>
+    </button>
+  </div>
+));
+
+SaveScoreButton.displayName = 'SaveScoreButton';
+
+export const GameStatus = memo(({ 
   attempts, 
   maxAttempts, 
   score,
@@ -39,12 +73,10 @@ export const GameStatus = ({
   const { toast } = useToast();
   const { confirmation, hideConfirmation, confirmExitGame } = useGameConfirmations();
   
-  // Debug logs detalhados
   console.log('🎮 GameStatus - Score recebido e exibindo:', score);
   console.log('🎮 GameStatus - Game Over:', gameOver);
   console.log('🎮 GameStatus - Time Remaining:', timeRemaining);
   
-  // Efeito para alertar quando o tempo estiver acabando
   useEffect(() => {
     if (timeRemaining === 10 && prevTime > 10 && !gameOver) {
       toast({
@@ -57,20 +89,29 @@ export const GameStatus = ({
     setPrevTime(timeRemaining);
   }, [timeRemaining, prevTime, gameOver, toast]);
   
-  const handleShowRankingForm = () => {
+  const handleShowRankingForm = useCallback(() => {
     setShowRankingForm(true);
-  };
+  }, []);
   
-  const handleAfterSave = () => {
-    // After saving ranking, go to home
+  const handleAfterSave = useCallback(() => {
     window.location.href = '/';
-  };
+  }, []);
 
-  const handleExitGame = () => {
+  const handleExitGame = useCallback(() => {
     confirmExitGame(() => {
       window.location.href = '/';
     });
-  };
+  }, [confirmExitGame]);
+
+  const shouldShowSaveButton = useMemo(() => 
+    gameOver && !showRankingForm, 
+    [gameOver, showRankingForm]
+  );
+
+  const shouldShowRankingForm = useMemo(() => 
+    gameOver && showRankingForm, 
+    [gameOver, showRankingForm]
+  );
 
   return (
     <>
@@ -116,20 +157,7 @@ export const GameStatus = ({
               <span className="font-medium text-gray-700">Como Jogar</span>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-sm">
-              <div className="bg-white/70 rounded-lg p-3 border border-flu-grena/20">
-                <div className="font-semibold text-flu-grena">1 Tentativa</div>
-                <div className="text-gray-600">por jogador</div>
-              </div>
-              <div className="bg-white/70 rounded-lg p-3 border border-flu-verde/20">
-                <div className="font-semibold text-flu-verde">60 Segundos</div>
-                <div className="text-gray-600">para responder</div>
-              </div>
-              <div className="bg-white/70 rounded-lg p-3 border border-orange-300">
-                <div className="font-semibold text-orange-600">5 Pontos</div>
-                <div className="text-gray-600">por acerto</div>
-              </div>
-            </div>
+            <GameRulesInfo />
           </div>
 
           {/* Botão de sair com visual melhorado - só mostra quando o jogo não acabou */}
@@ -151,21 +179,12 @@ export const GameStatus = ({
         </div>
 
         {/* Botão de salvar pontuação com animação - só quando o jogo acabar */}
-        {gameOver && !showRankingForm && (
-          <div className="text-center animate-fadeIn">
-            <button
-              onClick={handleShowRankingForm}
-              className="bg-gradient-to-r from-flu-grena to-flu-grena/90 text-white px-8 py-4 rounded-2xl hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 mx-auto flu-shadow font-bold text-lg w-full sm:w-auto max-w-sm group"
-            >
-              <Trophy className="w-6 h-6 group-hover:animate-bounce" />
-              Salvar Pontuação
-              <div className="w-2 h-2 bg-white/30 rounded-full animate-pulse"></div>
-            </button>
-          </div>
+        {shouldShowSaveButton && (
+          <SaveScoreButton onShowRankingForm={handleShowRankingForm} />
         )}
         
         {/* Formulário de ranking com transição suave */}
-        {gameOver && showRankingForm && (
+        {shouldShowRankingForm && (
           <div className="animate-fadeIn">
             <RankingForm 
               score={score}
@@ -188,4 +207,6 @@ export const GameStatus = ({
       />
     </>
   );
-};
+});
+
+GameStatus.displayName = 'GameStatus';

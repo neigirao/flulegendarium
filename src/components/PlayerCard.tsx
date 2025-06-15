@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, memo, useCallback, useMemo } from "react";
 import { defaultPlayerImage } from "@/utils/player-image";
 
 interface PlayerStatistics {
@@ -24,18 +24,17 @@ export interface PlayerCardProps {
   onImageUpdate: (playerId: string, newImageUrl: string) => void;
 }
 
-export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
+const PlayerCard = memo(({ player, onImageUpdate }: PlayerCardProps) => {
   const { toast } = useToast();
   const [imageError, setImageError] = useState(false);
   const [isFixingImage, setIsFixingImage] = useState(false);
 
-  const fixPlayerImage = async () => {
-    if (isFixingImage) return; // Prevent multiple simultaneous corrections
+  const fixPlayerImage = useCallback(async () => {
+    if (isFixingImage) return;
     
     try {
       setIsFixingImage(true);
       
-      // Usar a imagem padrão como fallback
       const newImageUrl = defaultPlayerImage;
       
       const { error } = await supabase
@@ -45,10 +44,7 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
       
       if (error) throw error;
       
-      // Notificar o componente pai sobre a atualização
       onImageUpdate(player.id, newImageUrl);
-      
-      // Resetar o estado de erro
       setImageError(false);
       
       toast({
@@ -65,14 +61,24 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
     } finally {
       setIsFixingImage(false);
     }
-  };
+  }, [isFixingImage, player.id, player.name, onImageUpdate, toast]);
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     console.error(`Erro ao carregar imagem para ${player.name}`);
     if (!imageError) {
       setImageError(true);
     }
-  };
+  }, [imageError, player.name]);
+
+  const imageSrc = useMemo(() => 
+    player.image_url || defaultPlayerImage, 
+    [player.image_url]
+  );
+
+  const statisticsDisplay = useMemo(() => {
+    if (!player.statistics) return null;
+    return `${player.statistics.gols} gols em ${player.statistics.jogos} jogos`;
+  }, [player.statistics]);
   
   return (
     <div className="p-4 rounded-lg border bg-card text-card-foreground shadow-sm">
@@ -90,7 +96,7 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
             </div>
           ) : (
             <img 
-              src={player.image_url || defaultPlayerImage} 
+              src={imageSrc} 
               alt={player.name}
               className="w-full h-full object-cover"
               onError={handleImageError}
@@ -114,9 +120,9 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
           <p className="text-sm text-muted-foreground">Posição: {player.position}</p>
           <p className="text-sm text-muted-foreground">Ano de destaque: {player.year_highlight}</p>
           <p className="mt-2 text-sm">{player.fun_fact}</p>
-          {player.statistics && (
+          {statisticsDisplay && (
             <p className="text-sm mt-1">
-              Estatísticas: {player.statistics.gols} gols em {player.statistics.jogos} jogos
+              Estatísticas: {statisticsDisplay}
             </p>
           )}
           {player.achievements && player.achievements.length > 0 && (
@@ -133,4 +139,8 @@ export const PlayerCard = ({ player, onImageUpdate }: PlayerCardProps) => {
       </div>
     </div>
   );
-};
+});
+
+PlayerCard.displayName = 'PlayerCard';
+
+export { PlayerCard };

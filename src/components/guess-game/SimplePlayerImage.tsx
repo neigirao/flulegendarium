@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, memo, useCallback, useMemo } from "react";
 import { Player } from "@/types/guess-game";
 
 interface SimplePlayerImageProps {
@@ -7,29 +7,34 @@ interface SimplePlayerImageProps {
   onImageLoaded?: () => void;
 }
 
-export const SimplePlayerImage = ({ player, onImageLoaded }: SimplePlayerImageProps) => {
+export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerImageProps) => {
   const [imageError, setImageError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleImageLoad = () => {
+  const handleImageLoad = useCallback(() => {
     console.log('✅ Imagem carregada com sucesso:', player.name);
     setIsLoading(false);
     setImageError(false);
     onImageLoaded?.();
-  };
+  }, [player.name, onImageLoaded]);
 
-  const handleImageError = () => {
+  const handleImageError = useCallback(() => {
     console.error('❌ Erro ao carregar imagem para:', player.name, 'URL:', player.image_url);
     setImageError(true);
     setIsLoading(false);
-  };
+  }, [player.name, player.image_url]);
 
-  const getImageSrc = () => {
+  const imageSrc = useMemo(() => {
     if (imageError || !player.image_url) {
       return "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png";
     }
     return player.image_url;
-  };
+  }, [imageError, player.image_url]);
+
+  const imageOpacity = useMemo(() => 
+    isLoading ? 'opacity-0' : 'opacity-100', 
+    [isLoading]
+  );
 
   console.log('🖼️ Renderizando imagem para:', player.name, 'URL:', player.image_url);
 
@@ -49,11 +54,9 @@ export const SimplePlayerImage = ({ player, onImageLoaded }: SimplePlayerImagePr
       {/* Image container */}
       <div className="w-full h-full flex items-center justify-center p-2 md:p-3 lg:p-4">
         <img
-          src={getImageSrc()}
+          src={imageSrc}
           alt={`Imagem de ${player.name}`}
-          className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
-            isLoading ? 'opacity-0' : 'opacity-100'
-          }`}
+          className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${imageOpacity}`}
           onLoad={handleImageLoad}
           onError={handleImageError}
           style={{ display: 'block' }}
@@ -75,4 +78,6 @@ export const SimplePlayerImage = ({ player, onImageLoaded }: SimplePlayerImagePr
       )}
     </div>
   );
-};
+});
+
+SimplePlayerImage.displayName = 'SimplePlayerImage';
