@@ -1,11 +1,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
-
-interface Player {
-  id: string;
-  name: string;
-  image_url: string;
-}
+import { Player } from '@/types/guess-game';
 
 interface GuessAttempt {
   guess: string;
