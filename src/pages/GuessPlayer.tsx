@@ -1,3 +1,4 @@
+
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
@@ -175,8 +176,8 @@ const GuessPlayer = () => {
           {gameStarted && (
             <GameContainer
               currentPlayer={currentPlayer}
-              gameKey={gameKey}
-              attempts={attempts}
+              gameKey={gameKey.toString()}
+              attempts={attempts.length}
               score={score}
               gameOver={gameOver}
               timeRemaining={timeRemaining}

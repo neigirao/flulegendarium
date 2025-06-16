@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 
 interface Player {
@@ -44,6 +45,19 @@ export const useSimpleGuessGame = (players: Player[] = []) => {
   const [playerChangeCount, setPlayerChangeCount] = useState(0);
   const [playerChangeTime, setPlayerChangeTime] = useState<number | null>(null);
 
+  // Utility functions defined first
+  const normalizeText = useCallback((text: string): string => {
+    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+  }, []);
+
+  const calculatePoints = useCallback((attempts: number, timeRemaining: number): number => {
+    const basePoints = 100;
+    const attemptMultiplier = Math.max(0, MAX_ATTEMPTS - attempts);
+    const timeBonus = timeRemaining / TIME_LIMIT_SECONDS;
+    const totalPoints = basePoints * attemptMultiplier * (1 + timeBonus);
+    return Math.round(totalPoints);
+  }, [MAX_ATTEMPTS, TIME_LIMIT_SECONDS]);
+
   // Enhanced error handling with observability
   const handleError = useCallback((error: Error, context: string) => {
     trackError(error, {
@@ -52,6 +66,48 @@ export const useSimpleGuessGame = (players: Player[] = []) => {
       action: context
     });
   }, [trackError]);
+
+  // Enhanced player selection with error handling
+  const selectRandomPlayer = useCallback(() => {
+    try {
+      if (!players || players.length === 0) {
+        const error = new Error('No players available for selection');
+        handleError(error, 'selectRandomPlayer');
+        return;
+      }
+
+      let newPlayer: Player;
+      let attempts = 0;
+      do {
+        newPlayer = players[Math.floor(Math.random() * players.length)];
+        attempts++;
+        if (attempts > players.length * 2) {
+          const error = new Error('Failed to select a different player after multiple attempts');
+          handleError(error, 'selectRandomPlayer');
+          return;
+        }
+      } while (newPlayer.id === currentPlayer?.id);
+
+      setCurrentPlayer(newPlayer);
+      setAttempts([]);
+      setTimeRemaining(TIME_LIMIT_SECONDS);
+      setGameOver(false);
+      setHasLost(false);
+      setGameKey(prevKey => prevKey + 1);
+      setIsTimerRunning(true);
+      setPlayerChangeCount(prevCount => prevCount + 1);
+      setPlayerChangeTime(Date.now());
+      
+      log('info', 'Player selected', { 
+        playerId: newPlayer.id, 
+        playerName: newPlayer.name,
+        changeCount: playerChangeCount + 1
+      });
+
+    } catch (error) {
+      handleError(error as Error, 'selectRandomPlayer');
+    }
+  }, [players, currentPlayer, handleError, log, playerChangeCount]);
 
   // Track game session start
   useEffect(() => {
@@ -150,60 +206,6 @@ export const useSimpleGuessGame = (players: Player[] = []) => {
     score, currentStreak, MAX_ATTEMPTS, normalizeText, calculatePoints,
     trackPlayerGuess, log, handleError, selectRandomPlayer, playerChangeTime
   ]);
-
-  // Enhanced player selection with error handling
-  const selectRandomPlayer = useCallback(() => {
-    try {
-      if (!players || players.length === 0) {
-        const error = new Error('No players available for selection');
-        handleError(error, 'selectRandomPlayer');
-        return;
-      }
-
-      let newPlayer: Player;
-      let attempts = 0;
-      do {
-        newPlayer = players[Math.floor(Math.random() * players.length)];
-        attempts++;
-        if (attempts > players.length * 2) {
-          const error = new Error('Failed to select a different player after multiple attempts');
-          handleError(error, 'selectRandomPlayer');
-          return;
-        }
-      } while (newPlayer.id === currentPlayer?.id);
-
-      setCurrentPlayer(newPlayer);
-      setAttempts([]);
-      setTimeRemaining(TIME_LIMIT_SECONDS);
-      setGameOver(false);
-      setHasLost(false);
-      setGameKey(prevKey => prevKey + 1);
-      setIsTimerRunning(true);
-      setPlayerChangeCount(prevCount => prevCount + 1);
-      setPlayerChangeTime(Date.now());
-      
-      log('info', 'Player selected', { 
-        playerId: newPlayer.id, 
-        playerName: newPlayer.name,
-        changeCount: playerChangeCount + 1
-      });
-
-    } catch (error) {
-      handleError(error as Error, 'selectRandomPlayer');
-    }
-  }, [players, currentPlayer, handleError, log, playerChangeCount]);
-
-  const normalizeText = useCallback((text: string): string => {
-    return text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
-  }, []);
-
-  const calculatePoints = useCallback((attempts: number, timeRemaining: number): number => {
-    const basePoints = 100;
-    const attemptMultiplier = Math.max(0, MAX_ATTEMPTS - attempts);
-    const timeBonus = timeRemaining / TIME_LIMIT_SECONDS;
-    const totalPoints = basePoints * attemptMultiplier * (1 + timeBonus);
-    return Math.round(totalPoints);
-  }, [MAX_ATTEMPTS, TIME_LIMIT_SECONDS]);
 
   const startGameForPlayer = useCallback(() => {
     if (players && players.length > 0) {

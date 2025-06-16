@@ -205,8 +205,8 @@ const Game = () => {
             {gameStarted && (
               <GameContainer
                 currentPlayer={currentPlayer}
-                gameKey={gameKey}
-                attempts={attempts}
+                gameKey={gameKey.toString()}
+                attempts={attempts.length}
                 score={score}
                 gameOver={gameOver}
                 timeRemaining={timeRemaining}
