@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getGameStats } from "@/services/statsService";
 import { SEOHead } from "@/components/SEOHead";
 import { StructuredData } from "@/components/StructuredData";
-import { GamepadIcon, UsersIcon, AwardIcon, PlayIcon, TrophyIcon, StarIcon, Menu, X } from "lucide-react";
+import { GamepadIcon, UsersIcon, AwardIcon, PlayIcon, TrophyIcon, StarIcon, Menu, X, Instagram } from "lucide-react";
 import { UniversalTouchTarget } from "@/components/mobile/UniversalTouchTarget";
 import { MobileSkeleton } from "@/components/mobile/MobileSkeleton";
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard";
@@ -373,19 +373,67 @@ export default function Index() {
           </div>
         </section>
 
+        {/* Enhanced Footer with Instagram */}
         <footer className="bg-flu-grena py-8 md:py-12 text-white">
           <div className="container mx-auto px-4">
-            <div className="flex items-center justify-center gap-3 md:gap-4 mb-4 md:mb-6">
-              <img 
-                src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                alt="Fluminense FC" 
-                className="w-8 h-8 md:w-10 md:h-10"
-              />
-              <span className="text-xl md:text-2xl font-bold">Lendas do Flu</span>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+              {/* Logo and Description */}
+              <div className="text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 mb-4 md:mb-6">
+                  <img 
+                    src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
+                    alt="Fluminense FC" 
+                    className="w-8 h-8 md:w-10 md:h-10"
+                  />
+                  <span className="text-xl md:text-2xl font-bold">Lendas do Flu</span>
+                </div>
+                <p className="text-base md:text-lg opacity-80 max-w-sm mx-auto md:mx-0">
+                  O quiz oficial dos tricolores. Teste seus conhecimentos sobre as lendas do Fluminense!
+                </p>
+              </div>
+
+              {/* Social Media */}
+              <div className="text-center">
+                <h3 className="text-lg md:text-xl font-semibold mb-4">Siga-nos</h3>
+                <div className="flex justify-center">
+                  <a 
+                    href="https://www.instagram.com/jogolendasdoflu" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg"
+                  >
+                    <Instagram className="w-5 h-5" />
+                    <span className="font-semibold">@jogolendasdoflu</span>
+                  </a>
+                </div>
+                <p className="text-sm opacity-70 mt-3">
+                  💬 Canal oficial de feedback e novidades
+                </p>
+              </div>
+
+              {/* Quick Links */}
+              <div className="text-center md:text-right">
+                <h3 className="text-lg md:text-xl font-semibold mb-4">Links Rápidos</h3>
+                <div className="space-y-2">
+                  <Link to="/selecionar-modo-jogo" className="block text-white/80 hover:text-white transition-colors">
+                    Jogar Quiz
+                  </Link>
+                  <Link to="/faq" className="block text-white/80 hover:text-white transition-colors">
+                    FAQ
+                  </Link>
+                  <Link to="/meu-perfil-tricolor" className="block text-white/80 hover:text-white transition-colors">
+                    Meu Perfil
+                  </Link>
+                </div>
+              </div>
             </div>
-            <p className="text-center text-base md:text-lg opacity-80">
-              &copy; 2024 Lendas do Flu. Feito com ❤️ pelos tricolores.
-            </p>
+
+            {/* Copyright */}
+            <div className="border-t border-white/20 mt-8 pt-6 text-center">
+              <p className="text-base md:text-lg opacity-80">
+                &copy; 2024 Lendas do Flu. Feito com ❤️ pelos tricolores.
+              </p>
+            </div>
           </div>
         </footer>
       </div>

@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Trophy, RotateCcw, Play, Home } from "lucide-react";
+import { Trophy, RotateCcw, Play, Home, Instagram } from "lucide-react";
 import { GameConfirmDialog } from "./GameConfirmDialog";
 import { useGameConfirmations } from "@/hooks/use-game-confirmations";
 import { RankingForm } from "./RankingForm";
@@ -95,7 +95,7 @@ export const GameOverDialog = ({
             {isGuestPlayer ? (
               // Layout simplificado para jogadores convidados
               <div className="space-y-4">
-                <div className="text-center">
+                <div className="text-center space-y-3">
                   <QuickShareButton
                     score={score}
                     correctGuesses={Math.floor(score / 5)}
@@ -104,6 +104,30 @@ export const GameOverDialog = ({
                     size="lg"
                     className="w-full bg-flu-grena hover:bg-flu-grena/90 text-white"
                   />
+                  
+                  {/* Instagram Call-to-Action */}
+                  <div className="bg-gradient-to-r from-purple-100 to-pink-100 p-4 rounded-lg border border-purple-200">
+                    <p className="text-sm text-gray-700 mb-3">
+                      📸 <strong>Compartilhe seu resultado!</strong><br />
+                      Nos marque no Instagram para aparecer em nossos stories
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full border-purple-300 text-purple-700 hover:bg-purple-50"
+                      asChild
+                    >
+                      <a 
+                        href="https://www.instagram.com/jogolendasdoflu" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2"
+                      >
+                        <Instagram className="w-4 h-4" />
+                        Seguir @jogolendasdoflu
+                      </a>
+                    </Button>
+                  </div>
                 </div>
                 
                 <DialogFooter className="flex flex-col gap-3 sm:flex-col">

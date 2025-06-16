@@ -1,10 +1,9 @@
-
 import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, HelpCircle, MessageCircle, Trophy, Users, GamepadIcon, Shield } from "lucide-react";
+import { ArrowLeft, HelpCircle, MessageCircle, Trophy, Users, GamepadIcon, Shield, Instagram } from "lucide-react";
 
 const faqData = [
   {
@@ -205,15 +204,61 @@ export default function FAQ() {
               ))}
             </div>
 
-            {/* Contact Section */}
-            <Card className="mt-12 bg-gradient-to-r from-flu-grena to-flu-verde text-white">
+            {/* Instagram Feedback Section */}
+            <Card className="mt-12 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
               <CardHeader className="text-center">
                 <CardTitle className="flex items-center justify-center gap-3 text-2xl">
-                  <MessageCircle className="w-8 h-8" />
+                  <Instagram className="w-8 h-8" />
                   Não encontrou sua resposta?
                 </CardTitle>
                 <CardDescription className="text-white/90 text-lg">
-                  Entre em contato conosco e teremos prazer em ajudar
+                  💬 Fale conosco diretamente no Instagram!
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <p className="mb-6 text-white/90 text-lg">
+                  Nossa equipe responde rapidamente no <strong>@jogolendasdoflu</strong>
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  <Button 
+                    variant="secondary" 
+                    size="lg"
+                    className="bg-white text-purple-600 hover:bg-gray-100 font-semibold"
+                    asChild
+                  >
+                    <a 
+                      href="https://www.instagram.com/jogolendasdoflu" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2"
+                    >
+                      <Instagram className="w-5 h-5" />
+                      Seguir @jogolendasdoflu
+                    </a>
+                  </Button>
+                  <Button 
+                    variant="secondary" 
+                    size="lg"
+                    className="bg-white text-flu-grena hover:bg-gray-100"
+                    asChild
+                  >
+                    <Link to="/selecionar-modo-jogo">
+                      Começar a Jogar
+                    </Link>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Contact Section */}
+            <Card className="mt-8 bg-gradient-to-r from-flu-grena to-flu-verde text-white">
+              <CardHeader className="text-center">
+                <CardTitle className="flex items-center justify-center gap-3 text-2xl">
+                  <MessageCircle className="w-8 h-8" />
+                  Outras formas de contato
+                </CardTitle>
+                <CardDescription className="text-white/90 text-lg">
+                  Estamos sempre prontos para ajudar você
                 </CardDescription>
               </CardHeader>
               <CardContent className="text-center">
@@ -229,16 +274,6 @@ export default function FAQ() {
                   >
                     <Link to="/meu-perfil-tricolor">
                       Ir para Meu Perfil
-                    </Link>
-                  </Button>
-                  <Button 
-                    variant="secondary" 
-                    size="lg"
-                    className="bg-white text-flu-grena hover:bg-gray-100"
-                    asChild
-                  >
-                    <Link to="/selecionar-modo-jogo">
-                      Começar a Jogar
                     </Link>
                   </Button>
                 </div>
