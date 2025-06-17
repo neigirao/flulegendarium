@@ -30,6 +30,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     let mounted = true;
     
+    // Função para reforçar CSS após mudanças de auth
+    const reinforceStyles = () => {
+      const htmlElement = document.documentElement;
+      htmlElement.classList.add('css-loaded');
+      
+      // Garantir que as variáveis CSS estejam definidas
+      const computedStyle = getComputedStyle(document.documentElement);
+      if (!computedStyle.getPropertyValue('--primary')) {
+        document.documentElement.style.setProperty('--primary', '351 98% 24%');
+        document.documentElement.style.setProperty('--secondary', '159 100% 19%');
+        debugLogger.info('AuthProvider', 'Variáveis CSS reforçadas');
+      }
+    };
+    
     // Configurar listener de mudanças de estado primeiro
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -44,14 +58,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUser(session?.user ?? null);
           setLoading(false);
           
-          // Garantir que o CSS seja preservado após mudanças de auth
+          // Reforçar estilos após mudança de auth
           setTimeout(() => {
-            const htmlElement = document.documentElement;
-            if (!htmlElement.classList.contains('css-loaded')) {
-              htmlElement.classList.add('css-loaded');
-              debugLogger.info('AuthProvider', 'CSS classes reforçadas após mudança de auth');
-            }
-          }, 100);
+            reinforceStyles();
+          }, 50);
         }
       }
     );
@@ -60,6 +70,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const initializeAuth = async () => {
       try {
         debugLogger.info('AuthProvider', 'Obtendo sessão inicial');
+        
+        // Reforçar estilos antes de verificar sessão
+        reinforceStyles();
+        
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -161,10 +175,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         debugLogger.info('AuthProvider', 'Logout realizado com sucesso');
         // Estados serão limpos pelo onAuthStateChange
         
-        // Forçar recarregamento completo da página para garantir CSS
+        // Não recarregar a página, apenas limpar estados
+        setSession(null);
+        setUser(null);
+        
+        // Garantir que o CSS permaneça aplicado
         setTimeout(() => {
-          window.location.reload();
-        }, 500);
+          const htmlElement = document.documentElement;
+          htmlElement.classList.add('css-loaded');
+          
+          // Verificar se os estilos ainda estão aplicados
+          const bodyStyle = getComputedStyle(document.body);
+          if (!bodyStyle.backgroundColor || bodyStyle.backgroundColor === 'rgba(0, 0, 0, 0)') {
+            document.body.style.backgroundColor = 'hsl(0 0% 100%)';
+            debugLogger.info('AuthProvider', 'CSS de background reforçado após logout');
+          }
+        }, 100);
       }
     } catch (error) {
       debugLogger.error('AuthProvider', 'Erro crítico no logout', error);

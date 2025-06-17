@@ -8,6 +8,7 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CriticalMeta } from "@/components/CriticalMeta";
 import { RootLayout } from "@/components/RootLayout";
 import Index from "@/pages/Index";
+import GameModeSelection from "@/pages/GameModeSelection";
 import GuessPlayer from "@/pages/GuessPlayer";
 import Profile from "@/pages/Profile";
 import AdminLogin from "@/pages/AdminLogin";
