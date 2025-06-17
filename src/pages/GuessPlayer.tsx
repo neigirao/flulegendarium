@@ -18,7 +18,8 @@ import { usePlayersData } from "@/hooks/use-players-data";
 import { usePlayerPreload } from "@/hooks/use-player-preload";
 import { useGameState } from "@/hooks/use-game-state";
 import { useObservability } from "@/hooks/use-observability";
-import { useGameMetrics } from "@/hooks/use-game-metrics";
+import { useEnhancedGameMetrics } from "@/hooks/use-enhanced-game-metrics";
+import { useAdvancedUserTracking } from "@/hooks/use-advanced-user-tracking";
 import { useEffect } from "react";
 
 const GuessPlayer = () => {
@@ -26,7 +27,18 @@ const GuessPlayer = () => {
   const [showAuthSelection, setShowAuthSelection] = useState(true);
   const { showImageUrl, handleDebugClick } = useDebug();
   const { trackError, log } = useObservability();
-  const { trackGameAbandonment, trackConversion } = useGameMetrics();
+  
+  // Enhanced tracking hooks
+  const { 
+    trackGameStart, 
+    trackPlayerGuess, 
+    trackGameEnd, 
+    trackGameAbandonment,
+    trackTutorialEvent,
+    trackGameReplay
+  } = useEnhancedGameMetrics();
+  
+  const { trackPageView, trackInteraction } = useAdvancedUserTracking();
   
   const { players, isLoading, playersError } = usePlayersData();
 
@@ -84,38 +96,110 @@ const GuessPlayer = () => {
     }
   }, [playersError, trackError]);
 
-  // Track page navigation
+  // Track page load with enhanced metrics
   useEffect(() => {
+    trackPageView('/guess-player');
     log('info', 'GuessPlayer page loaded', {
       hasUser: !!user,
       playersCount: players?.length || 0,
-      gameStarted
+      gameStarted,
+      userAgent: navigator.userAgent,
+      viewport: `${window.innerWidth}x${window.innerHeight}`
     });
-  }, [log, user, players, gameStarted]);
+  }, [log, user, players, gameStarted, trackPageView]);
 
+  // Enhanced tutorial handlers
   const handleTutorialCompleteLocal = () => {
     log('info', 'Tutorial completed', { hasUser: !!user });
+    trackTutorialEvent('complete');
     handleTutorialComplete(user);
   };
 
   const handleSkipTutorialLocal = () => {
     log('info', 'Tutorial skipped', { hasUser: !!user });
+    trackTutorialEvent('skip');
     handleSkipTutorial(user);
   };
 
+  // Enhanced game start handlers
   const handleGuestPlay = () => {
     log('info', 'Guest play selected');
+    trackInteraction('auth_selection', 'guest_play');
     setShowAuthSelection(false);
     setGameStarted(true);
     setIsAuthenticatedGame(false);
+    
+    // Track game start with enhanced data
+    trackGameStart({
+      sessionId: `guest_${Date.now()}`,
+      startTime: Date.now(),
+      isAuthenticated: false,
+      gameMode: 'guest'
+    });
   };
 
   const handleAuthenticatedPlay = () => {
     log('info', 'Authenticated play selected', { userId: user?.id });
-    trackConversion(false, 'login');
+    trackInteraction('auth_selection', 'authenticated_play');
     setShowAuthSelection(false);
     setGameStarted(true);
     setIsAuthenticatedGame(true);
+    
+    // Track game start with enhanced data
+    trackGameStart({
+      sessionId: `auth_${user?.id}_${Date.now()}`,
+      startTime: Date.now(),
+      isAuthenticated: true,
+      playerName: user?.email,
+      gameMode: 'authenticated'
+    });
+  };
+
+  // Enhanced guess handler
+  const handleGuessWithTracking = (guess: string) => {
+    const guessStartTime = Date.now();
+    
+    // Call original handler
+    handleGuess(guess);
+    
+    // Enhanced tracking
+    if (currentPlayer) {
+      const timeToGuess = guessStartTime - (Date.now() - 30000); // Approximate
+      trackPlayerGuess(
+        currentPlayer.name,
+        guess,
+        guess.toLowerCase() === currentPlayer.name.toLowerCase(),
+        Math.abs(timeToGuess),
+        score - 5, // previous score
+        score // current score
+      );
+    }
+  };
+
+  // Enhanced game over handler
+  const handleGameOverCloseLocal = () => {
+    const sessionData = {
+      sessionId: `session_${Date.now()}`,
+      startTime: Date.now() - 120000, // approximate
+      isAuthenticated: isAuthenticatedGame,
+      playerName: guestPlayerName
+    };
+    
+    const metrics = {
+      sessionDuration: 120000, // approximate
+      totalGuesses: attempts.length,
+      correctGuesses: score / 5,
+      accuracy: (score / 5) / Math.max(attempts.length, 1)
+    };
+    
+    trackGameEnd(sessionData, metrics);
+    handleGameOverClose(selectRandomPlayer);
+  };
+
+  // Enhanced replay handler
+  const handleReplay = () => {
+    trackGameReplay();
+    selectRandomPlayer();
   };
 
   // Track game abandonment on unmount
@@ -151,12 +235,13 @@ const GuessPlayer = () => {
     return <EmptyPlayersDisplay />;
   }
 
-  console.log('🎮 GuessPlayer Render:', {
+  console.log('🎮 GuessPlayer Enhanced Render:', {
     playerName: currentPlayer?.name,
     gameKey,
     gameStarted,
     changeCount: playerChangeCount,
-    guestPlayerName
+    guestPlayerName,
+    trackingActive: true
   });
 
   return (
@@ -182,8 +267,8 @@ const GuessPlayer = () => {
               gameOver={gameOver}
               timeRemaining={timeRemaining}
               MAX_ATTEMPTS={MAX_ATTEMPTS}
-              handleGuess={handleGuess}
-              selectRandomPlayer={selectRandomPlayer}
+              handleGuess={handleGuessWithTracking}
+              selectRandomPlayer={handleReplay}
               handlePlayerImageFixed={handlePlayerImageFixed}
               isProcessingGuess={isProcessingGuess}
               hasLost={hasLost}
@@ -223,7 +308,7 @@ const GuessPlayer = () => {
       {currentPlayer && gameStarted && (
         <GameOverDialog
           open={showGameOverDialog}
-          onClose={() => handleGameOverClose(selectRandomPlayer)}
+          onClose={handleGameOverCloseLocal}
           playerName={currentPlayer.name}
           score={score}
           onResetScore={resetScore}
