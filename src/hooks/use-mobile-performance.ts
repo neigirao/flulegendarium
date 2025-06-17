@@ -1,81 +1,149 @@
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useDeviceDetection } from './use-device-detection';
+
+interface PerformanceConfig {
+  enableAnimations: boolean;
+  imageQuality: 'high' | 'medium' | 'low';
+  prefetchImages: boolean;
+  reducedMotion: boolean;
+}
 
 export const useMobilePerformance = () => {
   const { isMobile, connectionType, devicePixelRatio } = useDeviceDetection();
+  const configRef = useRef<PerformanceConfig | null>(null);
+  const cleanupFunctions = useRef<(() => void)[]>([]);
 
-  // Optimize for mobile performance
-  useEffect(() => {
-    if (!isMobile) return;
+  // Determine optimal performance configuration
+  const getPerformanceConfig = useCallback((): PerformanceConfig => {
+    const isSlowConnection = connectionType === 'slow-2g' || connectionType === '2g';
+    const isLowEndDevice = devicePixelRatio <= 1 || navigator.hardwareConcurrency <= 2;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    // Reduce animations on slow connections
-    if (connectionType === 'slow-2g' || connectionType === '2g') {
-      document.documentElement.style.setProperty('--animation-duration', '0.1s');
-    }
+    return {
+      enableAnimations: !isSlowConnection && !prefersReducedMotion,
+      imageQuality: isSlowConnection || isLowEndDevice ? 'low' : devicePixelRatio > 2 ? 'high' : 'medium',
+      prefetchImages: !isSlowConnection,
+      reducedMotion: prefersReducedMotion || isSlowConnection
+    };
+  }, [connectionType, devicePixelRatio]);
 
-    // Optimize rendering for high DPI displays
-    if (devicePixelRatio > 2) {
-      // Enable hardware acceleration for critical elements
-      const criticalElements = document.querySelectorAll('.animate-spin, .transition-all');
-      criticalElements.forEach(el => {
-        (el as HTMLElement).style.willChange = 'transform';
+  // Apply performance optimizations
+  const applyOptimizations = useCallback((config: PerformanceConfig) => {
+    const cleanups: (() => void)[] = [];
+
+    // Animation optimizations
+    if (!config.enableAnimations) {
+      document.documentElement.style.setProperty('--animation-duration', '0.05s');
+      document.documentElement.style.setProperty('--transition-duration', '0.05s');
+      
+      cleanups.push(() => {
+        document.documentElement.style.removeProperty('--animation-duration');
+        document.documentElement.style.removeProperty('--transition-duration');
       });
     }
 
-    // Prevent over-scrolling on iOS
-    document.body.style.overscrollBehavior = 'none';
+    // Reduced motion
+    if (config.reducedMotion) {
+      document.documentElement.classList.add('reduce-motion');
+      
+      cleanups.push(() => {
+        document.documentElement.classList.remove('reduce-motion');
+      });
+    }
 
-    // Improve touch performance
-    document.body.style.touchAction = 'manipulation';
+    // Hardware acceleration for critical elements
+    if (isMobile && devicePixelRatio > 1) {
+      const criticalElements = document.querySelectorAll('.animate-spin, .transition-all, [data-critical-animation]');
+      criticalElements.forEach(el => {
+        (el as HTMLElement).style.willChange = 'transform';
+        (el as HTMLElement).style.backfaceVisibility = 'hidden';
+      });
 
-    return () => {
-      document.documentElement.style.removeProperty('--animation-duration');
-      document.body.style.overscrollBehavior = '';
-      document.body.style.touchAction = '';
-    };
-  }, [isMobile, connectionType, devicePixelRatio]);
+      cleanups.push(() => {
+        criticalElements.forEach(el => {
+          (el as HTMLElement).style.willChange = '';
+          (el as HTMLElement).style.backfaceVisibility = '';
+        });
+      });
+    }
+
+    // Mobile-specific optimizations
+    if (isMobile) {
+      // Prevent over-scrolling
+      document.body.style.overscrollBehavior = 'none';
+      
+      // Improve touch performance
+      document.body.style.touchAction = 'manipulation';
+      
+      // Optimize scrolling
+      document.documentElement.style.scrollBehavior = config.enableAnimations ? 'smooth' : 'auto';
+
+      cleanups.push(() => {
+        document.body.style.overscrollBehavior = '';
+        document.body.style.touchAction = '';
+        document.documentElement.style.scrollBehavior = '';
+      });
+    }
+
+    return cleanups;
+  }, [isMobile, devicePixelRatio]);
 
   // Memory management for mobile
   const optimizeMemoryUsage = useCallback(() => {
-    if (!isMobile) return;
+    if (!isMobile) return () => {};
 
-    // Clean up unused resources
     const cleanupImages = () => {
-      const images = document.querySelectorAll('img[data-loaded="false"]');
+      const images = document.querySelectorAll('img:not([data-priority="high"])');
       images.forEach(img => {
-        if (img.getBoundingClientRect().top > window.innerHeight * 2) {
-          (img as HTMLImageElement).src = '';
+        const rect = img.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+        
+        // Unload images that are far from viewport
+        if (rect.top > viewportHeight * 3 || rect.bottom < -viewportHeight * 2) {
+          const originalSrc = (img as HTMLImageElement).src;
+          if (originalSrc && !originalSrc.includes('data:')) {
+            (img as HTMLImageElement).dataset.originalSrc = originalSrc;
+            (img as HTMLImageElement).src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1" height="1"%3E%3C/svg%3E';
+          }
         }
       });
     };
 
-    // Throttle cleanup to avoid performance issues
-    let cleanupTimeout: NodeJS.Timeout;
+    let timeoutId: NodeJS.Timeout;
     const throttledCleanup = () => {
-      clearTimeout(cleanupTimeout);
-      cleanupTimeout = setTimeout(cleanupImages, 1000);
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(cleanupImages, 1000);
     };
 
+    // Use passive listeners for better performance
     window.addEventListener('scroll', throttledCleanup, { passive: true });
+    window.addEventListener('resize', throttledCleanup, { passive: true });
 
     return () => {
       window.removeEventListener('scroll', throttledCleanup);
-      clearTimeout(cleanupTimeout);
+      window.removeEventListener('resize', throttledCleanup);
+      clearTimeout(timeoutId);
     };
   }, [isMobile]);
 
   // Battery optimization
   const optimizeBatteryUsage = useCallback(() => {
-    if (!isMobile || !('getBattery' in navigator)) return;
+    if (!isMobile || !('getBattery' in navigator)) return () => {};
+
+    let cleanup = () => {};
 
     (navigator as any).getBattery?.().then((battery: any) => {
       const handleBatteryChange = () => {
-        if (battery.level < 0.2 && !battery.charging) {
-          // Reduce performance on low battery
+        const isLowBattery = battery.level < 0.2 && !battery.charging;
+        
+        if (isLowBattery) {
           document.documentElement.classList.add('low-battery-mode');
+          // Reduce performance in low battery mode
+          document.documentElement.style.setProperty('--animation-duration', '0.1s');
         } else {
           document.documentElement.classList.remove('low-battery-mode');
+          document.documentElement.style.removeProperty('--animation-duration');
         }
       };
 
@@ -83,25 +151,57 @@ export const useMobilePerformance = () => {
       battery.addEventListener('chargingchange', handleBatteryChange);
       handleBatteryChange();
 
-      return () => {
+      cleanup = () => {
         battery.removeEventListener('levelchange', handleBatteryChange);
         battery.removeEventListener('chargingchange', handleBatteryChange);
       };
     }).catch(() => {
       // Battery API not supported
     });
+
+    return cleanup;
   }, [isMobile]);
 
+  // Main effect to apply all optimizations
   useEffect(() => {
-    const cleanupMemory = optimizeMemoryUsage();
-    optimizeBatteryUsage();
+    const config = getPerformanceConfig();
+    configRef.current = config;
 
-    return cleanupMemory;
-  }, [optimizeMemoryUsage, optimizeBatteryUsage]);
+    // Apply optimizations
+    const optimizationCleanups = applyOptimizations(config);
+    const memoryCleanup = optimizeMemoryUsage();
+    const batteryCleanup = optimizeBatteryUsage();
+
+    // Store all cleanup functions
+    cleanupFunctions.current = [
+      ...optimizationCleanups,
+      memoryCleanup,
+      batteryCleanup
+    ];
+
+    console.log('🚀 Mobile performance optimized:', config);
+
+    return () => {
+      cleanupFunctions.current.forEach(cleanup => {
+        try {
+          cleanup();
+        } catch (error) {
+          console.warn('Cleanup error:', error);
+        }
+      });
+      cleanupFunctions.current = [];
+    };
+  }, [getPerformanceConfig, applyOptimizations, optimizeMemoryUsage, optimizeBatteryUsage]);
 
   return {
     isMobileOptimized: isMobile,
     connectionType,
-    devicePixelRatio
+    devicePixelRatio,
+    performanceConfig: configRef.current,
+    reapplyOptimizations: () => {
+      const config = getPerformanceConfig();
+      const cleanups = applyOptimizations(config);
+      cleanupFunctions.current.push(...cleanups);
+    }
   };
 };
