@@ -1,5 +1,5 @@
 
-import { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from 'react';
 import { PlayerImageSkeleton } from '@/components/ui/skeleton-loader';
 
 // Lazy load heavy components
