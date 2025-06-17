@@ -39,7 +39,7 @@ export const LazyWrapper = ({ children, fallback }: LazyWrapperProps) => {
 };
 
 // Simplified higher-order component for lazy loading with preloading
-export const withLazyPreload = <P extends Record<string, any>>(
+export const withLazyPreload = <P extends {}>(
   importFn: () => Promise<{ default: React.ComponentType<P> }>,
   preloadTrigger?: () => boolean
 ) => {
@@ -50,11 +50,11 @@ export const withLazyPreload = <P extends Record<string, any>>(
     importFn();
   }
   
-  const WrappedComponent = (props: P) => (
+  const WrappedComponent = React.forwardRef<any, P>((props, ref) => (
     <LazyWrapper>
-      <LazyComponent {...props} />
+      <LazyComponent {...props} ref={ref} />
     </LazyWrapper>
-  );
+  ));
   
   WrappedComponent.displayName = 'LazyPreloadedComponent';
   
