@@ -14,6 +14,18 @@ interface UserBehavioralData {
   created_at: string;
 }
 
+interface UserBehavioralProfile {
+  user_id: string;
+  preferred_play_times: string[];
+  average_session_duration: number;
+  game_completion_rate: number;
+  help_seeking_frequency: number;
+  learning_progression_score: number;
+  engagement_level: 'low' | 'medium' | 'high' | 'very_high';
+  churn_risk_score: number;
+  player_type_preferences: string[];
+}
+
 export const EnhancedUserDataDashboard = () => {
   const { user } = useAuth();
 
@@ -47,7 +59,7 @@ export const EnhancedUserDataDashboard = () => {
         .single();
 
       if (error && error.code !== 'PGRST116') throw error;
-      return data;
+      return data as UserBehavioralProfile;
     },
     enabled: !!user
   });
@@ -230,7 +242,7 @@ export const EnhancedUserDataDashboard = () => {
       )}
 
       {/* Preferred Play Times */}
-      {profiles?.preferred_play_times && (
+      {profiles?.preferred_play_times && profiles.preferred_play_times.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle>Horários Preferenciais</CardTitle>

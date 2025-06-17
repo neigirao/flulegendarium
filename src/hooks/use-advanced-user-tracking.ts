@@ -49,8 +49,16 @@ export const useAdvancedUserTracking = () => {
     if (!user) return;
 
     const sessionId = `session_${user.id}_${Date.now()}`;
+    
+    // Fix the type casting issue
+    const getDeviceType = (): 'mobile' | 'desktop' | 'tablet' => {
+      if (window.innerWidth < 768) return 'mobile';
+      if (window.innerWidth < 1024) return 'tablet';
+      return 'desktop';
+    };
+
     const deviceInfo = {
-      type: window.innerWidth < 768 ? 'mobile' : window.innerWidth < 1024 ? 'tablet' : 'desktop' as const,
+      type: getDeviceType(),
       screen_width: window.innerWidth,
       screen_height: window.innerHeight,
       user_agent: navigator.userAgent
