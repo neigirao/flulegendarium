@@ -1,7 +1,9 @@
-
 import { useEffect } from 'react';
+import { useLCPOptimization } from '@/hooks/use-lcp-optimization';
 
 export const CriticalMeta = () => {
+  const { optimizeForLCP } = useLCPOptimization();
+
   useEffect(() => {
     // Otimizar viewport para mobile
     const updateViewport = () => {
@@ -14,78 +16,7 @@ export const CriticalMeta = () => {
       viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no');
     };
 
-    // Adicionar resource hints críticos com priorização
-    const addResourceHints = () => {
-      // Preconnect to critical domains first
-      const criticalDomains = [
-        'https://fonts.googleapis.com',
-        'https://fonts.gstatic.com'
-      ];
-
-      criticalDomains.forEach(domain => {
-        const link = document.createElement('link');
-        link.rel = 'preconnect';
-        link.href = domain;
-        link.crossOrigin = 'anonymous';
-        document.head.appendChild(link);
-      });
-
-      // DNS prefetch for non-critical domains
-      const prefetchDomains = [
-        'https://lovableproject.com',
-        'https://www.googletagmanager.com'
-      ];
-
-      prefetchDomains.forEach(domain => {
-        const link = document.createElement('link');
-        link.rel = 'dns-prefetch';
-        link.href = domain;
-        document.head.appendChild(link);
-      });
-
-      // Preload critical fonts with higher priority
-      const criticalFonts = [
-        {
-          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap',
-          as: 'style'
-        }
-      ];
-
-      criticalFonts.forEach(font => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.href = font.href;
-        link.as = font.as;
-        link.crossOrigin = 'anonymous';
-        document.head.appendChild(link);
-        
-        // Also add the actual stylesheet
-        const styleLink = document.createElement('link');
-        styleLink.rel = 'stylesheet';
-        styleLink.href = font.href;
-        styleLink.media = 'print';
-        styleLink.onload = function() {
-          (this as HTMLLinkElement).media = 'all';
-        };
-        document.head.appendChild(styleLink);
-      });
-
-      // Preload critical images
-      const criticalImages = [
-        '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png' // Fluminense logo
-      ];
-
-      criticalImages.forEach(src => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.href = src;
-        link.as = 'image';
-        link.fetchPriority = 'high';
-        document.head.appendChild(link);
-      });
-    };
-
-    // Critical CSS inline otimizado para LCP
+    // Critical CSS inline otimizado para LCP - ENHANCED
     const addCriticalCSS = () => {
       const criticalCSS = `
         /* Critical above-the-fold styles optimized for LCP */
@@ -119,6 +50,24 @@ export const CriticalMeta = () => {
         .bg-flu-grena { background-color: #7A0213; }
         .bg-flu-verde { background-color: #006140; }
         
+        /* Enhanced LCP optimizations */
+        img[data-critical="true"] {
+          content-visibility: visible;
+          contain-intrinsic-size: 400px 500px;
+        }
+        
+        /* Prevent layout shift for critical images */
+        .lcp-container {
+          aspect-ratio: 4/5;
+          contain: layout style paint;
+        }
+        
+        /* Optimize critical button interactions */
+        button[data-critical="true"] {
+          contain: layout style paint;
+          will-change: transform;
+        }
+        
         /* Prevent layout shift for common elements */
         img { height: auto; max-width: 100%; }
         button { cursor: pointer; }
@@ -131,12 +80,98 @@ export const CriticalMeta = () => {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
+        
+        /* Enhanced performance hints */
+        * {
+          box-sizing: border-box;
+        }
+        
+        .performance-optimized {
+          transform: translateZ(0);
+          backface-visibility: hidden;
+        }
       `;
 
       const style = document.createElement('style');
       style.innerHTML = criticalCSS;
       style.setAttribute('data-critical', 'true');
+      style.setAttribute('data-enhanced', 'lcp');
       document.head.appendChild(style);
+    };
+
+    // Enhanced resource hints for LCP
+    const addResourceHints = () => {
+      // High priority preconnects for LCP
+      const criticalDomains = [
+        'https://fonts.googleapis.com',
+        'https://fonts.gstatic.com'
+      ];
+
+      criticalDomains.forEach(domain => {
+        const link = document.createElement('link');
+        link.rel = 'preconnect';
+        link.href = domain;
+        link.crossOrigin = 'anonymous';
+        link.setAttribute('data-lcp-critical', 'true');
+        document.head.appendChild(link);
+      });
+
+      // DNS prefetch for non-critical domains
+      const prefetchDomains = [
+        'https://www.googletagmanager.com'
+      ];
+
+      prefetchDomains.forEach(domain => {
+        const link = document.createElement('link');
+        link.rel = 'dns-prefetch';
+        link.href = domain;
+        document.head.appendChild(link);
+      });
+
+      // Enhanced font preloading for LCP
+      const criticalFonts = [
+        {
+          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap',
+          as: 'style'
+        }
+      ];
+
+      criticalFonts.forEach(font => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.href = font.href;
+        link.as = font.as;
+        link.crossOrigin = 'anonymous';
+        link.fetchPriority = 'high';
+        link.setAttribute('data-lcp-font', 'true');
+        document.head.appendChild(link);
+        
+        // Load the actual stylesheet with media query trick
+        const styleLink = document.createElement('link');
+        styleLink.rel = 'stylesheet';
+        styleLink.href = font.href;
+        styleLink.media = 'print';
+        styleLink.onload = function() {
+          (this as HTMLLinkElement).media = 'all';
+        };
+        document.head.appendChild(styleLink);
+      });
+
+      // Preload LCP candidate images
+      const lcpImages = [
+        '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png', // Fluminense logo
+        '/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png'  // Game banner
+      ];
+
+      lcpImages.forEach((src, index) => {
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.href = src;
+        link.as = 'image';
+        link.fetchPriority = index === 0 ? 'high' : 'low';
+        link.setAttribute('data-lcp-image', 'true');
+        document.head.appendChild(link);
+      });
     };
 
     // PWA meta tags otimizados
@@ -172,36 +207,44 @@ export const CriticalMeta = () => {
       // Reduce main-thread blocking
       if ('scheduler' in window && 'postTask' in (window as any).scheduler) {
         (window as any).scheduler.postTask(() => {
-          addResourceHints();
           addPWAMeta();
         }, { priority: 'background' });
       } else {
         // Fallback for browsers without scheduler API
         setTimeout(() => {
-          addResourceHints();
           addPWAMeta();
         }, 0);
       }
     };
 
-    // Execute critical optimizations immediately
+    // Execute critical optimizations immediately for LCP
     updateViewport();
     addCriticalCSS();
     
+    // Apply LCP optimizations
+    optimizeForLCP();
+    
     // Execute non-critical optimizations after initial render
-    addPerformanceOptimizations();
-
-    // Cleanup function
-    return () => {
-      // Remove critical CSS after main CSS loads to reduce memory usage
+    if ('scheduler' in window && 'postTask' in (window as any).scheduler) {
+      (window as any).scheduler.postTask(() => {
+        addResourceHints();
+      }, { priority: 'background' });
+    } else {
       setTimeout(() => {
-        const criticalStyle = document.querySelector('style[data-critical="true"]');
+        addResourceHints();
+      }, 0);
+    }
+
+    // Enhanced cleanup for LCP optimization
+    return () => {
+      setTimeout(() => {
+        const criticalStyle = document.querySelector('style[data-enhanced="lcp"]');
         if (criticalStyle) {
           criticalStyle.remove();
         }
-      }, 3000); // Increased timeout to ensure main CSS is loaded
+      }, 5000); // Increased timeout for LCP optimization
     };
-  }, []);
+  }, [optimizeForLCP]);
 
   return null;
 };
