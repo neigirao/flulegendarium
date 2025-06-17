@@ -54,11 +54,53 @@
 @layer base {
   * {
     @apply border-border;
+    box-sizing: border-box;
   }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  #root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Cores personalizadas do Fluminense */
+.flu-grena {
+  color: rgb(122, 2, 19);
+}
+
+.bg-flu-grena {
+  background-color: rgb(122, 2, 19);
+}
+
+.flu-verde {
+  color: rgb(0, 97, 60);
+}
+
+.bg-flu-verde {
+  background-color: rgb(0, 97, 60);
+}
+
+.flu-branco {
+  color: rgb(255, 255, 255);
+}
+
+.bg-flu-branco {
+  background-color: rgb(255, 255, 255);
 }
 
 /* Temas personalizados do Fluminense */
@@ -76,6 +118,45 @@
 
 .flu-shadow {
   box-shadow: 0 4px 20px rgba(122, 2, 19, 0.2), 0 2px 10px rgba(0, 97, 60, 0.15);
+}
+
+/* Layout fixes */
+.full-height-mobile {
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
+}
+
+/* Prevent layout shifts */
+.container {
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
 }
 
 /* Animações aprimoradas */
@@ -201,4 +282,21 @@
 
 .gradient-danger {
   background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+}
+
+/* Prevent horizontal scrolling */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  overflow-x: hidden;
 }
