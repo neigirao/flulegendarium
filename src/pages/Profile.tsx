@@ -49,9 +49,7 @@ const Profile = () => {
           </div>
         </header>
 
-        <div className="py-20">
-          <UserProfile />
-        </div>
+        <UserProfile />
       </div>
     </RootLayout>
   );
