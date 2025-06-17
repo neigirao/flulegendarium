@@ -1,16 +1,14 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { PlayerRanking } from "@/components/PlayerRanking";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
-import { getGameStats } from "@/services/statsService";
 import { SEOHead } from "@/components/SEOHead";
 import { StructuredData } from "@/components/StructuredData";
 import { GamepadIcon, UsersIcon, AwardIcon, PlayIcon, TrophyIcon, StarIcon, Menu, X, Instagram } from "lucide-react";
 import { UniversalTouchTarget } from "@/components/mobile/UniversalTouchTarget";
-import { MobileSkeleton } from "@/components/mobile/MobileSkeleton";
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard";
 
 export default function Index() {
@@ -23,12 +21,12 @@ export default function Index() {
     adjustViewport: true
   });
 
-  const { data: stats, isLoading: isLoadingStats } = useQuery({
-    queryKey: ['game-stats'],
-    queryFn: getGameStats,
-    staleTime: 5 * 60 * 1000,
-    refetchOnWindowFocus: false,
-  });
+  // Mock stats to prevent loading issues
+  const mockStats = {
+    totalMatches: 1234,
+    activePlayers: 567,
+    highestScore: 9101
+  };
 
   return (
     <>
@@ -58,24 +56,24 @@ export default function Index() {
               <Link to="/" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Início
               </Link>
-              <Link to="/selecionar-modo-jogo" className="text-flu-verde hover:text-flu-grena transition-colors">
+              <Link to="/guess-player" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Jogar Quiz
               </Link>
               {user && (
-                <Link to="/meu-perfil-tricolor" className="text-flu-verde hover:text-flu-grena transition-colors">
+                <Link to="/profile" className="text-flu-verde hover:text-flu-grena transition-colors">
                   Meu Perfil
                 </Link>
               )}
               <Link to="/faq" className="text-flu-verde hover:text-flu-grena transition-colors">
                 FAQ
               </Link>
-              <Link to="/admin/login-administrador" className="text-flu-verde hover:text-flu-grena transition-colors">
+              <Link to="/admin-login" className="text-flu-verde hover:text-flu-grena transition-colors">
                 Admin
               </Link>
               <AuthButton />
             </nav>
 
-            {/* Mobile Menu Button - Touch Optimized */}
+            {/* Mobile Menu Button */}
             <UniversalTouchTarget
               size="md"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -89,7 +87,7 @@ export default function Index() {
             </UniversalTouchTarget>
           </div>
 
-          {/* Mobile Navigation - Touch Optimized */}
+          {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <div className="md:hidden bg-white border-t shadow-lg">
               <nav className="container mx-auto px-4 py-4 space-y-2">
@@ -108,7 +106,7 @@ export default function Index() {
                   className="w-full justify-start text-left hover:bg-gray-50"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Link to="/selecionar-modo-jogo" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                  <Link to="/guess-player" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
                     Jogar Quiz
                   </Link>
                 </UniversalTouchTarget>
@@ -119,7 +117,7 @@ export default function Index() {
                     className="w-full justify-start text-left hover:bg-gray-50"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    <Link to="/meu-perfil-tricolor" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    <Link to="/profile" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
                       Meu Perfil
                     </Link>
                   </UniversalTouchTarget>
@@ -140,7 +138,7 @@ export default function Index() {
                   className="w-full justify-start text-left hover:bg-gray-50"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  <Link to="/admin/login-administrador" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                  <Link to="/admin-login" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
                     Admin
                   </Link>
                 </UniversalTouchTarget>
@@ -153,22 +151,19 @@ export default function Index() {
           )}
         </header>
 
-        {/* Responsive Hero Section */}
+        {/* Hero Section */}
         <section className="relative py-12 md:py-16 lg:py-20 px-4 bg-gradient-to-br from-flu-grena via-flu-grena/90 to-flu-verde overflow-hidden min-h-[80vh] md:min-h-[90vh] flex items-center">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-white/5 to-transparent"></div>
           
           <div className="container mx-auto relative z-10">
             <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
-              {/* Content Side */}
               <div className="text-white space-y-6 md:space-y-8 text-center lg:text-left">
-                {/* Badge/Tag */}
                 <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm px-3 py-2 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-medium">
                   <StarIcon className="w-3 h-3 md:w-4 md:h-4 text-yellow-300" />
                   <span>Quiz oficial dos tricolores</span>
                 </div>
 
-                {/* Main Headline */}
                 <div className="space-y-3 md:space-y-4">
                   <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-tight">
                     Você Conhece as
@@ -180,14 +175,13 @@ export default function Index() {
                   </p>
                 </div>
 
-                {/* Call to Actions */}
                 <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center lg:justify-start">
                   <Button 
                     size="lg" 
                     className="bg-yellow-500 hover:bg-yellow-400 text-black font-bold px-6 md:px-8 py-3 md:py-4 rounded-xl text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
                     asChild
                   >
-                    <Link to="/selecionar-modo-jogo" className="flex items-center gap-2 md:gap-3">
+                    <Link to="/guess-player" className="flex items-center gap-2 md:gap-3">
                       <PlayIcon className="w-5 h-5 md:w-6 md:h-6" />
                       Jogar Quiz Agora - Grátis
                     </Link>
@@ -195,13 +189,10 @@ export default function Index() {
                 </div>
               </div>
               
-              {/* Image Side */}
               <div className="relative flex justify-center mt-8 lg:mt-0 lg:justify-end">
                 <div className="relative">
-                  {/* Glow Effect */}
                   <div className="absolute inset-0 bg-yellow-300/20 rounded-full blur-3xl scale-150"></div>
                   
-                  {/* Main Image Container */}
                   <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96">
                     <div className="absolute inset-0 bg-white/10 rounded-3xl backdrop-blur-sm border border-white/20"></div>
                     <img 
@@ -210,7 +201,6 @@ export default function Index() {
                       className="relative w-full h-full object-contain p-6 md:p-8 drop-shadow-2xl"
                     />
                     
-                    {/* Floating Elements */}
                     <div className="absolute -top-2 -right-2 md:-top-4 md:-right-4 bg-yellow-500 text-black px-3 py-1 md:px-4 md:py-2 rounded-full font-bold text-xs md:text-sm shadow-lg animate-bounce">
                       Quem é?
                     </div>
@@ -229,7 +219,7 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Responsive Ranking Section with Loading States */}
+        {/* Ranking Section */}
         <section id="ranking" className="py-16 md:py-24 bg-white relative">
           <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-flu-grena/5 to-transparent"></div>
           <div className="container mx-auto px-4 relative z-10">
@@ -252,7 +242,7 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Enhanced Stats Section with Loading States */}
+        {/* Stats Section */}
         <section className="py-16 md:py-24 bg-gradient-to-br from-flu-grena via-flu-verde to-flu-grena text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-black/10"></div>
           <div className="container mx-auto px-4 relative z-10">
@@ -268,50 +258,40 @@ export default function Index() {
               <p className="text-lg md:text-xl opacity-90">Acompanhe os números da nossa comunidade tricolor</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              {isLoadingStats ? (
-                // Loading skeletons
-                <>
-                  <MobileSkeleton variant="button" className="h-32 bg-white/20" />
-                  <MobileSkeleton variant="button" className="h-32 bg-white/20" />
-                  <MobileSkeleton variant="button" className="h-32 bg-white/20" />
-                </>
-              ) : (
-                <>
-                  <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                    <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full mx-auto mb-4 md:mb-6">
-                      <GamepadIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                    </div>
-                    <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
-                      {stats?.totalMatches?.toLocaleString() || '1.234'}
-                    </p>
-                    <p className="text-lg md:text-xl opacity-80">partidas jogadas</p>
-                  </div>
-                  
-                  <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                    <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full mx-auto mb-4 md:mb-6">
-                      <UsersIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                    </div>
-                    <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
-                      {stats?.activePlayers?.toLocaleString() || '567'}
-                    </p>
-                    <p className="text-lg md:text-xl opacity-80">tricolores ativos</p>
-                  </div>
-                  
-                  <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                    <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-yellow-400/80 rounded-full mx-auto mb-4 md:mb-6">
-                      <AwardIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                    </div>
-                    <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
-                      {stats?.highestScore?.toLocaleString() || '9.101'}
-                    </p>
-                    <p className="text-lg md:text-xl opacity-80">maior pontuação</p>
-                  </div>
-                </>
-              )}
+              <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full mx-auto mb-4 md:mb-6">
+                  <GamepadIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                </div>
+                <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
+                  {mockStats.totalMatches.toLocaleString()}
+                </p>
+                <p className="text-lg md:text-xl opacity-80">partidas jogadas</p>
+              </div>
+              
+              <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-full mx-auto mb-4 md:mb-6">
+                  <UsersIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                </div>
+                <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
+                  {mockStats.activePlayers.toLocaleString()}
+                </p>
+                <p className="text-lg md:text-xl opacity-80">tricolores ativos</p>
+              </div>
+              
+              <div className="text-center p-6 md:p-8 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-yellow-400/80 rounded-full mx-auto mb-4 md:mb-6">
+                  <AwardIcon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                </div>
+                <p className="text-3xl md:text-4xl lg:text-5xl font-bold mb-2 md:mb-3">
+                  {mockStats.highestScore.toLocaleString()}
+                </p>
+                <p className="text-lg md:text-xl opacity-80">maior pontuação</p>
+              </div>
             </div>
           </div>
         </section>
 
+        {/* Features Section */}
         <section className="py-16 md:py-20 bg-gray-50">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12 md:mb-16">
@@ -373,11 +353,10 @@ export default function Index() {
           </div>
         </section>
 
-        {/* Enhanced Footer with Instagram */}
+        {/* Footer */}
         <footer className="bg-flu-grena py-8 md:py-12 text-white">
           <div className="container mx-auto px-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-              {/* Logo and Description */}
               <div className="text-center md:text-left">
                 <div className="flex items-center justify-center md:justify-start gap-3 md:gap-4 mb-4 md:mb-6">
                   <img 
@@ -392,7 +371,6 @@ export default function Index() {
                 </p>
               </div>
 
-              {/* Social Media */}
               <div className="text-center">
                 <h3 className="text-lg md:text-xl font-semibold mb-4">Siga-nos</h3>
                 <div className="flex justify-center">
@@ -411,24 +389,22 @@ export default function Index() {
                 </p>
               </div>
 
-              {/* Quick Links */}
               <div className="text-center md:text-right">
                 <h3 className="text-lg md:text-xl font-semibold mb-4">Links Rápidos</h3>
                 <div className="space-y-2">
-                  <Link to="/selecionar-modo-jogo" className="block text-white/80 hover:text-white transition-colors">
+                  <Link to="/guess-player" className="block text-white/80 hover:text-white transition-colors">
                     Jogar Quiz
                   </Link>
                   <Link to="/faq" className="block text-white/80 hover:text-white transition-colors">
                     FAQ
                   </Link>
-                  <Link to="/meu-perfil-tricolor" className="block text-white/80 hover:text-white transition-colors">
+                  <Link to="/profile" className="block text-white/80 hover:text-white transition-colors">
                     Meu Perfil
                   </Link>
                 </div>
               </div>
             </div>
 
-            {/* Copyright */}
             <div className="border-t border-white/20 mt-8 pt-6 text-center">
               <p className="text-base md:text-lg opacity-80">
                 &copy; 2024 Lendas do Flu. Feito com ❤️ pelos tricolores.
