@@ -35,15 +35,21 @@ export const MobileOptimizedImage = memo(({
   });
 
   const handleImageLoad = useCallback(() => {
+    console.log('📸 MobileOptimizedImage loaded:', currentSrc);
     setImageLoaded(true);
     setImageError(false);
     onLoad?.();
-  }, [onLoad]);
+  }, [currentSrc, onLoad]);
 
   const handleImageError = useCallback(() => {
+    console.error('❌ MobileOptimizedImage error:', currentSrc);
+    
     if (currentSrc !== fallbackSrc) {
+      console.log('🔄 Trying fallback:', fallbackSrc);
       setCurrentSrc(fallbackSrc);
+      setImageError(false);
     } else {
+      console.log('💥 Fallback also failed');
       setImageError(true);
     }
     onError?.();
@@ -79,6 +85,7 @@ export const MobileOptimizedImage = memo(({
       {/* Image */}
       {!imageError && (
         <img
+          key={currentSrc} // Force re-render when src changes
           src={currentSrc}
           srcSet={generateSrcSet(currentSrc)}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -93,10 +100,8 @@ export const MobileOptimizedImage = memo(({
           onLoad={handleImageLoad}
           onError={handleImageError}
           style={{
-            // Prevent layout shift
             width: '100%',
             height: '100%',
-            // Improve rendering performance
             willChange: imageLoaded ? 'auto' : 'opacity'
           }}
         />

@@ -2,6 +2,7 @@
 import { useState, memo, useCallback, useMemo } from "react";
 import { Player } from "@/types/guess-game";
 import { MobileOptimizedImage } from "@/components/mobile/MobileOptimizedImage";
+import { playerImagesFallbacks, defaultImage } from "@/utils/player-image/constants";
 
 interface SimplePlayerImageProps {
   player: Player;
@@ -10,31 +11,53 @@ interface SimplePlayerImageProps {
 
 export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerImageProps) => {
   const [imageError, setImageError] = useState<boolean>(false);
+  const [retryCount, setRetryCount] = useState<number>(0);
+  const maxRetries = 2;
 
   const handleImageLoad = useCallback(() => {
     console.log('✅ Imagem carregada com sucesso:', player.name);
     setImageError(false);
+    setRetryCount(0);
     onImageLoaded?.();
   }, [player.name, onImageLoaded]);
 
   const handleImageError = useCallback(() => {
     console.error('❌ Erro ao carregar imagem para:', player.name, 'URL:', player.image_url);
-    setImageError(true);
-  }, [player.name, player.image_url]);
-
-  // Use optimized image source
-  const imageSrc = useMemo(() => {
-    if (imageError || !player.image_url) {
-      return "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png";
+    
+    if (retryCount < maxRetries) {
+      // Try fallback image if available
+      const fallback = playerImagesFallbacks[player.name];
+      if (fallback && player.image_url !== fallback) {
+        console.log('🔄 Tentando fallback para:', player.name);
+        setRetryCount(prev => prev + 1);
+        return;
+      }
     }
-    return player.image_url;
-  }, [imageError, player.image_url]);
+    
+    setImageError(true);
+  }, [player.name, player.image_url, retryCount, maxRetries]);
 
-  console.log('🖼️ Renderizando imagem para:', player.name, 'URL:', player.image_url);
+  // Use optimized image source with fallback logic
+  const imageSrc = useMemo(() => {
+    if (imageError) {
+      return defaultImage;
+    }
+    
+    // Try fallback first if original failed
+    if (retryCount > 0 && playerImagesFallbacks[player.name]) {
+      return playerImagesFallbacks[player.name];
+    }
+    
+    // Use original URL or default
+    return player.image_url || defaultImage;
+  }, [imageError, player.image_url, player.name, retryCount]);
+
+  console.log('🖼️ Renderizando imagem para:', player.name, 'URL:', imageSrc, 'Retry:', retryCount);
 
   return (
     <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
       <MobileOptimizedImage
+        key={`${player.id}-${retryCount}`} // Force re-render on retry
         src={imageSrc}
         alt={`Imagem de ${player.name}`}
         className="shadow-md hover:shadow-lg border-2 border-flu-verde"
@@ -58,7 +81,8 @@ export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerIm
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-2 p-2 bg-gray-100 rounded text-xs border">
           <p><strong>Debug:</strong> {player.name} - {imageError ? 'ERRO' : 'OK'}</p>
-          <p className="break-all">URL: {player.image_url}</p>
+          <p>Tentativas: {retryCount}/{maxRetries}</p>
+          <p className="break-all">URL: {imageSrc}</p>
         </div>
       )}
     </div>
