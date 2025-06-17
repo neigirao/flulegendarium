@@ -278,7 +278,7 @@ export const UserProfile = () => {
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="text-center p-3 bg-flu-verde/10 rounded-lg">
-                      <p className="text-2xl font-bold text-flu-verde">#{socialComparison.rank}</p>
+                      <p className="text-2xl font-bold text-flu-verde">#{socialComparison.user_rank}</p>
                       <p className="text-sm text-gray-600">Posição Geral</p>
                     </div>
                     <div className="text-center p-3 bg-blue-50 rounded-lg">
@@ -286,7 +286,7 @@ export const UserProfile = () => {
                       <p className="text-sm text-gray-600">Melhor que</p>
                     </div>
                     <div className="text-center p-3 bg-orange-50 rounded-lg">
-                      <p className="text-2xl font-bold text-orange-600">{socialComparison.total_players}</p>
+                      <p className="text-2xl font-bold text-orange-600">{socialComparison.total_users}</p>
                       <p className="text-sm text-gray-600">Total de Jogadores</p>
                     </div>
                   </div>
