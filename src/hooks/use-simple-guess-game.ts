@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
@@ -13,6 +14,13 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const [timeRemaining, setTimeRemaining] = useState(60);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
   const [gameActive, setGameActive] = useState(false);
+  const [gamesPlayed, setGamesPlayed] = useState(0);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
+
+  // Constantes
+  const MAX_ATTEMPTS = 1;
+  const TIME_LIMIT_SECONDS = 60;
 
   // Selecionar jogador aleatório
   const selectRandomPlayer = useCallback(() => {
@@ -25,7 +33,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       setCurrentPlayer(newPlayer);
       setGameOver(false);
       setGameActive(true);
-      setTimeRemaining(60);
+      setTimeRemaining(TIME_LIMIT_SECONDS);
     }
   }, [players, currentPlayer]);
 
@@ -38,6 +46,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         if (prev <= 1) {
           setGameOver(true);
           setGameActive(false);
+          setCurrentStreak(0);
           if (currentPlayer) {
             toast({
               variant: "destructive",
@@ -66,6 +75,12 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       if (isCorrect) {
         const points = 5;
         setScore(prev => prev + points);
+        setGamesPlayed(prev => prev + 1);
+        setCurrentStreak(prev => {
+          const newStreak = prev + 1;
+          setMaxStreak(current => Math.max(current, newStreak));
+          return newStreak;
+        });
         
         toast({
           title: "Parabéns!",
@@ -79,6 +94,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       } else {
         setGameOver(true);
         setGameActive(false);
+        setCurrentStreak(0);
         
         toast({
           variant: "destructive",
@@ -99,8 +115,16 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     setScore(0);
     setGameOver(false);
     setGameActive(false);
-    setTimeRemaining(60);
+    setTimeRemaining(TIME_LIMIT_SECONDS);
     setCurrentPlayer(null);
+    setGamesPlayed(0);
+    setCurrentStreak(0);
+    setMaxStreak(0);
+  }, []);
+
+  // Reset apenas o score
+  const resetScore = useCallback(() => {
+    setScore(0);
   }, []);
 
   // Selecionar primeiro jogador
@@ -111,15 +135,35 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   }, [players, currentPlayer, selectRandomPlayer]);
 
   return {
+    // Estado do jogo
     currentPlayer,
     score,
     gameOver,
     timeRemaining,
     isProcessingGuess,
     gameActive,
+    gamesPlayed,
+    currentStreak,
+    maxStreak,
+    
+    // Propriedades calculadas/derivadas
+    gameKey: currentPlayer?.id ? `${currentPlayer.id}-${Date.now()}` : 0,
+    attempts: [], // Array vazio para compatibilidade
+    hasLost: gameOver,
+    isTimerRunning: gameActive,
+    playerChangeCount: gamesPlayed,
+    
+    // Constantes
+    MAX_ATTEMPTS,
+    TIME_LIMIT_SECONDS,
+    
+    // Funções
     handleGuess,
     selectRandomPlayer,
     resetGame,
+    resetScore,
     handlePlayerImageFixed: () => {}, // placeholder
+    startGameForPlayer: () => {}, // placeholder
+    forceRefresh: selectRandomPlayer, // alias para selectRandomPlayer
   };
 };
