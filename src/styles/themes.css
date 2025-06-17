@@ -1,0 +1,47 @@
+
+/* Temas personalizados do Fluminense */
+.flu-gradient {
+  @apply bg-gradient-to-r from-flu-grena via-flu-branco to-flu-verde;
+}
+
+/* Gradientes temáticos */
+.gradient-flu {
+  background: linear-gradient(135deg, #7A0213 0%, #00613C 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.gradient-danger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}
+
+/* Garantir que os estilos sejam aplicados sempre */
+.flu-grena {
+  color: #7A0213 !important;
+}
+
+.bg-flu-grena {
+  background-color: #7A0213 !important;
+}
+
+.flu-verde {
+  color: #00613C !important;
+}
+
+.bg-flu-verde {
+  background-color: #00613C !important;
+}
+
+.flu-branco {
+  color: #FFFFFF !important;
+}
+
+.bg-flu-branco {
+  background-color: #FFFFFF !important;
+}
