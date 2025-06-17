@@ -1,4 +1,3 @@
-
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
@@ -13,10 +12,7 @@ if (!rootElement) {
 }
 
 // Optimize React rendering
-const root = createRoot(rootElement, {
-  // Enable concurrent features for better performance
-  unstable_strictMode: true
-});
+const root = createRoot(rootElement);
 
 root.render(
   <React.StrictMode>
