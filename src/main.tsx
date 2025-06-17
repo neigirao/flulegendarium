@@ -4,12 +4,16 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
+console.log('🚀 Starting application initialization...');
+
 const rootElement = document.getElementById("root");
 if (!rootElement) {
   throw new Error("Root element not found");
 }
 
-// Simple error boundary component
+console.log('✅ Root element found');
+
+// Simple error fallback component
 const ErrorFallback = ({ error }: { error: Error }) => (
   <div style={{ 
     display: 'flex', 
@@ -44,16 +48,18 @@ const ErrorFallback = ({ error }: { error: Error }) => (
 // Create root with error handling
 const root = createRoot(rootElement);
 
-// Simple render function with error boundary
+// Simple render function
 const renderApp = () => {
   try {
+    console.log('🎨 Rendering React app...');
     root.render(
       <React.StrictMode>
         <App />
       </React.StrictMode>
     );
+    console.log('✅ App rendered successfully');
   } catch (error) {
-    console.error('Failed to render app:', error);
+    console.error('💥 Failed to render app:', error);
     root.render(<ErrorFallback error={error as Error} />);
   }
 };
@@ -65,26 +71,12 @@ if (document.readyState === 'loading') {
   renderApp();
 }
 
-// Service worker registration with error handling
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((registration) => {
-        console.log('✅ SW registered successfully:', registration.scope);
-      })
-      .catch((error) => {
-        console.warn('❌ SW registration failed:', error);
-      });
-  });
-}
-
-// Global error handlers
+// Simplified global error handlers
 window.addEventListener('error', (event) => {
   console.error('💥 Global error:', {
     message: event.message,
     filename: event.filename,
     lineno: event.lineno,
-    colno: event.colno,
     error: event.error
   });
 });
@@ -92,3 +84,5 @@ window.addEventListener('error', (event) => {
 window.addEventListener('unhandledrejection', (event) => {
   console.error('🚨 Unhandled promise rejection:', event.reason);
 });
+
+console.log('🎯 Main.tsx initialization complete');

@@ -3,7 +3,6 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ErrorState } from '@/components/ui/error-states';
 
 interface Props {
   children: ReactNode;
@@ -35,6 +34,7 @@ export class RootErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): Partial<State> {
+    console.error('🔥 RootErrorBoundary caught error:', error);
     return {
       hasError: true,
       error,
@@ -43,7 +43,7 @@ export class RootErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('🚨 Root Error Boundary caught error:', {
+    const errorData = {
       error: error.message,
       stack: error.stack,
       componentStack: errorInfo.componentStack,
@@ -51,21 +51,25 @@ export class RootErrorBoundary extends Component<Props, State> {
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent,
       url: window.location.href
-    });
+    };
+
+    console.error('🚨 Root Error Boundary detailed error:', errorData);
 
     this.setState({
       error,
       errorInfo
     });
 
-    // Track error for analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'app_crash', {
-        error_message: error.message,
-        error_id: this.state.errorId,
-        error_stack: error.stack?.slice(0, 500),
-        component_stack: errorInfo.componentStack?.slice(0, 500)
-      });
+    // Simple analytics tracking without complex error reporting
+    try {
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'app_crash', {
+          error_message: error.message,
+          error_id: this.state.errorId
+        });
+      }
+    } catch (analyticsError) {
+      console.warn('Analytics tracking failed:', analyticsError);
     }
   }
 
@@ -174,14 +178,6 @@ export class RootErrorBoundary extends Component<Props, State> {
                         <strong>Stack:</strong>
                         <pre className="mt-1 whitespace-pre-wrap break-all text-xs">
                           {this.state.error.stack}
-                        </pre>
-                      </div>
-                    )}
-                    {this.state.errorInfo?.componentStack && (
-                      <div>
-                        <strong>Component Stack:</strong>
-                        <pre className="mt-1 whitespace-pre-wrap break-all text-xs">
-                          {this.state.errorInfo.componentStack}
                         </pre>
                       </div>
                     )}
