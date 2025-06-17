@@ -2,15 +2,17 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import { LogIn, LogOut, User } from "lucide-react";
-import { LoadingSpinner } from "@/components/ui/loading-states";
+import { debugLogger } from "@/utils/debugLogger";
 
 export const AuthButton = () => {
   const { user, signInWithGoogle, signOut, loading } = useAuth();
 
+  debugLogger.debug('AuthButton', 'Renderizando', { hasUser: !!user, loading });
+
   if (loading) {
     return (
       <Button variant="outline" disabled className="border-flu-grena/20">
-        <LoadingSpinner size="sm" className="mr-2" />
+        <div className="w-4 h-4 animate-spin border-2 border-flu-grena border-t-transparent rounded-full mr-2"></div>
         Carregando...
       </Button>
     );
@@ -30,7 +32,10 @@ export const AuthButton = () => {
         <Button
           variant="outline"
           size="sm"
-          onClick={signOut}
+          onClick={() => {
+            debugLogger.info('AuthButton', 'Fazendo logout');
+            signOut();
+          }}
           className="flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
         >
           <LogOut size={16} />
@@ -42,7 +47,10 @@ export const AuthButton = () => {
 
   return (
     <Button
-      onClick={signInWithGoogle}
+      onClick={() => {
+        debugLogger.info('AuthButton', 'Fazendo login com Google');
+        signInWithGoogle();
+      }}
       className="bg-flu-grena hover:bg-flu-grena/90 text-white flex items-center gap-2 font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
     >
       <LogIn size={16} />

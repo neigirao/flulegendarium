@@ -10,6 +10,7 @@ import GuessPlayer from "@/pages/GuessPlayer";
 import Profile from "@/pages/Profile";
 import AdminLogin from "@/pages/AdminLogin";
 import FAQ from "@/pages/FAQ";
+import { debugLogger } from "@/utils/debugLogger";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,25 +23,29 @@ const queryClient = new QueryClient({
 });
 
 function App() {
+  debugLogger.info('App', 'Aplicação iniciando');
+
   return (
     <SimpleErrorBoundary>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
           <TooltipProvider>
-            <Toaster />
             <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/guess-player" element={<GuessPlayer />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/admin-login" element={<AdminLogin />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
+              <div className="min-h-screen">
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/guess-player" element={<GuessPlayer />} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/admin-login" element={<AdminLogin />} />
+                  <Route path="/faq" element={<FAQ />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </div>
+              <Toaster />
             </BrowserRouter>
           </TooltipProvider>
-        </QueryClientProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </SimpleErrorBoundary>
   );
 }
