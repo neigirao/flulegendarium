@@ -4,7 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SimpleErrorBoundary } from "@/components/error-boundaries/SimpleErrorBoundary";
-import { AuthProvider } from "@/hooks/useAuth";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { CriticalMeta } from "@/components/CriticalMeta";
 import { RootLayout } from "@/components/RootLayout";
 import Index from "@/pages/Index";
@@ -39,6 +39,7 @@ function App() {
                 <div className="min-h-screen">
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/game-mode-selection" element={<GameModeSelection />} />
                     <Route path="/guess-player" element={<GuessPlayer />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/admin-login" element={<AdminLogin />} />
