@@ -76,7 +76,7 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     
     // Set chunk size warning limit (performance budget)
-    chunkSizeWarningLimit: 500, // Reduced from 800KB to 500KB
+    chunkSizeWarningLimit: 300, // Reduced from 500KB to 300KB for better performance
     
     // Optimize CSS
     cssCodeSplit: true,
