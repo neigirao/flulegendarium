@@ -1,5 +1,4 @@
-
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
 import { useGameTimer, TIME_LIMIT_SECONDS } from "./use-game-timer";
