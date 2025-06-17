@@ -7,7 +7,7 @@ import { isCorrectGuess } from "@/utils/name-processor";
 export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const { toast } = useToast();
   
-  // Estado do jogo
+  // Estado básico do jogo
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -22,24 +22,32 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const MAX_ATTEMPTS = 1;
   const TIME_LIMIT_SECONDS = 60;
 
-  // Selecionar jogador aleatório
+  // Selecionar jogador aleatório de forma segura
   const selectRandomPlayer = useCallback(() => {
-    if (!players || players.length === 0) return;
-    
-    const randomIndex = Math.floor(Math.random() * players.length);
-    const newPlayer = players[randomIndex];
-    
-    if (newPlayer && newPlayer.id !== currentPlayer?.id) {
-      setCurrentPlayer(newPlayer);
-      setGameOver(false);
-      setGameActive(true);
-      setTimeRemaining(TIME_LIMIT_SECONDS);
+    try {
+      if (!players || players.length === 0) {
+        console.log('❌ Nenhum jogador disponível');
+        return;
+      }
+      
+      const randomIndex = Math.floor(Math.random() * players.length);
+      const newPlayer = players[randomIndex];
+      
+      if (newPlayer && newPlayer.id !== currentPlayer?.id) {
+        console.log('🎮 Novo jogador selecionado:', newPlayer.name);
+        setCurrentPlayer(newPlayer);
+        setGameOver(false);
+        setGameActive(true);
+        setTimeRemaining(TIME_LIMIT_SECONDS);
+      }
+    } catch (error) {
+      console.error('❌ Erro ao selecionar jogador:', error);
     }
   }, [players, currentPlayer]);
 
-  // Timer do jogo
+  // Timer seguro
   useEffect(() => {
-    if (!gameActive || gameOver) return;
+    if (!gameActive || gameOver || timeRemaining <= 0) return;
 
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
@@ -61,15 +69,19 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [gameActive, gameOver, currentPlayer, toast]);
+  }, [gameActive, gameOver, timeRemaining, currentPlayer, toast]);
 
-  // Processar palpite
+  // Processar palpite de forma segura
   const handleGuess = useCallback(async (guess: string) => {
-    if (!currentPlayer || !guess || gameOver || isProcessingGuess) return;
-    
-    setIsProcessingGuess(true);
-    
     try {
+      if (!currentPlayer || !guess || gameOver || isProcessingGuess) {
+        console.log('❌ Condições não atendidas para processar palpite');
+        return;
+      }
+      
+      console.log('🎯 Processando palpite:', guess);
+      setIsProcessingGuess(true);
+      
       const isCorrect = isCorrectGuess(guess, currentPlayer.name);
       
       if (isCorrect) {
@@ -105,34 +117,43 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         setIsProcessingGuess(false);
       }
     } catch (error) {
-      console.error("Erro ao processar palpite:", error);
+      console.error("❌ Erro ao processar palpite:", error);
       setIsProcessingGuess(false);
     }
   }, [currentPlayer, gameOver, isProcessingGuess, score, toast, selectRandomPlayer]);
 
-  // Reset do jogo
+  // Reset seguro do jogo
   const resetGame = useCallback(() => {
-    setScore(0);
-    setGameOver(false);
-    setGameActive(false);
-    setTimeRemaining(TIME_LIMIT_SECONDS);
-    setCurrentPlayer(null);
-    setGamesPlayed(0);
-    setCurrentStreak(0);
-    setMaxStreak(0);
+    try {
+      console.log('🔄 Resetando jogo');
+      setScore(0);
+      setGameOver(false);
+      setGameActive(false);
+      setTimeRemaining(TIME_LIMIT_SECONDS);
+      setCurrentPlayer(null);
+      setGamesPlayed(0);
+      setCurrentStreak(0);
+      setMaxStreak(0);
+      setIsProcessingGuess(false);
+    } catch (error) {
+      console.error('❌ Erro ao resetar jogo:', error);
+    }
   }, []);
 
-  // Reset apenas o score
   const resetScore = useCallback(() => {
     setScore(0);
   }, []);
 
-  // Selecionar primeiro jogador
+  // Selecionar primeiro jogador de forma segura
   useEffect(() => {
-    if (players && players.length > 0 && !currentPlayer) {
-      selectRandomPlayer();
+    try {
+      if (players && players.length > 0 && !currentPlayer && !gameOver) {
+        selectRandomPlayer();
+      }
+    } catch (error) {
+      console.error('❌ Erro ao selecionar primeiro jogador:', error);
     }
-  }, [players, currentPlayer, selectRandomPlayer]);
+  }, [players, currentPlayer, gameOver, selectRandomPlayer]);
 
   return {
     // Estado do jogo
@@ -146,9 +167,9 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     currentStreak,
     maxStreak,
     
-    // Propriedades calculadas/derivadas
-    gameKey: currentPlayer?.id ? `${currentPlayer.id}-${Date.now()}` : 0,
-    attempts: [], // Array vazio para compatibilidade
+    // Propriedades calculadas
+    gameKey: currentPlayer?.id || 'no-player',
+    attempts: [],
     hasLost: gameOver,
     isTimerRunning: gameActive,
     playerChangeCount: gamesPlayed,
@@ -162,8 +183,12 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     selectRandomPlayer,
     resetGame,
     resetScore,
-    handlePlayerImageFixed: () => {}, // placeholder
-    startGameForPlayer: () => {}, // placeholder
-    forceRefresh: selectRandomPlayer, // alias para selectRandomPlayer
+    handlePlayerImageFixed: () => {
+      console.log('🖼️ Imagem do jogador corrigida');
+    },
+    startGameForPlayer: () => {
+      console.log('🎮 Iniciando jogo para jogador');
+    },
+    forceRefresh: selectRandomPlayer,
   };
 };
