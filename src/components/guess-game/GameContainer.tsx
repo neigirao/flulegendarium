@@ -4,13 +4,13 @@ import { GuessForm } from "./GuessForm";
 import { GameLoadingState } from "./GameLoadingState";
 import { GameTimer } from "./GameTimer";
 import { Player } from "@/types/guess-game";
-import { ReactivePlayerImage } from "./ReactivePlayerImage";
+import { SimplePlayerImage } from "./SimplePlayerImage";
 import { usePerformance } from "@/hooks/use-performance";
 import { useErrorHandler } from "@/hooks/use-error-handler";
 
 interface GameContainerProps {
   currentPlayer: Player | null;
-  gameKey: string; // NEW: For forcing image refresh
+  gameKey: string;
   attempts: number;
   score: number;
   gameOver: boolean;
@@ -26,8 +26,8 @@ interface GameContainerProps {
   gamesPlayed?: number;
   currentStreak?: number;
   maxStreak?: number;
-  forceRefresh?: () => void; // NEW: For manual refresh
-  playerChangeCount?: number; // NEW: For debug
+  forceRefresh?: () => void;
+  playerChangeCount?: number;
 }
 
 export const GameContainer = ({
@@ -62,22 +62,6 @@ export const GameContainer = ({
     }
   }, [trackCustomMetric, handleError]);
 
-  useEffect(() => {
-    try {
-      if (currentPlayer) {
-        console.log('🎮 GameContainer: Iniciando jogo para jogador:', {
-          name: currentPlayer.name,
-          id: currentPlayer.id,
-          gameKey,
-          changeCount: playerChangeCount
-        });
-        startGameForPlayer();
-      }
-    } catch (error) {
-      handleError(error as Error, 'GameContainer.startGameForPlayer');
-    }
-  }, [currentPlayer, gameKey, startGameForPlayer, handleError, playerChangeCount]);
-
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault();
@@ -91,15 +75,12 @@ export const GameContainer = ({
     };
   }, [handleKeyDown]);
 
-  // Enhanced debug logs
-  console.log('🎮 GameContainer Enhanced State:', {
+  console.log('🎮 GameContainer State:', {
     playerName: currentPlayer?.name || 'Nenhum',
-    playerId: currentPlayer?.id || 'N/A',
-    gameKey,
     score,
     timer: timeRemaining,
     gameOver,
-    changeCount: playerChangeCount
+    isTimerRunning
   });
 
   if (!currentPlayer) {
@@ -121,11 +102,10 @@ export const GameContainer = ({
         />
       </div>
 
-      {/* Enhanced Player Image with gameKey */}
+      {/* Player Image */}
       <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
-        <ReactivePlayerImage
+        <SimplePlayerImage
           player={currentPlayer}
-          gameKey={gameKey}
           onImageLoaded={handleImageLoaded}
         />
       </div>
@@ -183,11 +163,11 @@ export const GameContainer = ({
       {/* Debug controls em desenvolvimento */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-4 p-3 bg-gray-100 rounded text-xs border">
-          <p><strong>Enhanced Debug Info:</strong></p>
+          <p><strong>Debug Info:</strong></p>
           <p>Player: {currentPlayer?.name} ({currentPlayer?.id})</p>
           <p>Game Key: {gameKey}</p>
-          <p>Change Count: {playerChangeCount}</p>
-          <p>Score: {score} | Timer: {timeRemaining}s</p>
+          <p>Score: {score} | Timer: {timeRemaining}s | Running: {isTimerRunning ? 'YES' : 'NO'}</p>
+          <p>Games Played: {gamesPlayed} | Current Streak: {currentStreak}</p>
           <p className="break-all">Image URL: {currentPlayer?.image_url}</p>
           
           <div className="mt-2 flex gap-2">
