@@ -13,80 +13,62 @@ import Profile from "@/pages/Profile";
 import AdminLogin from "@/pages/AdminLogin";
 import FAQ from "@/pages/FAQ";
 
-console.log('📱 App component initializing...');
-
 // Lazy load heavy components
 const AdminLazy = lazy(() => import("@/pages/AdminLazy"));
 
-// Create a stable QueryClient instance with simplified config
+// Create a stable QueryClient instance
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      gcTime: 10 * 60 * 1000, // 10 minutes
-      retry: (failureCount, error: any) => {
-        if (error?.status >= 400 && error?.status < 500) {
-          return false;
-        }
-        return failureCount < 2;
-      },
+      staleTime: 5 * 60 * 1000,
+      gcTime: 10 * 60 * 1000,
+      retry: 2,
       refetchOnWindowFocus: false,
     },
   },
 });
 
-console.log('⚙️ QueryClient created successfully');
-
 function App() {
-  console.log('🎯 App component rendering...');
-  
-  try {
-    return (
-      <RootErrorBoundary>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <Toaster />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route 
-                  path="/guess-player" 
-                  element={
-                    <GameErrorBoundary>
-                      <GuessPlayer />
-                    </GameErrorBoundary>
-                  } 
-                />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/admin-login" element={<AdminLogin />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route 
-                  path="/admin/*" 
-                  element={
-                    <AdminErrorBoundary>
-                      <Suspense fallback={
-                        <div className="flex items-center justify-center min-h-screen">
-                          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
-                        </div>
-                      }>
-                        <AdminLazy />
-                      </Suspense>
-                    </AdminErrorBoundary>
-                  } 
-                />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </RootErrorBoundary>
-    );
-  } catch (error) {
-    console.error('💥 Error in App component:', error);
-    throw error;
-  }
+  return (
+    <RootErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route 
+                path="/guess-player" 
+                element={
+                  <GameErrorBoundary>
+                    <GuessPlayer />
+                  </GameErrorBoundary>
+                } 
+              />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/admin-login" element={<AdminLogin />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route 
+                path="/admin/*" 
+                element={
+                  <AdminErrorBoundary>
+                    <Suspense fallback={
+                      <div className="flex items-center justify-center min-h-screen">
+                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
+                      </div>
+                    }>
+                      <AdminLazy />
+                    </Suspense>
+                  </AdminErrorBoundary>
+                } 
+              />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </RootErrorBoundary>
+  );
 }
-
-console.log('✅ App component defined successfully');
 
 export default App;
