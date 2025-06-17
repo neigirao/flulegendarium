@@ -1,6 +1,239 @@
 
 @import './styles/responsive.css';
-@import './styles/base.css';
-@import './styles/animations.css';
-@import './styles/components.css';
-@import './styles/themes.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 351 98% 24%;  /* Grená do Fluminense */
+    --primary-foreground: 210 40% 98%;
+    --secondary: 159 100% 19%;  /* Verde do Fluminense */
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 351 98% 24%;
+    --radius: 0.75rem;
+  }
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 351 98% 24%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 159 100% 19%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 351 98% 24%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Forçar carregamento de estilos críticos */
+  html.css-loaded * {
+    font-family: Inter, system-ui, sans-serif !important;
+  }
+  
+  html.css-loaded body {
+    background: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+}
+
+/* Temas personalizados do Fluminense */
+.glass {
+  @apply bg-white/10 backdrop-blur-lg border border-white/20;
+}
+
+.card-hover {
+  @apply transition-all duration-300 hover:scale-105 hover:shadow-xl cursor-pointer;
+}
+
+.flu-gradient {
+  @apply bg-gradient-to-r from-flu-grena via-flu-branco to-flu-verde;
+}
+
+.flu-shadow {
+  box-shadow: 0 4px 20px rgba(122, 2, 19, 0.2), 0 2px 10px rgba(0, 97, 60, 0.15);
+}
+
+/* Animações aprimoradas */
+@keyframes pulse-flu {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(122, 2, 19, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(0, 97, 60, 0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%) skewX(-12deg);
+  }
+  100% {
+    transform: translateX(200%) skewX(-12deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bounce-gentle {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(122, 2, 19, 0.3), 0 0 10px rgba(122, 2, 19, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 10px rgba(122, 2, 19, 0.5), 0 0 20px rgba(122, 2, 19, 0.3);
+  }
+}
+
+.animate-pulse-flu {
+  animation: pulse-flu 2s infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-bounce-gentle {
+  animation: bounce-gentle 2s infinite;
+}
+
+.animate-glow {
+  animation: glow 2s infinite;
+}
+
+/* Transições suaves para todos os elementos interativos */
+.transition-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Hover effects melhorados */
+.hover-lift {
+  transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Estados de foco melhorados */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flu-grena focus-visible:ring-offset-2;
+}
+
+/* Feedback visual para interações */
+.interactive-element {
+  @apply transition-all duration-200 hover:scale-105 active:scale-95 focus-ring;
+}
+
+/* Gradientes temáticos */
+.gradient-flu {
+  background: linear-gradient(135deg, #7A0213 0%, #00613C 100%);
+}
+
+.gradient-success {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.gradient-danger {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}
+
+/* Garantir que os estilos sejam aplicados sempre */
+.flu-grena {
+  color: #7A0213 !important;
+}
+
+.bg-flu-grena {
+  background-color: #7A0213 !important;
+}
+
+.flu-verde {
+  color: #00613C !important;
+}
+
+.bg-flu-verde {
+  background-color: #00613C !important;
+}
+
+.flu-branco {
+  color: #FFFFFF !important;
+}
+
+.bg-flu-branco {
+  background-color: #FFFFFF !important;
+}

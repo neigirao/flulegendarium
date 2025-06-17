@@ -13,7 +13,7 @@ const Index = () => {
   const { user } = useAuth();
 
   const handleStartGame = () => {
-    console.log('🎮 Navegando para seleção de modo de jogo');
+    // Sempre redirecionar para seleção de modo, mesmo usuários logados
     navigate("/game-mode-selection");
   };
 
@@ -31,12 +31,6 @@ const Index = () => {
             <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
           </div>
           <nav className="flex items-center space-x-6">
-            <Link to="/faq" className="text-gray-600 hover:text-flu-grena transition-colors">
-              FAQ
-            </Link>
-            <Link to="/profile" className="text-gray-600 hover:text-flu-grena transition-colors">
-              Perfil
-            </Link>
             <AuthButton />
           </nav>
         </div>
