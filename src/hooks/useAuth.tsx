@@ -43,6 +43,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setSession(session);
           setUser(session?.user ?? null);
           setLoading(false);
+          
+          // Garantir que o CSS seja preservado após mudanças de auth
+          setTimeout(() => {
+            const htmlElement = document.documentElement;
+            if (!htmlElement.classList.contains('css-loaded')) {
+              htmlElement.classList.add('css-loaded');
+              debugLogger.info('AuthProvider', 'CSS classes reforçadas após mudança de auth');
+            }
+          }, 100);
         }
       }
     );
@@ -151,6 +160,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } else {
         debugLogger.info('AuthProvider', 'Logout realizado com sucesso');
         // Estados serão limpos pelo onAuthStateChange
+        
+        // Forçar recarregamento completo da página para garantir CSS
+        setTimeout(() => {
+          window.location.reload();
+        }, 500);
       }
     } catch (error) {
       debugLogger.error('AuthProvider', 'Erro crítico no logout', error);

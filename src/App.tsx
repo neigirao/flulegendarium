@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { SimpleErrorBoundary } from "@/components/error-boundaries/SimpleErrorBoundary";
 import { AuthProvider } from "@/hooks/useAuth";
+import { CriticalMeta } from "@/components/CriticalMeta";
+import { RootLayout } from "@/components/RootLayout";
 import Index from "@/pages/Index";
 import GuessPlayer from "@/pages/GuessPlayer";
 import Profile from "@/pages/Profile";
@@ -27,21 +29,24 @@ function App() {
 
   return (
     <SimpleErrorBoundary>
+      <CriticalMeta />
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <TooltipProvider>
             <BrowserRouter>
-              <div className="min-h-screen">
-                <Routes>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/guess-player" element={<GuessPlayer />} />
-                  <Route path="/profile" element={<Profile />} />
-                  <Route path="/admin-login" element={<AdminLogin />} />
-                  <Route path="/faq" element={<FAQ />} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
-                </Routes>
-              </div>
-              <Toaster />
+              <RootLayout>
+                <div className="min-h-screen">
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/guess-player" element={<GuessPlayer />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/admin-login" element={<AdminLogin />} />
+                    <Route path="/faq" element={<FAQ />} />
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                  </Routes>
+                </div>
+                <Toaster />
+              </RootLayout>
             </BrowserRouter>
           </TooltipProvider>
         </AuthProvider>

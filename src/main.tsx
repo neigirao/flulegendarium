@@ -14,6 +14,9 @@ if (!rootElement) {
   throw new Error("Root element not found");
 }
 
+// Adicionar classe CSS para garantir que os estilos sejam aplicados
+document.documentElement.classList.add('css-loaded');
+
 const root = createRoot(rootElement);
 
 try {

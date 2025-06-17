@@ -59,6 +59,16 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Forçar carregamento de estilos críticos */
+  html.css-loaded * {
+    font-family: Inter, system-ui, sans-serif !important;
+  }
+  
+  html.css-loaded body {
+    background: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
 }
 
 /* Temas personalizados do Fluminense */
@@ -201,4 +211,29 @@
 
 .gradient-danger {
   background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}
+
+/* Garantir que os estilos sejam aplicados sempre */
+.flu-grena {
+  color: #7A0213 !important;
+}
+
+.bg-flu-grena {
+  background-color: #7A0213 !important;
+}
+
+.flu-verde {
+  color: #00613C !important;
+}
+
+.bg-flu-verde {
+  background-color: #00613C !important;
+}
+
+.flu-branco {
+  color: #FFFFFF !important;
+}
+
+.bg-flu-branco {
+  background-color: #FFFFFF !important;
 }
