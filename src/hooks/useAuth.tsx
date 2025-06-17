@@ -2,6 +2,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { debugLogger } from '@/utils/debugLogger';
 
 interface AuthContextType {
   user: User | null;
@@ -23,19 +24,24 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    debugLogger.info('AuthProvider', 'Inicializando autenticação');
+    
     let mounted = true;
     
-    // Get initial session with error handling
-    const getInitialSession = async () => {
+    const initializeAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
+        
         if (error) {
-          console.error('Error getting initial session:', error);
-        } else if (mounted) {
-          setUser(session?.user ?? null);
+          debugLogger.error('AuthProvider', 'Erro ao obter sessão inicial', error);
+        } else {
+          debugLogger.info('AuthProvider', 'Sessão inicial obtida', { hasUser: !!session?.user });
+          if (mounted) {
+            setUser(session?.user ?? null);
+          }
         }
       } catch (error) {
-        console.error('Error getting initial session:', error);
+        debugLogger.error('AuthProvider', 'Erro crítico na inicialização', error);
       } finally {
         if (mounted) {
           setLoading(false);
@@ -43,21 +49,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     };
 
-    getInitialSession();
+    initializeAuth();
 
-    // Listen for auth changes with error handling
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        try {
-          if (mounted) {
-            setUser(session?.user ?? null);
-            setLoading(false);
-          }
-        } catch (error) {
-          console.error('Auth state change error:', error);
-          if (mounted) {
-            setLoading(false);
-          }
+        debugLogger.info('AuthProvider', 'Mudança de estado de auth', { event, hasUser: !!session?.user });
+        
+        if (mounted) {
+          setUser(session?.user ?? null);
+          setLoading(false);
         }
       }
     );
@@ -65,51 +65,78 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return () => {
       mounted = false;
       subscription.unsubscribe();
+      debugLogger.info('AuthProvider', 'AuthProvider desmontado');
     };
   }, []);
 
   const signIn = async (email: string, password: string) => {
     try {
+      debugLogger.info('AuthProvider', 'Tentativa de login', { email });
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
+      
+      if (error) {
+        debugLogger.error('AuthProvider', 'Erro no login', error);
+      } else {
+        debugLogger.info('AuthProvider', 'Login realizado com sucesso');
+      }
+      
       return { data, error };
     } catch (error) {
-      console.error('Sign in error:', error);
+      debugLogger.error('AuthProvider', 'Erro crítico no login', error);
       return { data: null, error };
     }
   };
 
   const signUp = async (email: string, password: string) => {
     try {
+      debugLogger.info('AuthProvider', 'Tentativa de cadastro', { email });
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
+      
+      if (error) {
+        debugLogger.error('AuthProvider', 'Erro no cadastro', error);
+      } else {
+        debugLogger.info('AuthProvider', 'Cadastro realizado com sucesso');
+      }
+      
       return { data, error };
     } catch (error) {
-      console.error('Sign up error:', error);
+      debugLogger.error('AuthProvider', 'Erro crítico no cadastro', error);
       return { data: null, error };
     }
   };
 
   const signOut = async () => {
     try {
+      debugLogger.info('AuthProvider', 'Realizando logout');
       await supabase.auth.signOut();
+      debugLogger.info('AuthProvider', 'Logout realizado com sucesso');
     } catch (error) {
-      console.error('Sign out error:', error);
+      debugLogger.error('AuthProvider', 'Erro no logout', error);
     }
   };
 
   const signInWithGoogle = async () => {
     try {
+      debugLogger.info('AuthProvider', 'Tentativa de login com Google');
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
       });
+      
+      if (error) {
+        debugLogger.error('AuthProvider', 'Erro no login com Google', error);
+      } else {
+        debugLogger.info('AuthProvider', 'Login com Google iniciado');
+      }
+      
       return { data, error };
     } catch (error) {
-      console.error('Google sign in error:', error);
+      debugLogger.error('AuthProvider', 'Erro crítico no login com Google', error);
       return { data: null, error };
     }
   };
@@ -123,6 +150,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signInWithGoogle,
   };
 
+  debugLogger.debug('AuthProvider', 'Estado atual', { hasUser: !!user, loading });
+
   return (
     <AuthContext.Provider value={value}>
       {children}
@@ -133,6 +162,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (context === undefined) {
+    debugLogger.error('useAuth', 'Hook usado fora do AuthProvider!');
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;

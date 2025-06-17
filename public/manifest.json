@@ -47,7 +47,7 @@
       "name": "Jogar Agora",
       "short_name": "Jogar",
       "description": "Começar um novo jogo",
-      "url": "/game",
+      "url": "/guess-player",
       "icons": [
         {
           "src": "/og-image.png",
@@ -67,14 +67,5 @@
         }
       ]
     }
-  ],
-  "share_target": {
-    "action": "/",
-    "method": "GET",
-    "params": {
-      "title": "title",
-      "text": "text",
-      "url": "url"
-    }
-  }
+  ]
 }
