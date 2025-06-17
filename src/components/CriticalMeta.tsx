@@ -3,36 +3,6 @@ import { useEffect } from 'react';
 
 export const CriticalMeta = () => {
   useEffect(() => {
-    // Função para garantir que os estilos críticos estejam sempre aplicados
-    const enforceStyles = () => {
-      const htmlElement = document.documentElement;
-      htmlElement.classList.add('css-loaded');
-      
-      // Garantir que as variáveis CSS estejam definidas
-      const rootStyles = {
-        '--background': '0 0% 100%',
-        '--foreground': '222.2 84% 4.9%',
-        '--primary': '351 98% 24%',
-        '--secondary': '159 100% 19%',
-        '--muted': '210 40% 96.1%',
-        '--border': '214.3 31.8% 91.4%'
-      };
-
-      Object.entries(rootStyles).forEach(([property, value]) => {
-        if (!getComputedStyle(htmlElement).getPropertyValue(property)) {
-          htmlElement.style.setProperty(property, value);
-        }
-      });
-      
-      // Garantir estilos do body
-      const body = document.body;
-      if (!body.style.backgroundColor) {
-        body.style.backgroundColor = 'hsl(var(--background))';
-        body.style.color = 'hsl(var(--foreground))';
-        body.style.fontFamily = 'Inter, system-ui, sans-serif';
-      }
-    };
-
     // Otimizar viewport para mobile
     const updateViewport = () => {
       let viewportMeta = document.querySelector('meta[name="viewport"]');
@@ -44,21 +14,52 @@ export const CriticalMeta = () => {
       viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no');
     };
 
-    // Aplicar estilos imediatamente
-    enforceStyles();
-    updateViewport();
+    // Adicionar resource hints críticos
+    const addResourceHints = () => {
+      // Preload critical fonts
+      const fontPreload = document.createElement('link');
+      fontPreload.rel = 'preload';
+      fontPreload.as = 'font';
+      fontPreload.type = 'font/woff2';
+      fontPreload.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap';
+      fontPreload.crossOrigin = 'anonymous';
+      document.head.appendChild(fontPreload);
 
-    // Reforçar estilos periodicamente
-    const styleInterval = setInterval(enforceStyles, 2000);
+      // Preconnect to important domains
+      const preconnects = [
+        'https://fonts.googleapis.com',
+        'https://fonts.gstatic.com',
+        'https://lovableproject.com'
+      ];
 
-    // Reforçar estilos em mudanças de visibilidade
-    const handleVisibilityChange = () => {
-      if (!document.hidden) {
-        setTimeout(enforceStyles, 100);
-      }
+      preconnects.forEach(domain => {
+        const link = document.createElement('link');
+        link.rel = 'preconnect';
+        link.href = domain;
+        link.crossOrigin = 'anonymous';
+        document.head.appendChild(link);
+      });
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    // Critical CSS inline para above-the-fold
+    const addCriticalCSS = () => {
+      const criticalCSS = `
+        /* Critical above-the-fold styles */
+        body { font-family: Inter, system-ui, sans-serif; margin: 0; }
+        .min-h-screen { min-height: 100vh; min-height: 100dvh; }
+        .flex { display: flex; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
+        .from-flu-verde\/50 { --tw-gradient-from: rgb(0 97 60 / 0.5); --tw-gradient-to: rgb(0 97 60 / 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
+        .to-white { --tw-gradient-to: rgb(255 255 255); }
+      `;
+
+      const style = document.createElement('style');
+      style.innerHTML = criticalCSS;
+      style.setAttribute('data-critical', 'true');
+      document.head.appendChild(style);
+    };
 
     // PWA meta tags
     const addPWAMeta = () => {
@@ -81,12 +82,20 @@ export const CriticalMeta = () => {
       });
     };
 
+    updateViewport();
+    addResourceHints();
+    addCriticalCSS();
     addPWAMeta();
 
     // Cleanup function
     return () => {
-      clearInterval(styleInterval);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      // Remove critical CSS after main CSS loads
+      setTimeout(() => {
+        const criticalStyle = document.querySelector('style[data-critical="true"]');
+        if (criticalStyle) {
+          criticalStyle.remove();
+        }
+      }, 2000);
     };
   }, []);
 

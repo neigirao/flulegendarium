@@ -1,3 +1,4 @@
+
 import { useAuth } from "@/hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import { getUserStatistics } from "@/services/statsService";
@@ -18,12 +19,12 @@ export const UserProfile = () => {
   });
 
   const { 
-    timeSeriesData, 
-    socialComparison, 
+    performanceData, 
+    socialData, 
     insights, 
-    performancePatterns,
+    patterns,
     isLoading: isLoadingAnalytics 
-  } = useUserAnalytics();
+  } = useUserAnalytics(user?.id);
 
   if (isLoading || isLoadingAnalytics) {
     return (
@@ -200,12 +201,12 @@ export const UserProfile = () => {
         </TabsContent>
 
         <TabsContent value="performance" className="space-y-6">
-          <PerformanceChart data={timeSeriesData} />
-          <PerformancePatterns patterns={performancePatterns} />
+          <PerformanceChart data={performanceData} />
+          <PerformancePatterns patterns={patterns} />
         </TabsContent>
 
         <TabsContent value="social" className="space-y-6">
-          <SocialComparison data={socialComparison} />
+          <SocialComparison data={socialData} />
         </TabsContent>
 
         <TabsContent value="insights" className="space-y-6">
@@ -300,16 +301,16 @@ export const UserProfile = () => {
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-semibold text-flu-grena">{userStats?.total_games || 0}</div>
+                  <div className="text-lg font-semibold text-flu-grena">{userStats.total_games || 0}</div>
                   <div className="text-xs text-gray-600">Jogos</div>
                 </div>
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
-                  <div className="text-lg font-semibold text-flu-grena">{userStats?.best_streak || 0}</div>
+                  <div className="text-lg font-semibold text-flu-grena">{userStats.best_streak || 0}</div>
                   <div className="text-xs text-gray-600">Melhor Seq.</div>
                 </div>
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
                   <div className="text-lg font-semibold text-flu-grena">
-                    {userStats?.total_games && userStats.total_games > 0 
+                    {userStats.total_games > 0 
                       ? `${Math.round((userStats.total_correct / userStats.total_games) * 100)}%` 
                       : '0%'
                     }
@@ -318,7 +319,7 @@ export const UserProfile = () => {
                 </div>
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
                   <div className="text-lg font-semibold text-flu-grena">
-                    {userStats?.average_score ? Math.round(userStats.average_score) : 0}
+                    {userStats.average_score ? Math.round(userStats.average_score) : 0}
                   </div>
                   <div className="text-xs text-gray-600">Média Pts</div>
                 </div>

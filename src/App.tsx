@@ -1,59 +1,98 @@
 
+import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { SimpleErrorBoundary } from "@/components/error-boundaries/SimpleErrorBoundary";
-import { AuthProvider } from "@/components/auth/AuthProvider";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "@/hooks/useAuth";
 import { CriticalMeta } from "@/components/CriticalMeta";
-import { RootLayout } from "@/components/RootLayout";
-import Index from "@/pages/Index";
-import GameModeSelection from "@/pages/GameModeSelection";
-import GuessPlayer from "@/pages/GuessPlayer";
-import Profile from "@/pages/Profile";
-import AdminLogin from "@/pages/AdminLogin";
-import FAQ from "@/pages/FAQ";
-import { debugLogger } from "@/utils/debugLogger";
+import { MobileViewport } from "@/components/mobile/MobileViewport";
+import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBoundary";
+import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
+import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
+
+const Index = lazy(() => import("@/pages/Index"))
+const GuessThePlayer = lazy(() => import("@/pages/GuessPlayer"))
+const SelectGameMode = lazy(() => import("@/pages/GameModeSelection"))
+const Profile = lazy(() => import("@/pages/Profile"))
+const AdminLogin = lazy(() => import("@/pages/AdminLogin"))
+const AdminDashboard = lazy(() => import("@/pages/Admin"))
+const FAQ = lazy(() => import("@/pages/FAQ"))
+const NotFound = lazy(() => import("@/pages/NotFound"))
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000,
-      retry: 1,
-      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: (failureCount, error) => {
+        // Don't retry on 4xx errors
+        if (error && 'status' in error && typeof error.status === 'number') {
+          if (error.status >= 400 && error.status < 500) {
+            console.warn('⚠️ Não tentando novamente para erro 4xx:', error.status);
+            return false;
+          }
+        }
+        // Retry up to 3 times for other errors
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     },
   },
 });
 
 function App() {
-  debugLogger.info('App', 'Aplicação iniciando');
-
   return (
-    <SimpleErrorBoundary>
-      <CriticalMeta />
+    <RootErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <TooltipProvider>
-            <BrowserRouter>
-              <RootLayout>
-                <div className="min-h-screen">
+        <BrowserRouter>
+          <AuthProvider>
+            <TooltipProvider>
+              <CriticalMeta />
+              <MobileViewport />
+              <div className="min-h-screen bg-background font-sans antialiased">
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
+                </div>}>
                   <Routes>
                     <Route path="/" element={<Index />} />
-                    <Route path="/game-mode-selection" element={<GameModeSelection />} />
-                    <Route path="/guess-player" element={<GuessPlayer />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/admin-login" element={<AdminLogin />} />
+                    <Route path="/selecionar-modo-jogo" element={<SelectGameMode />} />
+                    <Route 
+                      path="/quiz" 
+                      element={
+                        <GameErrorBoundary>
+                          <GuessThePlayer />
+                        </GameErrorBoundary>
+                      } 
+                    />
+                    <Route path="/meu-perfil-tricolor" element={<Profile />} />
                     <Route path="/faq" element={<FAQ />} />
-                    <Route path="*" element={<Navigate to="/" replace />} />
+                    <Route path="/admin/login-administrador" element={<AdminLogin />} />
+                    <Route 
+                      path="/admin" 
+                      element={
+                        <AdminErrorBoundary>
+                          <AdminDashboard />
+                        </AdminErrorBoundary>
+                      } 
+                    />
+                    <Route 
+                      path="/admin/dashboard" 
+                      element={
+                        <AdminErrorBoundary>
+                          <AdminDashboard />
+                        </AdminErrorBoundary>
+                      } 
+                    />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
-                </div>
-                <Toaster />
-              </RootLayout>
-            </BrowserRouter>
-          </TooltipProvider>
-        </AuthProvider>
+                </Suspense>
+              </div>
+              <Toaster />
+            </TooltipProvider>
+          </AuthProvider>
+        </BrowserRouter>
       </QueryClientProvider>
-    </SimpleErrorBoundary>
+    </RootErrorBoundary>
   );
 }
 

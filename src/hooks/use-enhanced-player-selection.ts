@@ -1,93 +1,87 @@
 
-import { useState, useCallback, useEffect } from 'react';
-import { Player } from '@/types/guess-game';
-import { useIntelligentPlayerSelection } from './use-intelligent-player-selection';
-import { useObservability } from './use-observability';
+import { useState, useRef, useCallback, useEffect } from "react";
+import { Player } from "@/types/guess-game";
 
 export const useEnhancedPlayerSelection = (players: Player[] | undefined) => {
-  const { log } = useObservability();
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const [previousPlayer, setPreviousPlayer] = useState<Player | null>(null);
+  const [gameKey, setGameKey] = useState<string>(Date.now().toString());
+  const isInitialized = useRef<boolean>(false);
+  const lastSelectedId = useRef<string | null>(null);
+  const playerChangeCount = useRef<number>(0);
 
-  const {
-    selectNextPlayer,
-    recordGuessResult,
-    resetSession,
-    getSessionStats,
-    playersWithDifficulty
-  } = useIntelligentPlayerSelection(players || []);
+  // Initialize with first player
+  useEffect(() => {
+    if (players && players.length > 0 && !isInitialized.current) {
+      console.log('🎮 Inicializando seleção de jogadores com', players.length, 'jogadores');
+      isInitialized.current = true;
+      const randomIndex = Math.floor(Math.random() * players.length);
+      const selectedPlayer = players[randomIndex];
+      if (selectedPlayer) {
+        console.log('🎯 Jogador inicial selecionado:', selectedPlayer.name);
+        setCurrentPlayer(selectedPlayer);
+        lastSelectedId.current = selectedPlayer.id;
+        setGameKey(`game-${Date.now()}-${playerChangeCount.current}`);
+      }
+    }
+  }, [players]);
 
-  // Selecionar um novo jogador aleatório com lógica inteligente
+  // Enhanced player selection with forced refresh
   const selectRandomPlayer = useCallback(() => {
     if (!players || players.length === 0) {
-      log('warn', 'No players available for selection');
+      console.warn('⚠️ Nenhum jogador disponível');
       return;
     }
-
-    const newPlayer = selectNextPlayer();
     
-    if (newPlayer && newPlayer.id !== currentPlayer?.id) {
-      setPreviousPlayer(currentPlayer);
-      setCurrentPlayer(newPlayer);
-      
-      log('info', 'Enhanced player selected', {
-        playerId: newPlayer.id,
-        playerName: newPlayer.name,
-        difficulty: (newPlayer as any).difficulty_level || 'medio',
-        sessionStats: getSessionStats()
+    playerChangeCount.current += 1;
+    console.log('🔄 Selecionando novo jogador (tentativa', playerChangeCount.current, ')');
+    
+    // Generate new game key to force refresh
+    const newGameKey = `game-${Date.now()}-${playerChangeCount.current}`;
+    
+    // Filter to avoid repeating current player
+    const availablePlayers = players.filter(player => player.id !== lastSelectedId.current);
+    const playersToSelect = availablePlayers.length > 0 ? availablePlayers : players;
+    
+    const randomIndex = Math.floor(Math.random() * playersToSelect.length);
+    const selectedPlayer = playersToSelect[randomIndex];
+    
+    if (selectedPlayer) {
+      console.log('🎯 Novo jogador selecionado:', {
+        name: selectedPlayer.name,
+        id: selectedPlayer.id,
+        gameKey: newGameKey,
+        changeCount: playerChangeCount.current
       });
-    } else if (newPlayer) {
-      // Se o mesmo jogador foi selecionado, tentar novamente
-      setTimeout(() => selectRandomPlayer(), 100);
+      
+      // Force state update with new key
+      setGameKey(newGameKey);
+      setCurrentPlayer(selectedPlayer);
+      lastSelectedId.current = selectedPlayer.id;
     }
-  }, [players, currentPlayer, selectNextPlayer, getSessionStats, log]);
+  }, [players]);
 
-  // Manipular correção da imagem do jogador
+  // Force refresh - útil para debug
+  const forceRefresh = useCallback(() => {
+    if (currentPlayer) {
+      playerChangeCount.current += 1;
+      const newGameKey = `refresh-${Date.now()}-${playerChangeCount.current}`;
+      console.log('🔄 Forçando refresh do jogador atual:', currentPlayer.name, 'com key:', newGameKey);
+      setGameKey(newGameKey);
+    }
+  }, [currentPlayer]);
+
   const handlePlayerImageFixed = useCallback(() => {
-    log('info', 'Player image loaded successfully', {
-      playerId: currentPlayer?.id,
-      playerName: currentPlayer?.name
-    });
-  }, [currentPlayer, log]);
-
-  // Registrar resultado e selecionar próximo jogador
-  const handleGuessResult = useCallback(async (isCorrect: boolean, guessTime: number) => {
-    if (!currentPlayer) return;
-
-    await recordGuessResult(currentPlayer, isCorrect, guessTime);
-    
-    log('info', 'Guess result recorded', {
-      playerId: currentPlayer.id,
-      playerName: currentPlayer.name,
-      isCorrect,
-      guessTime,
-      sessionStats: getSessionStats()
-    });
-  }, [currentPlayer, recordGuessResult, getSessionStats, log]);
-
-  // Resetar seleção e sessão
-  const resetPlayerSelection = useCallback(() => {
-    setCurrentPlayer(null);
-    setPreviousPlayer(null);
-    resetSession();
-    log('info', 'Player selection and session reset');
-  }, [resetSession, log]);
-
-  // Selecionar jogador inicial quando players carregam
-  useEffect(() => {
-    if (players && players.length > 0 && !currentPlayer) {
-      selectRandomPlayer();
+    if (currentPlayer) {
+      console.log('🖼️ Imagem corrigida para:', currentPlayer.name);
     }
-  }, [players, currentPlayer, selectRandomPlayer]);
+  }, [currentPlayer]);
 
   return {
     currentPlayer,
-    previousPlayer,
+    gameKey,
     selectRandomPlayer,
+    forceRefresh,
     handlePlayerImageFixed,
-    handleGuessResult,
-    resetPlayerSelection,
-    getSessionStats,
-    playersWithDifficulty
+    playerChangeCount: playerChangeCount.current
   };
 };

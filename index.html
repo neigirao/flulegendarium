@@ -3,93 +3,28 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lendas do Flu - Teste seus conhecimentos tricolores</title>
     <meta name="description" content="Descubra se você realmente conhece as lendas do Fluminense. Adivinhe o jogador pela foto e prove que é um verdadeiro tricolor!" />
     <meta name="author" content="Lendas do Flu" />
     <meta name="keywords" content="Fluminense, tricolor, futebol, jogo, quiz, lendas, Fred, Castilho" />
     
-    <!-- Critical resource hints - moved to top -->
+    <!-- Preconnect to improve performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="dns-prefetch" href="//www.googletagmanager.com">
-    <link rel="dns-prefetch" href="//static.hotjar.com">
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     
-    <!-- Critical CSS - inlined and optimized -->
-    <style>
-      /* Critical above-the-fold styles */
-      * { box-sizing: border-box; }
-      html { font-size: 16px; }
-      body { 
-        margin: 0; 
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; 
-        background: linear-gradient(to bottom, rgba(16, 185, 129, 0.5), #ffffff);
-        min-height: 100vh;
-        min-height: 100dvh;
-        font-display: swap;
-        line-height: 1.5;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      #root { 
-        min-height: 100vh; 
-        min-height: 100dvh; 
-        display: flex;
-        flex-direction: column;
-      }
-      .loader { 
-        display: flex; 
-        flex-direction: column;
-        justify-content: center; 
-        align-items: center; 
-        min-height: 100vh; 
-        min-height: 100dvh;
-        padding: 20px;
-      }
-      .loader-spinner {
-        width: 40px; 
-        height: 40px; 
-        border: 3px solid #f3f3f3; 
-        border-top: 3px solid #800020; 
-        border-radius: 50%; 
-        animation: spin 1s linear infinite;
-        margin-bottom: 16px;
-      }
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      .loader-text {
-        color: #800020;
-        font-size: 14px;
-        font-weight: 500;
-      }
-      /* Prevent layout shift */
-      img { 
-        max-width: 100%; 
-        height: auto; 
-        vertical-align: middle;
-      }
-      /* Optimize interaction performance */
-      button, .button, a {
-        touch-action: manipulation;
-        cursor: pointer;
-      }
-      /* Prevent CLS from font loading */
-      .font-loading {
-        font-display: swap;
-        font-variation-settings: normal;
-      }
-    </style>
+    <!-- DNS prefetch for external resources -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
     
-    <!-- Optimized font loading - non-blocking -->
+    <!-- Optimized font loading with preload -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
     
-    <!-- Preload critical images with high priority -->
-    <link rel="preload" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" as="image" fetchpriority="high">
-    <link rel="preload" href="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png" as="image" fetchpriority="high">
+    <!-- Preload critical resources -->
+    <link rel="preload" href="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png" as="image" type="image/png">
+    <link rel="preload" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" as="image" type="image/png">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
@@ -116,7 +51,7 @@
     <meta name="apple-mobile-web-app-title" content="Lendas do Flu" />
     <link rel="apple-touch-icon" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" />
     
-    <!-- Favicon -->
+    <!-- Favicon com escudo do Fluminense -->
     <link rel="icon" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" type="image/png">
     <link rel="icon" type="image/png" sizes="32x32" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" />
@@ -133,62 +68,82 @@
     
     <!-- Performance hints -->
     <meta http-equiv="x-dns-prefetch-control" content="on">
+    
+    <!-- Google tag (gtag.js) - Optimized loading -->
+    <script>
+      // Load analytics asynchronously after page load
+      window.addEventListener('load', function() {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC';
+        document.head.appendChild(script);
+        
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-X2VE77MEYC', {
+          anonymize_ip: true,
+          cookie_flags: 'SameSite=None;Secure'
+        });
+      });
+    </script>
+
+    <!-- Hotjar Tracking Code - Optimized loading -->
+    <script>
+      window.addEventListener('load', function() {
+        (function(h,o,t,j,a,r){
+            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+            h._hjSettings={hjid:997810,hjsv:6};
+            a=o.getElementsByTagName('head')[0];
+            r=o.createElement('script');r.async=1;
+            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+            a.appendChild(r);
+        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+      });
+    </script>
+
+    <!-- Critical CSS inlined for faster rendering -->
+    <style>
+      /* Critical CSS for initial paint - optimized */
+      body { 
+        margin: 0; 
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; 
+        background: linear-gradient(to bottom, #10b98150, #ffffff);
+        min-height: 100vh;
+        font-display: swap;
+      }
+      .loader { 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+      }
+      /* Prevent layout shift */
+      img { 
+        max-width: 100%; 
+        height: auto; 
+      }
+      /* Optimize button performance */
+      button, .button {
+        touch-action: manipulation;
+      }
+    </style>
   </head>
 
   <body>
     <div id="root">
-      <!-- Optimized loading state -->
+      <!-- Enhanced fallback loading state -->
       <div class="loader" role="status" aria-label="Carregando aplicação">
-        <div class="loader-spinner" aria-hidden="true"></div>
-        <div class="loader-text">Carregando Lendas do Flu...</div>
-        <span class="sr-only">Carregando aplicação...</span>
+        <div style="width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #800020; border-radius: 50%; animation: spin 1s linear infinite;" aria-hidden="true"></div>
+        <span class="sr-only">Carregando...</span>
       </div>
     </div>
     
-    <!-- Load analytics asynchronously with proper error handling -->
-    <script>
-      // Defer analytics loading until after critical rendering
-      function loadAnalytics() {
-        try {
-          // Google Analytics
-          var gaScript = document.createElement('script');
-          gaScript.async = true;
-          gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC';
-          gaScript.onerror = function() { console.warn('Failed to load Google Analytics'); };
-          document.head.appendChild(gaScript);
-          
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-X2VE77MEYC', {
-            anonymize_ip: true,
-            cookie_flags: 'SameSite=None;Secure'
-          });
-
-          // Hotjar
-          (function(h,o,t,j,a,r){
-              h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-              h._hjSettings={hjid:997810,hjsv:6};
-              a=o.getElementsByTagName('head')[0];
-              r=o.createElement('script');r.async=1;
-              r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-              r.onerror = function() { console.warn('Failed to load Hotjar'); };
-              a.appendChild(r);
-          })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-        } catch (error) {
-          console.warn('Analytics loading error:', error);
-        }
-      }
-
-      // Load analytics after main content
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(loadAnalytics, { timeout: 3000 });
-      } else {
-        setTimeout(loadAnalytics, 2000);
-      }
-    </script>
-
     <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
       .sr-only {
         position: absolute;
         width: 1px;
