@@ -232,10 +232,56 @@ export type Database = {
         }
         Relationships: []
       }
+      player_difficulty_stats: {
+        Row: {
+          created_at: string
+          device_type: string | null
+          guess_time: number
+          id: string
+          is_correct: boolean
+          player_id: string | null
+          session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_type?: string | null
+          guess_time: number
+          id?: string
+          is_correct?: boolean
+          player_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_type?: string | null
+          guess_time?: number
+          id?: string
+          is_correct?: boolean
+          player_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_difficulty_stats_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       players: {
         Row: {
           achievements: string[] | null
+          average_guess_time: number | null
+          correct_attempts: number | null
           created_at: string
+          difficulty_confidence: number | null
+          difficulty_level: string | null
+          difficulty_score: number | null
           fun_fact: string | null
           id: string
           image_url: string
@@ -243,11 +289,17 @@ export type Database = {
           nicknames: string[] | null
           position: string
           statistics: Json | null
+          total_attempts: number | null
           year_highlight: string | null
         }
         Insert: {
           achievements?: string[] | null
+          average_guess_time?: number | null
+          correct_attempts?: number | null
           created_at?: string
+          difficulty_confidence?: number | null
+          difficulty_level?: string | null
+          difficulty_score?: number | null
           fun_fact?: string | null
           id?: string
           image_url: string
@@ -255,11 +307,17 @@ export type Database = {
           nicknames?: string[] | null
           position?: string
           statistics?: Json | null
+          total_attempts?: number | null
           year_highlight?: string | null
         }
         Update: {
           achievements?: string[] | null
+          average_guess_time?: number | null
+          correct_attempts?: number | null
           created_at?: string
+          difficulty_confidence?: number | null
+          difficulty_level?: string | null
+          difficulty_score?: number | null
           fun_fact?: string | null
           id?: string
           image_url?: string
@@ -267,6 +325,7 @@ export type Database = {
           nicknames?: string[] | null
           position?: string
           statistics?: Json | null
+          total_attempts?: number | null
           year_highlight?: string | null
         }
         Relationships: []
@@ -436,6 +495,75 @@ export type Database = {
           progress?: number | null
           unlocked_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_behavioral_metrics: {
+        Row: {
+          created_at: string
+          id: string
+          metrics_data: Json
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          metrics_data?: Json
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          metrics_data?: Json
+          session_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_behavioral_profiles: {
+        Row: {
+          average_session_duration: number | null
+          churn_risk_score: number | null
+          created_at: string
+          engagement_level: string | null
+          game_completion_rate: number | null
+          help_seeking_frequency: number | null
+          id: string
+          learning_progression_score: number | null
+          player_type_preferences: string[] | null
+          preferred_play_times: string[] | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          average_session_duration?: number | null
+          churn_risk_score?: number | null
+          created_at?: string
+          engagement_level?: string | null
+          game_completion_rate?: number | null
+          help_seeking_frequency?: number | null
+          id?: string
+          learning_progression_score?: number | null
+          player_type_preferences?: string[] | null
+          preferred_play_times?: string[] | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          average_session_duration?: number | null
+          churn_risk_score?: number | null
+          created_at?: string
+          engagement_level?: string | null
+          game_completion_rate?: number | null
+          help_seeking_frequency?: number | null
+          id?: string
+          learning_progression_score?: number | null
+          player_type_preferences?: string[] | null
+          preferred_play_times?: string[] | null
+          updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
