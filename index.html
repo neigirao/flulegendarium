@@ -18,11 +18,10 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//www.google-analytics.com">
     
-    <!-- Optimized font loading with preload - FIXED CORS -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    <!-- Fixed font loading - removed preload to avoid CORS issues -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" crossorigin="anonymous">
     
-    <!-- Preload critical resources -->
+    <!-- Preload critical resources - only local images -->
     <link rel="preload" href="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png" as="image" type="image/png">
     <link rel="preload" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" as="image" type="image/png">
     
@@ -96,37 +95,25 @@
       }
     </style>
     
-    <!-- Optimized Analytics Loading -->
+    <!-- Simplified Analytics Loading -->
     <script>
-      // Load analytics after critical rendering
-      setTimeout(function() {
-        var script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC';
-        document.head.appendChild(script);
-        
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-X2VE77MEYC', {
-          anonymize_ip: true,
-          cookie_flags: 'SameSite=None;Secure'
-        });
-      }, 3000);
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-X2VE77MEYC');
     </script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC"></script>
 
-    <!-- Optimized Hotjar Loading -->
+    <!-- Simplified Hotjar Loading -->
     <script>
-      setTimeout(function() {
-        (function(h,o,t,j,a,r){
-            h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-            h._hjSettings={hjid:997810,hjsv:6};
-            a=o.getElementsByTagName('head')[0];
-            r=o.createElement('script');r.async=1;
-            r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-            a.appendChild(r);
-        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-      }, 5000);
+      (function(h,o,t,j,a,r){
+          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
+          h._hjSettings={hjid:997810,hjsv:6};
+          a=o.getElementsByTagName('head')[0];
+          r=o.createElement('script');r.async=1;
+          r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
+          a.appendChild(r);
+      })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
     </script>
   </head>
 
