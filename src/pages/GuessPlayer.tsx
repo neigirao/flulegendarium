@@ -1,11 +1,10 @@
-
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
 import { GuestNameForm } from "@/components/guess-game/GuestNameForm";
 import { useSimpleGuessGame } from "@/hooks/use-simple-guess-game";
 import { useAuth } from "@/hooks/useAuth";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { RootLayout } from "@/components/RootLayout";
 import { Loader } from "@/components/guess-game/Loader";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
@@ -16,10 +15,9 @@ import { GameContainer } from "@/components/guess-game/GameContainer";
 import { useDebug } from "@/hooks/use-debug";
 import { usePlayersData } from "@/hooks/use-players-data";
 import { usePlayerPreload } from "@/hooks/use-player-preload";
-import { use GameState } from "@/hooks/use-game-state";
+import { useGameState } from "@/hooks/use-game-state";
 import { useObservability } from "@/hooks/use-observability";
 import { useGameMetrics } from "@/hooks/use-game-metrics";
-import { useEffect } from "react";
 
 const GuessPlayer = () => {
   const { user } = useAuth();
