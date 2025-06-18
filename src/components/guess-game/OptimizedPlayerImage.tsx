@@ -1,8 +1,7 @@
 
 import { memo } from "react";
 import { Player } from "@/types/guess-game";
-import { LCPOptimizedPlayerImage } from "@/components/performance/LCPOptimizedPlayerImage";
-import { useCriticalResources } from "@/hooks/use-critical-resources";
+import { SimplePlayerImage } from "./SimplePlayerImage";
 
 interface OptimizedPlayerImageProps {
   player: Player;
@@ -17,22 +16,18 @@ export const OptimizedPlayerImage = memo(({
   priority = true,
   gameKey 
 }: OptimizedPlayerImageProps) => {
-  // Initialize critical resources preloading
-  useCriticalResources();
-
   console.log('🚀 OptimizedPlayerImage rendering:', {
     player: player.name,
+    imageUrl: player.image_url,
     priority,
     gameKey
   });
 
   return (
-    <LCPOptimizedPlayerImage
+    <SimplePlayerImage
       key={`${player.id}-${gameKey || 'default'}`}
       player={player}
-      priority={priority}
       onImageLoaded={onImageLoaded}
-      className="transition-all duration-300"
     />
   );
 });
