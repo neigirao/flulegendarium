@@ -60,8 +60,6 @@ export const GameContainer = ({
     );
   }
 
-  console.log('🎮 GameContainer: Renderizando jogador', currentPlayer.name);
-
   return (
     <div className="max-w-2xl mx-auto">
       {/* Indicador de Dificuldade */}
@@ -106,7 +104,7 @@ export const GameContainer = ({
         />
       )}
 
-      {/* Controles de Debug (apenas em desenvolvimento) */}
+      {/* Controles de Debug */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-8 p-4 bg-gray-100 rounded-lg">
           <h4 className="font-semibold mb-2">Debug Controls</h4>
@@ -123,26 +121,12 @@ export const GameContainer = ({
             >
               Refresh
             </button>
-            <button
-              onClick={startGameForPlayer}
-              className="px-3 py-1 bg-purple-500 text-white rounded text-sm"
-            >
-              Restart Timer
-            </button>
           </div>
           <div className="text-xs text-gray-600">
             <p>Player: {currentPlayer.name}</p>
             <p>Difficulty: {currentPlayer.difficulty_level}</p>
-            <p>Score: {currentPlayer.difficulty_score}</p>
             <p>Game Key: {gameKey}</p>
             <p>Changes: {playerChangeCount}</p>
-            {gameProgress && (
-              <>
-                <p>Round: {gameProgress.currentRound}</p>
-                <p>Streak: {gameProgress.currentStreak}</p>
-                <p>Allowed: {gameProgress.allowedDifficulties.join(', ')}</p>
-              </>
-            )}
           </div>
         </div>
       )}
