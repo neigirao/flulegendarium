@@ -84,6 +84,7 @@ export const GameContainer = ({
         gamesPlayed={gamesPlayed}
         gameOver={gameOver}
         isTimerRunning={isTimerRunning}
+        onNextPlayer={selectRandomPlayer}
       />
 
       {/* Imagem do Jogador */}
@@ -99,7 +100,7 @@ export const GameContainer = ({
       {/* Formulário de Palpite */}
       {!gameOver && (
         <GuessForm
-          onGuess={handleGuess}
+          onSubmitGuess={handleGuess}
           disabled={isProcessingGuess || gameOver}
           isProcessing={isProcessingGuess}
         />
