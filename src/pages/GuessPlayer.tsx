@@ -16,7 +16,7 @@ import { GameContainer } from "@/components/guess-game/GameContainer";
 import { useDebug } from "@/hooks/use-debug";
 import { usePlayersData } from "@/hooks/use-players-data";
 import { usePlayerPreload } from "@/hooks/use-player-preload";
-import { useGameState } from "@/hooks/use-game-state";
+import { use GameState } from "@/hooks/use-game-state";
 import { useObservability } from "@/hooks/use-observability";
 import { useGameMetrics } from "@/hooks/use-game-metrics";
 import { useEffect } from "react";
@@ -30,10 +30,12 @@ const GuessPlayer = () => {
   
   const { players, isLoading, playersError } = usePlayersData();
 
-  // Enhanced game hook
+  // Enhanced game hook with adaptive difficulty
   const {
     currentPlayer,
     gameKey,
+    gameProgress,
+    currentDifficulty,
     attempts,
     score,
     gameOver,
@@ -89,7 +91,8 @@ const GuessPlayer = () => {
     log('info', 'GuessPlayer page loaded', {
       hasUser: !!user,
       playersCount: players?.length || 0,
-      gameStarted
+      gameStarted,
+      adaptiveDifficultyEnabled: true
     });
   }, [log, user, players, gameStarted]);
 
@@ -153,10 +156,12 @@ const GuessPlayer = () => {
 
   console.log('🎮 GuessPlayer Render:', {
     playerName: currentPlayer?.name,
+    difficulty: currentPlayer?.difficulty_level,
     gameKey,
     gameStarted,
     changeCount: playerChangeCount,
-    guestPlayerName
+    guestPlayerName,
+    currentProgress: gameProgress
   });
 
   return (
@@ -194,6 +199,8 @@ const GuessPlayer = () => {
               maxStreak={maxStreak}
               forceRefresh={forceRefresh}
               playerChangeCount={playerChangeCount}
+              gameProgress={gameProgress}
+              currentDifficulty={currentDifficulty}
             />
           )}
 

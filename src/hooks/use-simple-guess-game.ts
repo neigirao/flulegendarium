@@ -4,7 +4,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
 import { useGameTimer, TIME_LIMIT_SECONDS } from "./use-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
-import { useEnhancedPlayerSelection } from "./use-enhanced-player-selection";
+import { useAdaptivePlayerSelection } from "./use-adaptive-player-selection";
 import { useGameSession } from "./use-game-session";
 import { useGameScore } from "./use-game-score";
 import { useGameLogic } from "./use-game-logic";
@@ -22,15 +22,20 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const [hasLost, setHasLost] = useState(false);
   const [gameActive, setGameActive] = useState(false);
 
-  // Enhanced player selection hook
+  // Seleção adaptativa de jogadores
   const { 
     currentPlayer, 
     gameKey, 
-    selectRandomPlayer, 
+    gameProgress,
+    currentDifficulty,
+    selectRandomPlayer: adaptiveSelectPlayer,
     forceRefresh,
     handlePlayerImageFixed,
-    playerChangeCount 
-  } = useEnhancedPlayerSelection(players);
+    calculateDifficultyPoints,
+    resetProgress,
+    playerChangeCount,
+    savePlayerDifficultyStats
+  } = useAdaptivePlayerSelection(players);
 
   const { sessionId, registerGameStart, resetSession } = useGameSession();
   const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
@@ -39,10 +44,12 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const gameStartTimeRef = useRef<number | null>(null);
   const totalAttemptsRef = useRef(0);
   const correctGuessesRef = useRef(0);
+  const roundStartTimeRef = useRef<number>(Date.now());
 
   // Start tracking game metrics when game starts
   const startGameMetrics = useCallback(() => {
     gameStartTimeRef.current = Date.now();
+    roundStartTimeRef.current = Date.now();
     totalAttemptsRef.current = 0;
     correctGuessesRef.current = 0;
     console.log('🎯 Game metrics tracking started');
@@ -93,6 +100,18 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     }
   }, [user, toast]);
 
+  // Enhanced selectRandomPlayer with adaptive logic
+  const selectRandomPlayer = useCallback((isCorrectGuess?: boolean) => {
+    // Salvar tempo da rodada se houve uma tentativa
+    if (currentPlayer && isCorrectGuess !== undefined) {
+      const guessTime = Date.now() - roundStartTimeRef.current;
+      savePlayerDifficultyStats(currentPlayer.id, guessTime, isCorrectGuess);
+    }
+    
+    adaptiveSelectPlayer(isCorrectGuess);
+    roundStartTimeRef.current = Date.now();
+  }, [currentPlayer, adaptiveSelectPlayer, savePlayerDifficultyStats]);
+
   // Handle time up callback
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer && gameActive) {
@@ -101,6 +120,9 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       setHasLost(true);
       setGameActive(false);
       resetStreak();
+      
+      // Salvar estatísticas antes de encerrar
+      selectRandomPlayer(false);
       
       // Save game data when time runs out
       saveGameData(score, false);
@@ -111,7 +133,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         description: `O jogador era ${currentPlayer.name}. Pontuação final: ${score}`,
       });
     }
-  }, [currentPlayer, gameOver, score, toast, gameActive, resetStreak, saveGameData]);
+  }, [currentPlayer, gameOver, score, toast, gameActive, resetStreak, saveGameData, selectRandomPlayer]);
 
   // Handle tab change callback
   const handleTabChange = useCallback(() => {
@@ -142,13 +164,24 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     gameOver,
     gameActive,
     onCorrectGuess: (points: number) => {
-      console.log('✅ Resposta correta! Adicionando pontos:', points);
+      console.log('✅ Resposta correta! Pontos base:', points);
+      
+      // Calcular pontos com multiplicador de dificuldade
+      const finalPoints = calculateDifficultyPoints(points, currentPlayer?.difficulty_level);
+      console.log('🎯 Pontos finais com multiplicador:', finalPoints);
+      
       correctGuessesRef.current += 1;
       totalAttemptsRef.current += 1;
-      addScore(points);
+      addScore(finalPoints);
+      
+      // Mostrar toast com informação de dificuldade
+      toast({
+        title: "Parabéns!",
+        description: `${currentPlayer?.name}! ${currentDifficulty ? `(${currentDifficulty.label} - ${currentDifficulty.multiplier}x)` : ''} +${finalPoints} pontos`,
+      });
       
       // Save game data for correct guess
-      saveGameData(score + points, true);
+      saveGameData(score + finalPoints, true);
     },
     onIncorrectGuess: () => {
       console.log('❌ Resposta incorreta');
@@ -167,14 +200,14 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       setHasLost(true);
       setGameActive(false);
     },
-    selectRandomPlayer,
+    selectRandomPlayer: () => selectRandomPlayer(true),
     stopTimer
   });
 
   // Start timer when a new player is selected and game is not over
   const startGameForPlayer = useCallback(async () => {
     if (currentPlayer && !gameOver) {
-      console.log('🎮 Iniciando timer para:', currentPlayer.name);
+      console.log('🎮 Iniciando timer para:', currentPlayer.name, 'Dificuldade:', currentPlayer.difficulty_level);
       setGameOver(false);
       setHasLost(false);
       setGameActive(true);
@@ -198,8 +231,9 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
 
   // Reset score function
   const resetScore = useCallback(() => {
-    console.log('🎯 Resetando pontuação');
+    console.log('🎯 Resetando pontuação e progresso');
     resetAll();
+    resetProgress();
     setGameActive(false);
     resetSession();
     
@@ -207,11 +241,13 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     gameStartTimeRef.current = null;
     totalAttemptsRef.current = 0;
     correctGuessesRef.current = 0;
-  }, [resetAll, resetSession]);
+  }, [resetAll, resetProgress, resetSession]);
 
   return {
     currentPlayer,
     gameKey,
+    gameProgress,
+    currentDifficulty,
     attempts: [],
     score,
     gameOver,
@@ -230,6 +266,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     gamesPlayed,
     currentStreak,
     maxStreak,
-    playerChangeCount
+    playerChangeCount,
+    calculateDifficultyPoints
   };
 };
