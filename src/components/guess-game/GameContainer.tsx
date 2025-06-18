@@ -1,6 +1,6 @@
 
 import { GameStatus } from "./GameStatus";
-import { OptimizedPlayerImage } from "./OptimizedPlayerImage";
+import { FastPlayerImage } from "./FastPlayerImage";
 import { GuessForm } from "./GuessForm";
 import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
 import { DifficultyIndicator } from "./DifficultyIndicator";
@@ -60,6 +60,8 @@ export const GameContainer = ({
     );
   }
 
+  console.log('🎮 GameContainer: Renderizando jogador', currentPlayer.name);
+
   return (
     <div className="max-w-2xl mx-auto">
       {/* Indicador de Dificuldade */}
@@ -89,11 +91,9 @@ export const GameContainer = ({
 
       {/* Imagem do Jogador */}
       <div className="mb-8">
-        <OptimizedPlayerImage
+        <FastPlayerImage
           player={currentPlayer}
-          gameKey={gameKey}
           onImageLoaded={handlePlayerImageFixed}
-          priority={true}
         />
       </div>
 
