@@ -5,7 +5,7 @@ import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
 import { useSimpleGameTimer } from "./use-simple-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
 import { usePlayerSelection } from "./use-player-selection";
-import { useSimpleGameSession } from "./use-simple-game-session";
+import { useGameSession } from "./use-game-session";
 import { useGameScore } from "./use-game-score";
 import { useSimpleGameLogic } from "./use-simple-game-logic";
 import { useAuth } from "./useAuth";
@@ -32,17 +32,17 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
 
   // Game progress and difficulty
   const [gameProgress, setGameProgress] = useState<GameProgressInfo>({
-    level: 1,
-    questionsInLevel: 0,
-    questionsToNextLevel: 5,
-    totalQuestions: 0
+    currentRound: 1,
+    currentStreak: 0,
+    allowedDifficulties: ['facil'],
+    nextDifficultyThreshold: 5
   });
   
   const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>('facil');
 
   // Composed hooks
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed, playerChangeCount } = usePlayerSelection(players);
-  const { sessionId, registerGameStart, resetSession } = useSimpleGameSession();
+  const { sessionId, registerGameStart, resetSession } = useGameSession();
   const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
 
   console.log('🔍 Estado atual do jogo:', {
@@ -128,13 +128,11 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   });
   
   // Game timer hook
-  const { timeRemaining, isRunning, startTimer, stopTimer } = useSimpleGameTimer(gameOver, handleTimeUp);
+  const { timeRemaining, isRunning, startTimer, stopTimer } = useSimpleGameTimer(handleTimeUp);
 
   // Game logic hook with enhanced callbacks
-  const { handleGuess, isProcessingGuess } = useSimpleGameLogic({
+  const { handleGuess, isProcessing } = useSimpleGameLogic({
     currentPlayer,
-    gameOver,
-    gameActive,
     onCorrectGuess: (points: number) => {
       console.log('✅ Resposta correta! Adicionando pontos:', points);
       correctGuessesRef.current += 1;
@@ -144,13 +142,13 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       // Update game progress
       setGameProgress(prev => ({
         ...prev,
-        questionsInLevel: prev.questionsInLevel + 1,
-        totalQuestions: prev.totalQuestions + 1
+        currentRound: prev.currentRound + 1,
+        currentStreak: prev.currentStreak + 1
       }));
       
       saveGameData(score + points, true);
     },
-    onIncorrectGuess: () => {
+    onIncorrectGuess: (guess: string) => {
       console.log('❌ Resposta incorreta');
       totalAttemptsRef.current += 1;
       resetStreak();
@@ -160,13 +158,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       setGameActive(false);
       saveGameData(score, false);
     },
-    onGameEnd: () => {
-      setGameOver(true);
-      setHasLost(true);
-      setGameActive(false);
-    },
-    selectRandomPlayer,
-    stopTimer
+    onNextPlayer: selectRandomPlayer
   });
 
   // Start timer when a new player is selected and game is not over
@@ -219,10 +211,10 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     setGameActive(false);
     resetSession();
     setGameProgress({
-      level: 1,
-      questionsInLevel: 0,
-      questionsToNextLevel: 5,
-      totalQuestions: 0
+      currentRound: 1,
+      currentStreak: 0,
+      allowedDifficulties: ['facil'],
+      nextDifficultyThreshold: 5
     });
     
     // Reset game metrics
@@ -245,7 +237,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     selectRandomPlayer,
     forceRefresh,
     handlePlayerImageFixed,
-    isProcessingGuess,
+    isProcessingGuess: isProcessing,
     TIME_LIMIT_SECONDS,
     hasLost,
     startGameForPlayer,

@@ -27,13 +27,7 @@ export interface NameProcessingResult {
   matchType?: string;
 }
 
-export interface DifficultyLevel {
-  level: 'muito_facil' | 'facil' | 'medio' | 'dificil' | 'muito_dificil';
-  label: string;
-  color: string;
-  icon: string;
-  multiplier: number;
-}
+export type DifficultyLevel = 'muito_facil' | 'facil' | 'medio' | 'dificil' | 'muito_dificil';
 
 export interface GameProgressInfo {
   currentRound: number;
