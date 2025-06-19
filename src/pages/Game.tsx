@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import { Loader as GameLoader } from "lucide-react";
@@ -250,7 +249,6 @@ const Game = () => {
             score={score}
             onResetScore={resetScore}
             isAuthenticated={isAuthenticatedGame}
-            guestPlayerName={guestPlayerName}
           />
         )}
       </div>

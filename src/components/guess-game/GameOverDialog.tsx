@@ -141,8 +141,10 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
             <div className="space-y-4">
               <SocialShare
                 score={score}
-                text={getShareText()}
-                url="https://flulegendarium.lovable.app/"
+                correctGuesses={Math.floor(score / 5)}
+                gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
+                streak={0}
+                achievements={[]}
               />
               
               <div className="space-y-2">

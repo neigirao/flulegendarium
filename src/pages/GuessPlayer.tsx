@@ -1,4 +1,3 @@
-
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
@@ -230,7 +229,6 @@ const GuessPlayer = () => {
           score={score}
           onResetScore={resetScore}
           isAuthenticated={isAuthenticatedGame}
-          guestPlayerName={guestPlayerName}
         />
       )}
     </RootLayout>
