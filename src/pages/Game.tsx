@@ -24,8 +24,8 @@ const Game = () => {
   const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
   const { showImageUrl } = useDebug();
   
-  // Carregar dados dos jogadores
-  const { players, isLoading, error: playersError } = usePlayersData();
+  // Carregar dados dos jogadores primeiro
+  const { players, isLoading, error } = usePlayersData();
 
   // Track page view
   useEffect(() => {
@@ -35,7 +35,8 @@ const Game = () => {
   console.log("📋 Estado dos players:", {
     playersCount: players?.length || 0,
     isLoading,
-    hasError: !!playersError
+    hasError: !!error,
+    firstPlayer: players?.[0]?.name || 'N/A'
   });
 
   // Loading state
@@ -44,17 +45,18 @@ const Game = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <GameLoader className="w-8 h-8 animate-spin mx-auto mb-4" />
-          <p className="text-lg font-medium">Carregando jogadores...</p>
+          <GameLoader className="w-8 h-8 animate-spin mx-auto mb-4 text-flu-grena" />
+          <p className="text-lg font-medium text-flu-grena">Carregando jogadores...</p>
+          <p className="text-sm text-gray-600 mt-2">Aguarde enquanto preparamos o jogo</p>
         </div>
       </div>
     );
   }
 
   // Error state
-  if (playersError) {
-    console.error("❌ Erro:", playersError);
-    return <ErrorDisplay error={playersError} />;
+  if (error) {
+    console.error("❌ Erro ao carregar jogadores:", error);
+    return <ErrorDisplay error={error} />;
   }
 
   // Empty players state
@@ -63,20 +65,19 @@ const Game = () => {
     return <EmptyPlayersDisplay />;
   }
 
-  // Inicializar lógica do jogo
+  console.log("✅ Jogadores carregados, iniciando game logic...");
+
+  return <GameWithPlayers players={players} />;
+};
+
+// Componente separado para garantir que o game logic só rode com players carregados
+const GameWithPlayers = ({ players }: { players: any[] }) => {
+  const { user } = useAuth();
+  const { trackGameStart, trackEvent } = useAnalytics();
+  const { showImageUrl } = useDebug();
+
+  // Inicializar lógica do jogo com players garantidos
   const gameLogic = useSimpleGuessGame(players);
-  
-  if (!gameLogic) {
-    console.log("⚠️ Game logic não inicializada");
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <GameLoader className="w-8 h-8 animate-spin mx-auto mb-4" />
-          <p>Inicializando jogo...</p>
-        </div>
-      </div>
-    );
-  }
 
   const {
     currentPlayer,
@@ -126,10 +127,11 @@ const Game = () => {
     selectRandomPlayer
   });
 
-  console.log('🎮 Game render - Estado:', {
+  console.log('🎮 GameWithPlayers render - Estado:', {
     currentPlayerName: currentPlayer?.name || 'Nenhum',
     gameStarted,
-    playersCount: players?.length || 0
+    playersCount: players?.length || 0,
+    gameLogicReady: !!gameLogic
   });
 
   return (

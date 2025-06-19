@@ -33,37 +33,37 @@ export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerIm
     return player.image_url;
   }, [imageError, player.image_url]);
 
-  console.log('🖼️ Renderizando imagem para:', player.name, 'URL:', imageSrc);
+  console.log('🖼️ Renderizando imagem para:', player.name, 'URL:', imageSrc, 'Loading:', isLoading, 'Error:', imageError);
 
   return (
     <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
-      <div className="relative">
+      <div className="relative bg-white rounded-lg shadow-lg border-2 border-flu-verde overflow-hidden">
         {/* Loading state */}
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
+          <div className="absolute inset-0 flex items-center justify-center bg-gray-100 z-10">
             <div className="flex flex-col items-center gap-2">
               <div className="w-8 h-8 border-4 border-flu-verde border-t-transparent rounded-full animate-spin"></div>
-              <span className="text-sm text-gray-600">Carregando...</span>
+              <span className="text-sm text-gray-600">Carregando imagem...</span>
             </div>
           </div>
         )}
 
-        <img
-          key={`${player.id}-${imageSrc}`}
-          src={imageSrc}
-          alt={`Imagem de ${player.name}`}
-          className="w-full h-auto max-h-[400px] md:max-h-[500px] object-contain shadow-md hover:shadow-lg border-2 border-flu-verde rounded-lg"
-          loading="eager"
-          onLoad={handleImageLoad}
-          onError={handleImageError}
-          style={{
-            aspectRatio: '4/5',
-            minHeight: '300px'
-          }}
-        />
+        <div className="aspect-[4/5] min-h-[300px] flex items-center justify-center p-4">
+          <img
+            key={`${player.id}-${imageSrc}`}
+            src={imageSrc}
+            alt={`Imagem de ${player.name}`}
+            className={`max-w-full max-h-full object-contain transition-opacity duration-300 ${
+              isLoading ? 'opacity-0' : 'opacity-100'
+            }`}
+            loading="eager"
+            onLoad={handleImageLoad}
+            onError={handleImageError}
+          />
+        </div>
       </div>
 
-      {/* Error state indicator */}
+      {/* Status indicator */}
       {imageError && (
         <div className="mt-2 text-center">
           <div className="inline-flex items-center gap-2 bg-yellow-50 text-yellow-700 px-3 py-1 rounded-full text-sm">
@@ -76,10 +76,11 @@ export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerIm
       {/* Debug info em desenvolvimento */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-2 p-2 bg-gray-100 rounded text-xs border">
-          <p><strong>Debug:</strong> {player.name}</p>
+          <p><strong>Debug SimplePlayerImage:</strong></p>
+          <p>Player: {player.name} ({player.id})</p>
           <p>Status: {imageError ? 'ERRO - usando fallback' : isLoading ? 'CARREGANDO' : 'CARREGADA'}</p>
-          <p className="break-all">URL: {imageSrc}</p>
-          <p>Original URL: {player.image_url || 'não definida'}</p>
+          <p className="break-all">URL atual: {imageSrc}</p>
+          <p className="break-all">URL original: {player.image_url || 'não definida'}</p>
         </div>
       )}
     </div>

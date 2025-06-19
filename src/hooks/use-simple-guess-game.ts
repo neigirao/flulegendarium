@@ -2,30 +2,21 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
-import { useSimplePlayerSelection } from "./use-simple-player-selection";
 import { useAuth } from "./useAuth";
 import { isCorrectGuess } from "@/utils/name-processor";
 
 export const MAX_ATTEMPTS = 1;
 export const TIME_LIMIT_SECONDS = 60;
 
-export const useSimpleGuessGame = (players: Player[] | undefined) => {
-  console.log("🎮 useSimpleGuessGame iniciando com:", {
-    playersCount: players?.length || 0
-  });
+export const useSimpleGuessGame = (players: Player[]) => {
+  console.log("🎮 useSimpleGuessGame iniciando com jogadores:", players?.length || 0);
 
   const { toast } = useToast();
   const { user } = useAuth();
   
-  // Verificação simples dos jogadores
-  const validPlayers = players && Array.isArray(players) && players.length > 0 ? players : [];
-  
-  if (validPlayers.length === 0) {
-    console.log("⚠️ Sem jogadores válidos disponíveis");
-    return null;
-  }
-
-  // Estados do jogo
+  // Estados principais
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+  const [usedPlayerIds, setUsedPlayerIds] = useState<Set<string>>(new Set());
   const [gameOver, setGameOver] = useState(false);
   const [hasLost, setHasLost] = useState(false);
   const [gameActive, setGameActive] = useState(false);
@@ -39,10 +30,45 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   // Timer
   const timerRef = useRef<number | null>(null);
 
-  // Seleção de jogador
-  const { currentPlayer, selectRandomPlayer } = useSimplePlayerSelection(validPlayers);
+  // Seleção de jogador aleatório
+  const selectRandomPlayer = useCallback(() => {
+    if (!players || players.length === 0) {
+      console.warn('⚠️ Nenhum jogador disponível para seleção');
+      return;
+    }
 
-  // Iniciar timer
+    console.log('🎲 Selecionando jogador aleatório...', {
+      totalPlayers: players.length,
+      usedPlayers: usedPlayerIds.size
+    });
+
+    // Se todos foram usados, limpar a lista
+    let availablePlayers = players.filter(p => !usedPlayerIds.has(p.id));
+    
+    if (availablePlayers.length === 0) {
+      console.log('🔄 Resetando jogadores usados');
+      setUsedPlayerIds(new Set());
+      availablePlayers = players;
+    }
+
+    // Selecionar aleatoriamente
+    const randomIndex = Math.floor(Math.random() * availablePlayers.length);
+    const selectedPlayer = availablePlayers[randomIndex];
+
+    console.log('✅ Jogador selecionado:', selectedPlayer.name);
+
+    // Marcar como usado e definir como atual
+    setUsedPlayerIds(prev => new Set([...prev, selectedPlayer.id]));
+    setCurrentPlayer(selectedPlayer);
+    
+    // Resetar estados do jogo para novo jogador
+    setGameOver(false);
+    setHasLost(false);
+    setGameActive(true);
+    startTimer();
+  }, [players, usedPlayerIds]);
+
+  // Timer functions
   const startTimer = useCallback(() => {
     if (timerRef.current) {
       window.clearInterval(timerRef.current);
@@ -65,7 +91,6 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     }, 1000);
   }, []);
 
-  // Parar timer
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
       window.clearInterval(timerRef.current);
@@ -104,7 +129,6 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         setTimeout(() => {
           selectRandomPlayer();
           setIsProcessingGuess(false);
-          startTimer();
         }, 1500);
         
       } else {
@@ -128,9 +152,9 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       console.error("Erro ao processar palpite:", error);
       setIsProcessingGuess(false);
     }
-  }, [currentPlayer, isProcessingGuess, gameOver, toast, stopTimer, selectRandomPlayer, startTimer]);
+  }, [currentPlayer, isProcessingGuess, gameOver, toast, stopTimer, selectRandomPlayer]);
 
-  // Iniciar jogo para jogador
+  // Iniciar jogo
   const startGameForPlayer = useCallback(() => {
     if (currentPlayer && !gameOver) {
       console.log('🎮 Iniciando jogo para:', currentPlayer.name);
@@ -150,6 +174,14 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     stopTimer();
   }, [stopTimer]);
 
+  // Selecionar primeiro jogador quando disponível
+  useEffect(() => {
+    if (players && players.length > 0 && !currentPlayer) {
+      console.log('🚀 Primeira seleção de jogador, total disponível:', players.length);
+      selectRandomPlayer();
+    }
+  }, [players, currentPlayer, selectRandomPlayer]);
+
   // Cleanup timer
   useEffect(() => {
     return () => {
@@ -159,14 +191,13 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     };
   }, []);
 
-  // Auto start quando jogador muda
-  useEffect(() => {
-    if (currentPlayer && !gameOver) {
-      startGameForPlayer();
-    }
-  }, [currentPlayer, gameOver, startGameForPlayer]);
+  console.log("🎮 useSimpleGuessGame resultado:", {
+    hasCurrentPlayer: !!currentPlayer,
+    currentPlayerName: currentPlayer?.name || 'null',
+    playersCount: players?.length || 0
+  });
 
-  const result = {
+  return {
     currentPlayer,
     gameKey: Date.now(),
     attempts: [],
@@ -187,13 +218,6 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     gamesPlayed,
     currentStreak,
     maxStreak: Math.max(currentStreak, 0),
-    playerChangeCount: 1
+    playerChangeCount: usedPlayerIds.size
   };
-
-  console.log("🎮 useSimpleGuessGame resultado:", {
-    hasCurrentPlayer: !!result.currentPlayer,
-    currentPlayerName: result.currentPlayer?.name
-  });
-
-  return result;
 };

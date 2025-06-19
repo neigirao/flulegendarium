@@ -1,6 +1,6 @@
 
 import { GameStatus } from "./GameStatus";
-import { FastPlayerImage } from "./FastPlayerImage";
+import { SimplePlayerImage } from "./SimplePlayerImage";
 import { GuessForm } from "./GuessForm";
 import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
 import { DifficultyIndicator } from "./DifficultyIndicator";
@@ -65,7 +65,10 @@ export const GameContainer = ({
         <div className="mb-4">
           <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
-        <p className="text-gray-600 mb-4">Carregando jogador...</p>
+        <p className="text-gray-600 mb-4">Preparando próximo jogador...</p>
+        <p className="text-sm text-gray-500">
+          Aguarde enquanto selecionamos um jogador para você
+        </p>
         
         {/* Debug button for development */}
         {process.env.NODE_ENV === 'development' && (
@@ -87,17 +90,6 @@ export const GameContainer = ({
 
   return (
     <div className="max-w-2xl mx-auto">
-      {/* Indicador de Dificuldade */}
-      {gameProgress && currentDifficulty && (
-        <div className="mb-6 flex justify-center">
-          <DifficultyIndicator 
-            currentDifficulty={currentDifficulty}
-            gameProgress={gameProgress}
-            className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm"
-          />
-        </div>
-      )}
-
       {/* Status do Jogo */}
       <GameStatus
         score={score}
@@ -114,7 +106,7 @@ export const GameContainer = ({
 
       {/* Imagem do Jogador */}
       <div className="mb-8">
-        <FastPlayerImage
+        <SimplePlayerImage
           key={`${currentPlayer.id}-${gameKey}`}
           player={currentPlayer}
           onImageLoaded={handlePlayerImageFixed}
@@ -150,10 +142,12 @@ export const GameContainer = ({
           </div>
           <div className="text-xs text-gray-600">
             <p>Player: {currentPlayer.name}</p>
-            <p>Difficulty: {currentPlayer.difficulty_level || 'N/A'}</p>
+            <p>ID: {currentPlayer.id}</p>
             <p>Game Key: {gameKey}</p>
             <p>Changes: {playerChangeCount}</p>
             <p>Image URL: {currentPlayer.image_url}</p>
+            <p>Timer Running: {isTimerRunning ? 'SIM' : 'NÃO'}</p>
+            <p>Game Over: {gameOver ? 'SIM' : 'NÃO'}</p>
           </div>
         </div>
       )}
