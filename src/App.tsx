@@ -1,8 +1,9 @@
+
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { RootErrorBoundary } from "@/components/RootErrorBoundary";
+import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBoundary";
 import { Loader } from "@/components/guess-game/Loader";
 
 import Index from "@/pages/Index";
@@ -17,9 +18,19 @@ import Game2 from "@/pages/Game2";
 const AdminLogin = lazy(() => import('@/pages/AdminLogin'));
 const AdminLazy = lazy(() => import('@/pages/Admin'));
 
+// Create QueryClient instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
+
 function App() {
   return (
-    <QueryClient>
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <RootErrorBoundary>
           <Routes>
@@ -36,7 +47,7 @@ function App() {
           </Routes>
         </RootErrorBoundary>
       </BrowserRouter>
-    </QueryClient>
+    </QueryClientProvider>
   );
 }
 
