@@ -1,125 +1,48 @@
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useEffect, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Player, GameProgressInfo, DifficultyLevelType } from "@/types/guess-game";
+import { Player } from "@/types/guess-game";
 import { useSimpleGameTimer } from "./use-simple-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
 import { usePlayerSelection } from "./use-player-selection";
 import { useGameSession } from "./use-game-session";
 import { useGameScore } from "./use-game-score";
-import { useSimpleGameLogic } from "./use-simple-game-logic";
-import { useAuth } from "./useAuth";
-import { saveGameHistory } from "@/services/gameHistoryService";
+import { useGameMetrics } from "./game/use-game-metrics";
+import { useGameProgress } from "./game/use-game-progress";
+import { useGameStateManagement } from "./game/use-game-state-management";
+import { useGameCallbacks } from "./game/use-game-callbacks";
+import { useEnhancedGameLogic } from "./game/use-enhanced-game-logic";
 
 export const MAX_ATTEMPTS = 1;
 export const TIME_LIMIT_SECONDS = 30;
 
 export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const { toast } = useToast();
-  const { user } = useAuth();
   
   console.log('🎮 useSimpleGuessGame hook inicializado:', {
-    playersCount: players?.length || 0,
-    hasUser: !!user
+    playersCount: players?.length || 0
   });
-
-  // Game state
-  const [gameOver, setGameOver] = useState(false);
-  const [hasLost, setHasLost] = useState(false);
-  const [gameActive, setGameActive] = useState(false);
-  const [gameKey, setGameKey] = useState(Date.now());
-  const [attempts, setAttempts] = useState<string[]>([]);
-
-  // Game progress and difficulty
-  const [gameProgress, setGameProgress] = useState<GameProgressInfo>({
-    currentRound: 1,
-    currentStreak: 0,
-    allowedDifficulties: ['facil'],
-    nextDifficultyThreshold: 5
-  });
-  
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelType>('facil');
 
   // Composed hooks
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed, playerChangeCount } = usePlayerSelection(players);
   const { sessionId, registerGameStart, resetSession } = useGameSession();
   const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
+  
+  // New modular hooks
+  const { saveGameData, startGameMetrics, incrementCorrectGuesses, incrementTotalAttempts, resetMetrics } = useGameMetrics();
+  const { gameProgress, currentDifficulty, updateGameProgress, resetGameProgress } = useGameProgress();
+  const { gameOver, hasLost, gameActive, gameKey, attempts, startGame, endGame, refreshGame, resetGame } = useGameStateManagement();
 
-  console.log('🔍 Estado atual do jogo:', {
-    currentPlayerName: currentPlayer?.name || 'null',
+  // Game callbacks
+  const { handleTimeUp, handleTabChange } = useGameCallbacks({
     gameActive,
     gameOver,
+    currentPlayer,
     score,
-    playerChangeCount
+    endGame,
+    resetStreak,
+    saveGameData
   });
-
-  // Game metrics for saving
-  const gameStartTimeRef = useRef<number | null>(null);
-  const totalAttemptsRef = useRef(0);
-  const correctGuessesRef = useRef(0);
-
-  // Save game history when game ends
-  const saveGameData = useCallback(async (finalScore: number, isCorrect: boolean = false) => {
-    if (!user?.id || !gameStartTimeRef.current) {
-      console.log('⚠️ Cannot save game data - missing user or start time');
-      return;
-    }
-
-    try {
-      const gameDuration = Math.floor((Date.now() - gameStartTimeRef.current) / 1000);
-      const attempts = totalAttemptsRef.current + (isCorrect ? 1 : 0);
-      const correct = correctGuessesRef.current + (isCorrect ? 1 : 0);
-
-      console.log('💾 Saving game history:', {
-        userId: user.id,
-        score: finalScore,
-        correct_guesses: correct,
-        total_attempts: attempts,
-        game_duration: gameDuration
-      });
-
-      await saveGameHistory({
-        user_id: user.id,
-        score: finalScore,
-        correct_guesses: correct,
-        total_attempts: attempts,
-        game_duration: gameDuration
-      });
-
-    } catch (error) {
-      console.error('❌ Error saving game history:', error);
-    }
-  }, [user]);
-
-  // Handle time up callback
-  const handleTimeUp = useCallback(() => {
-    if (!gameOver && currentPlayer && gameActive) {
-      console.log('⏰ Tempo esgotado para:', currentPlayer.name);
-      setGameOver(true);
-      setHasLost(true);
-      setGameActive(false);
-      resetStreak();
-      
-      saveGameData(score, false);
-      
-      toast({
-        variant: "destructive",
-        title: "Tempo esgotado!",
-        description: `O jogador era ${currentPlayer.name}. Pontuação final: ${score}`,
-      });
-    }
-  }, [currentPlayer, gameOver, score, toast, gameActive, resetStreak, saveGameData]);
-
-  // Handle tab change callback
-  const handleTabChange = useCallback(() => {
-    if (gameActive && !gameOver) {
-      setGameOver(true);
-      setHasLost(true);
-      setGameActive(false);
-      resetStreak();
-      saveGameData(score, false);
-    }
-  }, [gameActive, gameOver, resetStreak, saveGameData, score]);
   
   // Tab visibility hook
   useTabVisibility({ 
@@ -130,50 +53,29 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   // Game timer hook
   const { timeRemaining, isRunning, startTimer, stopTimer } = useSimpleGameTimer(handleTimeUp);
 
-  // Game logic hook with enhanced callbacks
-  const { handleGuess, isProcessing } = useSimpleGameLogic({
+  // Enhanced game logic hook
+  const { handleGuess, isProcessing } = useEnhancedGameLogic({
     currentPlayer,
-    onCorrectGuess: (points: number) => {
-      console.log('✅ Resposta correta! Adicionando pontos:', points);
-      correctGuessesRef.current += 1;
-      totalAttemptsRef.current += 1;
-      addScore(points);
-      
-      // Update game progress
-      setGameProgress(prev => ({
-        ...prev,
-        currentRound: prev.currentRound + 1,
-        currentStreak: prev.currentStreak + 1
-      }));
-      
-      saveGameData(score + points, true);
-    },
-    onIncorrectGuess: (guess: string) => {
-      console.log('❌ Resposta incorreta');
-      totalAttemptsRef.current += 1;
-      resetStreak();
-      
-      setGameOver(true);
-      setHasLost(true);
-      setGameActive(false);
-      saveGameData(score, false);
-    },
-    onNextPlayer: selectRandomPlayer
+    gameProgress,
+    updateGameProgress,
+    addScore,
+    resetStreak,
+    endGame,
+    saveGameData,
+    incrementCorrectGuesses,
+    incrementTotalAttempts,
+    selectRandomPlayer,
+    score
   });
 
   // Start timer when a new player is selected and game is not over
   const startGameForPlayer = useCallback(async () => {
     if (currentPlayer && !gameOver) {
       console.log('🎮 Iniciando timer para:', currentPlayer.name);
-      setGameOver(false);
-      setHasLost(false);
-      setGameActive(true);
-      setAttempts([]);
+      startGame();
       
       // Start game metrics tracking
-      gameStartTimeRef.current = Date.now();
-      totalAttemptsRef.current = 0;
-      correctGuessesRef.current = 0;
+      startGameMetrics();
       
       // Register game start
       if (!sessionId) {
@@ -187,7 +89,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         }
       }, 100);
     }
-  }, [currentPlayer, gameOver, isRunning, startTimer, sessionId, registerGameStart]);
+  }, [currentPlayer, gameOver, isRunning, startTimer, sessionId, registerGameStart, startGame, startGameMetrics]);
 
   // Start game when player is selected
   useEffect(() => {
@@ -200,28 +102,19 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   // Force refresh function
   const forceRefresh = useCallback(() => {
     console.log('🔄 Force refresh - selecionando novo jogador');
-    setGameKey(Date.now());
+    refreshGame();
     selectRandomPlayer();
-  }, [selectRandomPlayer]);
+  }, [selectRandomPlayer, refreshGame]);
 
   // Reset score function
   const resetScore = useCallback(() => {
     console.log('🎯 Resetando pontuação');
     resetAll();
-    setGameActive(false);
+    resetGame();
     resetSession();
-    setGameProgress({
-      currentRound: 1,
-      currentStreak: 0,
-      allowedDifficulties: ['facil'],
-      nextDifficultyThreshold: 5
-    });
-    
-    // Reset game metrics
-    gameStartTimeRef.current = null;
-    totalAttemptsRef.current = 0;
-    correctGuessesRef.current = 0;
-  }, [resetAll, resetSession]);
+    resetGameProgress();
+    resetMetrics();
+  }, [resetAll, resetSession, resetGameProgress, resetMetrics, resetGame]);
 
   return {
     currentPlayer,
