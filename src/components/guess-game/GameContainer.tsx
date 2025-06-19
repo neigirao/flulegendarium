@@ -2,7 +2,7 @@
 import { GameStatus } from "./GameStatus";
 import { FastPlayerImage } from "./FastPlayerImage";
 import { GuessForm } from "./GuessForm";
-import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
+import { Player, GameProgressInfo, DifficultyLevelInfo } from "@/types/guess-game";
 import { DifficultyIndicator } from "./DifficultyIndicator";
 
 interface GameContainerProps {
@@ -26,7 +26,7 @@ interface GameContainerProps {
   forceRefresh: () => void;
   playerChangeCount: number;
   gameProgress?: GameProgressInfo;
-  currentDifficulty?: DifficultyLevel | null;
+  currentDifficulty?: DifficultyLevelInfo | null;
 }
 
 export const GameContainer = ({
@@ -87,6 +87,15 @@ export const GameContainer = ({
 
   return (
     <div className="max-w-2xl mx-auto">
+      {/* Imagem do Jogador - MOVIDA PARA O TOPO */}
+      <div className="mb-8">
+        <FastPlayerImage
+          key={`${currentPlayer.id}-${gameKey}`}
+          player={currentPlayer}
+          onImageLoaded={handlePlayerImageFixed}
+        />
+      </div>
+
       {/* Indicador de Dificuldade */}
       {gameProgress && currentDifficulty && (
         <div className="mb-6 flex justify-center">
@@ -111,15 +120,6 @@ export const GameContainer = ({
         isTimerRunning={isTimerRunning}
         onNextPlayer={selectRandomPlayer}
       />
-
-      {/* Imagem do Jogador */}
-      <div className="mb-8">
-        <FastPlayerImage
-          key={`${currentPlayer.id}-${gameKey}`}
-          player={currentPlayer}
-          onImageLoaded={handlePlayerImageFixed}
-        />
-      </div>
 
       {/* Formulário de Palpite */}
       {!gameOver && (

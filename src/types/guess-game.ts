@@ -29,6 +29,14 @@ export interface NameProcessingResult {
 
 export type DifficultyLevel = 'muito_facil' | 'facil' | 'medio' | 'dificil' | 'muito_dificil';
 
+export interface DifficultyLevelInfo {
+  level: DifficultyLevel;
+  label: string;
+  color: string;
+  icon: string;
+  multiplier: number;
+}
+
 export interface GameProgressInfo {
   currentRound: number;
   currentStreak: number;

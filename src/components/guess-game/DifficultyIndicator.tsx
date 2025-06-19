@@ -1,12 +1,12 @@
 
 import { memo } from 'react';
-import { DifficultyLevel, GameProgressInfo } from '@/types/guess-game';
+import { DifficultyLevelInfo, GameProgressInfo } from '@/types/guess-game';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface DifficultyIndicatorProps {
-  currentDifficulty: DifficultyLevel | null;
+  currentDifficulty: DifficultyLevelInfo | null;
   gameProgress: GameProgressInfo;
   className?: string;
 }

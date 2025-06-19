@@ -1,10 +1,9 @@
-
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import { Player, DifficultyLevel, GameProgressInfo } from "@/types/guess-game";
+import { Player, DifficultyLevel, DifficultyLevelInfo, GameProgressInfo } from "@/types/guess-game";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
-const DIFFICULTY_LEVELS: Record<string, DifficultyLevel> = {
+const DIFFICULTY_LEVELS: Record<string, DifficultyLevelInfo> = {
   muito_facil: { level: 'muito_facil', label: 'Muito Fácil', color: 'text-green-600', icon: '⭐', multiplier: 1.0 },
   facil: { level: 'facil', label: 'Fácil', color: 'text-blue-600', icon: '⭐⭐', multiplier: 1.2 },
   medio: { level: 'medio', label: 'Médio', color: 'text-yellow-600', icon: '⭐⭐⭐', multiplier: 1.5 },
