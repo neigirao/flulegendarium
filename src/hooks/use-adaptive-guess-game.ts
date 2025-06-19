@@ -199,7 +199,7 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
   return {
     // Player and game state
     currentPlayer,
-    currentDifficulty: currentDifficulty.level,
+    currentDifficulty, // Return the full DifficultyLevelInfo object
     gameProgress,
     gameKey,
     playerChangeCount,
