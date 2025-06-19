@@ -1,3 +1,4 @@
+
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
@@ -28,12 +29,10 @@ const GuessPlayer = () => {
   
   const { players, isLoading, playersError } = usePlayersData();
 
-  // Enhanced game hook with adaptive difficulty
+  // Using simple game hook (without adaptive difficulty)
   const {
     currentPlayer,
     gameKey,
-    gameProgress,
-    currentDifficulty,
     attempts,
     score,
     gameOver,
@@ -90,7 +89,7 @@ const GuessPlayer = () => {
       hasUser: !!user,
       playersCount: players?.length || 0,
       gameStarted,
-      adaptiveDifficultyEnabled: true
+      adaptiveDifficultyEnabled: false
     });
   }, [log, user, players, gameStarted]);
 
@@ -158,8 +157,7 @@ const GuessPlayer = () => {
     gameKey,
     gameStarted,
     changeCount: playerChangeCount,
-    guestPlayerName,
-    currentProgress: gameProgress
+    guestPlayerName
   });
 
   return (
@@ -197,8 +195,7 @@ const GuessPlayer = () => {
               maxStreak={maxStreak}
               forceRefresh={forceRefresh}
               playerChangeCount={playerChangeCount}
-              gameProgress={gameProgress}
-              currentDifficulty={currentDifficulty}
+              // Remove gameProgress and currentDifficulty props since simple game doesn't use them
             />
           )}
 

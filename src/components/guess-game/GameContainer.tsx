@@ -96,7 +96,7 @@ export const GameContainer = ({
         />
       </div>
 
-      {/* Indicador de Dificuldade */}
+      {/* Indicador de Dificuldade - apenas se disponível */}
       {gameProgress && currentDifficulty && (
         <div className="mb-6 flex justify-center">
           <DifficultyIndicator 
