@@ -25,17 +25,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-
-    let isMounted = true;
+    let mounted = true;
 
     // Get initial session
     const getInitialSession = async () => {
@@ -47,14 +39,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        if (isMounted) {
+        if (mounted) {
           setSession(initialSession);
           setUser(initialSession?.user ?? null);
           setLoading(false);
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
-        if (isMounted) {
+        if (mounted) {
           setLoading(false);
         }
       }
@@ -65,9 +57,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, newSession) => {
-        console.log('Auth state changed:', event, newSession?.user?.email);
+        console.log('Auth state changed:', event);
         
-        if (isMounted) {
+        if (mounted) {
           setSession(newSession);
           setUser(newSession?.user ?? null);
           setLoading(false);
@@ -76,10 +68,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     return () => {
-      isMounted = false;
+      mounted = false;
       subscription.unsubscribe();
     };
-  }, [mounted]);
+  }, []);
 
   const signInWithGoogle = async () => {
     try {
@@ -89,10 +81,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           redirectTo: window.location.origin
         }
       });
-      if (error) {
-        console.error('Error signing in with Google:', error);
-        throw error;
-      }
+      if (error) throw error;
     } catch (error) {
       console.error('Sign in with Google error:', error);
       throw error;
@@ -102,10 +91,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      if (error) {
-        console.error('Error signing out:', error);
-        throw error;
-      }
+      if (error) throw error;
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;

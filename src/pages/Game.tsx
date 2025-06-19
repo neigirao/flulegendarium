@@ -28,34 +28,25 @@ const Game = () => {
   // Load players data first
   const { players, isLoading, playersError } = usePlayersData();
 
-  // Log do estado dos players
-  useEffect(() => {
-    console.log("📋 Estado dos players no Game component:", {
-      playersCount: players?.length || 0,
-      isLoading,
-      hasError: !!playersError,
-      firstPlayer: players?.[0]?.name
-    });
-  }, [players, isLoading, playersError]);
-
   // Track page view
   useEffect(() => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
-  // Game logic hook - only initialize if we have players
-  const gameLogicResult = useSimpleGuessGame(players && players.length > 0 ? players : undefined);
+  // Verificação mais robusta dos dados
+  const hasValidPlayers = players && Array.isArray(players) && players.length > 0;
   
-  // Log do resultado do game logic
-  useEffect(() => {
-    console.log("🎮 Resultado do useSimpleGuessGame:", {
-      hasGameLogic: !!gameLogicResult,
-      hasCurrentPlayer: !!gameLogicResult?.currentPlayer,
-      currentPlayerName: gameLogicResult?.currentPlayer?.name,
-      gameKey: gameLogicResult?.gameKey
-    });
-  }, [gameLogicResult]);
+  console.log("📋 Estado dos players no Game component:", {
+    playersCount: players?.length || 0,
+    isLoading,
+    hasError: !!playersError,
+    hasValidPlayers,
+    firstPlayerName: hasValidPlayers ? players[0]?.name : 'none'
+  });
 
+  // Game logic hook - só inicializar se temos jogadores válidos
+  const gameLogicResult = useSimpleGuessGame(hasValidPlayers ? players : undefined);
+  
   // Loading state
   if (isLoading) {
     console.log("🔄 Mostrando loading state...");
@@ -77,7 +68,7 @@ const Game = () => {
   }
 
   // Empty players state
-  if (!players || players.length === 0) {
+  if (!hasValidPlayers) {
     console.warn("⚠️ Mostrando empty players state");
     return <EmptyPlayersDisplay />;
   }
@@ -95,6 +86,7 @@ const Game = () => {
     );
   }
 
+  // Extrair dados do game logic
   const {
     currentPlayer,
     gameKey,
