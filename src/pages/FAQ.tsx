@@ -1,9 +1,10 @@
+
 import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, HelpCircle, MessageCircle, Trophy, Users, GamepadIcon, Shield, Instagram } from "lucide-react";
+import { ArrowLeft, HelpCircle, MessageCircle, Trophy, Users, GamepadIcon, Shield, Instagram, Brain } from "lucide-react";
 
 const faqData = [
   {
@@ -19,6 +20,14 @@ const faqData = [
         answer: "É muito simples! Uma foto de um jogador do Fluminense aparece na tela e você tem que adivinhar o nome correto. Você tem apenas 30 segundos e UMA tentativa por jogador. Cada acerto vale pontos e você compete no ranking global com outros tricolores."
       },
       {
+        question: "O que é o Modo Adaptativo?",
+        answer: "O Modo Adaptativo é nossa mais nova funcionalidade! Ele ajusta automaticamente a dificuldade do jogo baseado no seu desempenho. Acertou várias seguidas? O jogo fica mais difícil. Errou? Diminui um pouco a dificuldade. É como ter um treinador pessoal para seu conhecimento tricolor!"
+      },
+      {
+        question: "Como funciona a progressão de dificuldade?",
+        answer: "No Modo Adaptativo, começamos com jogadores mais conhecidos. Conforme você acerta consecutivamente, a dificuldade aumenta gradualmente, mostrando jogadores mais obscuros ou históricos. Se você errar, a dificuldade diminui para manter o jogo desafiador mas justo."
+      },
+      {
         question: "O jogo é gratuito?",
         answer: "Sim! Lendas do Flu é completamente gratuito. Você pode jogar sem criar conta, mas recomendamos fazer login para salvar seu progresso e participar do ranking oficial."
       },
@@ -29,12 +38,34 @@ const faqData = [
     ]
   },
   {
+    category: "Modos de Jogo",
+    icon: Brain,
+    questions: [
+      {
+        question: "Qual é a diferença entre os modos de jogo?",
+        answer: "Temos dois modos principais: o Modo Clássico (com dificuldade fixa) e o Modo Adaptativo (que ajusta a dificuldade automaticamente). O Modo Adaptativo é ideal para quem quer um desafio personalizado que evolui com seu conhecimento."
+      },
+      {
+        question: "Qual modo devo escolher?",
+        answer: "Se você quer testar seu conhecimento de forma consistente, escolha o Modo Clássico. Se prefere um desafio que se adapta ao seu nível e quer uma experiência mais dinâmica, vá de Modo Adaptativo!"
+      },
+      {
+        question: "Posso alternar entre os modos?",
+        answer: "Claro! Você pode jogar ambos os modos quando quiser. Cada um tem seu próprio sistema de pontuação e ranking, então você pode ser craque em um e iniciante no outro."
+      },
+      {
+        question: "O Modo Adaptativo é mais difícil?",
+        answer: "Não necessariamente! Ele se adapta ao SEU nível. Se você é iniciante, começará com jogadores mais fáceis. Se você é expert, rapidamente chegará aos jogadores mais desafiadores. É personalizado para você!"
+      }
+    ]
+  },
+  {
     category: "Como Jogar",
     icon: Trophy,
     questions: [
       {
         question: "Como começar a jogar?",
-        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha entre jogar como convidado ou fazer login, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
+        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha entre jogar como convidado ou fazer login, selecione o modo de jogo (Clássico ou Adaptativo), passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
       },
       {
         question: "Posso tentar mais de uma vez por jogador?",
@@ -46,7 +77,7 @@ const faqData = [
       },
       {
         question: "Como funciona a pontuação?",
-        answer: "Cada resposta correta vale 5 pontos. O objetivo é fazer o maior número de acertos consecutivos possível. Sua melhor sequência fica salva no ranking!"
+        answer: "No Modo Clássico, cada resposta correta vale 5 pontos. No Modo Adaptativo, os pontos variam conforme a dificuldade - jogadores mais difíceis valem mais pontos! O objetivo é fazer o maior número de acertos consecutivos possível."
       },
       {
         question: "Posso usar nomes e apelidos?",
