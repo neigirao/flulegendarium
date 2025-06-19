@@ -85,7 +85,7 @@ const AdaptiveGameContainer = () => {
       
       <div className="mt-6 space-y-6">
         <AdaptiveDifficultyIndicator 
-          currentDifficulty={currentDifficulty}
+          currentDifficulty={currentDifficulty.level}
           progress={difficultyProgress}
         />
         
