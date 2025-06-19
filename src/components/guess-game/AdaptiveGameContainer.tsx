@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useAdaptiveGuessGame } from "@/hooks/use-adaptive-guess-game";
 import { usePlayersData } from "@/hooks/use-players-data";
@@ -85,7 +86,7 @@ const AdaptiveGameContainer = () => {
       
       <div className="mt-6 space-y-6">
         <AdaptiveDifficultyIndicator 
-          currentDifficulty={currentDifficulty.level}
+          currentDifficulty={currentDifficulty.level as any}
           progress={difficultyProgress}
         />
         
@@ -94,7 +95,7 @@ const AdaptiveGameContainer = () => {
           currentStreak={currentStreak}
           gamesPlayed={gamesPlayed}
           maxStreak={maxStreak}
-          attempts={attempts}
+          attempts={[]}
           gameActive={!gameOver && isTimerRunning}
         />
 
@@ -104,7 +105,7 @@ const AdaptiveGameContainer = () => {
               key={`${gameKey}-${currentPlayer.id}`}
               player={currentPlayer}
               onImageFixed={handlePlayerImageFixed}
-              difficulty={currentDifficulty.level}
+              difficulty={currentDifficulty.level as any}
             />
             
             <GuessForm
@@ -142,7 +143,12 @@ const AdaptiveGameContainer = () => {
 
       {difficultyChangeInfo && (
         <AdaptiveProgressionNotification
-          changeInfo={difficultyChangeInfo}
+          changeInfo={{
+            direction: 'up',
+            newLevel: difficultyChangeInfo.newLevel as any,
+            oldLevel: difficultyChangeInfo.oldLevel as any,
+            reason: difficultyChangeInfo.reason
+          }}
           onClose={clearDifficultyChange}
         />
       )}

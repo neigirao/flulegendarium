@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAdaptivePlayerSelection } from "./use-adaptive-player-selection";
-import { useGameTimer } from "./use-game-timer";
+import { useSimpleGameTimer } from "./use-simple-game-timer";
 import { useAdaptiveGameMetrics } from "./use-adaptive-game-metrics";
 import { useToast } from "@/components/ui/use-toast";
 import { useTabVisibility } from "./use-tab-visibility";
@@ -52,15 +52,12 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const [incorrectSequence, setIncorrectSequence] = useState(0);
 
   const { toast } = useToast();
-  const { isTabVisible } = useTabVisibility();
+  const { isVisible: isTabVisible } = useTabVisibility();
   const lastGuessTimeRef = useRef<number>(0);
 
   // Hooks
   const { selectPlayerByDifficulty } = useAdaptivePlayerSelection();
-  const { timeRemaining, startTimer, pauseTimer, isTimerRunning, resetTimer } = useGameTimer({
-    duration: 30,
-    onTimeUp: () => handleTimeUp()
-  });
+  const { timeRemaining, startTimer, stopTimer, isRunning } = useSimpleGameTimer(30);
 
   const {
     startMetricsTracking,
@@ -74,11 +71,11 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
 
   // Tab visibility handler
   useEffect(() => {
-    if (!isTabVisible && isTimerRunning && !gameOver) {
+    if (!isTabVisible && isRunning && !gameOver) {
       console.log('🚫 Tab não está visível, terminando jogo');
       handleTimeUp();
     }
-  }, [isTabVisible, isTimerRunning, gameOver]);
+  }, [isTabVisible, isRunning, gameOver]);
 
   const adjustDifficulty = useCallback((wasCorrect: boolean) => {
     let newCorrectSequence = correctSequence;
@@ -144,7 +141,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
 
     console.log(`🎯 Selecionando jogador com dificuldade: ${currentDifficulty.label}`);
     
-    const selectedPlayer = selectPlayerByDifficulty(players, currentDifficulty.level);
+    const selectedPlayer = selectPlayerByDifficulty(players, currentDifficulty.level as any);
     
     if (selectedPlayer) {
       setCurrentPlayer(selectedPlayer);
@@ -169,13 +166,12 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     setGameOver(false);
     setHasLost(false);
     setIsProcessingGuess(false);
-    resetTimer();
     startTimer();
     
     if (gamesPlayed === 0) {
       startMetricsTracking();
     }
-  }, [currentPlayer, gamesPlayed, startTimer, resetTimer, startMetricsTracking]);
+  }, [currentPlayer, gamesPlayed, startTimer, startMetricsTracking]);
 
   const handleTimeUp = useCallback(() => {
     if (!currentPlayer || gameOver) return;
@@ -184,7 +180,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     
     setGameOver(true);
     setHasLost(true);
-    pauseTimer();
+    stopTimer();
     
     const guessTime = Date.now() - lastGuessTimeRef.current;
     recordIncorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
@@ -198,7 +194,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
 
     // Save game data
     saveGameData(score, currentDifficulty.level, currentDifficulty.multiplier);
-  }, [currentPlayer, gameOver, score, currentDifficulty, pauseTimer, recordIncorrectGuess, adjustDifficulty, saveGameData, toast]);
+  }, [currentPlayer, gameOver, score, currentDifficulty, stopTimer, recordIncorrectGuess, adjustDifficulty, saveGameData, toast]);
 
   const handleGuess = useCallback(async (guess: string) => {
     if (!currentPlayer || gameOver || isProcessingGuess) return;
@@ -244,7 +240,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
         setGameOver(true);
         setHasLost(true);
         setCurrentStreak(0);
-        pauseTimer();
+        stopTimer();
         
         recordIncorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
         adjustDifficulty(false);
@@ -274,7 +270,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     recordIncorrectGuess,
     adjustDifficulty,
     saveGameData,
-    pauseTimer,
+    stopTimer,
     selectRandomPlayer,
     toast
   ]);
@@ -303,10 +299,9 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     setCorrectSequence(0);
     setIncorrectSequence(0);
     setDifficultyChangeInfo(null);
-    resetTimer();
     resetMetrics();
     selectRandomPlayer();
-  }, [selectRandomPlayer, resetTimer, resetMetrics]);
+  }, [selectRandomPlayer, resetMetrics]);
 
   const clearDifficultyChange = useCallback(() => {
     setDifficultyChangeInfo(null);
@@ -329,7 +324,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     timeRemaining,
     isProcessingGuess,
     hasLost,
-    isTimerRunning,
+    isTimerRunning: isRunning,
     gamesPlayed,
     currentStreak,
     maxStreak,

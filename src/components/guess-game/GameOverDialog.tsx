@@ -131,7 +131,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
           {showRankingForm && (
             <RankingForm
               score={score}
-              onSaved={() => handleSaveToRanking}
+              onSaved={handleSaveToRanking}
               onCancel={() => setShowRankingForm(false)}
               isAuthenticated={isAuthenticated}
             />
@@ -141,7 +141,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
             <div className="space-y-4">
               <SocialShare
                 score={score}
-                shareText={getShareText()}
+                text={getShareText()}
                 url="https://flulegendarium.lovable.app/"
               />
               

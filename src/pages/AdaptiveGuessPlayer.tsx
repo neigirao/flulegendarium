@@ -33,13 +33,11 @@ const AdaptiveGuessPlayer = () => {
   const {
     currentPlayer,
     currentDifficulty,
-    gameProgress,
     gameKey,
     attempts,
     score,
     gameOver,
     timeRemaining,
-    MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
     forceRefresh,
@@ -52,12 +50,10 @@ const AdaptiveGuessPlayer = () => {
     gamesPlayed,
     currentStreak,
     maxStreak,
-    playerChangeCount,
-    TIME_LIMIT_SECONDS,
-    availablePlayersCount,
     difficultyProgress,
     difficultyChangeInfo,
-    clearDifficultyChange
+    clearDifficultyChange,
+    saveToRanking
   } = useAdaptiveGuessGame(players);
 
   const {
@@ -159,6 +155,7 @@ const AdaptiveGuessPlayer = () => {
   }
 
   // Check if there are players for adaptive mode
+  const availablePlayersCount = players?.length || 0;
   if (availablePlayersCount === 0 && gameStarted) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4">
@@ -184,7 +181,6 @@ const AdaptiveGuessPlayer = () => {
     difficulty: currentDifficulty,
     gameKey,
     gameStarted,
-    changeCount: playerChangeCount,
     guestPlayerName,
     availablePlayersCount
   });
@@ -207,11 +203,11 @@ const AdaptiveGuessPlayer = () => {
             <GameContainer
               currentPlayer={currentPlayer}
               gameKey={gameKey.toString()}
-              attempts={attempts.length}
+              attempts={attempts}
               score={score}
               gameOver={gameOver}
               timeRemaining={timeRemaining}
-              MAX_ATTEMPTS={MAX_ATTEMPTS}
+              MAX_ATTEMPTS={1}
               handleGuess={handleGuess}
               selectRandomPlayer={selectRandomPlayer}
               handlePlayerImageFixed={handlePlayerImageFixed}
@@ -223,9 +219,20 @@ const AdaptiveGuessPlayer = () => {
               currentStreak={currentStreak}
               maxStreak={maxStreak}
               forceRefresh={forceRefresh}
-              playerChangeCount={playerChangeCount}
-              gameProgress={gameProgress}
-              currentDifficulty={currentDifficulty}
+              playerChangeCount={0}
+              gameProgress={{
+                currentRound: gamesPlayed + 1,
+                currentStreak,
+                allowedDifficulties: [currentDifficulty.level as any],
+                nextDifficultyThreshold: 3
+              }}
+              currentDifficulty={{
+                level: currentDifficulty.level as any,
+                label: currentDifficulty.label,
+                color: 'text-blue-600 bg-blue-50',
+                icon: '⭐⭐⭐',
+                multiplier: currentDifficulty.multiplier
+              }}
             />
           )}
 
@@ -260,7 +267,9 @@ const AdaptiveGuessPlayer = () => {
           score={score}
           onResetScore={resetScore}
           isAuthenticated={isAuthenticatedGame}
-          guestPlayerName={guestPlayerName}
+          onSaveToRanking={saveToRanking}
+          gameMode="adaptive"
+          difficultyLevel={currentDifficulty.label}
         />
       )}
     </RootLayout>

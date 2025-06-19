@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface GameHistory {
@@ -12,6 +13,7 @@ export interface GameHistory {
   created_at?: string;
   game_mode?: 'classic' | 'adaptive';
   difficulty_level?: string;
+  difficulty_multiplier?: number;
 }
 
 export const saveGameHistory = async (history: Omit<GameHistory, 'id' | 'created_at'>): Promise<GameHistory> => {
@@ -30,7 +32,7 @@ export const saveGameHistory = async (history: Omit<GameHistory, 'id' | 'created
     }
 
     console.log('✅ GameHistoryService: Game history saved successfully:', data);
-    return data;
+    return data as GameHistory;
   } catch (error) {
     console.error('❌ GameHistoryService: Exception while saving:', error);
     throw error;
@@ -60,7 +62,7 @@ export const getUserGameHistory = async (userId: string, limit: number = 10, gam
     }
 
     console.log('✅ GameHistoryService: Fetched history:', data?.length || 0, 'records');
-    return data || [];
+    return (data || []) as GameHistory[];
   } catch (error) {
     console.error('❌ GameHistoryService: Exception while fetching:', error);
     throw error;
