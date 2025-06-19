@@ -127,11 +127,11 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     isGameActive: gameActive 
   });
   
-  // Game timer hook
-  const { timeRemaining, isRunning, startTimer, stopTimer } = useSimpleGameTimer(handleTimeUp);
+  // Game timer hook - Fixed: pass TIME_LIMIT_SECONDS as number
+  const { timeRemaining, isRunning, startTimer, stopTimer } = useSimpleGameTimer(TIME_LIMIT_SECONDS);
 
-  // Game logic hook with enhanced callbacks
-  const { handleGuess, isProcessing } = useSimpleGameLogic({
+  // Game logic hook with enhanced callbacks - Fixed: use correct property names and interface
+  const { handleGuess, isProcessingGuess } = useSimpleGameLogic({
     currentPlayer,
     onCorrectGuess: (points: number) => {
       console.log('✅ Resposta correta! Adicionando pontos:', points);
@@ -158,7 +158,13 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       setGameActive(false);
       saveGameData(score, false);
     },
-    onNextPlayer: selectRandomPlayer
+    onGameEnd: () => {
+      setGameOver(true);
+      setHasLost(true);
+      setGameActive(false);
+    },
+    selectRandomPlayer,
+    stopTimer
   });
 
   // Start timer when a new player is selected and game is not over
@@ -237,7 +243,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     selectRandomPlayer,
     forceRefresh,
     handlePlayerImageFixed,
-    isProcessingGuess: isProcessing,
+    isProcessingGuess,
     TIME_LIMIT_SECONDS,
     hasLost,
     startGameForPlayer,
