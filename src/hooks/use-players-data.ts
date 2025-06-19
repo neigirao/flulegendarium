@@ -17,35 +17,34 @@ interface DatabasePlayer {
 }
 
 export const usePlayersData = () => {
-  console.log("🔄 Iniciando usePlayersData hook...");
+  console.log("🔄 usePlayersData iniciando...");
 
-  const { data: players = [], isLoading, error: playersError } = useQuery({
+  const { data: players = [], isLoading, error } = useQuery({
     queryKey: ['players'],
     queryFn: async (): Promise<Player[]> => {
-      console.log("🔍 Executando query para buscar jogadores...");
+      console.log("🔍 Buscando jogadores...");
       
-      const { data, error } = await supabase
-        .from('players')
-        .select('*')
-        .order('name');
-      
-      if (error) {
-        console.error("❌ Erro na query do Supabase:", error);
-        throw new Error(`Erro ao buscar jogadores: ${error.message}`);
-      }
-      
-      if (!data || data.length === 0) {
-        console.warn("⚠️ Nenhum jogador encontrado no banco de dados");
-        return [];
-      }
+      try {
+        const { data, error } = await supabase
+          .from('players')
+          .select('*')
+          .order('name');
+        
+        if (error) {
+          console.error("❌ Erro na query:", error);
+          throw error;
+        }
+        
+        if (!data || data.length === 0) {
+          console.warn("⚠️ Nenhum jogador encontrado");
+          return [];
+        }
 
-      console.log(`✅ ${data.length} jogadores encontrados no banco`);
-      
-      // Processar jogadores de forma mais robusta
-      const processedPlayers = data
-        .filter((player: DatabasePlayer) => player.id && player.name)
-        .map((player: DatabasePlayer): Player => {
-          return {
+        console.log(`✅ ${data.length} jogadores encontrados`);
+        
+        const processedPlayers = data
+          .filter((player: DatabasePlayer) => player.id && player.name)
+          .map((player: DatabasePlayer): Player => ({
             id: player.id,
             name: player.name || 'Jogador Desconhecido',
             position: player.position || 'Posição não informada',
@@ -55,29 +54,29 @@ export const usePlayersData = () => {
             achievements: Array.isArray(player.achievements) ? player.achievements : [],
             nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
             statistics: convertStatistics(player.statistics)
-          };
-        });
+          }));
 
-      console.log(`✅ ${processedPlayers.length} jogadores processados com sucesso`);
-      return processedPlayers;
+        console.log(`✅ ${processedPlayers.length} jogadores processados`);
+        return processedPlayers;
+      } catch (error) {
+        console.error("❌ Erro ao buscar jogadores:", error);
+        throw error;
+      }
     },
     staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-    retry: 2,
+    retry: 3,
     refetchOnWindowFocus: false,
-    refetchOnMount: true,
   });
 
   console.log("📊 usePlayersData resultado:", {
     playersCount: players?.length || 0,
     isLoading,
-    hasError: !!playersError,
-    errorMessage: playersError?.message
+    hasError: !!error
   });
 
   return {
     players: players || [],
     isLoading,
-    playersError
+    error
   };
 };

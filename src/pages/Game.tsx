@@ -14,7 +14,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useDebug } from "@/hooks/use-debug";
 import { usePlayersData } from "@/hooks/use-players-data";
-import { usePlayerPreload } from "@/hooks/use-player-preload";
 import { useGameState } from "@/hooks/use-game-state";
 import { useGameHandlers } from "@/hooks/game/use-game-handlers";
 
@@ -25,37 +24,28 @@ const Game = () => {
   const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
   const { showImageUrl } = useDebug();
   
-  // Load players data first
-  const { players, isLoading, playersError } = usePlayersData();
+  // Carregar dados dos jogadores
+  const { players, isLoading, error: playersError } = usePlayersData();
 
   // Track page view
   useEffect(() => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
-  // Verificação mais robusta dos dados
-  const hasValidPlayers = players && Array.isArray(players) && players.length > 0;
-  
-  console.log("📋 Estado dos players no Game component:", {
+  console.log("📋 Estado dos players:", {
     playersCount: players?.length || 0,
     isLoading,
-    hasError: !!playersError,
-    hasValidPlayers,
-    firstPlayerName: hasValidPlayers ? players[0]?.name : 'none'
+    hasError: !!playersError
   });
 
-  // Game logic hook - só inicializar se temos jogadores válidos
-  const gameLogicResult = useSimpleGuessGame(hasValidPlayers ? players : undefined);
-  
   // Loading state
   if (isLoading) {
-    console.log("🔄 Mostrando loading state...");
+    console.log("🔄 Mostrando loading...");
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <GameLoader className="w-8 h-8 animate-spin mx-auto mb-4" />
           <p className="text-lg font-medium">Carregando jogadores...</p>
-          <p className="text-sm text-gray-600 mt-2">Por favor, aguarde...</p>
         </div>
       </div>
     );
@@ -63,19 +53,21 @@ const Game = () => {
 
   // Error state
   if (playersError) {
-    console.error("❌ Mostrando error state:", playersError);
+    console.error("❌ Erro:", playersError);
     return <ErrorDisplay error={playersError} />;
   }
 
   // Empty players state
-  if (!hasValidPlayers) {
-    console.warn("⚠️ Mostrando empty players state");
+  if (!players || players.length === 0) {
+    console.warn("⚠️ Nenhum jogador disponível");
     return <EmptyPlayersDisplay />;
   }
 
-  // No game logic result yet (still initializing)
-  if (!gameLogicResult) {
-    console.log("⚠️ gameLogicResult ainda não disponível");
+  // Inicializar lógica do jogo
+  const gameLogic = useSimpleGuessGame(players);
+  
+  if (!gameLogic) {
+    console.log("⚠️ Game logic não inicializada");
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -86,7 +78,6 @@ const Game = () => {
     );
   }
 
-  // Extrair dados do game logic
   const {
     currentPlayer,
     gameKey,
@@ -108,7 +99,7 @@ const Game = () => {
     currentStreak,
     maxStreak,
     playerChangeCount
-  } = gameLogicResult;
+  } = gameLogic;
 
   // Game state management
   const {
@@ -135,24 +126,10 @@ const Game = () => {
     selectRandomPlayer
   });
 
-  // Preload next players
-  usePlayerPreload(players, currentPlayer);
-
-  // Track game end
-  useEffect(() => {
-    if (hasLost) {
-      const correctGuesses = Math.floor(score / 5);
-      trackGameEnd(score, correctGuesses);
-    }
-  }, [hasLost, score, trackGameEnd]);
-
-  console.log('🎮 Game render - Estado final:', {
+  console.log('🎮 Game render - Estado:', {
     currentPlayerName: currentPlayer?.name || 'Nenhum',
-    gameKey,
-    playersCount: players?.length || 0,
     gameStarted,
-    isLoading,
-    hasError: !!playersError
+    playersCount: players?.length || 0
   });
 
   return (
@@ -164,6 +141,7 @@ const Game = () => {
         url="https://flulegendarium.lovable.app/jogar-quiz-fluminense"
         canonical="https://flulegendarium.lovable.app/jogar-quiz-fluminense"
       />
+      
       <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white">
         <GameHeader user={user} trackEvent={trackEvent} />
         
