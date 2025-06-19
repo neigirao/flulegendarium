@@ -13,6 +13,7 @@ import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoun
 
 const Index = lazy(() => import("@/pages/Index"))
 const GuessThePlayer = lazy(() => import("@/pages/GuessPlayer"))
+const AdaptiveGuessPlayerSimple = lazy(() => import("@/pages/AdaptiveGuessPlayerSimple"))
 const SelectGameMode = lazy(() => import("@/pages/GameModeSelection"))
 const Profile = lazy(() => import("@/pages/Profile"))
 const AdminLogin = lazy(() => import("@/pages/AdminLogin"))
@@ -61,6 +62,14 @@ function App() {
                       element={
                         <GameErrorBoundary>
                           <GuessThePlayer />
+                        </GameErrorBoundary>
+                      } 
+                    />
+                    <Route 
+                      path="/quiz-adaptativo" 
+                      element={
+                        <GameErrorBoundary>
+                          <AdaptiveGuessPlayerSimple />
                         </GameErrorBoundary>
                       } 
                     />

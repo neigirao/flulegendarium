@@ -1,15 +1,18 @@
 
-import { ArrowLeft, Info, Trophy, Star } from "lucide-react";
+import { ArrowLeft, Info, Trophy, Star, Brain } from "lucide-react";
 import { Link } from "react-router-dom";
 import { GameRulesTooltip } from "./GameRulesTooltip";
 import { cn } from "@/lib/utils";
+import { DifficultyLevel } from "@/types/guess-game";
 
 interface GameHeaderProps {
   score: number;
   onDebugClick: () => void;
+  currentDifficulty?: DifficultyLevel;
+  isAdaptiveMode?: boolean;
 }
 
-export const GameHeader = ({ score, onDebugClick }: GameHeaderProps) => {
+export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveMode }: GameHeaderProps) => {
   console.log('🎮 GameHeader - Score recebido e exibindo:', score);
   
   const getScoreVariant = () => {
@@ -49,13 +52,22 @@ export const GameHeader = ({ score, onDebugClick }: GameHeaderProps) => {
           </div>
         </Link>
         
-        {/* Score principal centralizado e responsivo */}
+        {/* Score principal centralizado e responsivo com indicador de modo */}
         <div className="flex-1 flex justify-center">
           <div className={cn(
             "relative px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 rounded-xl sm:rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 cursor-default",
             "text-center border backdrop-blur-sm min-w-[120px] sm:min-w-[160px] md:min-w-[180px]",
             scoreStyles[variant]
           )}>
+            {/* Indicador de modo adaptativo */}
+            {isAdaptiveMode && (
+              <div className="absolute -top-2 -left-2 bg-gradient-to-r from-flu-verde to-flu-grena text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                <Brain className="w-3 h-3" />
+                <span className="hidden sm:inline">ADAPTATIVO</span>
+                <span className="sm:hidden">AI</span>
+              </div>
+            )}
+
             {/* Efeito de brilho para scores altos */}
             {score >= 30 && (
               <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
@@ -72,6 +84,11 @@ export const GameHeader = ({ score, onDebugClick }: GameHeaderProps) => {
                 <span className="text-xs sm:text-sm opacity-90 font-medium leading-tight">
                   {score === 1 ? "ponto" : "pontos"}
                 </span>
+                {currentDifficulty && (
+                  <span className="text-xs opacity-75 leading-tight hidden sm:block">
+                    {currentDifficulty.replace('_', ' ')}
+                  </span>
+                )}
               </div>
               
               {score >= 50 && <Star className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 animate-spin" style={{ animationDirection: 'reverse' }} />}
