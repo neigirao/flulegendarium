@@ -28,7 +28,11 @@ export const AdaptiveGameStatus = ({
           <Clock className="w-4 h-4 text-flu-grena" />
           <span className="text-sm font-medium text-gray-600">Tempo</span>
         </div>
-        <GameTimer timeRemaining={timeRemaining} isActive={gameActive} />
+        <GameTimer 
+          timeRemaining={timeRemaining} 
+          isRunning={gameActive} 
+          gameOver={!gameActive}
+        />
       </div>
 
       {/* Current Streak */}

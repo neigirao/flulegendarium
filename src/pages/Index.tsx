@@ -9,6 +9,7 @@ import { getGameStats } from "@/services/statsService";
 import { SEOHead } from "@/components/SEOHead";
 import { StructuredData } from "@/components/StructuredData";
 import { GamepadIcon, UsersIcon, AwardIcon, PlayIcon, TrophyIcon, StarIcon, Menu, X, Instagram } from "lucide-react";
+import { Trophy, Users, Play, Target, Brain, Star } from "lucide-react";
 import { UniversalTouchTarget } from "@/components/mobile/UniversalTouchTarget";
 import { MobileSkeleton } from "@/components/mobile/MobileSkeleton";
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard";

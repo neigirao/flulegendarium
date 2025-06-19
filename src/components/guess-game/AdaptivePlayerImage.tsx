@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 interface AdaptivePlayerImageProps {
   player: Player;
-  onImageFixed: (imageUrl: string) => void;
+  onImageFixed: (imageUrl?: string) => void;
   difficulty: DifficultyLevel;
 }
 
@@ -58,7 +58,7 @@ export const AdaptivePlayerImage = ({
         >
           <OptimizedPlayerImage
             player={player}
-            onImageFixed={onImageFixed}
+            onImageLoaded={onImageFixed}
             className="w-80 h-80 md:w-96 md:h-96 object-cover"
           />
         </div>

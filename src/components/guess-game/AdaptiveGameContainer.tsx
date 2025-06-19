@@ -18,7 +18,7 @@ const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   
-  const { data: players, isLoading, error } = usePlayersData();
+  const { players, isLoading, playersError } = usePlayersData();
   
   const {
     currentPlayer,
@@ -68,8 +68,8 @@ const AdaptiveGameContainer = () => {
     );
   }
 
-  if (error) {
-    return <ErrorDisplay error={error} />;
+  if (playersError) {
+    return <ErrorDisplay error={playersError} />;
   }
 
   if (!players || players.length === 0) {
@@ -108,33 +108,23 @@ const AdaptiveGameContainer = () => {
             />
             
             <GuessForm
-              onGuess={handleGuess}
+              onSubmitGuess={handleGuess}
               disabled={gameOver || isProcessingGuess}
               isProcessing={isProcessingGuess}
-              showHint={attempts.length > 0}
-              currentPlayer={currentPlayer}
             />
           </div>
         )}
 
         {showDebug && (
           <DebugInfo
-            currentPlayer={currentPlayer}
-            gameKey={gameKey}
-            score={score}
-            gameOver={gameOver}
-            isTimerRunning={isTimerRunning}
-            playerChangeCount={0}
-            timeRemaining={timeRemaining}
-            attempts={attempts}
-            currentDifficulty={currentDifficulty}
-            difficultyProgress={difficultyProgress}
+            show={true}
+            imageUrl={currentPlayer?.image_url}
           />
         )}
       </div>
 
       <GameOverDialog
-        isOpen={gameOver}
+        open={gameOver}
         score={score}
         hasLost={hasLost}
         currentPlayer={currentPlayer}

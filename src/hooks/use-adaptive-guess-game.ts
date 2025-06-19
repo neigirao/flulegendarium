@@ -1,7 +1,7 @@
 
 import { useState, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Player } from "@/types/guess-game";
+import { Player, DifficultyChangeInfo } from "@/types/guess-game";
 import { useSimpleGameTimer } from "./use-simple-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
 import { useAdaptivePlayerSelection } from "./use-adaptive-player-selection";
@@ -20,6 +20,7 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
   const [gameActive, setGameActive] = useState(false);
   const [gameKey, setGameKey] = useState(0);
   const [playerChangeCount, setPlayerChangeCount] = useState(0);
+  const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
 
   // Adaptive player selection
   const {
@@ -35,6 +36,9 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
 
   // Game scoring with multiplier
   const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
+
+  // Calculate difficulty progress percentage
+  const difficultyProgress = (currentStreak / gameProgress.nextDifficultyThreshold) * 100;
 
   // Handle time up
   const handleTimeUp = useCallback(() => {
@@ -97,7 +101,20 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
       console.log('✨ Pontos com multiplicador:', multipliedPoints, 'x', currentDifficulty.multiplier);
       
       addScore(multipliedPoints);
+      
+      // Check for difficulty change and create notification
+      const oldLevel = currentDifficulty.level;
       handleCorrectGuessBase();
+      
+      // If difficulty changed, show notification
+      if (currentDifficulty.level !== oldLevel) {
+        setDifficultyChangeInfo({
+          direction: 'up',
+          newLevel: currentDifficulty.level,
+          oldLevel,
+          reason: `${currentStreak + 1} acertos consecutivos`
+        });
+      }
       
       // Continuar para próximo jogador automaticamente
       setTimeout(() => {
@@ -106,7 +123,21 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
     },
     onIncorrectGuess: (guess: string) => {
       console.log('❌ Resposta incorreta:', guess);
+      
+      // Check for difficulty change and create notification
+      const oldLevel = currentDifficulty.level;
       handleIncorrectGuessBase();
+      
+      // If difficulty changed, show notification
+      if (currentDifficulty.level !== oldLevel) {
+        setDifficultyChangeInfo({
+          direction: 'down',
+          newLevel: currentDifficulty.level,
+          oldLevel,
+          reason: 'Erro na resposta'
+        });
+      }
+      
       setGameOver(true);
       setHasLost(true);
       setGameActive(false);
@@ -144,12 +175,17 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
   }, [selectRandomPlayer]);
 
   // Handle player image fixed
-  const handlePlayerImageFixed = useCallback(() => {
+  const handlePlayerImageFixed = useCallback((imageUrl?: string) => {
     console.log('🖼️ Imagem do jogador carregada, iniciando jogo');
     if (!gameActive && !gameOver) {
       startGameForPlayer();
     }
   }, [gameActive, gameOver, startGameForPlayer]);
+
+  // Clear difficulty change notification
+  const clearDifficultyChange = useCallback(() => {
+    setDifficultyChangeInfo(null);
+  }, []);
 
   // Reset score
   const resetScore = useCallback(() => {
@@ -157,16 +193,19 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
     resetAll();
     resetDifficulty();
     setGameActive(false);
+    setDifficultyChangeInfo(null);
   }, [resetAll, resetDifficulty]);
 
   return {
     // Player and game state
     currentPlayer,
-    currentDifficulty,
+    currentDifficulty: currentDifficulty.level,
     gameProgress,
     gameKey,
     playerChangeCount,
     availablePlayersCount,
+    difficultyProgress,
+    difficultyChangeInfo,
     
     // Game mechanics
     attempts: [],
@@ -183,6 +222,7 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
     startGameForPlayer,
     forceRefresh,
     resetScore,
+    clearDifficultyChange,
     
     // Game status
     isProcessingGuess,

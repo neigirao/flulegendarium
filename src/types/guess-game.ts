@@ -37,6 +37,13 @@ export interface DifficultyLevelInfo {
   multiplier: number;
 }
 
+export interface DifficultyChangeInfo {
+  direction: 'up' | 'down';
+  newLevel: DifficultyLevel;
+  oldLevel: DifficultyLevel;
+  reason: string;
+}
+
 export interface GameProgressInfo {
   currentRound: number;
   currentStreak: number;
