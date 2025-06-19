@@ -52,3 +52,42 @@ export const getGameStats = async (): Promise<GameStats> => {
     };
   }
 };
+
+export const getGameStatsByMode = async (gameMode?: 'classic' | 'adaptive'): Promise<GameStats> => {
+  try {
+    const queries = [];
+    
+    if (gameMode) {
+      queries.push(
+        supabase.from('game_starts').select('*', { count: 'exact', head: true }).eq('game_mode', gameMode),
+        supabase.from('rankings').select('*', { count: 'exact', head: true }).eq('game_mode', gameMode),
+        supabase.from('rankings').select('score').eq('game_mode', gameMode).order('score', { ascending: false }).limit(1).single()
+      );
+    } else {
+      queries.push(
+        supabase.from('game_starts').select('*', { count: 'exact', head: true }),
+        supabase.from('rankings').select('*', { count: 'exact', head: true }),
+        supabase.from('rankings').select('score').order('score', { ascending: false }).limit(1).single()
+      );
+    }
+    
+    queries.push(supabase.from('players').select('*', { count: 'exact', head: true }));
+
+    const [gameStartsResult, rankingsResult, highestScoreResult, playersResult] = await Promise.all(queries);
+
+    return {
+      totalMatches: gameStartsResult.count || 0,
+      activePlayers: rankingsResult.count || 0,
+      highestScore: highestScoreResult.data?.score || 0,
+      totalPlayers: playersResult.count || 0
+    };
+  } catch (error) {
+    console.error('Erro ao buscar estatísticas por modo:', error);
+    return {
+      totalMatches: 0,
+      activePlayers: 0,
+      highestScore: 0,
+      totalPlayers: 0
+    };
+  }
+};

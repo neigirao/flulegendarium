@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface GameHistory {
@@ -11,6 +10,8 @@ export interface GameHistory {
   current_streak?: number;
   max_streak?: number;
   created_at?: string;
+  game_mode?: 'classic' | 'adaptive';
+  difficulty_level?: string;
 }
 
 export const saveGameHistory = async (history: Omit<GameHistory, 'id' | 'created_at'>): Promise<GameHistory> => {
@@ -36,16 +37,22 @@ export const saveGameHistory = async (history: Omit<GameHistory, 'id' | 'created
   }
 };
 
-export const getUserGameHistory = async (userId: string, limit: number = 10): Promise<GameHistory[]> => {
-  console.log('📖 GameHistoryService: Fetching history for user:', userId);
+export const getUserGameHistory = async (userId: string, limit: number = 10, gameMode?: 'classic' | 'adaptive'): Promise<GameHistory[]> => {
+  console.log('📖 GameHistoryService: Fetching history for user:', userId, 'gameMode:', gameMode);
   
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('user_game_history')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(limit);
+
+    if (gameMode) {
+      query = query.eq('game_mode', gameMode);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('❌ GameHistoryService: Error fetching game history:', error);
@@ -60,14 +67,20 @@ export const getUserGameHistory = async (userId: string, limit: number = 10): Pr
   }
 };
 
-export const getUserStats = async (userId: string) => {
-  console.log('📊 GameHistoryService: Calculating stats for user:', userId);
+export const getUserStats = async (userId: string, gameMode?: 'classic' | 'adaptive') => {
+  console.log('📊 GameHistoryService: Calculating stats for user:', userId, 'gameMode:', gameMode);
   
   try {
-    const { data, error } = await supabase
+    let query = supabase
       .from('user_game_history')
-      .select('score, correct_guesses, total_attempts, current_streak, max_streak')
+      .select('score, correct_guesses, total_attempts, current_streak, max_streak, game_mode, difficulty_level')
       .eq('user_id', userId);
+
+    if (gameMode) {
+      query = query.eq('game_mode', gameMode);
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       console.error('❌ GameHistoryService: Error fetching user stats:', error);
@@ -83,7 +96,9 @@ export const getUserStats = async (userId: string) => {
         totalCorrectGuesses: 0,
         totalAttempts: 0,
         accuracyRate: 0,
-        maxStreak: 0
+        maxStreak: 0,
+        adaptiveGames: 0,
+        classicGames: 0
       };
     }
 
@@ -94,6 +109,10 @@ export const getUserStats = async (userId: string) => {
     const totalAttempts = data.reduce((sum, game) => sum + game.total_attempts, 0);
     const accuracyRate = totalAttempts > 0 ? (totalCorrectGuesses / totalAttempts) * 100 : 0;
     const maxStreak = Math.max(...data.map(game => game.max_streak || 0));
+    
+    // Count games by mode
+    const adaptiveGames = data.filter(game => game.game_mode === 'adaptive').length;
+    const classicGames = data.filter(game => game.game_mode === 'classic' || !game.game_mode).length;
 
     const stats = {
       totalGames,
@@ -102,7 +121,9 @@ export const getUserStats = async (userId: string) => {
       totalCorrectGuesses,
       totalAttempts,
       accuracyRate: Math.round(accuracyRate * 100) / 100,
-      maxStreak
+      maxStreak,
+      adaptiveGames,
+      classicGames
     };
 
     console.log('✅ GameHistoryService: Calculated stats:', stats);

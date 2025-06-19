@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useAdaptiveGuessGame } from "@/hooks/use-adaptive-guess-game";
 import { usePlayersData } from "@/hooks/use-players-data";
@@ -42,7 +41,8 @@ const AdaptiveGameContainer = () => {
     currentStreak,
     maxStreak,
     difficultyChangeInfo,
-    clearDifficultyChange
+    clearDifficultyChange,
+    saveToRanking
   } = useAdaptiveGuessGame(players);
 
   useEffect(() => {
@@ -130,6 +130,9 @@ const AdaptiveGameContainer = () => {
         score={score}
         onResetScore={resetScore}
         isAuthenticated={false}
+        onSaveToRanking={saveToRanking}
+        gameMode="adaptive"
+        difficultyLevel={currentDifficulty.label}
       />
 
       <AdaptiveTutorial 

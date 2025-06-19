@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,12 +10,21 @@ import { useQueryClient } from "@tanstack/react-query";
 
 interface RankingFormProps {
   score: number;
-  onSaved: () => void;
+  onSaved: (playerName: string) => void;
   onCancel: () => void;
   isAuthenticated?: boolean;
+  gameMode?: 'classic' | 'adaptive';
+  difficultyLevel?: string;
 }
 
-export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false }: RankingFormProps) => {
+export const RankingForm = ({ 
+  score, 
+  onSaved, 
+  onCancel, 
+  isAuthenticated = false,
+  gameMode = 'classic',
+  difficultyLevel 
+}: RankingFormProps) => {
   const [name, setName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -56,7 +64,9 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
       console.log('💾 Salvando ranking no banco:', {
         player_name: name.trim(),
         score: score,
-        user_id: user?.id || null
+        user_id: user?.id || null,
+        game_mode: gameMode,
+        difficulty_level: difficultyLevel
       });
 
       const { error } = await supabase
@@ -66,6 +76,8 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
             player_name: name.trim(),
             score: score,
             user_id: user?.id || null,
+            game_mode: gameMode,
+            difficulty_level: difficultyLevel,
             created_at: new Date().toISOString()
           }
         ]);
@@ -83,23 +95,24 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
       trackEvent({
         action: 'score_saved_to_ranking',
         category: 'Game',
-        label: 'ranking_submission',
+        label: `ranking_submission_${gameMode}`,
         value: score
       });
 
+      const modeText = gameMode === 'adaptive' ? ' no modo adaptativo' : '';
       toast({
         title: "Sucesso!",
-        description: `Sua pontuação de ${score} pontos foi salva no ranking!`,
+        description: `Sua pontuação de ${score} pontos foi salva no ranking${modeText}!`,
       });
 
-      onSaved();
+      onSaved(name.trim());
     } catch (error) {
       console.error('❌ Erro ao salvar pontuação:', error);
       
       trackEvent({
         action: 'score_save_error',
         category: 'Game',
-        label: 'ranking_submission_failed'
+        label: `ranking_submission_failed_${gameMode}`
       });
       
       toast({
@@ -118,6 +131,11 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
         <div className="flex items-center gap-2">
           <Trophy className="w-5 h-5 text-flu-grena" />
           <h3 className="text-lg font-bold text-flu-grena">Salvar no Ranking</h3>
+          {gameMode === 'adaptive' && (
+            <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
+              Adaptativo
+            </span>
+          )}
         </div>
         <Button
           variant="ghost"
@@ -129,9 +147,16 @@ export const RankingForm = ({ score, onSaved, onCancel, isAuthenticated = false 
         </Button>
       </div>
       
-      <p className="text-gray-600 text-center">
-        Sua pontuação: <span className="font-bold text-flu-grena">{score} pontos</span>
-      </p>
+      <div className="text-center">
+        <p className="text-gray-600">
+          Sua pontuação: <span className="font-bold text-flu-grena">{score} pontos</span>
+        </p>
+        {gameMode === 'adaptive' && difficultyLevel && (
+          <p className="text-sm text-gray-500">
+            Nível final: {difficultyLevel}
+          </p>
+        )}
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">

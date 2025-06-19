@@ -208,6 +208,7 @@ export type Database = {
       game_starts: {
         Row: {
           created_at: string
+          game_mode: string | null
           id: string
           player_type: string
           session_id: string | null
@@ -216,6 +217,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          game_mode?: string | null
           id?: string
           player_type?: string
           session_id?: string | null
@@ -224,6 +226,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          game_mode?: string | null
           id?: string
           player_type?: string
           session_id?: string | null
@@ -357,6 +360,8 @@ export type Database = {
       rankings: {
         Row: {
           created_at: string
+          difficulty_level: string | null
+          game_mode: string | null
           games_played: number
           id: string
           player_name: string
@@ -365,6 +370,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          difficulty_level?: string | null
+          game_mode?: string | null
           games_played?: number
           id?: string
           player_name: string
@@ -373,6 +380,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          difficulty_level?: string | null
+          game_mode?: string | null
           games_played?: number
           id?: string
           player_name?: string
@@ -608,7 +617,10 @@ export type Database = {
           correct_guesses: number
           created_at: string
           current_streak: number | null
+          difficulty_level: string | null
+          difficulty_multiplier: number | null
           game_duration: number | null
+          game_mode: string | null
           id: string
           max_streak: number | null
           score: number
@@ -620,7 +632,10 @@ export type Database = {
           correct_guesses?: number
           created_at?: string
           current_streak?: number | null
+          difficulty_level?: string | null
+          difficulty_multiplier?: number | null
           game_duration?: number | null
+          game_mode?: string | null
           id?: string
           max_streak?: number | null
           score?: number
@@ -632,7 +647,10 @@ export type Database = {
           correct_guesses?: number
           created_at?: string
           current_streak?: number | null
+          difficulty_level?: string | null
+          difficulty_multiplier?: number | null
           game_duration?: number | null
+          game_mode?: string | null
           id?: string
           max_streak?: number | null
           score?: number

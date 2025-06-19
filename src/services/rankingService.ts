@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Ranking {
@@ -32,14 +31,20 @@ export const saveRanking = async (ranking: Omit<Ranking, 'id' | 'created_at'>): 
   return data;
 };
 
-export const getTopRankings = async (limit: number = 10): Promise<Ranking[]> => {
-  console.log('🏆 Buscando top rankings, limit:', limit);
+export const getTopRankings = async (limit: number = 10, gameMode?: 'classic' | 'adaptive'): Promise<Ranking[]> => {
+  console.log('🏆 Buscando top rankings, limit:', limit, 'gameMode:', gameMode);
   
-  const { data, error } = await supabase
+  let query = supabase
     .from('rankings')
     .select('*')
     .order('score', { ascending: false })
     .limit(limit);
+
+  if (gameMode) {
+    query = query.eq('game_mode', gameMode);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('❌ Error fetching rankings:', error);
@@ -50,15 +55,21 @@ export const getTopRankings = async (limit: number = 10): Promise<Ranking[]> => 
   return data || [];
 };
 
-export const getUserRankings = async (userId: string, limit: number = 10): Promise<Ranking[]> => {
-  console.log('👤 Buscando rankings do usuário:', userId);
+export const getUserRankings = async (userId: string, limit: number = 10, gameMode?: 'classic' | 'adaptive'): Promise<Ranking[]> => {
+  console.log('👤 Buscando rankings do usuário:', userId, 'gameMode:', gameMode);
   
-  const { data, error } = await supabase
+  let query = supabase
     .from('rankings')
     .select('*')
     .eq('user_id', userId)
     .order('score', { ascending: false })
     .limit(limit);
+
+  if (gameMode) {
+    query = query.eq('game_mode', gameMode);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('❌ Error fetching user rankings:', error);
