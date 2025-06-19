@@ -19,6 +19,8 @@ import { useGameState } from "@/hooks/use-game-state";
 import { useGameHandlers } from "@/hooks/game/use-game-handlers";
 
 const Game = () => {
+  console.log("🎮 Game component iniciando...");
+  
   const { user } = useAuth();
   const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
   const { showImageUrl } = useDebug();
@@ -26,12 +28,45 @@ const Game = () => {
   // Load players data first
   const { players, isLoading, playersError } = usePlayersData();
 
+  // Log do estado dos players
+  useEffect(() => {
+    console.log("📋 Estado dos players no Game component:", {
+      playersCount: players?.length || 0,
+      isLoading,
+      hasError: !!playersError,
+      firstPlayer: players?.[0]?.name
+    });
+  }, [players, isLoading, playersError]);
+
   // Track page view
   useEffect(() => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
   // Game logic hook
+  const gameLogicResult = useSimpleGuessGame(players);
+  
+  // Log do resultado do game logic
+  useEffect(() => {
+    console.log("🎮 Resultado do useSimpleGuessGame:", {
+      hasCurrentPlayer: !!gameLogicResult?.currentPlayer,
+      currentPlayerName: gameLogicResult?.currentPlayer?.name,
+      gameKey: gameLogicResult?.gameKey
+    });
+  }, [gameLogicResult]);
+
+  if (!gameLogicResult) {
+    console.log("⚠️ gameLogicResult é null/undefined");
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <GameLoader className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p>Inicializando jogo...</p>
+        </div>
+      </div>
+    );
+  }
+
   const {
     currentPlayer,
     gameKey,
@@ -53,7 +88,7 @@ const Game = () => {
     currentStreak,
     maxStreak,
     playerChangeCount
-  } = useSimpleGuessGame(players);
+  } = gameLogicResult;
 
   // Game state management
   const {
@@ -93,25 +128,38 @@ const Game = () => {
 
   // Loading state
   if (isLoading) {
+    console.log("🔄 Mostrando loading state...");
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <GameLoader />
+        <div className="text-center">
+          <GameLoader className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p className="text-lg font-medium">Carregando jogadores...</p>
+          <p className="text-sm text-gray-600 mt-2">Por favor, aguarde...</p>
+        </div>
       </div>
     );
   }
 
   // Error state
   if (playersError) {
+    console.error("❌ Mostrando error state:", playersError);
     return <ErrorDisplay error={playersError} />;
   }
 
   // Empty players state
   if (!players || players.length === 0) {
+    console.warn("⚠️ Mostrando empty players state");
     return <EmptyPlayersDisplay />;
   }
 
-  console.log('🎮 Game render - Current Player:', currentPlayer?.name || 'Nenhum', 'GameKey:', gameKey);
-  console.log('🎮 Game render - Players loaded:', players?.length || 0);
+  console.log('🎮 Game render - Estado final:', {
+    currentPlayerName: currentPlayer?.name || 'Nenhum',
+    gameKey,
+    playersCount: players?.length || 0,
+    gameStarted,
+    isLoading,
+    hasError: !!playersError
+  });
 
   return (
     <>
