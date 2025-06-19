@@ -1,61 +1,113 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
   
-  <!-- Homepage -->
+  <!-- Homepage - Máxima prioridade -->
   <url>
     <loc>https://flulegendarium.lovable.app/</loc>
-    <lastmod>2024-12-14</lastmod>
+    <lastmod>2024-12-19</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://flulegendarium.lovable.app/og-image.png</image:loc>
-      <image:title>Lendas do Flu - Página Inicial</image:title>
+      <image:loc>https://flulegendarium.lovable.app/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png</image:loc>
+      <image:title>Lendas do Flu - Quiz dos Tricolores</image:title>
+      <image:caption>Teste seus conhecimentos sobre as lendas do Fluminense FC</image:caption>
     </image:image>
   </url>
 
-  <!-- Semantic URLs for better SEO -->
-  <url>
-    <loc>https://flulegendarium.lovable.app/jogar-quiz-fluminense</loc>
-    <lastmod>2024-12-14</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
+  <!-- Seleção de Modo de Jogo - Alta prioridade -->
   <url>
     <loc>https://flulegendarium.lovable.app/selecionar-modo-jogo</loc>
-    <lastmod>2024-12-14</lastmod>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://flulegendarium.lovable.app/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png</image:loc>
+      <image:title>Escolha como jogar - Lendas do Flu</image:title>
+      <image:caption>Jogue como convidado ou faça login para salvar seu progresso</image:caption>
+    </image:image>
+  </url>
+
+  <!-- Quiz/Jogo - Alta prioridade -->
+  <url>
+    <loc>https://flulegendarium.lovable.app/quiz</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://flulegendarium.lovable.app/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png</image:loc>
+      <image:title>Quiz Lendas do Fluminense</image:title>
+      <image:caption>Adivinhe os jogadores pelas fotos e teste seu conhecimento tricolor</image:caption>
+    </image:image>
+  </url>
+
+  <!-- FAQ - Média prioridade -->
+  <url>
+    <loc>https://flulegendarium.lovable.app/faq</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Login Admin - Baixa prioridade, mas pública -->
+  <url>
+    <loc>https://flulegendarium.lovable.app/admin/login-administrador</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+
+  <!-- URLs Semânticas Adicionais para SEO -->
+  <url>
+    <loc>https://flulegendarium.lovable.app/quiz-fluminense-tricolor</loc>
+    <lastmod>2024-12-19</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://flulegendarium.lovable.app/meu-perfil-tricolor</loc>
-    <lastmod>2024-12-14</lastmod>
+    <loc>https://flulegendarium.lovable.app/teste-conhecimento-flu</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://flulegendarium.lovable.app/jogo-adivinhar-jogadores-fluminense</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Páginas de Categorias/Temas para SEO -->
+  <url>
+    <loc>https://flulegendarium.lovable.app/lendas-historicas-fluminense</loc>
+    <lastmod>2024-12-19</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
 
   <url>
-    <loc>https://flulegendarium.lovable.app/admin/login-administrador</loc>
-    <lastmod>2024-12-14</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://flulegendarium.lovable.app/ranking-tricolores</loc>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.7</priority>
   </url>
 
-  <!-- Legacy URLs for compatibility (will redirect) -->
+  <!-- URLs Legacy para redirecionamento -->
   <url>
     <loc>https://flulegendarium.lovable.app/game</loc>
-    <lastmod>2024-12-14</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>never</changefreq>
     <priority>0.1</priority>
   </url>
 
   <url>
     <loc>https://flulegendarium.lovable.app/select-mode</loc>
-    <lastmod>2024-12-14</lastmod>
-    <changefreq>weekly</changefreq>
+    <lastmod>2024-12-19</lastmod>
+    <changefreq>never</changefreq>
     <priority>0.1</priority>
   </url>
 

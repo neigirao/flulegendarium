@@ -1,26 +1,83 @@
 
+# Robots.txt para Lendas do Flu - Quiz do Fluminense
+# Otimizado para buscadores e IAs que fazem busca na web
+
 User-agent: *
 Allow: /
-Allow: /game
-Allow: /select-mode
-Allow: /profile
+Allow: /quiz
+Allow: /selecionar-modo-jogo
+Allow: /faq
+Allow: /admin/login-administrador
 
-# Block admin pages from search engines
-Disallow: /admin/
-Disallow: /admin/login
+# Permitir acesso a recursos estáticos
+Allow: /lovable-uploads/
+Allow: /*.css
+Allow: /*.js
+Allow: /*.png
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.ico
+Allow: /*.webp
 
-# Sitemap location
-Sitemap: https://flulegendarium.lovable.app/sitemap.xml
+# Bloquear páginas que requerem autenticação
+Disallow: /meu-perfil-tricolor
+Disallow: /admin/dashboard
+Disallow: /admin/*
+Disallow: /profile
+Disallow: /user/
 
-# Crawl delay to be respectful
-Crawl-delay: 1
+# Bloquear URLs com parâmetros de sessão
+Disallow: /*?session=
+Disallow: /*?token=
+Disallow: /*?auth=
 
-# Allow all major search engines
+# Permitir bots específicos de IA e buscadores
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Slurp
 Allow: /
+Crawl-delay: 1
+
+# ChatGPT e outros bots de IA
+User-agent: ChatGPT-User
+Allow: /
+Crawl-delay: 1
+
+User-agent: GPTBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Claude-Web
+Allow: /
+Crawl-delay: 1
+
+User-agent: PerplexityBot
+Allow: /
+Crawl-delay: 1
+
+User-agent: anthropic-ai
+Allow: /
+Crawl-delay: 1
+
+User-agent: OpenAI-SearchBot
+Allow: /
+Crawl-delay: 1
+
+# Localização do sitemap
+Sitemap: https://flulegendarium.lovable.app/sitemap.xml
+
+# Crawl delay geral para ser respeitoso com os servidores
+Crawl-delay: 1
+
+# Informações adicionais
+# Este site contém um quiz interativo sobre jogadores históricos do Fluminense FC
+# Palavras-chave: quiz fluminense, teste tricolor, jogo futebol, lendas flu
+# Conteúdo em português brasileiro (pt-BR)
