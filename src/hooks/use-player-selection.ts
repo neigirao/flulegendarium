@@ -1,69 +1,77 @@
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Player } from "@/types/guess-game";
 
 export const usePlayerSelection = (players: Player[] | undefined) => {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const isInitialized = useRef<boolean>(false);
-  const lastSelectedId = useRef<string | null>(null);
+  const [playerChangeCount, setPlayerChangeCount] = useState(0);
+  const usedPlayerIds = useRef<Set<string>>(new Set());
 
-  // Initialize with first player when players are loaded
-  useEffect(() => {
-    if (players && players.length > 0 && !isInitialized.current) {
-      console.log('🎮 Inicializando com primeiro jogador dos', players.length, 'disponíveis');
-      isInitialized.current = true;
-      const randomIndex = Math.floor(Math.random() * players.length);
-      const selectedPlayer = players[randomIndex];
-      if (selectedPlayer) {
-        console.log('🎯 Jogador selecionado:', selectedPlayer.name);
-        setCurrentPlayer(selectedPlayer);
-        lastSelectedId.current = selectedPlayer.id;
-      }
-    }
-  }, [players]);
+  console.log('🎯 usePlayerSelection hook:', {
+    playersCount: players?.length || 0,
+    currentPlayerName: currentPlayer?.name || 'null',
+    playerChangeCount,
+    usedPlayersCount: usedPlayerIds.current.size
+  });
 
-  // Select a random player (avoiding the current one if possible)
   const selectRandomPlayer = useCallback(() => {
     if (!players || players.length === 0) {
-      console.warn('⚠️ Nenhum jogador disponível para seleção');
+      console.warn('⚠️ selectRandomPlayer: Nenhum jogador disponível');
+      setCurrentPlayer(null);
       return;
     }
+
+    console.log('🎲 Selecionando jogador aleatório...', {
+      totalPlayers: players.length,
+      usedPlayers: usedPlayerIds.current.size
+    });
+
+    // Se todos os jogadores já foram usados, reiniciar
+    if (usedPlayerIds.current.size >= players.length) {
+      console.log('🔄 Todos os jogadores foram usados, reiniciando...');
+      usedPlayerIds.current.clear();
+    }
+
+    // Filtrar jogadores não utilizados
+    const availablePlayers = players.filter(player => !usedPlayerIds.current.has(player.id));
     
-    console.log('🔄 Iniciando seleção de novo jogador...');
-    
-    // Se há apenas um jogador, seleciona ele mesmo
-    if (players.length === 1) {
-      const selectedPlayer = players[0];
-      console.log('🎯 Único jogador disponível selecionado:', selectedPlayer.name);
-      setCurrentPlayer(selectedPlayer);
-      lastSelectedId.current = selectedPlayer.id;
+    if (availablePlayers.length === 0) {
+      console.warn('⚠️ Nenhum jogador disponível após filtro');
       return;
     }
-    
-    // Filtra jogadores para evitar repetir o atual
-    const availablePlayers = players.filter(player => player.id !== lastSelectedId.current);
-    const playersToSelect = availablePlayers.length > 0 ? availablePlayers : players;
-    
-    const randomIndex = Math.floor(Math.random() * playersToSelect.length);
-    const selectedPlayer = playersToSelect[randomIndex];
-    
-    if (selectedPlayer) {
-      console.log('🔄 Novo jogador selecionado:', selectedPlayer.name, '(anterior:', lastSelectedId.current, ')');
-      setCurrentPlayer(selectedPlayer);
-      lastSelectedId.current = selectedPlayer.id;
-    }
+
+    // Selecionar jogador aleatório
+    const randomIndex = Math.floor(Math.random() * availablePlayers.length);
+    const selectedPlayer = availablePlayers[randomIndex];
+
+    console.log('✅ Jogador selecionado:', {
+      name: selectedPlayer.name,
+      id: selectedPlayer.id,
+      imageUrl: selectedPlayer.image_url
+    });
+
+    // Marcar como usado e atualizar estado
+    usedPlayerIds.current.add(selectedPlayer.id);
+    setCurrentPlayer(selectedPlayer);
+    setPlayerChangeCount(prev => prev + 1);
   }, [players]);
 
-  // Handle image fixes - just log for now
   const handlePlayerImageFixed = useCallback(() => {
-    if (currentPlayer) {
-      console.log('🖼️ Imagem corrigida para:', currentPlayer.name);
-    }
+    console.log('🖼️ Imagem do jogador corrigida para:', currentPlayer?.name);
   }, [currentPlayer]);
+
+  // Selecionar primeiro jogador quando a lista estiver disponível
+  useEffect(() => {
+    if (players && players.length > 0 && !currentPlayer) {
+      console.log('🚀 Primeira seleção de jogador, total disponível:', players.length);
+      selectRandomPlayer();
+    }
+  }, [players, currentPlayer, selectRandomPlayer]);
 
   return {
     currentPlayer,
     selectRandomPlayer,
     handlePlayerImageFixed,
+    playerChangeCount
   };
 };

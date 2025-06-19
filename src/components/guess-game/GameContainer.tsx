@@ -52,10 +52,35 @@ export const GameContainer = ({
   gameProgress,
   currentDifficulty
 }: GameContainerProps) => {
+  console.log('🎮 GameContainer render:', {
+    hasCurrentPlayer: !!currentPlayer,
+    playerName: currentPlayer?.name || 'null',
+    gameKey,
+    changeCount: playerChangeCount
+  });
+
   if (!currentPlayer) {
     return (
       <div className="text-center py-8">
-        <p className="text-gray-600">Carregando jogador...</p>
+        <div className="mb-4">
+          <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin mx-auto"></div>
+        </div>
+        <p className="text-gray-600 mb-4">Carregando jogador...</p>
+        
+        {/* Debug button for development */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4">
+            <button
+              onClick={forceRefresh}
+              className="px-4 py-2 bg-flu-grena text-white rounded hover:bg-red-700"
+            >
+              Force Refresh
+            </button>
+            <p className="text-xs text-gray-500 mt-2">
+              Player changes: {playerChangeCount}
+            </p>
+          </div>
+        )}
       </div>
     );
   }
@@ -90,6 +115,7 @@ export const GameContainer = ({
       {/* Imagem do Jogador */}
       <div className="mb-8">
         <FastPlayerImage
+          key={`${currentPlayer.id}-${gameKey}`}
           player={currentPlayer}
           onImageLoaded={handlePlayerImageFixed}
         />
@@ -124,9 +150,10 @@ export const GameContainer = ({
           </div>
           <div className="text-xs text-gray-600">
             <p>Player: {currentPlayer.name}</p>
-            <p>Difficulty: {currentPlayer.difficulty_level}</p>
+            <p>Difficulty: {currentPlayer.difficulty_level || 'N/A'}</p>
             <p>Game Key: {gameKey}</p>
             <p>Changes: {playerChangeCount}</p>
+            <p>Image URL: {currentPlayer.image_url}</p>
           </div>
         </div>
       )}

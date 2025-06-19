@@ -1,59 +1,62 @@
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Player } from "@/types/guess-game";
-import { useGameTimer, TIME_LIMIT_SECONDS } from "./use-game-timer";
+import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
+import { useSimpleGameTimer } from "./use-simple-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
-import { useAdaptivePlayerSelection } from "./use-adaptive-player-selection";
-import { useGameSession } from "./use-game-session";
+import { usePlayerSelection } from "./use-player-selection";
+import { useSimpleGameSession } from "./use-simple-game-session";
 import { useGameScore } from "./use-game-score";
-import { useGameLogic } from "./use-game-logic";
+import { useSimpleGameLogic } from "./use-simple-game-logic";
 import { useAuth } from "./useAuth";
 import { saveGameHistory } from "@/services/gameHistoryService";
 
 export const MAX_ATTEMPTS = 1;
+export const TIME_LIMIT_SECONDS = 30;
 
 export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const { toast } = useToast();
   const { user } = useAuth();
   
+  console.log('🎮 useSimpleGuessGame hook inicializado:', {
+    playersCount: players?.length || 0,
+    hasUser: !!user
+  });
+
   // Game state
   const [gameOver, setGameOver] = useState(false);
   const [hasLost, setHasLost] = useState(false);
   const [gameActive, setGameActive] = useState(false);
+  const [gameKey, setGameKey] = useState(Date.now());
+  const [attempts, setAttempts] = useState<string[]>([]);
 
-  // Seleção adaptativa de jogadores
-  const { 
-    currentPlayer, 
-    gameKey, 
-    gameProgress,
-    currentDifficulty,
-    selectRandomPlayer: adaptiveSelectPlayer,
-    forceRefresh,
-    handlePlayerImageFixed,
-    calculateDifficultyPoints,
-    resetProgress,
-    playerChangeCount,
-    savePlayerDifficultyStats
-  } = useAdaptivePlayerSelection(players);
+  // Game progress and difficulty
+  const [gameProgress, setGameProgress] = useState<GameProgressInfo>({
+    level: 1,
+    questionsInLevel: 0,
+    questionsToNextLevel: 5,
+    totalQuestions: 0
+  });
+  
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>('facil');
 
-  const { sessionId, registerGameStart, resetSession } = useGameSession();
+  // Composed hooks
+  const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed, playerChangeCount } = usePlayerSelection(players);
+  const { sessionId, registerGameStart, resetSession } = useSimpleGameSession();
   const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
+
+  console.log('🔍 Estado atual do jogo:', {
+    currentPlayerName: currentPlayer?.name || 'null',
+    gameActive,
+    gameOver,
+    score,
+    playerChangeCount
+  });
 
   // Game metrics for saving
   const gameStartTimeRef = useRef<number | null>(null);
   const totalAttemptsRef = useRef(0);
   const correctGuessesRef = useRef(0);
-  const roundStartTimeRef = useRef<number>(Date.now());
-
-  // Start tracking game metrics when game starts
-  const startGameMetrics = useCallback(() => {
-    gameStartTimeRef.current = Date.now();
-    roundStartTimeRef.current = Date.now();
-    totalAttemptsRef.current = 0;
-    correctGuessesRef.current = 0;
-    console.log('🎯 Game metrics tracking started');
-  }, []);
 
   // Save game history when game ends
   const saveGameData = useCallback(async (finalScore: number, isCorrect: boolean = false) => {
@@ -75,7 +78,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         game_duration: gameDuration
       });
 
-      const savedHistory = await saveGameHistory({
+      await saveGameHistory({
         user_id: user.id,
         score: finalScore,
         correct_guesses: correct,
@@ -83,34 +86,10 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         game_duration: gameDuration
       });
 
-      console.log('✅ Game history saved successfully:', savedHistory);
-      
-      toast({
-        title: "Jogo salvo!",
-        description: `Pontuação: ${finalScore} | Duração: ${gameDuration}s`,
-      });
-
     } catch (error) {
       console.error('❌ Error saving game history:', error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao salvar",
-        description: "Não foi possível salvar o histórico do jogo.",
-      });
     }
-  }, [user, toast]);
-
-  // Enhanced selectRandomPlayer with adaptive logic
-  const selectRandomPlayer = useCallback((isCorrectGuess?: boolean) => {
-    // Salvar tempo da rodada se houve uma tentativa
-    if (currentPlayer && isCorrectGuess !== undefined) {
-      const guessTime = Date.now() - roundStartTimeRef.current;
-      savePlayerDifficultyStats(currentPlayer.id, guessTime, isCorrectGuess);
-    }
-    
-    adaptiveSelectPlayer(isCorrectGuess);
-    roundStartTimeRef.current = Date.now();
-  }, [currentPlayer, adaptiveSelectPlayer, savePlayerDifficultyStats]);
+  }, [user]);
 
   // Handle time up callback
   const handleTimeUp = useCallback(() => {
@@ -121,10 +100,6 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
       setGameActive(false);
       resetStreak();
       
-      // Salvar estatísticas antes de encerrar
-      selectRandomPlayer(false);
-      
-      // Save game data when time runs out
       saveGameData(score, false);
       
       toast({
@@ -133,18 +108,15 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
         description: `O jogador era ${currentPlayer.name}. Pontuação final: ${score}`,
       });
     }
-  }, [currentPlayer, gameOver, score, toast, gameActive, resetStreak, saveGameData, selectRandomPlayer]);
+  }, [currentPlayer, gameOver, score, toast, gameActive, resetStreak, saveGameData]);
 
   // Handle tab change callback
   const handleTabChange = useCallback(() => {
     if (gameActive && !gameOver) {
-      console.log('👁️ Tab change detected - ending game');
       setGameOver(true);
       setHasLost(true);
       setGameActive(false);
       resetStreak();
-      
-      // Save game data when user switches tabs
       saveGameData(score, false);
     }
   }, [gameActive, gameOver, resetStreak, saveGameData, score]);
@@ -156,99 +128,115 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   });
   
   // Game timer hook
-  const { timeRemaining, isRunning, startTimer, stopTimer } = useGameTimer(gameOver, handleTimeUp);
+  const { timeRemaining, isRunning, startTimer, stopTimer } = useSimpleGameTimer(gameOver, handleTimeUp);
 
   // Game logic hook with enhanced callbacks
-  const { handleGuess, isProcessingGuess } = useGameLogic({
+  const { handleGuess, isProcessingGuess } = useSimpleGameLogic({
     currentPlayer,
     gameOver,
     gameActive,
     onCorrectGuess: (points: number) => {
-      console.log('✅ Resposta correta! Pontos base:', points);
-      
-      // Calcular pontos com multiplicador de dificuldade
-      const finalPoints = calculateDifficultyPoints(points, currentPlayer?.difficulty_level);
-      console.log('🎯 Pontos finais com multiplicador:', finalPoints);
-      
+      console.log('✅ Resposta correta! Adicionando pontos:', points);
       correctGuessesRef.current += 1;
       totalAttemptsRef.current += 1;
-      addScore(finalPoints);
+      addScore(points);
       
-      // Mostrar toast com informação de dificuldade
-      toast({
-        title: "Parabéns!",
-        description: `${currentPlayer?.name}! ${currentDifficulty ? `(${currentDifficulty.label} - ${currentDifficulty.multiplier}x)` : ''} +${finalPoints} pontos`,
-      });
+      // Update game progress
+      setGameProgress(prev => ({
+        ...prev,
+        questionsInLevel: prev.questionsInLevel + 1,
+        totalQuestions: prev.totalQuestions + 1
+      }));
       
-      // Save game data for correct guess
-      saveGameData(score + finalPoints, true);
+      saveGameData(score + points, true);
     },
     onIncorrectGuess: () => {
       console.log('❌ Resposta incorreta');
       totalAttemptsRef.current += 1;
       resetStreak();
       
-      // End game and save data for incorrect guess
       setGameOver(true);
       setHasLost(true);
       setGameActive(false);
       saveGameData(score, false);
     },
     onGameEnd: () => {
-      console.log('🏁 Game ended');
       setGameOver(true);
       setHasLost(true);
       setGameActive(false);
     },
-    selectRandomPlayer: () => selectRandomPlayer(true),
+    selectRandomPlayer,
     stopTimer
   });
 
   // Start timer when a new player is selected and game is not over
   const startGameForPlayer = useCallback(async () => {
     if (currentPlayer && !gameOver) {
-      console.log('🎮 Iniciando timer para:', currentPlayer.name, 'Dificuldade:', currentPlayer.difficulty_level);
+      console.log('🎮 Iniciando timer para:', currentPlayer.name);
       setGameOver(false);
       setHasLost(false);
       setGameActive(true);
+      setAttempts([]);
       
       // Start game metrics tracking
-      startGameMetrics();
+      gameStartTimeRef.current = Date.now();
+      totalAttemptsRef.current = 0;
+      correctGuessesRef.current = 0;
       
-      // Register game start only once per session
+      // Register game start
       if (!sessionId) {
         await registerGameStart();
       }
       
-      // Aguarda um momento antes de iniciar timer para garantir que o componente renderizou
+      // Start timer
       setTimeout(() => {
         if (!isRunning) {
           startTimer();
         }
       }, 100);
     }
-  }, [currentPlayer, gameOver, isRunning, startTimer, sessionId, registerGameStart, startGameMetrics]);
+  }, [currentPlayer, gameOver, isRunning, startTimer, sessionId, registerGameStart]);
+
+  // Start game when player is selected
+  useEffect(() => {
+    if (currentPlayer && !gameActive && !gameOver) {
+      console.log('🔄 Novo jogador detectado, iniciando jogo:', currentPlayer.name);
+      startGameForPlayer();
+    }
+  }, [currentPlayer, gameActive, gameOver, startGameForPlayer]);
+
+  // Force refresh function
+  const forceRefresh = useCallback(() => {
+    console.log('🔄 Force refresh - selecionando novo jogador');
+    setGameKey(Date.now());
+    selectRandomPlayer();
+  }, [selectRandomPlayer]);
 
   // Reset score function
   const resetScore = useCallback(() => {
-    console.log('🎯 Resetando pontuação e progresso');
+    console.log('🎯 Resetando pontuação');
     resetAll();
-    resetProgress();
     setGameActive(false);
     resetSession();
+    setGameProgress({
+      level: 1,
+      questionsInLevel: 0,
+      questionsToNextLevel: 5,
+      totalQuestions: 0
+    });
     
     // Reset game metrics
     gameStartTimeRef.current = null;
     totalAttemptsRef.current = 0;
     correctGuessesRef.current = 0;
-  }, [resetAll, resetProgress, resetSession]);
+  }, [resetAll, resetSession]);
 
   return {
     currentPlayer,
     gameKey,
     gameProgress,
     currentDifficulty,
-    attempts: [],
+    attempts,
     score,
     gameOver,
     timeRemaining,
@@ -266,7 +254,6 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     gamesPlayed,
     currentStreak,
     maxStreak,
-    playerChangeCount,
-    calculateDifficultyPoints
+    playerChangeCount
   };
 };
