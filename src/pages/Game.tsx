@@ -14,7 +14,7 @@ import { usePlayersData } from "@/hooks/use-players-data";
 import { useDirectPlayerSelection } from "@/hooks/use-direct-player-selection";
 
 const Game = () => {
-  console.log("🎮 Game component iniciando...");
+  console.log("🎮 Game component INICIANDO...");
   
   const { user } = useAuth();
   const { trackGameStart, trackPageView, trackEvent } = useAnalytics();
@@ -22,24 +22,39 @@ const Game = () => {
   // Carregar dados dos jogadores
   const { players, isLoading, error } = usePlayersData();
   
+  console.log("🎮 Game - usePlayersData resultado:", {
+    players: players ? `Array com ${players.length} itens` : 'undefined/null',
+    playersType: typeof players,
+    isArray: Array.isArray(players),
+    primeirosJogadores: players ? players.slice(0, 3).map(p => ({ name: p.name, id: p.id })) : 'N/A',
+    isLoading,
+    hasError: !!error
+  });
+  
   // Seleção direta de jogadores
   const { currentPlayer, selectRandomPlayer } = useDirectPlayerSelection(players);
+
+  console.log("🎮 Game - useDirectPlayerSelection resultado:", {
+    currentPlayer: currentPlayer ? { name: currentPlayer.name, id: currentPlayer.id } : null,
+    temSelectRandomPlayer: typeof selectRandomPlayer === 'function'
+  });
 
   // Track page view
   useEffect(() => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
-  console.log("📋 Estado do Game:", {
+  console.log("📋 Estado FINAL do Game:", {
     playersCount: players?.length || 0,
     isLoading,
     hasError: !!error,
-    currentPlayerName: currentPlayer?.name || 'Nenhum'
+    currentPlayerName: currentPlayer?.name || 'Nenhum',
+    renderizaraTela: !isLoading && !error && players && players.length > 0
   });
 
   // Loading state
   if (isLoading) {
-    console.log("🔄 Mostrando loading...");
+    console.log("🔄 Game - Mostrando loading...");
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -53,17 +68,21 @@ const Game = () => {
 
   // Error state
   if (error) {
-    console.error("❌ Erro ao carregar jogadores:", error);
+    console.error("❌ Game - Erro ao carregar jogadores:", error);
     return <ErrorDisplay error={error} />;
   }
 
   // Empty players state
   if (!players || players.length === 0) {
-    console.warn("⚠️ Nenhum jogador disponível");
+    console.warn("⚠️ Game - Nenhum jogador disponível");
     return <EmptyPlayersDisplay />;
   }
 
-  console.log("✅ Renderizando jogo com jogadores carregados");
+  console.log("✅ Game - Renderizando jogo com jogadores carregados");
+  console.log("✅ Game - Dados para GameContainer:", {
+    currentPlayer: currentPlayer ? { name: currentPlayer.name, id: currentPlayer.id } : null,
+    totalPlayers: players.length
+  });
 
   return (
     <>

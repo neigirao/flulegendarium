@@ -52,14 +52,18 @@ export const GameContainer = ({
   gameProgress,
   currentDifficulty
 }: GameContainerProps) => {
-  console.log('🎮 GameContainer render:', {
+  console.log('🎮 GameContainer RENDER - DADOS RECEBIDOS:', {
     hasCurrentPlayer: !!currentPlayer,
     playerName: currentPlayer?.name || 'null',
+    playerId: currentPlayer?.id || 'null',
+    playerImageUrl: currentPlayer?.image_url || 'null',
     gameKey,
-    changeCount: playerChangeCount
+    changeCount: playerChangeCount,
+    timestamp: new Date().toISOString()
   });
 
   if (!currentPlayer) {
+    console.log('⚠️ GameContainer - SEM JOGADOR ATUAL - mostrando loading');
     return (
       <div className="text-center py-8">
         <div className="mb-4">
@@ -74,7 +78,10 @@ export const GameContainer = ({
         {process.env.NODE_ENV === 'development' && (
           <div className="mt-4">
             <button
-              onClick={forceRefresh}
+              onClick={() => {
+                console.log('🔧 Force Refresh clicado');
+                forceRefresh();
+              }}
               className="px-4 py-2 bg-flu-grena text-white rounded hover:bg-red-700"
             >
               Force Refresh
@@ -87,6 +94,8 @@ export const GameContainer = ({
       </div>
     );
   }
+
+  console.log('✅ GameContainer - JOGADOR VÁLIDO - renderizando jogo completo');
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -128,13 +137,19 @@ export const GameContainer = ({
           <h4 className="font-semibold mb-2">Debug Controls</h4>
           <div className="flex gap-2 mb-2">
             <button
-              onClick={selectRandomPlayer}
+              onClick={() => {
+                console.log('🔧 Próximo Jogador clicado');
+                selectRandomPlayer();
+              }}
               className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
             >
               Próximo Jogador
             </button>
             <button
-              onClick={forceRefresh}
+              onClick={() => {
+                console.log('🔧 Refresh clicado');
+                forceRefresh();
+              }}
               className="px-3 py-1 bg-green-500 text-white rounded text-sm"
             >
               Refresh
