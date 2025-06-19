@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Player } from "@/types/guess-game";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { isCorrectGuess } from "@/utils/name-processor";
 
 interface SimpleGameProps {
@@ -15,6 +15,8 @@ export const SimpleGame = ({ players }: SimpleGameProps) => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [usedPlayerIds, setUsedPlayerIds] = useState<Set<string>>(new Set());
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   console.log('🎮 SimpleGame - Players recebidos:', players?.length || 0);
 
@@ -43,6 +45,8 @@ export const SimpleGame = ({ players }: SimpleGameProps) => {
     setUsedPlayerIds(prev => new Set([...prev, selected.id]));
     setGameOver(false);
     setGuess("");
+    setImageLoaded(false);
+    setImageError(false);
   };
 
   // Processar palpite
@@ -85,6 +89,18 @@ export const SimpleGame = ({ players }: SimpleGameProps) => {
     }
   }, [players, currentPlayer]);
 
+  const handleImageLoad = () => {
+    console.log('✅ Imagem carregada com sucesso');
+    setImageLoaded(true);
+    setImageError(false);
+  };
+
+  const handleImageError = () => {
+    console.error('❌ Erro ao carregar imagem');
+    setImageError(true);
+    setImageLoaded(false);
+  };
+
   if (!players || players.length === 0) {
     return (
       <div className="text-center py-8">
@@ -118,17 +134,42 @@ export const SimpleGame = ({ players }: SimpleGameProps) => {
       {/* Imagem do Jogador */}
       <div className="mb-8">
         <div className="bg-white rounded-lg shadow-lg border-2 border-flu-verde overflow-hidden max-w-md mx-auto">
-          <div className="aspect-[4/5] min-h-[400px] flex items-center justify-center p-4">
+          <div className="aspect-[4/5] min-h-[400px] flex items-center justify-center p-4 relative">
+            
+            {/* Loading State */}
+            {!imageLoaded && !imageError && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                  <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                  <p className="text-gray-600">Carregando imagem...</p>
+                </div>
+              </div>
+            )}
+
+            {/* Error State */}
+            {imageError && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                <div className="text-center p-4">
+                  <img 
+                    src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
+                    alt="Escudo do Fluminense" 
+                    className="w-16 h-16 mx-auto mb-2 opacity-50"
+                  />
+                  <p className="text-gray-600 text-sm">Imagem não disponível</p>
+                  <p className="text-xs text-gray-500 mt-1">Continue jogando normalmente</p>
+                </div>
+              </div>
+            )}
+
+            {/* Imagem Principal */}
             <img
               src={currentPlayer.image_url}
               alt={`Jogador do Fluminense`}
-              className="max-w-full max-h-full object-contain rounded"
-              onError={(e) => {
-                console.error('❌ Erro na imagem:', currentPlayer.name);
-                (e.target as HTMLImageElement).src = "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png";
-              }}
-              onLoad={() => {
-                console.log('✅ Imagem carregada:', currentPlayer.name);
+              className={`max-w-full max-h-full object-contain rounded ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              style={{ 
+                transition: 'opacity 0.3s ease-in-out'
               }}
             />
           </div>
@@ -180,6 +221,18 @@ export const SimpleGame = ({ players }: SimpleGameProps) => {
         </div>
       )}
 
+      {/* Botão para próximo jogador (apenas durante o jogo) */}
+      {!gameOver && (
+        <div className="text-center mt-4">
+          <button
+            onClick={selectRandomPlayer}
+            className="bg-flu-verde text-white px-6 py-2 rounded hover:bg-green-700"
+          >
+            Próximo Jogador
+          </button>
+        </div>
+      )}
+
       {/* Debug Info */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-8 p-4 bg-gray-100 rounded-lg text-sm">
@@ -189,6 +242,8 @@ export const SimpleGame = ({ players }: SimpleGameProps) => {
           <p>Imagem: {currentPlayer.image_url}</p>
           <p>Total players: {players.length}</p>
           <p>Usados: {usedPlayerIds.size}</p>
+          <p>Imagem carregada: {imageLoaded ? 'SIM' : 'NÃO'}</p>
+          <p>Erro na imagem: {imageError ? 'SIM' : 'NÃO'}</p>
         </div>
       )}
     </div>
