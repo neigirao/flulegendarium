@@ -25,7 +25,7 @@ export const useGameStateManagement = () => {
     setGameKey(Date.now());
   }, []);
 
-  const resetGame = useCallback() => {
+  const resetGame = useCallback(() => {
     setGameOver(false);
     setHasLost(false);
     setGameActive(false);

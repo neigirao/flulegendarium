@@ -1,19 +1,14 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
 import { Loader as GameLoader } from "lucide-react";
 
-import { AuthButton } from "@/components/auth/AuthButton";
-import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
-import { GameTutorial } from "@/components/guess-game/GameTutorial";
-import { GuestNameForm } from "@/components/guess-game/GuestNameForm";
-import { Loader } from "@/components/guess-game/Loader";
+import { SEOHead } from "@/components/SEOHead";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { EmptyPlayersDisplay } from "@/components/guess-game/EmptyPlayersDisplay";
-import { DebugInfo } from "@/components/guess-game/DebugInfo";
-import { GameContainer } from "@/components/guess-game/GameContainer";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SEOHead } from "@/components/SEOHead";
+import { GameHeader } from "@/components/game/GameHeader";
+import { GameContent } from "@/components/game/GameContent";
+import { GameModals } from "@/components/game/GameModals";
+
 import { useSimpleGuessGame } from "@/hooks/use-simple-guess-game";
 import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -21,12 +16,12 @@ import { useDebug } from "@/hooks/use-debug";
 import { usePlayersData } from "@/hooks/use-players-data";
 import { usePlayerPreload } from "@/hooks/use-player-preload";
 import { useGameState } from "@/hooks/use-game-state";
-import { useEffect } from "react";
+import { useGameHandlers } from "@/hooks/game/use-game-handlers";
 
 const Game = () => {
   const { user } = useAuth();
   const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
-  const { showImageUrl, handleDebugClick } = useDebug();
+  const { showImageUrl } = useDebug();
   
   // Load players data first
   const { players, isLoading, playersError } = usePlayersData();
@@ -36,7 +31,7 @@ const Game = () => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
-  // Now use the enhanced game hook with the loaded players
+  // Game logic hook
   const {
     currentPlayer,
     gameKey,
@@ -57,11 +52,10 @@ const Game = () => {
     gamesPlayed,
     currentStreak,
     maxStreak,
-    playerChangeCount,
-    TIME_LIMIT_SECONDS
+    playerChangeCount
   } = useSimpleGuessGame(players);
 
-  // Manage game state
+  // Game state management
   const {
     showGameOverDialog,
     showTutorial,
@@ -76,6 +70,16 @@ const Game = () => {
     handleGuestNameCancel
   } = useGameState({ hasLost });
 
+  // Game handlers
+  const { onTutorialComplete, onSkipTutorial, onGameOverClose } = useGameHandlers({
+    user,
+    trackGameStart,
+    handleTutorialComplete,
+    handleSkipTutorial,
+    handleGameOverClose,
+    selectRandomPlayer
+  });
+
   // Preload next players
   usePlayerPreload(players, currentPlayer);
 
@@ -86,16 +90,6 @@ const Game = () => {
       trackGameEnd(score, correctGuesses);
     }
   }, [hasLost, score, trackGameEnd]);
-
-  const onTutorialComplete = () => {
-    handleTutorialComplete(user);
-    trackGameStart('authenticated_game');
-  };
-
-  const onSkipTutorial = () => {
-    handleSkipTutorial(user);
-    trackGameStart('guest_game');
-  };
 
   // Loading state
   if (isLoading) {
@@ -129,130 +123,48 @@ const Game = () => {
         canonical="https://flulegendarium.lovable.app/jogar-quiz-fluminense"
       />
       <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white">
-        {/* Header */}
-        <header className="bg-white/90 backdrop-blur-sm shadow-sm py-4 sticky top-0 z-50">
-          <div className="container mx-auto px-4 flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <img 
-                src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                alt="Escudo Fluminense FC" 
-                className="w-8 h-8 object-contain"
-              />
-              <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
-            </Link>
-            <nav className="flex items-center space-x-6">
-              <Link 
-                to="/" 
-                className="text-flu-verde hover:text-flu-grena transition-colors"
-                onClick={() => trackEvent({
-                  action: 'navigation_click',
-                  category: 'Navigation',
-                  label: 'home_from_game'
-                })}
-              >
-                Início
-              </Link>
-              <Link 
-                to="/selecionar-modo-jogo" 
-                className="text-flu-verde hover:text-flu-grena transition-colors"
-                onClick={() => trackEvent({
-                  action: 'navigation_click',
-                  category: 'Navigation',
-                  label: 'select_mode_from_game'
-                })}
-              >
-                Jogar
-              </Link>
-              {user && (
-                <Link 
-                  to="/meu-perfil-tricolor" 
-                  className="text-flu-verde hover:text-flu-grena transition-colors"
-                  onClick={() => trackEvent({
-                    action: 'navigation_click',
-                    category: 'Navigation',
-                    label: 'profile_from_game'
-                  })}
-                >
-                  Meu Perfil
-                </Link>
-              )}
-              <Link 
-                to="/admin/login-administrador" 
-                className="text-flu-verde hover:text-flu-grena transition-colors"
-                onClick={() => trackEvent({
-                  action: 'navigation_click',
-                  category: 'Navigation',
-                  label: 'admin_from_game'
-                })}
-              >
-                Admin
-              </Link>
-              <AuthButton />
-            </nav>
-          </div>
-        </header>
+        <GameHeader user={user} trackEvent={trackEvent} />
+        
+        <GameContent
+          gameStarted={gameStarted}
+          showImageUrl={showImageUrl}
+          currentPlayer={currentPlayer}
+          gameKey={gameKey}
+          attempts={attempts.length}
+          score={score}
+          gameOver={gameOver}
+          timeRemaining={timeRemaining}
+          MAX_ATTEMPTS={MAX_ATTEMPTS}
+          handleGuess={handleGuess}
+          selectRandomPlayer={selectRandomPlayer}
+          handlePlayerImageFixed={handlePlayerImageFixed}
+          isProcessingGuess={isProcessingGuess}
+          hasLost={hasLost}
+          startGameForPlayer={startGameForPlayer}
+          isTimerRunning={isTimerRunning}
+          gamesPlayed={gamesPlayed}
+          currentStreak={currentStreak}
+          maxStreak={maxStreak}
+          forceRefresh={forceRefresh}
+          playerChangeCount={playerChangeCount}
+        />
 
-        {/* Game Content */}
-        <div className="py-8 px-4">
-          <div className="container mx-auto max-w-4xl">
-            <Breadcrumbs className="mb-6" />
-            
-            <DebugInfo 
-              show={showImageUrl} 
-              imageUrl={currentPlayer?.image_url} 
-            />
-
-            {gameStarted && (
-              <GameContainer
-                currentPlayer={currentPlayer}
-                gameKey={gameKey.toString()}
-                attempts={attempts.length}
-                score={score}
-                gameOver={gameOver}
-                timeRemaining={timeRemaining}
-                MAX_ATTEMPTS={MAX_ATTEMPTS}
-                handleGuess={handleGuess}
-                selectRandomPlayer={selectRandomPlayer}
-                handlePlayerImageFixed={handlePlayerImageFixed}
-                isProcessingGuess={isProcessingGuess}
-                hasLost={hasLost}
-                startGameForPlayer={startGameForPlayer}
-                isTimerRunning={isTimerRunning}
-                gamesPlayed={gamesPlayed}
-                currentStreak={currentStreak}
-                maxStreak={maxStreak}
-                forceRefresh={forceRefresh}
-                playerChangeCount={playerChangeCount}
-              />
-            )}
-          </div>
-        </div>
-
-        {showTutorial && (
-          <GameTutorial
-            onComplete={onTutorialComplete}
-            onSkip={onSkipTutorial}
-          />
-        )}
-
-        {showGuestNameForm && (
-          <GuestNameForm
-            onNameSubmitted={handleGuestNameSubmitted}
-            onCancel={handleGuestNameCancel}
-          />
-        )}
-
-        {currentPlayer && gameStarted && (
-          <GameOverDialog
-            open={showGameOverDialog}
-            onClose={() => handleGameOverClose(selectRandomPlayer)}
-            playerName={currentPlayer.name}
-            score={score}
-            onResetScore={resetScore}
-            isAuthenticated={isAuthenticatedGame}
-            guestPlayerName={guestPlayerName}
-          />
-        )}
+        <GameModals
+          showTutorial={showTutorial}
+          showGuestNameForm={showGuestNameForm}
+          showGameOverDialog={showGameOverDialog}
+          currentPlayer={currentPlayer}
+          gameStarted={gameStarted}
+          score={score}
+          isAuthenticatedGame={isAuthenticatedGame}
+          guestPlayerName={guestPlayerName}
+          onTutorialComplete={onTutorialComplete}
+          onSkipTutorial={onSkipTutorial}
+          handleGuestNameSubmitted={handleGuestNameSubmitted}
+          handleGuestNameCancel={handleGuestNameCancel}
+          handleGameOverClose={onGameOverClose}
+          resetScore={resetScore}
+        />
       </div>
     </>
   );
