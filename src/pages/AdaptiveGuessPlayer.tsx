@@ -54,7 +54,10 @@ const AdaptiveGuessPlayer = () => {
     maxStreak,
     playerChangeCount,
     TIME_LIMIT_SECONDS,
-    availablePlayersCount
+    availablePlayersCount,
+    difficultyProgress,
+    difficultyChangeInfo,
+    clearDifficultyChange
   } = useAdaptiveGuessGame(players);
 
   const {
