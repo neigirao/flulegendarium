@@ -133,7 +133,7 @@ const AdaptiveGuessPlayer = () => {
             isAuthenticated: isAuthenticatedGame,
             playerName: guestPlayerName
           },
-          'adaptive_gameplay'
+          'gameplay'
         );
       }
     };
@@ -193,7 +193,6 @@ const AdaptiveGuessPlayer = () => {
           <GameHeader 
             score={score} 
             onDebugClick={handleDebugClick}
-            title="Modo Adaptativo"
           />
 
           <DebugInfo 
@@ -231,8 +230,6 @@ const AdaptiveGuessPlayer = () => {
             <GameAuthSelection
               onGuestPlay={handleGuestPlay}
               onAuthenticatedPlay={handleAuthenticatedPlay}
-              title="Modo Adaptativo"
-              description="Jogue com dificuldade progressiva que se adapta ao seu desempenho!"
             />
           )}
         </div>
@@ -242,7 +239,6 @@ const AdaptiveGuessPlayer = () => {
         <GameTutorial
           onComplete={handleTutorialCompleteLocal}
           onSkip={handleSkipTutorialLocal}
-          isAdaptiveMode={true}
         />
       )}
 
@@ -262,8 +258,6 @@ const AdaptiveGuessPlayer = () => {
           onResetScore={resetScore}
           isAuthenticated={isAuthenticatedGame}
           guestPlayerName={guestPlayerName}
-          isAdaptiveMode={true}
-          finalDifficulty={currentDifficulty}
         />
       )}
     </RootLayout>

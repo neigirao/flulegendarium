@@ -3,16 +3,16 @@ import { useState, useEffect, useCallback, useRef } from "react";
 
 export const TIME_LIMIT_SECONDS = 60;
 
-export const useSimpleGameTimer = (onTimeUp: () => void) => {
-  const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
+export const useSimpleGameTimer = (timeLimit: number) => {
+  const [timeRemaining, setTimeRemaining] = useState(timeLimit);
   const [isRunning, setIsRunning] = useState(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const startTimer = useCallback(() => {
     console.log('⏰ Iniciando timer');
-    setTimeRemaining(TIME_LIMIT_SECONDS);
+    setTimeRemaining(timeLimit);
     setIsRunning(true);
-  }, []);
+  }, [timeLimit]);
 
   const stopTimer = useCallback(() => {
     console.log('⏹️ Parando timer');
@@ -26,8 +26,8 @@ export const useSimpleGameTimer = (onTimeUp: () => void) => {
   const resetTimer = useCallback(() => {
     console.log('🔄 Resetando timer');
     stopTimer();
-    setTimeRemaining(TIME_LIMIT_SECONDS);
-  }, [stopTimer]);
+    setTimeRemaining(timeLimit);
+  }, [stopTimer, timeLimit]);
 
   // Effect para controlar o timer
   useEffect(() => {
@@ -36,7 +36,6 @@ export const useSimpleGameTimer = (onTimeUp: () => void) => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
             setIsRunning(false);
-            onTimeUp();
             return 0;
           }
           return prev - 1;
@@ -54,7 +53,7 @@ export const useSimpleGameTimer = (onTimeUp: () => void) => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, timeRemaining, onTimeUp]);
+  }, [isRunning, timeRemaining]);
 
   return {
     timeRemaining,

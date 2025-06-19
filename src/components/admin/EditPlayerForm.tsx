@@ -8,7 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Upload, Link, X, BarChart3 } from "lucide-react";
-import { Player } from "@/types/guess-game";
+import { Player, DifficultyLevel } from "@/types/guess-game";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface EditPlayerFormProps {
@@ -18,11 +18,11 @@ interface EditPlayerFormProps {
 }
 
 const DIFFICULTY_LEVELS = [
-  { value: 'muito_facil', label: 'Muito Fácil', color: 'text-green-600' },
-  { value: 'facil', label: 'Fácil', color: 'text-blue-600' },
-  { value: 'medio', label: 'Médio', color: 'text-yellow-600' },
-  { value: 'dificil', label: 'Difícil', color: 'text-orange-600' },
-  { value: 'muito_dificil', label: 'Muito Difícil', color: 'text-red-600' }
+  { value: 'muito_facil' as DifficultyLevel, label: 'Muito Fácil', color: 'text-green-600' },
+  { value: 'facil' as DifficultyLevel, label: 'Fácil', color: 'text-blue-600' },
+  { value: 'medio' as DifficultyLevel, label: 'Médio', color: 'text-yellow-600' },
+  { value: 'dificil' as DifficultyLevel, label: 'Difícil', color: 'text-orange-600' },
+  { value: 'muito_dificil' as DifficultyLevel, label: 'Muito Difícil', color: 'text-red-600' }
 ];
 
 export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayerFormProps) => {
@@ -38,8 +38,12 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
   const [achievements, setAchievements] = useState(player.achievements?.join(', ') || '');
   const [gols, setGols] = useState(player.statistics?.gols || 0);
   const [jogos, setJogos] = useState(player.statistics?.jogos || 0);
-  const [difficultyLevel, setDifficultyLevel] = useState(player.difficulty_level || 'medio');
+  const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(player.difficulty_level || 'medio');
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('url');
+
+  const handleDifficultyChange = (value: string) => {
+    setDifficultyLevel(value as DifficultyLevel);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,7 +175,7 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="difficulty">Nível de Dificuldade</Label>
-                <Select value={difficultyLevel} onValueChange={setDifficultyLevel}>
+                <Select value={difficultyLevel} onValueChange={handleDifficultyChange}>
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione a dificuldade" />
                   </SelectTrigger>

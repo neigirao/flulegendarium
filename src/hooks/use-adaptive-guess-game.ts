@@ -36,23 +36,6 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
   // Game scoring with multiplier
   const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
 
-  // Game timer
-  const { 
-    timeRemaining, 
-    isRunning: isTimerRunning, 
-    startTimer, 
-    stopTimer, 
-    resetTimer 
-  } = useSimpleGameTimer(TIME_LIMIT_SECONDS);
-
-  // Enhanced player selection with difficulty progression
-  const selectRandomPlayer = useCallback(() => {
-    selectRandomPlayerBase();
-    setPlayerChangeCount(prev => prev + 1);
-    setGameKey(prev => prev + 1);
-    resetTimer();
-  }, [selectRandomPlayerBase, resetTimer]);
-
   // Handle time up
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer && gameActive) {
@@ -69,6 +52,23 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
       });
     }
   }, [currentPlayer, gameOver, score, toast, gameActive, handleIncorrectGuessBase]);
+
+  // Game timer
+  const { 
+    timeRemaining, 
+    isRunning: isTimerRunning, 
+    startTimer, 
+    stopTimer, 
+    resetTimer 
+  } = useSimpleGameTimer(TIME_LIMIT_SECONDS);
+
+  // Enhanced player selection with difficulty progression
+  const selectRandomPlayer = useCallback(() => {
+    selectRandomPlayerBase();
+    setPlayerChangeCount(prev => prev + 1);
+    setGameKey(prev => prev + 1);
+    resetTimer();
+  }, [selectRandomPlayerBase, resetTimer]);
 
   // Handle tab change
   const handleTabChange = useCallback(() => {
@@ -89,8 +89,6 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
   // Game logic with adaptive scoring
   const { handleGuess, isProcessingGuess } = useSimpleGameLogic({
     currentPlayer,
-    gameOver,
-    gameActive,
     onCorrectGuess: (basePoints: number) => {
       console.log('✅ Resposta correta! Pontos base:', basePoints);
       
@@ -106,8 +104,8 @@ export const useAdaptiveGuessGame = (players: Player[] | undefined) => {
         selectRandomPlayer();
       }, 1500);
     },
-    onIncorrectGuess: () => {
-      console.log('❌ Resposta incorreta');
+    onIncorrectGuess: (guess: string) => {
+      console.log('❌ Resposta incorreta:', guess);
       handleIncorrectGuessBase();
       setGameOver(true);
       setHasLost(true);
