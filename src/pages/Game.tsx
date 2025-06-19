@@ -6,51 +6,31 @@ import { SEOHead } from "@/components/SEOHead";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { EmptyPlayersDisplay } from "@/components/guess-game/EmptyPlayersDisplay";
 import { GameHeader } from "@/components/game/GameHeader";
-import { GameContainer } from "@/components/guess-game/GameContainer";
+import { SimpleGame } from "@/components/game/SimpleGame";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { usePlayersData } from "@/hooks/use-players-data";
-import { useDirectPlayerSelection } from "@/hooks/use-direct-player-selection";
 
 const Game = () => {
   console.log("🎮 Game component INICIANDO...");
   
   const { user } = useAuth();
-  const { trackGameStart, trackPageView, trackEvent } = useAnalytics();
+  const { trackPageView, trackEvent } = useAnalytics();
   
   // Carregar dados dos jogadores
   const { players, isLoading, error } = usePlayersData();
   
-  console.log("🎮 Game - usePlayersData resultado:", {
-    players: players ? `Array com ${players.length} itens` : 'undefined/null',
-    playersType: typeof players,
-    isArray: Array.isArray(players),
-    primeirosJogadores: players ? players.slice(0, 3).map(p => ({ name: p.name, id: p.id })) : 'N/A',
+  console.log("🎮 Game - Dados carregados:", {
+    players: players ? `${players.length} jogadores` : 'nenhum',
     isLoading,
     hasError: !!error
-  });
-  
-  // Seleção direta de jogadores
-  const { currentPlayer, selectRandomPlayer } = useDirectPlayerSelection(players);
-
-  console.log("🎮 Game - useDirectPlayerSelection resultado:", {
-    currentPlayer: currentPlayer ? { name: currentPlayer.name, id: currentPlayer.id } : null,
-    temSelectRandomPlayer: typeof selectRandomPlayer === 'function'
   });
 
   // Track page view
   useEffect(() => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
-
-  console.log("📋 Estado FINAL do Game:", {
-    playersCount: players?.length || 0,
-    isLoading,
-    hasError: !!error,
-    currentPlayerName: currentPlayer?.name || 'Nenhum',
-    renderizaraTela: !isLoading && !error && players && players.length > 0
-  });
 
   // Loading state
   if (isLoading) {
@@ -78,11 +58,7 @@ const Game = () => {
     return <EmptyPlayersDisplay />;
   }
 
-  console.log("✅ Game - Renderizando jogo com jogadores carregados");
-  console.log("✅ Game - Dados para GameContainer:", {
-    currentPlayer: currentPlayer ? { name: currentPlayer.name, id: currentPlayer.id } : null,
-    totalPlayers: players.length
-  });
+  console.log("✅ Game - Renderizando jogo com", players.length, "jogadores");
 
   return (
     <>
@@ -99,27 +75,7 @@ const Game = () => {
         
         <div className="py-8 px-4">
           <div className="container mx-auto max-w-4xl">
-            <GameContainer
-              currentPlayer={currentPlayer}
-              gameKey={Date.now().toString()}
-              attempts={0}
-              score={0}
-              gameOver={false}
-              timeRemaining={60}
-              MAX_ATTEMPTS={1}
-              handleGuess={() => {}}
-              selectRandomPlayer={selectRandomPlayer}
-              handlePlayerImageFixed={() => {}}
-              isProcessingGuess={false}
-              hasLost={false}
-              startGameForPlayer={() => {}}
-              isTimerRunning={false}
-              gamesPlayed={0}
-              currentStreak={0}
-              maxStreak={0}
-              forceRefresh={selectRandomPlayer}
-              playerChangeCount={0}
-            />
+            <SimpleGame players={players} />
           </div>
         </div>
       </div>
