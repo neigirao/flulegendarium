@@ -1,6 +1,7 @@
 
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
+import { AdaptiveTutorial } from "@/components/guess-game/AdaptiveTutorial";
 import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
 import { GuestNameForm } from "@/components/guess-game/GuestNameForm";
 import { useAdaptiveGuessGame } from "@/hooks/use-adaptive-guess-game";
@@ -23,6 +24,7 @@ import { useGameMetrics } from "@/hooks/use-game-metrics";
 const AdaptiveGuessPlayer = () => {
   const { user } = useAuth();
   const [showAuthSelection, setShowAuthSelection] = useState(true);
+  const [showAdaptiveTutorial, setShowAdaptiveTutorial] = useState(false);
   const { showImageUrl, handleDebugClick } = useDebug();
   const { trackError, log } = useObservability();
   const { trackGameAbandonment, trackConversion } = useGameMetrics();
@@ -96,6 +98,16 @@ const AdaptiveGuessPlayer = () => {
     });
   }, [log, user, players, gameStarted, currentDifficulty]);
 
+  // Show adaptive tutorial after regular tutorial
+  useEffect(() => {
+    if (gameStarted && !showTutorial) {
+      const hasSeenAdaptiveTutorial = localStorage.getItem('adaptive-tutorial-seen');
+      if (!hasSeenAdaptiveTutorial) {
+        setShowAdaptiveTutorial(true);
+      }
+    }
+  }, [gameStarted, showTutorial]);
+
   const handleTutorialCompleteLocal = () => {
     log('info', 'Adaptive tutorial completed', { hasUser: !!user });
     handleTutorialComplete(user);
@@ -106,19 +118,22 @@ const AdaptiveGuessPlayer = () => {
     handleSkipTutorial(user);
   };
 
+  const handleAdaptiveTutorialComplete = () => {
+    setShowAdaptiveTutorial(false);
+    localStorage.setItem('adaptive-tutorial-seen', 'true');
+  };
+
   const handleGuestPlay = () => {
     log('info', 'Adaptive guest play selected');
     setShowAuthSelection(false);
-    setGameStarted(true);
-    setIsAuthenticatedGame(false);
+    // Don't start game immediately, let tutorial flow handle it
   };
 
   const handleAuthenticatedPlay = () => {
     log('info', 'Adaptive authenticated play selected', { userId: user?.id });
     trackConversion(false, 'login');
     setShowAuthSelection(false);
-    setGameStarted(true);
-    setIsAuthenticatedGame(true);
+    // Don't start game immediately, let tutorial flow handle it
   };
 
   // Track game abandonment on unmount
@@ -181,6 +196,10 @@ const AdaptiveGuessPlayer = () => {
     difficulty: currentDifficulty,
     gameKey,
     gameStarted,
+    showTutorial,
+    showAdaptiveTutorial,
+    showGuestNameForm,
+    showAuthSelection,
     guestPlayerName,
     availablePlayersCount
   });
@@ -199,7 +218,7 @@ const AdaptiveGuessPlayer = () => {
             imageUrl={currentPlayer?.image_url} 
           />
 
-          {gameStarted && (
+          {gameStarted && !showAdaptiveTutorial && (
             <GameContainer
               currentPlayer={currentPlayer}
               gameKey={gameKey.toString()}
@@ -252,6 +271,13 @@ const AdaptiveGuessPlayer = () => {
         />
       )}
 
+      {showAdaptiveTutorial && (
+        <AdaptiveTutorial 
+          isOpen={showAdaptiveTutorial}
+          onComplete={handleAdaptiveTutorialComplete}
+        />
+      )}
+
       {showGuestNameForm && (
         <GuestNameForm
           onNameSubmitted={handleGuestNameSubmitted}
@@ -259,7 +285,7 @@ const AdaptiveGuessPlayer = () => {
         />
       )}
 
-      {currentPlayer && gameStarted && (
+      {currentPlayer && gameStarted && !showAdaptiveTutorial && (
         <GameOverDialog
           open={showGameOverDialog}
           onClose={() => handleGameOverClose(selectRandomPlayer)}
