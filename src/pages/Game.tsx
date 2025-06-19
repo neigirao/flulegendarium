@@ -6,37 +6,35 @@ import { SEOHead } from "@/components/SEOHead";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { EmptyPlayersDisplay } from "@/components/guess-game/EmptyPlayersDisplay";
 import { GameHeader } from "@/components/game/GameHeader";
-import { GameContent } from "@/components/game/GameContent";
-import { GameModals } from "@/components/game/GameModals";
+import { GameContainer } from "@/components/guess-game/GameContainer";
 
-import { useSimpleGuessGame } from "@/hooks/use-simple-guess-game";
 import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/use-analytics";
-import { useDebug } from "@/hooks/use-debug";
 import { usePlayersData } from "@/hooks/use-players-data";
-import { useGameState } from "@/hooks/use-game-state";
-import { useGameHandlers } from "@/hooks/game/use-game-handlers";
+import { useDirectPlayerSelection } from "@/hooks/use-direct-player-selection";
 
 const Game = () => {
   console.log("🎮 Game component iniciando...");
   
   const { user } = useAuth();
-  const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
-  const { showImageUrl } = useDebug();
+  const { trackGameStart, trackPageView, trackEvent } = useAnalytics();
   
-  // Carregar dados dos jogadores primeiro
+  // Carregar dados dos jogadores
   const { players, isLoading, error } = usePlayersData();
+  
+  // Seleção direta de jogadores
+  const { currentPlayer, selectRandomPlayer } = useDirectPlayerSelection(players);
 
   // Track page view
   useEffect(() => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
-  console.log("📋 Estado dos players:", {
+  console.log("📋 Estado do Game:", {
     playersCount: players?.length || 0,
     isLoading,
     hasError: !!error,
-    firstPlayer: players?.[0]?.name || 'N/A'
+    currentPlayerName: currentPlayer?.name || 'Nenhum'
   });
 
   // Loading state
@@ -65,74 +63,7 @@ const Game = () => {
     return <EmptyPlayersDisplay />;
   }
 
-  console.log("✅ Jogadores carregados, iniciando game logic...");
-
-  return <GameWithPlayers players={players} />;
-};
-
-// Componente separado para garantir que o game logic só rode com players carregados
-const GameWithPlayers = ({ players }: { players: any[] }) => {
-  const { user } = useAuth();
-  const { trackGameStart, trackEvent } = useAnalytics();
-  const { showImageUrl } = useDebug();
-
-  // Inicializar lógica do jogo com players garantidos
-  const gameLogic = useSimpleGuessGame(players);
-
-  const {
-    currentPlayer,
-    gameKey,
-    attempts,
-    score,
-    gameOver,
-    timeRemaining,
-    MAX_ATTEMPTS,
-    handleGuess,
-    selectRandomPlayer,
-    forceRefresh,
-    handlePlayerImageFixed,
-    isProcessingGuess,
-    hasLost,
-    startGameForPlayer,
-    isTimerRunning,
-    resetScore,
-    gamesPlayed,
-    currentStreak,
-    maxStreak,
-    playerChangeCount
-  } = gameLogic;
-
-  // Game state management
-  const {
-    showGameOverDialog,
-    showTutorial,
-    gameStarted,
-    isAuthenticatedGame,
-    showGuestNameForm,
-    guestPlayerName,
-    handleGameOverClose,
-    handleTutorialComplete,
-    handleSkipTutorial,
-    handleGuestNameSubmitted,
-    handleGuestNameCancel
-  } = useGameState({ hasLost });
-
-  // Game handlers
-  const { onTutorialComplete, onSkipTutorial, onGameOverClose } = useGameHandlers({
-    user,
-    trackGameStart,
-    handleTutorialComplete,
-    handleSkipTutorial,
-    handleGameOverClose,
-    selectRandomPlayer
-  });
-
-  console.log('🎮 GameWithPlayers render - Estado:', {
-    currentPlayerName: currentPlayer?.name || 'Nenhum',
-    gameStarted,
-    playersCount: players?.length || 0,
-    gameLogicReady: !!gameLogic
-  });
+  console.log("✅ Renderizando jogo com jogadores carregados");
 
   return (
     <>
@@ -147,46 +78,31 @@ const GameWithPlayers = ({ players }: { players: any[] }) => {
       <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white">
         <GameHeader user={user} trackEvent={trackEvent} />
         
-        <GameContent
-          gameStarted={gameStarted}
-          showImageUrl={showImageUrl}
-          currentPlayer={currentPlayer}
-          gameKey={gameKey.toString()}
-          attempts={attempts ? attempts.length : 0}
-          score={score}
-          gameOver={gameOver}
-          timeRemaining={timeRemaining}
-          MAX_ATTEMPTS={MAX_ATTEMPTS}
-          handleGuess={handleGuess}
-          selectRandomPlayer={selectRandomPlayer}
-          handlePlayerImageFixed={handlePlayerImageFixed}
-          isProcessingGuess={isProcessingGuess}
-          hasLost={hasLost}
-          startGameForPlayer={startGameForPlayer}
-          isTimerRunning={isTimerRunning}
-          gamesPlayed={gamesPlayed}
-          currentStreak={currentStreak}
-          maxStreak={maxStreak}
-          forceRefresh={forceRefresh}
-          playerChangeCount={playerChangeCount}
-        />
-
-        <GameModals
-          showTutorial={showTutorial}
-          showGuestNameForm={showGuestNameForm}
-          showGameOverDialog={showGameOverDialog}
-          currentPlayer={currentPlayer}
-          gameStarted={gameStarted}
-          score={score}
-          isAuthenticatedGame={isAuthenticatedGame}
-          guestPlayerName={guestPlayerName}
-          onTutorialComplete={onTutorialComplete}
-          onSkipTutorial={onSkipTutorial}
-          handleGuestNameSubmitted={handleGuestNameSubmitted}
-          handleGuestNameCancel={handleGuestNameCancel}
-          handleGameOverClose={onGameOverClose}
-          resetScore={resetScore}
-        />
+        <div className="py-8 px-4">
+          <div className="container mx-auto max-w-4xl">
+            <GameContainer
+              currentPlayer={currentPlayer}
+              gameKey={Date.now().toString()}
+              attempts={0}
+              score={0}
+              gameOver={false}
+              timeRemaining={60}
+              MAX_ATTEMPTS={1}
+              handleGuess={() => {}}
+              selectRandomPlayer={selectRandomPlayer}
+              handlePlayerImageFixed={() => {}}
+              isProcessingGuess={false}
+              hasLost={false}
+              startGameForPlayer={() => {}}
+              isTimerRunning={false}
+              gamesPlayed={0}
+              currentStreak={0}
+              maxStreak={0}
+              forceRefresh={selectRandomPlayer}
+              playerChangeCount={0}
+            />
+          </div>
+        </div>
       </div>
     </>
   );

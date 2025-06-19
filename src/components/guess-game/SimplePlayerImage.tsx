@@ -12,6 +12,8 @@ export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerIm
   const [imageError, setImageError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  console.log('🖼️ SimplePlayerImage render para:', player.name, 'URL:', player.image_url);
+
   const handleImageLoad = useCallback(() => {
     console.log('✅ Imagem carregada com sucesso:', player.name);
     setImageError(false);
@@ -20,10 +22,10 @@ export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerIm
   }, [player.name, onImageLoaded]);
 
   const handleImageError = useCallback(() => {
-    console.error('❌ Erro ao carregar imagem para:', player.name, 'URL:', player.image_url);
+    console.error('❌ Erro ao carregar imagem para:', player.name);
     setImageError(true);
     setIsLoading(false);
-  }, [player.name, player.image_url]);
+  }, [player.name]);
 
   // Use fallback image if there's an error or no URL
   const imageSrc = useMemo(() => {
@@ -32,8 +34,6 @@ export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerIm
     }
     return player.image_url;
   }, [imageError, player.image_url]);
-
-  console.log('🖼️ Renderizando imagem para:', player.name, 'URL:', imageSrc, 'Loading:', isLoading, 'Error:', imageError);
 
   return (
     <div className="w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto">
@@ -73,14 +73,13 @@ export const SimplePlayerImage = memo(({ player, onImageLoaded }: SimplePlayerIm
         </div>
       )}
 
-      {/* Debug info em desenvolvimento */}
+      {/* Debug info */}
       {process.env.NODE_ENV === 'development' && (
         <div className="mt-2 p-2 bg-gray-100 rounded text-xs border">
           <p><strong>Debug SimplePlayerImage:</strong></p>
           <p>Player: {player.name} ({player.id})</p>
           <p>Status: {imageError ? 'ERRO - usando fallback' : isLoading ? 'CARREGANDO' : 'CARREGADA'}</p>
-          <p className="break-all">URL atual: {imageSrc}</p>
-          <p className="break-all">URL original: {player.image_url || 'não definida'}</p>
+          <p className="break-all">URL: {imageSrc}</p>
         </div>
       )}
     </div>
