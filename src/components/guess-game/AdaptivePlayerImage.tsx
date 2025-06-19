@@ -53,13 +53,12 @@ export const AdaptivePlayerImage = ({
         effects.glowColor
       )}>
         <div 
-          className="relative rounded-2xl overflow-hidden bg-white"
+          className="relative rounded-2xl overflow-hidden bg-white w-80 h-80 md:w-96 md:h-96"
           style={{ filter: effects.filter }}
         >
           <OptimizedPlayerImage
             player={player}
             onImageLoaded={onImageFixed}
-            className="w-80 h-80 md:w-96 md:h-96 object-cover"
           />
         </div>
         

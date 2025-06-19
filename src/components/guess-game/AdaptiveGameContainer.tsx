@@ -125,13 +125,11 @@ const AdaptiveGameContainer = () => {
 
       <GameOverDialog
         open={gameOver}
+        onClose={() => {}}
+        playerName={currentPlayer?.name || ''}
         score={score}
-        hasLost={hasLost}
-        currentPlayer={currentPlayer}
-        onPlayAgain={selectRandomPlayer}
         onResetScore={resetScore}
-        maxStreak={maxStreak}
-        gamesPlayed={gamesPlayed}
+        isAuthenticated={false}
       />
 
       <AdaptiveTutorial 

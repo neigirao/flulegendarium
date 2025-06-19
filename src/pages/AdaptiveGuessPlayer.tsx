@@ -93,7 +93,7 @@ const AdaptiveGuessPlayer = () => {
       playersCount: players?.length || 0,
       gameStarted,
       adaptiveDifficultyEnabled: true,
-      currentDifficulty: currentDifficulty?.level
+      currentDifficulty: currentDifficulty
     });
   }, [log, user, players, gameStarted, currentDifficulty]);
 
@@ -178,7 +178,7 @@ const AdaptiveGuessPlayer = () => {
 
   console.log('🎮 AdaptiveGuessPlayer Render:', {
     playerName: currentPlayer?.name,
-    difficulty: currentDifficulty?.level,
+    difficulty: currentDifficulty,
     gameKey,
     gameStarted,
     changeCount: playerChangeCount,
