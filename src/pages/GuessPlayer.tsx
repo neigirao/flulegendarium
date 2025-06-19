@@ -28,8 +28,8 @@ const GuessPlayer = () => {
   const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
   const { showImageUrl, handleDebugClick } = useDebug();
   
-  // Load players data first
-  const { players, isLoading, playersError } = usePlayersData();
+  // Load players data first - fix the property name here
+  const { players, isLoading, error } = usePlayersData();
 
   // Track page view
   useEffect(() => {
@@ -88,9 +88,9 @@ const GuessPlayer = () => {
     );
   }
 
-  // Error state
-  if (playersError) {
-    return <ErrorDisplay error={playersError} />;
+  // Error state - using 'error' instead of 'playersError'
+  if (error) {
+    return <ErrorDisplay error={error} />;
   }
 
   // Empty players state
