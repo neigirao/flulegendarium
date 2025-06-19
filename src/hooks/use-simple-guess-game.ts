@@ -22,9 +22,9 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const { toast } = useToast();
   const { user } = useAuth();
   
-  // Early return if no players
-  if (!players || players.length === 0) {
-    console.log("⚠️ useSimpleGuessGame: Sem jogadores disponíveis, retornando null");
+  // Early return if no valid players
+  if (!players || !Array.isArray(players) || players.length === 0) {
+    console.log("⚠️ useSimpleGuessGame: Sem jogadores válidos disponíveis, retornando null");
     return null;
   }
 

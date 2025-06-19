@@ -8,6 +8,7 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signOut: () => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -24,9 +25,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    let mounted = true;
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    let isMounted = true;
 
     // Get initial session
     const getInitialSession = async () => {
@@ -38,14 +47,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
-        if (mounted) {
+        if (isMounted) {
           setSession(initialSession);
           setUser(initialSession?.user ?? null);
           setLoading(false);
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
-        if (mounted) {
+        if (isMounted) {
           setLoading(false);
         }
       }
@@ -58,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       async (event, newSession) => {
         console.log('Auth state changed:', event, newSession?.user?.email);
         
-        if (mounted) {
+        if (isMounted) {
           setSession(newSession);
           setUser(newSession?.user ?? null);
           setLoading(false);
@@ -67,10 +76,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
 
     return () => {
-      mounted = false;
+      isMounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [mounted]);
+
+  const signInWithGoogle = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) {
+        console.error('Error signing in with Google:', error);
+        throw error;
+      }
+    } catch (error) {
+      console.error('Sign in with Google error:', error);
+      throw error;
+    }
+  };
 
   const signOut = async () => {
     try {
@@ -90,6 +117,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     loading,
     signOut,
+    signInWithGoogle,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

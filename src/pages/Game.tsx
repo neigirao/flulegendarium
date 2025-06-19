@@ -43,20 +43,48 @@ const Game = () => {
     trackPageView('/jogar-quiz-fluminense');
   }, [trackPageView]);
 
-  // Game logic hook
-  const gameLogicResult = useSimpleGuessGame(players);
+  // Game logic hook - only initialize if we have players
+  const gameLogicResult = useSimpleGuessGame(players && players.length > 0 ? players : undefined);
   
   // Log do resultado do game logic
   useEffect(() => {
     console.log("🎮 Resultado do useSimpleGuessGame:", {
+      hasGameLogic: !!gameLogicResult,
       hasCurrentPlayer: !!gameLogicResult?.currentPlayer,
       currentPlayerName: gameLogicResult?.currentPlayer?.name,
       gameKey: gameLogicResult?.gameKey
     });
   }, [gameLogicResult]);
 
+  // Loading state
+  if (isLoading) {
+    console.log("🔄 Mostrando loading state...");
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <GameLoader className="w-8 h-8 animate-spin mx-auto mb-4" />
+          <p className="text-lg font-medium">Carregando jogadores...</p>
+          <p className="text-sm text-gray-600 mt-2">Por favor, aguarde...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (playersError) {
+    console.error("❌ Mostrando error state:", playersError);
+    return <ErrorDisplay error={playersError} />;
+  }
+
+  // Empty players state
+  if (!players || players.length === 0) {
+    console.warn("⚠️ Mostrando empty players state");
+    return <EmptyPlayersDisplay />;
+  }
+
+  // No game logic result yet (still initializing)
   if (!gameLogicResult) {
-    console.log("⚠️ gameLogicResult é null/undefined");
+    console.log("⚠️ gameLogicResult ainda não disponível");
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -126,32 +154,6 @@ const Game = () => {
     }
   }, [hasLost, score, trackGameEnd]);
 
-  // Loading state
-  if (isLoading) {
-    console.log("🔄 Mostrando loading state...");
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <GameLoader className="w-8 h-8 animate-spin mx-auto mb-4" />
-          <p className="text-lg font-medium">Carregando jogadores...</p>
-          <p className="text-sm text-gray-600 mt-2">Por favor, aguarde...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (playersError) {
-    console.error("❌ Mostrando error state:", playersError);
-    return <ErrorDisplay error={playersError} />;
-  }
-
-  // Empty players state
-  if (!players || players.length === 0) {
-    console.warn("⚠️ Mostrando empty players state");
-    return <EmptyPlayersDisplay />;
-  }
-
   console.log('🎮 Game render - Estado final:', {
     currentPlayerName: currentPlayer?.name || 'Nenhum',
     gameKey,
@@ -178,7 +180,7 @@ const Game = () => {
           showImageUrl={showImageUrl}
           currentPlayer={currentPlayer}
           gameKey={gameKey.toString()}
-          attempts={attempts.length}
+          attempts={attempts ? attempts.length : 0}
           score={score}
           gameOver={gameOver}
           timeRemaining={timeRemaining}

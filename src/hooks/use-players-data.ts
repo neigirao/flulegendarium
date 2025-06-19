@@ -36,8 +36,8 @@ export const usePlayersData = () => {
           throw new Error(`Erro ao buscar jogadores: ${error.message}`);
         }
         
-        if (!data) {
-          console.warn("⚠️ Query retornou null ou undefined");
+        if (!data || data.length === 0) {
+          console.warn("⚠️ Query retornou dados vazios");
           return [];
         }
 
@@ -59,7 +59,7 @@ export const usePlayersData = () => {
       }
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes (replaces cacheTime)
+    gcTime: 10 * 60 * 1000, // 10 minutes
     retry: (failureCount, error: any) => {
       console.log(`🔄 Tentativa ${failureCount + 1} de buscar jogadores. Erro:`, error?.message);
       
@@ -81,53 +81,63 @@ export const usePlayersData = () => {
       isArray: Array.isArray(rawPlayers)
     });
 
-    if (!Array.isArray(rawPlayers) || rawPlayers.length === 0) {
-      console.warn("⚠️ rawPlayers não é um array válido ou está vazio");
+    if (!Array.isArray(rawPlayers)) {
+      console.warn("⚠️ rawPlayers não é um array válido");
       return [];
     }
 
-    const processedPlayers = rawPlayers.map((player: DatabasePlayer, index: number) => {
-      try {
-        const enhancedPlayer: Player = {
-          id: player.id,
-          name: player.name || `Jogador ${index + 1}`,
-          position: player.position || 'Posição não informada',
-          image_url: player.image_url || '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
-          year_highlight: player.year_highlight || '',
-          fun_fact: player.fun_fact || '',
-          achievements: Array.isArray(player.achievements) ? player.achievements : [],
-          nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
-          statistics: convertStatistics(player.statistics)
-        };
-        
-        if (index < 3) {
-          console.log(`🎯 Jogador ${index + 1} processado:`, {
-            name: enhancedPlayer.name,
-            hasImage: !!enhancedPlayer.image_url,
-            imageUrl: enhancedPlayer.image_url.substring(0, 50) + '...'
-          });
-        }
-        
-        return enhancedPlayer;
-      } catch (error) {
-        console.error(`❌ Erro ao processar jogador ${index}:`, error, player);
-        // Return a fallback player instead of breaking the entire array
-        return {
-          id: player.id || `fallback-${index}`,
-          name: `Jogador ${index + 1}`,
-          position: 'Posição não informada',
-          image_url: '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
-          year_highlight: '',
-          fun_fact: '',
-          achievements: [],
-          nicknames: [],
-          statistics: { gols: 0, jogos: 0 }
-        };
-      }
-    });
+    if (rawPlayers.length === 0) {
+      console.warn("⚠️ rawPlayers está vazio");
+      return [];
+    }
 
-    console.log(`✅ Processamento concluído. Total de jogadores válidos: ${processedPlayers.length}`);
-    return processedPlayers;
+    try {
+      const processedPlayers = rawPlayers.map((player: DatabasePlayer, index: number) => {
+        try {
+          const enhancedPlayer: Player = {
+            id: player.id,
+            name: player.name || `Jogador ${index + 1}`,
+            position: player.position || 'Posição não informada',
+            image_url: player.image_url || '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
+            year_highlight: player.year_highlight || '',
+            fun_fact: player.fun_fact || '',
+            achievements: Array.isArray(player.achievements) ? player.achievements : [],
+            nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
+            statistics: convertStatistics(player.statistics)
+          };
+          
+          if (index < 3) {
+            console.log(`🎯 Jogador ${index + 1} processado:`, {
+              name: enhancedPlayer.name,
+              hasImage: !!enhancedPlayer.image_url,
+              imageUrl: enhancedPlayer.image_url.substring(0, 50) + '...'
+            });
+          }
+          
+          return enhancedPlayer;
+        } catch (error) {
+          console.error(`❌ Erro ao processar jogador ${index}:`, error, player);
+          // Return a fallback player instead of breaking the entire array
+          return {
+            id: player.id || `fallback-${index}`,
+            name: `Jogador ${index + 1}`,
+            position: 'Posição não informada',
+            image_url: '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
+            year_highlight: '',
+            fun_fact: '',
+            achievements: [],
+            nicknames: [],
+            statistics: { gols: 0, jogos: 0 }
+          };
+        }
+      });
+
+      console.log(`✅ Processamento concluído. Total de jogadores válidos: ${processedPlayers.length}`);
+      return processedPlayers;
+    } catch (error) {
+      console.error("❌ Erro crítico no processamento dos jogadores:", error);
+      return [];
+    }
   }, [rawPlayers]);
 
   // Enhanced logging
@@ -139,7 +149,7 @@ export const usePlayersData = () => {
   });
 
   return {
-    players,
+    players: players || [],
     isLoading,
     playersError
   };
