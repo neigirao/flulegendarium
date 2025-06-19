@@ -1,6 +1,6 @@
 
 import { GameStatus } from "./GameStatus";
-import { SimplePlayerImage } from "./SimplePlayerImage";
+import { RobustPlayerImage } from "./RobustPlayerImage";
 import { GuessForm } from "./GuessForm";
 import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
 import { DifficultyIndicator } from "./DifficultyIndicator";
@@ -113,10 +113,10 @@ export const GameContainer = ({
         onNextPlayer={selectRandomPlayer}
       />
 
-      {/* Imagem do Jogador */}
+      {/* Imagem do Jogador - Nova versão robusta */}
       <div className="mb-8">
-        <SimplePlayerImage
-          key={`${currentPlayer.id}-${gameKey}`}
+        <RobustPlayerImage
+          key={`robust-${currentPlayer.id}-${gameKey}`}
           player={currentPlayer}
           onImageLoaded={handlePlayerImageFixed}
         />
