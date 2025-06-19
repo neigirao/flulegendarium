@@ -12,7 +12,7 @@ export interface Player {
     gols: number;
     jogos: number;
   };
-  // Novos campos de dificuldade
+  // Campos de dificuldade
   difficulty_level?: 'muito_facil' | 'facil' | 'medio' | 'dificil' | 'muito_dificil';
   difficulty_score?: number;
   difficulty_confidence?: number;

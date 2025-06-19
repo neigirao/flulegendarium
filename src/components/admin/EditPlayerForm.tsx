@@ -1,20 +1,29 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Link, X } from "lucide-react";
+import { Upload, Link, X, BarChart3 } from "lucide-react";
 import { Player } from "@/types/guess-game";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface EditPlayerFormProps {
   player: Player;
   onPlayerUpdated: () => void;
   onCancel: () => void;
 }
+
+const DIFFICULTY_LEVELS = [
+  { value: 'muito_facil', label: 'Muito Fácil', color: 'text-green-600' },
+  { value: 'facil', label: 'Fácil', color: 'text-blue-600' },
+  { value: 'medio', label: 'Médio', color: 'text-yellow-600' },
+  { value: 'dificil', label: 'Difícil', color: 'text-orange-600' },
+  { value: 'muito_dificil', label: 'Muito Difícil', color: 'text-red-600' }
+];
 
 export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayerFormProps) => {
   const { toast } = useToast();
@@ -29,6 +38,7 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
   const [achievements, setAchievements] = useState(player.achievements?.join(', ') || '');
   const [gols, setGols] = useState(player.statistics?.gols || 0);
   const [jogos, setJogos] = useState(player.statistics?.jogos || 0);
+  const [difficultyLevel, setDifficultyLevel] = useState(player.difficulty_level || 'medio');
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('url');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,7 +97,8 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
           year_highlight: yearHighlight,
           fun_fact: funFact,
           achievements: achievementsArray,
-          statistics: { gols, jogos }
+          statistics: { gols, jogos },
+          difficulty_level: difficultyLevel
         })
         .eq('id', player.id);
 
@@ -144,6 +155,59 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
             />
           </div>
         </div>
+
+        {/* Seção de Dificuldade */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 size={20} />
+              Classificação de Dificuldade
+            </CardTitle>
+            <CardDescription>
+              Configure o nível de dificuldade do jogador no modo adaptativo
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="difficulty">Nível de Dificuldade</Label>
+                <Select value={difficultyLevel} onValueChange={setDifficultyLevel}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione a dificuldade" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {DIFFICULTY_LEVELS.map((level) => (
+                      <SelectItem key={level.value} value={level.value}>
+                        <span className={level.color}>{level.label}</span>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Estatísticas Automáticas</Label>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>Score: {player.difficulty_score || 50}/100</p>
+                  <p>Confiança: {(player.difficulty_confidence || 0).toFixed(1)}%</p>
+                  <p>Tentativas: {player.total_attempts || 0}</p>
+                  <p>Acertos: {player.correct_attempts || 0}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md">
+              <p><strong>Como funciona:</strong></p>
+              <ul className="list-disc list-inside space-y-1 mt-1">
+                <li><strong>Muito Fácil:</strong> Jogadores conhecidos (1x pontos)</li>
+                <li><strong>Fácil:</strong> Jogadores populares (1.2x pontos)</li>
+                <li><strong>Médio:</strong> Conhecimento intermediário (1.5x pontos)</li>
+                <li><strong>Difícil:</strong> Jogadores específicos (2x pontos)</li>
+                <li><strong>Muito Difícil:</strong> Lendas obscuras (3x pontos)</li>
+              </ul>
+            </div>
+          </CardContent>
+        </Card>
 
         <div className="space-y-2">
           <Label>Imagem do Jogador</Label>
