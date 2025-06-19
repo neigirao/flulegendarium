@@ -6,7 +6,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { EmptyPlayersDisplay } from "@/components/guess-game/EmptyPlayersDisplay";
 import { GameHeader } from "@/components/game/GameHeader";
-import { SimpleGame } from "@/components/game/SimpleGame";
+import { BasicGameView } from "@/components/game/BasicGameView";
 
 import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -24,7 +24,8 @@ const Game = () => {
   console.log("🎮 Game - Dados carregados:", {
     players: players ? `${players.length} jogadores` : 'nenhum',
     isLoading,
-    hasError: !!error
+    hasError: !!error,
+    primeirosJogadores: players?.slice(0, 3).map(p => ({ name: p.name, url: p.image_url?.substring(0, 50) + '...' }))
   });
 
   // Track page view
@@ -58,7 +59,7 @@ const Game = () => {
     return <EmptyPlayersDisplay />;
   }
 
-  console.log("✅ Game - Renderizando jogo com", players.length, "jogadores");
+  console.log("✅ Game - Renderizando jogo básico com", players.length, "jogadores");
 
   return (
     <>
@@ -75,7 +76,7 @@ const Game = () => {
         
         <div className="py-8 px-4">
           <div className="container mx-auto max-w-4xl">
-            <SimpleGame players={players} />
+            <BasicGameView players={players} />
           </div>
         </div>
       </div>
