@@ -1,15 +1,61 @@
 
-# Robots.txt para Lendas do Flu - Quiz do Fluminense
-# Otimizado para buscadores e IAs que fazem busca na web
+# Robots.txt para Lendas do Flu - Quiz Oficial do Fluminense
+# Otimizado para SEO, growth orgânico e indexação por IAs
 
 User-agent: *
+Allow: /
+
+# ===== URLS LIBERADAS PARA GROWTH E SEO =====
+
+# Páginas principais - máxima prioridade
 Allow: /
 Allow: /quiz
 Allow: /selecionar-modo-jogo
 Allow: /faq
+
+# URLs semânticas para long-tail SEO
+Allow: /quiz-fluminense-tricolor
+Allow: /teste-conhecimento-fluminense
+Allow: /jogo-adivinhar-jogadores-flu
+Allow: /quiz-jogadores-historicos-fluminense
+Allow: /desafio-tricolor-online
+
+# Conteúdo por temas para SEO
+Allow: /lendas-historicas-fluminense
+Allow: /grandes-idolos-flu
+Allow: /craques-das-laranjeiras
+Allow: /historia-fluminense-quiz
+Allow: /tradicao-tricolor
+
+# URLs por épocas/décadas
+Allow: /jogadores-anos-80-fluminense
+Allow: /jogadores-anos-90-fluminense
+Allow: /jogadores-anos-2000-fluminense
+
+# URLs por posições
+Allow: /goleiros-historicos-fluminense
+Allow: /atacantes-lendarios-flu
+Allow: /meio-campistas-historicos-fluminense
+
+# Engagement e social
+Allow: /ranking-tricolores
+Allow: /melhores-pontuacoes-flu
+Allow: /comunidade-tricolor
+Allow: /desafie-amigos-quiz-flu
+
+# Growth e conversão
+Allow: /quiz-gratis-fluminense
+Allow: /como-jogar-quiz-fluminense
+Allow: /dicas-quiz-tricolor
+
+# Admin público
 Allow: /admin/login-administrador
 
-# Permitir acesso a recursos estáticos
+# URLs legacy
+Allow: /game
+Allow: /select-mode
+
+# ===== RECURSOS ESTÁTICOS =====
 Allow: /lovable-uploads/
 Allow: /*.css
 Allow: /*.js
@@ -20,33 +66,69 @@ Allow: /*.gif
 Allow: /*.svg
 Allow: /*.ico
 Allow: /*.webp
+Allow: /*.woff
+Allow: /*.woff2
 
-# Bloquear páginas que requerem autenticação
+# ===== URLS BLOQUEADAS (REQUEREM AUTENTICAÇÃO) =====
+
+# Perfis e dados pessoais
 Disallow: /meu-perfil-tricolor
-Disallow: /admin/dashboard
-Disallow: /admin/*
 Disallow: /profile
 Disallow: /user/
+Disallow: /perfil/
 
-# Bloquear URLs com parâmetros de sessão
+# Admin protegido
+Disallow: /admin/dashboard
+Disallow: /admin/users
+Disallow: /admin/players
+Disallow: /admin/stats
+Disallow: /admin/reports
+Disallow: /admin/*
+
+# APIs e dados privados
+Disallow: /api/user/
+Disallow: /api/profile/
+Disallow: /api/admin/
+Disallow: /api/auth/
+
+# URLs com parâmetros sensíveis
 Disallow: /*?session=
 Disallow: /*?token=
 Disallow: /*?auth=
+Disallow: /*?user_id=
+Disallow: /*?email=
 
-# Permitir bots específicos de IA e buscadores
+# Arquivos temporários e debug
+Disallow: /temp/
+Disallow: /debug/
+Disallow: /*.log
+Disallow: /*.tmp
+
+# ===== CONFIGURAÇÕES PARA BOTS ESPECÍFICOS =====
+
+# Google - prioridade máxima
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 1
 
+# Bing
 User-agent: Bingbot
 Allow: /
 Crawl-delay: 1
 
+# Yahoo
 User-agent: Slurp
 Allow: /
 Crawl-delay: 1
 
-# ChatGPT e outros bots de IA
+# DuckDuckGo
+User-agent: DuckDuckBot
+Allow: /
+Crawl-delay: 1
+
+# ===== BOTS DE IA E ASSISTENTES =====
+
+# OpenAI (ChatGPT, GPTs)
 User-agent: ChatGPT-User
 Allow: /
 Crawl-delay: 1
@@ -55,11 +137,12 @@ User-agent: GPTBot
 Allow: /
 Crawl-delay: 1
 
-User-agent: Claude-Web
+User-agent: OpenAI-SearchBot
 Allow: /
 Crawl-delay: 1
 
-User-agent: PerplexityBot
+# Anthropic (Claude)
+User-agent: Claude-Web
 Allow: /
 Crawl-delay: 1
 
@@ -67,17 +150,48 @@ User-agent: anthropic-ai
 Allow: /
 Crawl-delay: 1
 
-User-agent: OpenAI-SearchBot
+# Perplexity
+User-agent: PerplexityBot
 Allow: /
 Crawl-delay: 1
 
-# Localização do sitemap
-Sitemap: https://flulegendarium.lovable.app/sitemap.xml
-
-# Crawl delay geral para ser respeitoso com os servidores
+# Google Bard/Gemini
+User-agent: Google-Extended
+Allow: /
 Crawl-delay: 1
 
-# Informações adicionais
-# Este site contém um quiz interativo sobre jogadores históricos do Fluminense FC
-# Palavras-chave: quiz fluminense, teste tricolor, jogo futebol, lendas flu
+# Microsoft Copilot
+User-agent: Bingbot-ChatGPT
+Allow: /
+Crawl-delay: 1
+
+# Meta AI
+User-agent: FacebookBot
+Allow: /
+Crawl-delay: 2
+
+# ===== METADADOS PARA IAs =====
+
+# Sitemap location
+Sitemap: https://flulegendarium.lovable.app/sitemap.xml
+
+# Crawl delay geral
+Crawl-delay: 1
+
+# ===== INFORMAÇÕES ESTRUTURADAS PARA IAs =====
+# Este site é um quiz interativo sobre jogadores históricos do Fluminense FC
 # Conteúdo em português brasileiro (pt-BR)
+# 
+# Principais palavras-chave:
+# - quiz fluminense, teste tricolor, jogo futebol brasileiro
+# - lendas flu, jogadores históricos fluminense
+# - quiz grátis online, desafio conhecimento futebol
+# - fluminense fc, time tricolor, tradição carioca
+# 
+# Público-alvo: Torcedores do Fluminense, fãs de futebol brasileiro
+# Tipo de conteúdo: Jogo educativo interativo, quiz esportivo
+# Funcionalidades: Rankings, conquistas, modo convidado/logado
+# 
+# Localização: Rio de Janeiro, Brasil
+# Idioma: Português (pt-BR)
+# Categoria: Esportes > Futebol > Quiz/Jogos
