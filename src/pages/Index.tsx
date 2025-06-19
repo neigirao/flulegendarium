@@ -12,19 +12,11 @@ import { GamepadIcon, UsersIcon, AwardIcon, PlayIcon, TrophyIcon, StarIcon, Menu
 import { UniversalTouchTarget } from "@/components/mobile/UniversalTouchTarget";
 import { MobileSkeleton } from "@/components/mobile/MobileSkeleton";
 import { useMobileKeyboard } from "@/hooks/use-mobile-keyboard";
-import { useNavigate } from "react-router-dom";
-import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function Index() {
   const { user } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navigate = useNavigate();
-  const { trackPageView } = useAnalytics();
-
-  useEffect(() => {
-    trackPageView('/');
-  }, [trackPageView]);
-
+  
   // Mobile keyboard handling
   useMobileKeyboard({
     onKeyboardShow: () => setMobileMenuOpen(false),
@@ -41,84 +33,125 @@ export default function Index() {
   return (
     <>
       <SEOHead 
-        title="Lendas do Flu - Quiz Oficial do Fluminense FC | Teste Seu Conhecimento Tricolor"
-        description="🏆 Quiz oficial do Fluminense! Adivinhe os jogadores históricos, ganhe pontos e prove que é um verdadeiro tricolor. Jogue grátis agora!"
-        keywords="quiz fluminense, jogadores fluminense, teste tricolor, adivinhar jogador, lendas flu, fluminense fc quiz"
+        title="Lendas do Flu - Quiz Oficial dos Tricolores | Teste seu Conhecimento Fluminense"
+        description="🏆 Desafie seus conhecimentos sobre o Fluminense! Adivinhe os jogadores pelas fotos, compete no ranking e prove que é um verdadeiro tricolor. Jogue grátis agora!"
+        keywords="quiz fluminense, teste fluminense, jogo fluminense, tricolor, adivinhe jogador fluminense, ranking tricolor, quiz futebol, lendas do flu"
         url="https://flulegendarium.lovable.app/"
         canonical="https://flulegendarium.lovable.app/"
       />
-      
-      <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white">
-        {/* Header */}
-        <header className="bg-white/90 backdrop-blur-sm shadow-sm py-4 sticky top-0 z-50">
+      <StructuredData type="WebSite" />
+      <div className="min-h-screen bg-gray-50 full-height-mobile">
+        {/* Responsive Header */}
+        <header className="bg-white shadow-sm py-3 md:py-4 sticky top-0 z-50">
           <div className="container mx-auto px-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <Link to="/" className="flex items-center gap-2 md:gap-3">
               <img 
                 src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                alt="Escudo Fluminense FC" 
-                className="w-8 h-8 object-contain"
+                alt="Escudo do Fluminense FC" 
+                className="w-6 h-6 md:w-8 md:h-8 object-contain"
               />
-              <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
-            </div>
-            <nav className="flex items-center space-x-6">
-              <Link to="/" className="text-flu-grena font-semibold">Início</Link>
-              <Link to="/selecionar-modo-jogo" className="text-flu-verde hover:text-flu-grena transition-colors">Jogar</Link>
-              <Link to="/jogo-2" className="text-flu-verde hover:text-flu-grena transition-colors font-semibold bg-flu-verde/10 px-3 py-1 rounded">
-                Jogo 2 🆕
+              <span className="text-lg md:text-2xl font-bold text-flu-grena">Lendas do Flu</span>
+            </Link>
+            
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link to="/" className="text-flu-verde hover:text-flu-grena transition-colors">
+                Início
               </Link>
-              <Link to="/meu-perfil-tricolor" className="text-flu-verde hover:text-flu-grena transition-colors">Perfil</Link>
-              <Link to="/admin/login-administrador" className="text-flu-verde hover:text-flu-grena transition-colors">Admin</Link>
+              <Link to="/selecionar-modo-jogo" className="text-flu-verde hover:text-flu-grena transition-colors">
+                Jogar Quiz
+              </Link>
+              {user && (
+                <Link to="/meu-perfil-tricolor" className="text-flu-verde hover:text-flu-grena transition-colors">
+                  Meu Perfil
+                </Link>
+              )}
+              <Link to="/faq" className="text-flu-verde hover:text-flu-grena transition-colors">
+                FAQ
+              </Link>
+              <Link to="/admin/login-administrador" className="text-flu-verde hover:text-flu-grena transition-colors">
+                Admin
+              </Link>
               <AuthButton />
             </nav>
-          </div>
-        </header>
 
-        {/* Hero Section */}
-        <section className="py-20 px-4">
-          <div className="container mx-auto max-w-6xl text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 drop-shadow-lg">
-              🏆 Lendas do Flu
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 drop-shadow">
-              O quiz oficial dos apaixonados pelo Fluminense FC
-            </p>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border-2 border-flu-verde hover:scale-105 transition-transform">
-                <h3 className="text-2xl font-bold text-flu-grena mb-3">🎮 Quiz Original</h3>
-                <p className="text-gray-600 mb-4">Jogo completo com múltiplas dificuldades e recursos avançados</p>
-                <button
-                  onClick={() => navigate('/selecionar-modo-jogo')}
-                  className="bg-flu-grena text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold"
-                >
-                  Jogar Quiz Original
-                </button>
-              </div>
-              
-              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border-2 border-flu-verde hover:scale-105 transition-transform">
-                <h3 className="text-2xl font-bold text-flu-grena mb-3">🆕 Jogo 2</h3>
-                <p className="text-gray-600 mb-4">Versão simplificada e direta - 1 tentativa, 1 minuto, regras simples!</p>
-                <button
-                  onClick={() => navigate('/jogo-2')}
-                  className="bg-flu-verde text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold"
-                >
-                  Experimentar Jogo 2
-                </button>
-              </div>
-              
-              <div className="bg-white/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border-2 border-flu-verde hover:scale-105 transition-transform">
-                <h3 className="text-2xl font-bold text-flu-grena mb-3">📊 Meu Perfil</h3>
-                <p className="text-gray-600 mb-4">Veja suas estatísticas, rankings e evolução no jogo</p>
-                <button
-                  onClick={() => navigate('/meu-perfil-tricolor')}
-                  className="bg-flu-grena text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold"
-                >
-                  Ver Perfil
-                </button>
-              </div>
-            </div>
+            {/* Mobile Menu Button - Touch Optimized */}
+            <UniversalTouchTarget
+              size="md"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden bg-transparent hover:bg-gray-100"
+            >
+              {mobileMenuOpen ? (
+                <X className="w-6 h-6 text-flu-grena" />
+              ) : (
+                <Menu className="w-6 h-6 text-flu-grena" />
+              )}
+            </UniversalTouchTarget>
           </div>
-        </section>
+
+          {/* Mobile Navigation - Touch Optimized */}
+          {mobileMenuOpen && (
+            <div className="md:hidden bg-white border-t shadow-lg">
+              <nav className="container mx-auto px-4 py-4 space-y-2">
+                <UniversalTouchTarget
+                  size="lg"
+                  className="w-full justify-start text-left hover:bg-gray-50"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Link to="/" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    Início
+                  </Link>
+                </UniversalTouchTarget>
+                
+                <UniversalTouchTarget
+                  size="lg"
+                  className="w-full justify-start text-left hover:bg-gray-50"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Link to="/selecionar-modo-jogo" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    Jogar Quiz
+                  </Link>
+                </UniversalTouchTarget>
+                
+                {user && (
+                  <UniversalTouchTarget
+                    size="lg"
+                    className="w-full justify-start text-left hover:bg-gray-50"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <Link to="/meu-perfil-tricolor" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                      Meu Perfil
+                    </Link>
+                  </UniversalTouchTarget>
+                )}
+                
+                <UniversalTouchTarget
+                  size="lg"
+                  className="w-full justify-start text-left hover:bg-gray-50"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Link to="/faq" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    FAQ
+                  </Link>
+                </UniversalTouchTarget>
+                
+                <UniversalTouchTarget
+                  size="lg"
+                  className="w-full justify-start text-left hover:bg-gray-50"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <Link to="/admin/login-administrador" className="w-full text-flu-verde hover:text-flu-grena transition-colors">
+                    Admin
+                  </Link>
+                </UniversalTouchTarget>
+                
+                <div className="pt-2">
+                  <AuthButton />
+                </div>
+              </nav>
+            </div>
+          )}
+        </header>
 
         {/* Responsive Hero Section */}
         <section className="relative py-12 md:py-16 lg:py-20 px-4 bg-gradient-to-br from-flu-grena via-flu-grena/90 to-flu-verde overflow-hidden min-h-[80vh] md:min-h-[90vh] flex items-center">
@@ -355,7 +388,7 @@ export default function Index() {
                   <span className="text-xl md:text-2xl font-bold">Lendas do Flu</span>
                 </div>
                 <p className="text-base md:text-lg opacity-80 max-w-sm mx-auto md:mx-0">
-                  O quiz oficial dos apaixonados pelo Fluminense FC
+                  O quiz oficial dos tricolores. Teste seus conhecimentos sobre as lendas do Fluminense!
                 </p>
               </div>
 

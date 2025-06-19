@@ -1,6 +1,6 @@
 
 import { useState, useRef, useCallback, useEffect, useMemo } from "react";
-import { Player, DifficultyLevel, DifficultyLevelType, GameProgressInfo } from "@/types/guess-game";
+import { Player, DifficultyLevel, GameProgressInfo } from "@/types/guess-game";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 
@@ -147,8 +147,7 @@ export const useAdaptivePlayerSelection = (players: Player[] | undefined) => {
   // Calcular pontuação baseada na dificuldade
   const calculateDifficultyPoints = useCallback((basePontos: number, playerDifficulty?: string): number => {
     if (!playerDifficulty) return basePontos;
-    const difficultyInfo = DIFFICULTY_LEVELS[playerDifficulty];
-    const multiplier = difficultyInfo?.multiplier || 1.0;
+    const multiplier = DIFFICULTY_LEVELS[playerDifficulty]?.multiplier || 1.0;
     return Math.round(basePontos * multiplier);
   }, []);
 

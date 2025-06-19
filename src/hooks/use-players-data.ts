@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Player } from "@/types/guess-game";
 import { convertStatistics } from "@/utils/statistics-converter";
+import { useMemo } from "react";
 
 interface DatabasePlayer {
   id: string;
@@ -17,95 +18,71 @@ interface DatabasePlayer {
 }
 
 export const usePlayersData = () => {
-  console.log("🔄 usePlayersData INICIANDO...");
-
-  const { data: players = [], isLoading, error } = useQuery({
+  const { data: rawPlayers = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
-    queryFn: async (): Promise<Player[]> => {
-      console.log("🔍 usePlayersData - EXECUTANDO QUERY...");
-      
+    queryFn: async (): Promise<DatabasePlayer[]> => {
       try {
+        console.log("🔍 Buscando jogadores no banco...");
+        
         const { data, error } = await supabase
           .from('players')
-          .select('*')
-          .order('name');
-        
-        console.log("🔍 usePlayersData - RESPOSTA DA QUERY:", {
-          dataLength: data?.length || 0,
-          hasError: !!error,
-          error: error?.message || 'nenhum',
-          primeirosItens: data ? data.slice(0, 3).map(p => ({ id: p.id, name: p.name })) : 'N/A'
-        });
+          .select('*');
         
         if (error) {
-          console.error("❌ usePlayersData - ERRO NA QUERY:", error);
+          console.error("❌ Erro ao buscar jogadores:", error);
           throw error;
         }
         
         if (!data || data.length === 0) {
-          console.warn("⚠️ usePlayersData - NENHUM DADO RETORNADO");
+          console.warn("⚠️ Nenhum jogador encontrado no banco");
           return [];
         }
 
-        console.log(`✅ usePlayersData - ${data.length} jogadores RAW encontrados`);
-        
-        const processedPlayers = data
-          .filter((player: DatabasePlayer) => {
-            const isValid = player.id && player.name;
-            if (!isValid) {
-              console.warn('⚠️ Jogador inválido filtrado:', player);
-            }
-            return isValid;
-          })
-          .map((player: DatabasePlayer): Player => {
-            const processed = {
-              id: player.id,
-              name: player.name || 'Jogador Desconhecido',
-              position: player.position || 'Posição não informada',
-              image_url: player.image_url || '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
-              year_highlight: player.year_highlight || '',
-              fun_fact: player.fun_fact || '',
-              achievements: Array.isArray(player.achievements) ? player.achievements : [],
-              nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
-              statistics: convertStatistics(player.statistics)
-            };
-            
-            console.log(`✅ Jogador processado: ${processed.name} (${processed.id})`);
-            return processed;
-          });
-
-        console.log(`✅ usePlayersData - ${processedPlayers.length} jogadores PROCESSADOS`);
-        console.log("✅ usePlayersData - PRIMEIROS 3 PROCESSADOS:", 
-          processedPlayers.slice(0, 3).map(p => ({ 
-            name: p.name, 
-            id: p.id, 
-            image_url: p.image_url?.substring(0, 50) + '...' 
-          }))
-        );
-        
-        return processedPlayers;
-      } catch (error) {
-        console.error("❌ usePlayersData - ERRO GERAL:", error);
-        throw error;
+        console.log("✅ Jogadores carregados do banco:", data.length);
+        return data;
+      } catch (err) {
+        console.error("💥 Exceção ao buscar jogadores:", err);
+        throw err;
       }
     },
     staleTime: 5 * 60 * 1000,
-    retry: 3,
+    retry: (failureCount, error: any) => {
+      // Don't retry on 4xx errors  
+      if (error?.status >= 400 && error?.status < 500) {
+        return false;
+      }
+      return failureCount < 2;
+    },
     refetchOnWindowFocus: false,
   });
 
-  console.log("📊 usePlayersData RESULTADO FINAL:", {
-    playersCount: players?.length || 0,
-    playersType: typeof players,
-    isArray: Array.isArray(players),
-    isLoading,
-    hasError: !!error,
-    primeirosNomes: players?.slice(0, 3).map(p => p.name) || 'N/A'
-  });
+  // Memoize the transformation to prevent unnecessary re-renders
+  const players = useMemo((): Player[] => {
+    if (!rawPlayers || rawPlayers.length === 0) return [];
+
+    return rawPlayers.map((player: DatabasePlayer) => {
+      const enhancedPlayer: Player = {
+        id: player.id,
+        name: player.name || 'Nome não informado',
+        position: player.position || 'Posição não informada',
+        image_url: player.image_url || '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
+        year_highlight: player.year_highlight || '',
+        fun_fact: player.fun_fact || '',
+        achievements: Array.isArray(player.achievements) ? player.achievements : [],
+        nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
+        statistics: convertStatistics(player.statistics)
+      };
+      
+      console.log(`🎯 Jogador processado: ${enhancedPlayer.name} - ${enhancedPlayer.image_url}`);
+      return enhancedPlayer;
+    });
+  }, [rawPlayers]);
+
+  console.log("🔄 Hook usePlayersData - Players:", players?.length || 0, "Loading:", isLoading, "Error:", !!playersError);
 
   return {
-    players: players || [],
+    players,
     isLoading,
-    error
+    playersError
   };
 };

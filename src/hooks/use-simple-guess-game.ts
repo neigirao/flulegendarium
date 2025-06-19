@@ -1,223 +1,251 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Player } from "@/types/guess-game";
+import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
+import { useSimpleGameTimer } from "./use-simple-game-timer";
+import { useTabVisibility } from "./use-tab-visibility";
+import { usePlayerSelection } from "./use-player-selection";
+import { useGameSession } from "./use-game-session";
+import { useGameScore } from "./use-game-score";
+import { useSimpleGameLogic } from "./use-simple-game-logic";
 import { useAuth } from "./useAuth";
-import { isCorrectGuess } from "@/utils/name-processor";
+import { saveGameHistory } from "@/services/gameHistoryService";
 
 export const MAX_ATTEMPTS = 1;
-export const TIME_LIMIT_SECONDS = 60;
+export const TIME_LIMIT_SECONDS = 30;
 
-export const useSimpleGuessGame = (players: Player[]) => {
-  console.log("🎮 useSimpleGuessGame iniciando com jogadores:", players?.length || 0);
-
+export const useSimpleGuessGame = (players: Player[] | undefined) => {
   const { toast } = useToast();
   const { user } = useAuth();
   
-  // Estados principais
-  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const [usedPlayerIds, setUsedPlayerIds] = useState<Set<string>>(new Set());
+  console.log('🎮 useSimpleGuessGame hook inicializado:', {
+    playersCount: players?.length || 0,
+    hasUser: !!user
+  });
+
+  // Game state
   const [gameOver, setGameOver] = useState(false);
   const [hasLost, setHasLost] = useState(false);
   const [gameActive, setGameActive] = useState(false);
-  const [score, setScore] = useState(0);
-  const [currentStreak, setCurrentStreak] = useState(0);
-  const [gamesPlayed, setGamesPlayed] = useState(0);
-  const [isProcessingGuess, setIsProcessingGuess] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [gameKey, setGameKey] = useState(Date.now());
+  const [attempts, setAttempts] = useState<string[]>([]);
 
-  // Timer
-  const timerRef = useRef<number | null>(null);
+  // Game progress and difficulty
+  const [gameProgress, setGameProgress] = useState<GameProgressInfo>({
+    currentRound: 1,
+    currentStreak: 0,
+    allowedDifficulties: ['facil'],
+    nextDifficultyThreshold: 5
+  });
+  
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>('facil');
 
-  // Seleção de jogador aleatório
-  const selectRandomPlayer = useCallback(() => {
-    if (!players || players.length === 0) {
-      console.warn('⚠️ Nenhum jogador disponível para seleção');
+  // Composed hooks
+  const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed, playerChangeCount } = usePlayerSelection(players);
+  const { sessionId, registerGameStart, resetSession } = useGameSession();
+  const { score, currentStreak, gamesPlayed, maxStreak, addScore, resetStreak, resetAll } = useGameScore();
+
+  console.log('🔍 Estado atual do jogo:', {
+    currentPlayerName: currentPlayer?.name || 'null',
+    gameActive,
+    gameOver,
+    score,
+    playerChangeCount
+  });
+
+  // Game metrics for saving
+  const gameStartTimeRef = useRef<number | null>(null);
+  const totalAttemptsRef = useRef(0);
+  const correctGuessesRef = useRef(0);
+
+  // Save game history when game ends
+  const saveGameData = useCallback(async (finalScore: number, isCorrect: boolean = false) => {
+    if (!user?.id || !gameStartTimeRef.current) {
+      console.log('⚠️ Cannot save game data - missing user or start time');
       return;
     }
-
-    console.log('🎲 Selecionando jogador aleatório...', {
-      totalPlayers: players.length,
-      usedPlayers: usedPlayerIds.size
-    });
-
-    // Se todos foram usados, limpar a lista
-    let availablePlayers = players.filter(p => !usedPlayerIds.has(p.id));
-    
-    if (availablePlayers.length === 0) {
-      console.log('🔄 Resetando jogadores usados');
-      setUsedPlayerIds(new Set());
-      availablePlayers = players;
-    }
-
-    // Selecionar aleatoriamente
-    const randomIndex = Math.floor(Math.random() * availablePlayers.length);
-    const selectedPlayer = availablePlayers[randomIndex];
-
-    console.log('✅ Jogador selecionado:', selectedPlayer.name);
-
-    // Marcar como usado e definir como atual
-    setUsedPlayerIds(prev => new Set([...prev, selectedPlayer.id]));
-    setCurrentPlayer(selectedPlayer);
-    
-    // Resetar estados do jogo para novo jogador
-    setGameOver(false);
-    setHasLost(false);
-    setGameActive(true);
-    startTimer();
-  }, [players, usedPlayerIds]);
-
-  // Timer functions
-  const startTimer = useCallback(() => {
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-    }
-    
-    setTimeRemaining(TIME_LIMIT_SECONDS);
-    setIsTimerRunning(true);
-    
-    timerRef.current = window.setInterval(() => {
-      setTimeRemaining(prev => {
-        if (prev <= 1) {
-          setGameOver(true);
-          setHasLost(true);
-          setGameActive(false);
-          setIsTimerRunning(false);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  }, []);
-
-  const stopTimer = useCallback(() => {
-    if (timerRef.current) {
-      window.clearInterval(timerRef.current);
-      timerRef.current = null;
-    }
-    setIsTimerRunning(false);
-  }, []);
-
-  // Processar palpite
-  const handleGuess = useCallback(async (guess: string) => {
-    if (!currentPlayer || !guess.trim() || isProcessingGuess || gameOver) {
-      return;
-    }
-
-    console.log('🎮 Processando palpite:', guess, 'para:', currentPlayer.name);
-    setIsProcessingGuess(true);
 
     try {
-      const isCorrect = isCorrectGuess(guess, currentPlayer.name);
-      
-      if (isCorrect) {
-        console.log('🎯 ACERTOU!');
-        const points = 5;
-        
-        stopTimer();
-        setScore(prev => prev + points);
-        setCurrentStreak(prev => prev + 1);
-        setGamesPlayed(prev => prev + 1);
-        
-        toast({
-          title: "Parabéns!",
-          description: `Você acertou! +${points} pontos`,
-        });
-        
-        // Próximo jogador após delay
-        setTimeout(() => {
-          selectRandomPlayer();
-          setIsProcessingGuess(false);
-        }, 1500);
-        
-      } else {
-        console.log('❌ ERROU!');
-        
-        stopTimer();
-        setGameOver(true);
-        setHasLost(true);
-        setGameActive(false);
-        setCurrentStreak(0);
-        
-        toast({
-          variant: "destructive",
-          title: "Game Over!",
-          description: `O jogador era ${currentPlayer.name}.`,
-        });
-        
-        setIsProcessingGuess(false);
-      }
-    } catch (error) {
-      console.error("Erro ao processar palpite:", error);
-      setIsProcessingGuess(false);
-    }
-  }, [currentPlayer, isProcessingGuess, gameOver, toast, stopTimer, selectRandomPlayer]);
+      const gameDuration = Math.floor((Date.now() - gameStartTimeRef.current) / 1000);
+      const attempts = totalAttemptsRef.current + (isCorrect ? 1 : 0);
+      const correct = correctGuessesRef.current + (isCorrect ? 1 : 0);
 
-  // Iniciar jogo
-  const startGameForPlayer = useCallback(() => {
+      console.log('💾 Saving game history:', {
+        userId: user.id,
+        score: finalScore,
+        correct_guesses: correct,
+        total_attempts: attempts,
+        game_duration: gameDuration
+      });
+
+      await saveGameHistory({
+        user_id: user.id,
+        score: finalScore,
+        correct_guesses: correct,
+        total_attempts: attempts,
+        game_duration: gameDuration
+      });
+
+    } catch (error) {
+      console.error('❌ Error saving game history:', error);
+    }
+  }, [user]);
+
+  // Handle time up callback
+  const handleTimeUp = useCallback(() => {
+    if (!gameOver && currentPlayer && gameActive) {
+      console.log('⏰ Tempo esgotado para:', currentPlayer.name);
+      setGameOver(true);
+      setHasLost(true);
+      setGameActive(false);
+      resetStreak();
+      
+      saveGameData(score, false);
+      
+      toast({
+        variant: "destructive",
+        title: "Tempo esgotado!",
+        description: `O jogador era ${currentPlayer.name}. Pontuação final: ${score}`,
+      });
+    }
+  }, [currentPlayer, gameOver, score, toast, gameActive, resetStreak, saveGameData]);
+
+  // Handle tab change callback
+  const handleTabChange = useCallback(() => {
+    if (gameActive && !gameOver) {
+      setGameOver(true);
+      setHasLost(true);
+      setGameActive(false);
+      resetStreak();
+      saveGameData(score, false);
+    }
+  }, [gameActive, gameOver, resetStreak, saveGameData, score]);
+  
+  // Tab visibility hook
+  useTabVisibility({ 
+    onTabChange: handleTabChange, 
+    isGameActive: gameActive 
+  });
+  
+  // Game timer hook
+  const { timeRemaining, isRunning, startTimer, stopTimer } = useSimpleGameTimer(handleTimeUp);
+
+  // Game logic hook with enhanced callbacks
+  const { handleGuess, isProcessing } = useSimpleGameLogic({
+    currentPlayer,
+    onCorrectGuess: (points: number) => {
+      console.log('✅ Resposta correta! Adicionando pontos:', points);
+      correctGuessesRef.current += 1;
+      totalAttemptsRef.current += 1;
+      addScore(points);
+      
+      // Update game progress
+      setGameProgress(prev => ({
+        ...prev,
+        currentRound: prev.currentRound + 1,
+        currentStreak: prev.currentStreak + 1
+      }));
+      
+      saveGameData(score + points, true);
+    },
+    onIncorrectGuess: (guess: string) => {
+      console.log('❌ Resposta incorreta');
+      totalAttemptsRef.current += 1;
+      resetStreak();
+      
+      setGameOver(true);
+      setHasLost(true);
+      setGameActive(false);
+      saveGameData(score, false);
+    },
+    onNextPlayer: selectRandomPlayer
+  });
+
+  // Start timer when a new player is selected and game is not over
+  const startGameForPlayer = useCallback(async () => {
     if (currentPlayer && !gameOver) {
-      console.log('🎮 Iniciando jogo para:', currentPlayer.name);
+      console.log('🎮 Iniciando timer para:', currentPlayer.name);
       setGameOver(false);
       setHasLost(false);
       setGameActive(true);
-      startTimer();
-    }
-  }, [currentPlayer, gameOver, startTimer]);
-
-  // Reset score
-  const resetScore = useCallback(() => {
-    setScore(0);
-    setCurrentStreak(0);
-    setGamesPlayed(0);
-    setGameActive(false);
-    stopTimer();
-  }, [stopTimer]);
-
-  // Selecionar primeiro jogador quando disponível
-  useEffect(() => {
-    if (players && players.length > 0 && !currentPlayer) {
-      console.log('🚀 Primeira seleção de jogador, total disponível:', players.length);
-      selectRandomPlayer();
-    }
-  }, [players, currentPlayer, selectRandomPlayer]);
-
-  // Cleanup timer
-  useEffect(() => {
-    return () => {
-      if (timerRef.current) {
-        window.clearInterval(timerRef.current);
+      setAttempts([]);
+      
+      // Start game metrics tracking
+      gameStartTimeRef.current = Date.now();
+      totalAttemptsRef.current = 0;
+      correctGuessesRef.current = 0;
+      
+      // Register game start
+      if (!sessionId) {
+        await registerGameStart();
       }
-    };
-  }, []);
+      
+      // Start timer
+      setTimeout(() => {
+        if (!isRunning) {
+          startTimer();
+        }
+      }, 100);
+    }
+  }, [currentPlayer, gameOver, isRunning, startTimer, sessionId, registerGameStart]);
 
-  console.log("🎮 useSimpleGuessGame resultado:", {
-    hasCurrentPlayer: !!currentPlayer,
-    currentPlayerName: currentPlayer?.name || 'null',
-    playersCount: players?.length || 0
-  });
+  // Start game when player is selected
+  useEffect(() => {
+    if (currentPlayer && !gameActive && !gameOver) {
+      console.log('🔄 Novo jogador detectado, iniciando jogo:', currentPlayer.name);
+      startGameForPlayer();
+    }
+  }, [currentPlayer, gameActive, gameOver, startGameForPlayer]);
+
+  // Force refresh function
+  const forceRefresh = useCallback(() => {
+    console.log('🔄 Force refresh - selecionando novo jogador');
+    setGameKey(Date.now());
+    selectRandomPlayer();
+  }, [selectRandomPlayer]);
+
+  // Reset score function
+  const resetScore = useCallback(() => {
+    console.log('🎯 Resetando pontuação');
+    resetAll();
+    setGameActive(false);
+    resetSession();
+    setGameProgress({
+      currentRound: 1,
+      currentStreak: 0,
+      allowedDifficulties: ['facil'],
+      nextDifficultyThreshold: 5
+    });
+    
+    // Reset game metrics
+    gameStartTimeRef.current = null;
+    totalAttemptsRef.current = 0;
+    correctGuessesRef.current = 0;
+  }, [resetAll, resetSession]);
 
   return {
     currentPlayer,
-    gameKey: Date.now(),
-    attempts: [],
+    gameKey,
+    gameProgress,
+    currentDifficulty,
+    attempts,
     score,
     gameOver,
     timeRemaining,
     MAX_ATTEMPTS,
     handleGuess,
     selectRandomPlayer,
-    forceRefresh: selectRandomPlayer,
-    handlePlayerImageFixed: () => {},
-    isProcessingGuess,
+    forceRefresh,
+    handlePlayerImageFixed,
+    isProcessingGuess: isProcessing,
     TIME_LIMIT_SECONDS,
     hasLost,
     startGameForPlayer,
-    isTimerRunning,
+    isTimerRunning: isRunning,
     resetScore,
     gamesPlayed,
     currentStreak,
-    maxStreak: Math.max(currentStreak, 0),
-    playerChangeCount: usedPlayerIds.size
+    maxStreak,
+    playerChangeCount
   };
 };

@@ -1,6 +1,6 @@
 
 import { GameStatus } from "./GameStatus";
-import { RobustPlayerImage } from "./RobustPlayerImage";
+import { FastPlayerImage } from "./FastPlayerImage";
 import { GuessForm } from "./GuessForm";
 import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
 import { DifficultyIndicator } from "./DifficultyIndicator";
@@ -52,36 +52,26 @@ export const GameContainer = ({
   gameProgress,
   currentDifficulty
 }: GameContainerProps) => {
-  console.log('🎮 GameContainer RENDER - DADOS RECEBIDOS:', {
+  console.log('🎮 GameContainer render:', {
     hasCurrentPlayer: !!currentPlayer,
     playerName: currentPlayer?.name || 'null',
-    playerId: currentPlayer?.id || 'null',
-    playerImageUrl: currentPlayer?.image_url || 'null',
     gameKey,
-    changeCount: playerChangeCount,
-    timestamp: new Date().toISOString()
+    changeCount: playerChangeCount
   });
 
   if (!currentPlayer) {
-    console.log('⚠️ GameContainer - SEM JOGADOR ATUAL - mostrando loading');
     return (
       <div className="text-center py-8">
         <div className="mb-4">
           <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
-        <p className="text-gray-600 mb-4">Preparando próximo jogador...</p>
-        <p className="text-sm text-gray-500">
-          Aguarde enquanto selecionamos um jogador para você
-        </p>
+        <p className="text-gray-600 mb-4">Carregando jogador...</p>
         
         {/* Debug button for development */}
         {process.env.NODE_ENV === 'development' && (
           <div className="mt-4">
             <button
-              onClick={() => {
-                console.log('🔧 Force Refresh clicado');
-                forceRefresh();
-              }}
+              onClick={forceRefresh}
               className="px-4 py-2 bg-flu-grena text-white rounded hover:bg-red-700"
             >
               Force Refresh
@@ -95,10 +85,19 @@ export const GameContainer = ({
     );
   }
 
-  console.log('✅ GameContainer - JOGADOR VÁLIDO - renderizando jogo completo');
-
   return (
     <div className="max-w-2xl mx-auto">
+      {/* Indicador de Dificuldade */}
+      {gameProgress && currentDifficulty && (
+        <div className="mb-6 flex justify-center">
+          <DifficultyIndicator 
+            currentDifficulty={currentDifficulty}
+            gameProgress={gameProgress}
+            className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm"
+          />
+        </div>
+      )}
+
       {/* Status do Jogo */}
       <GameStatus
         score={score}
@@ -113,10 +112,10 @@ export const GameContainer = ({
         onNextPlayer={selectRandomPlayer}
       />
 
-      {/* Imagem do Jogador - Nova versão robusta */}
+      {/* Imagem do Jogador */}
       <div className="mb-8">
-        <RobustPlayerImage
-          key={`robust-${currentPlayer.id}-${gameKey}`}
+        <FastPlayerImage
+          key={`${currentPlayer.id}-${gameKey}`}
           player={currentPlayer}
           onImageLoaded={handlePlayerImageFixed}
         />
@@ -137,19 +136,13 @@ export const GameContainer = ({
           <h4 className="font-semibold mb-2">Debug Controls</h4>
           <div className="flex gap-2 mb-2">
             <button
-              onClick={() => {
-                console.log('🔧 Próximo Jogador clicado');
-                selectRandomPlayer();
-              }}
+              onClick={selectRandomPlayer}
               className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
             >
               Próximo Jogador
             </button>
             <button
-              onClick={() => {
-                console.log('🔧 Refresh clicado');
-                forceRefresh();
-              }}
+              onClick={forceRefresh}
               className="px-3 py-1 bg-green-500 text-white rounded text-sm"
             >
               Refresh
@@ -157,12 +150,10 @@ export const GameContainer = ({
           </div>
           <div className="text-xs text-gray-600">
             <p>Player: {currentPlayer.name}</p>
-            <p>ID: {currentPlayer.id}</p>
+            <p>Difficulty: {currentPlayer.difficulty_level || 'N/A'}</p>
             <p>Game Key: {gameKey}</p>
             <p>Changes: {playerChangeCount}</p>
             <p>Image URL: {currentPlayer.image_url}</p>
-            <p>Timer Running: {isTimerRunning ? 'SIM' : 'NÃO'}</p>
-            <p>Game Over: {gameOver ? 'SIM' : 'NÃO'}</p>
           </div>
         </div>
       )}

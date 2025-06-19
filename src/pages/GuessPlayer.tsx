@@ -1,57 +1,60 @@
-
-import React from "react";
-import { Link } from "react-router-dom";
-import { Loader as GameLoader } from "lucide-react";
-
-import { AuthButton } from "@/components/auth/AuthButton";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
+import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
 import { GuestNameForm } from "@/components/guess-game/GuestNameForm";
+import { useSimpleGuessGame } from "@/hooks/use-simple-guess-game";
+import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import { RootLayout } from "@/components/RootLayout";
 import { Loader } from "@/components/guess-game/Loader";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { EmptyPlayersDisplay } from "@/components/guess-game/EmptyPlayersDisplay";
+import { GameHeader } from "@/components/guess-game/GameHeader";
 import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { GameContainer } from "@/components/guess-game/GameContainer";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { SEOHead } from "@/components/SEOHead";
-import { useAdaptivePlayerSelection } from "@/hooks/use-adaptive-player-selection";
-import { useAuth } from "@/hooks/useAuth";
-import { useAnalytics } from "@/hooks/use-analytics";
 import { useDebug } from "@/hooks/use-debug";
 import { usePlayersData } from "@/hooks/use-players-data";
 import { usePlayerPreload } from "@/hooks/use-player-preload";
 import { useGameState } from "@/hooks/use-game-state";
-import { useEffect } from "react";
+import { useObservability } from "@/hooks/use-observability";
+import { useGameMetrics } from "@/hooks/use-game-metrics";
 
 const GuessPlayer = () => {
   const { user } = useAuth();
-  const { trackGameStart, trackGameEnd, trackPageView, trackEvent } = useAnalytics();
+  const [showAuthSelection, setShowAuthSelection] = useState(true);
   const { showImageUrl, handleDebugClick } = useDebug();
+  const { trackError, log } = useObservability();
+  const { trackGameAbandonment, trackConversion } = useGameMetrics();
   
-  // Load players data first - fix the property name here
-  const { players, isLoading, error } = usePlayersData();
+  const { players, isLoading, playersError } = usePlayersData();
 
-  // Track page view
-  useEffect(() => {
-    trackPageView('/jogar-quiz-fluminense');
-  }, [trackPageView]);
-
-  // Now use the enhanced game hook with the loaded players
+  // Enhanced game hook with adaptive difficulty
   const {
     currentPlayer,
     gameKey,
     gameProgress,
     currentDifficulty,
+    attempts,
+    score,
+    gameOver,
+    timeRemaining,
+    MAX_ATTEMPTS,
+    handleGuess,
     selectRandomPlayer,
     forceRefresh,
     handlePlayerImageFixed,
-    calculateDifficultyPoints,
-    resetProgress,
+    isProcessingGuess,
+    hasLost,
+    startGameForPlayer,
+    isTimerRunning,
+    resetScore,
+    gamesPlayed,
+    currentStreak,
+    maxStreak,
     playerChangeCount,
-    savePlayerDifficultyStats
-  } = useAdaptivePlayerSelection(players);
+    TIME_LIMIT_SECONDS
+  } = useSimpleGuessGame(players);
 
-  // Manage game state
   const {
     showGameOverDialog,
     showTutorial,
@@ -59,186 +62,181 @@ const GuessPlayer = () => {
     isAuthenticatedGame,
     showGuestNameForm,
     guestPlayerName,
+    setIsAuthenticatedGame,
+    setGameStarted,
     handleGameOverClose,
     handleTutorialComplete,
     handleSkipTutorial,
     handleGuestNameSubmitted,
     handleGuestNameCancel
-  } = useGameState({ hasLost: false });
+  } = useGameState({ hasLost });
 
-  // Preload next players
   usePlayerPreload(players, currentPlayer);
 
-  const onTutorialComplete = () => {
+  // Enhanced error handling
+  useEffect(() => {
+    if (playersError) {
+      trackError(playersError as Error, {
+        severity: 'critical',
+        component: 'GuessPlayer',
+        action: 'loadPlayers'
+      });
+    }
+  }, [playersError, trackError]);
+
+  // Track page navigation
+  useEffect(() => {
+    log('info', 'GuessPlayer page loaded', {
+      hasUser: !!user,
+      playersCount: players?.length || 0,
+      gameStarted,
+      adaptiveDifficultyEnabled: true
+    });
+  }, [log, user, players, gameStarted]);
+
+  const handleTutorialCompleteLocal = () => {
+    log('info', 'Tutorial completed', { hasUser: !!user });
     handleTutorialComplete(user);
-    trackGameStart('authenticated_game');
   };
 
-  const onSkipTutorial = () => {
+  const handleSkipTutorialLocal = () => {
+    log('info', 'Tutorial skipped', { hasUser: !!user });
     handleSkipTutorial(user);
-    trackGameStart('guest_game');
   };
 
-  // Loading state
+  const handleGuestPlay = () => {
+    log('info', 'Guest play selected');
+    setShowAuthSelection(false);
+    setGameStarted(true);
+    setIsAuthenticatedGame(false);
+  };
+
+  const handleAuthenticatedPlay = () => {
+    log('info', 'Authenticated play selected', { userId: user?.id });
+    trackConversion(false, 'login');
+    setShowAuthSelection(false);
+    setGameStarted(true);
+    setIsAuthenticatedGame(true);
+  };
+
+  // Track game abandonment on unmount
+  useEffect(() => {
+    return () => {
+      if (gameStarted && !gameOver) {
+        trackGameAbandonment(
+          {
+            sessionId: `session_${Date.now()}`,
+            startTime: Date.now(),
+            isAuthenticated: isAuthenticatedGame,
+            playerName: guestPlayerName
+          },
+          'gameplay'
+        );
+      }
+    };
+  }, [gameStarted, gameOver, isAuthenticatedGame, guestPlayerName, trackGameAbandonment]);
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <GameLoader />
+      <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4 flex items-center justify-center">
+        <Loader />
       </div>
     );
   }
 
-  // Error state - using 'error' instead of 'playersError'
-  if (error) {
-    return <ErrorDisplay error={error} />;
+  if (playersError) {
+    return <ErrorDisplay error={playersError} />;
   }
 
-  // Empty players state
   if (!players || players.length === 0) {
     return <EmptyPlayersDisplay />;
   }
 
-  console.log('🎮 GuessPlayer render - Current Player:', currentPlayer?.name || 'Nenhum', 'GameKey:', gameKey);
-  console.log('🎮 GuessPlayer render - Players loaded:', players?.length || 0);
+  console.log('🎮 GuessPlayer Render:', {
+    playerName: currentPlayer?.name,
+    difficulty: currentPlayer?.difficulty_level,
+    gameKey,
+    gameStarted,
+    changeCount: playerChangeCount,
+    guestPlayerName,
+    currentProgress: gameProgress
+  });
 
   return (
-    <>
-      <SEOHead 
-        title="Jogar Quiz Fluminense - Adivinhe os Jogadores | Lendas do Flu"
-        description="🎮 Jogue agora o quiz oficial do Fluminense! Adivinhe os jogadores pelas fotos, ganhe pontos e entre no ranking tricolor. Desafio gratuito!"
-        keywords="jogar quiz fluminense, adivinhar jogador fluminense, jogo tricolor, quiz futebol online, teste fluminense grátis"
-        url="https://flulegendarium.lovable.app/jogar-quiz-fluminense"
-        canonical="https://flulegendarium.lovable.app/jogar-quiz-fluminense"
-      />
-      <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white">
-        {/* Header */}
-        <header className="bg-white/90 backdrop-blur-sm shadow-sm py-4 sticky top-0 z-50">
-          <div className="container mx-auto px-4 flex items-center justify-between">
-            <Link to="/" className="flex items-center gap-3">
-              <img 
-                src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                alt="Escudo Fluminense FC" 
-                className="w-8 h-8 object-contain"
-              />
-              <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
-            </Link>
-            <nav className="flex items-center space-x-6">
-              <Link 
-                to="/" 
-                className="text-flu-verde hover:text-flu-grena transition-colors"
-                onClick={() => trackEvent({
-                  action: 'navigation_click',
-                  category: 'Navigation',
-                  label: 'home_from_game'
-                })}
-              >
-                Início
-              </Link>
-              <Link 
-                to="/selecionar-modo-jogo" 
-                className="text-flu-verde hover:text-flu-grena transition-colors"
-                onClick={() => trackEvent({
-                  action: 'navigation_click',
-                  category: 'Navigation',
-                  label: 'select_mode_from_game'
-                })}
-              >
-                Jogar
-              </Link>
-              {user && (
-                <Link 
-                  to="/meu-perfil-tricolor" 
-                  className="text-flu-verde hover:text-flu-grena transition-colors"
-                  onClick={() => trackEvent({
-                    action: 'navigation_click',
-                    category: 'Navigation',
-                    label: 'profile_from_game'
-                  })}
-                >
-                  Meu Perfil
-                </Link>
-              )}
-              <Link 
-                to="/admin/login-administrador" 
-                className="text-flu-verde hover:text-flu-grena transition-colors"
-                onClick={() => trackEvent({
-                  action: 'navigation_click',
-                  category: 'Navigation',
-                  label: 'admin_from_game'
-                })}
-              >
-                Admin
-              </Link>
-              <AuthButton />
-            </nav>
-          </div>
-        </header>
+    <RootLayout>
+      <div className="min-h-screen bg-gradient-to-b from-flu-verde to-white p-4">
+        <div className="container mx-auto max-w-4xl">
+          <GameHeader 
+            score={score} 
+            onDebugClick={handleDebugClick} 
+          />
 
-        {/* Game Content */}
-        <div className="py-8 px-4">
-          <div className="container mx-auto max-w-4xl">
-            <Breadcrumbs className="mb-6" />
-            
-            <DebugInfo 
-              show={showImageUrl} 
-              imageUrl={currentPlayer?.image_url} 
+          <DebugInfo 
+            show={showImageUrl} 
+            imageUrl={currentPlayer?.image_url} 
+          />
+
+          {gameStarted && (
+            <GameContainer
+              currentPlayer={currentPlayer}
+              gameKey={gameKey.toString()}
+              attempts={attempts.length}
+              score={score}
+              gameOver={gameOver}
+              timeRemaining={timeRemaining}
+              MAX_ATTEMPTS={MAX_ATTEMPTS}
+              handleGuess={handleGuess}
+              selectRandomPlayer={selectRandomPlayer}
+              handlePlayerImageFixed={handlePlayerImageFixed}
+              isProcessingGuess={isProcessingGuess}
+              hasLost={hasLost}
+              startGameForPlayer={startGameForPlayer}
+              isTimerRunning={isTimerRunning}
+              gamesPlayed={gamesPlayed}
+              currentStreak={currentStreak}
+              maxStreak={maxStreak}
+              forceRefresh={forceRefresh}
+              playerChangeCount={playerChangeCount}
+              gameProgress={gameProgress}
+              currentDifficulty={currentDifficulty}
             />
+          )}
 
-            {gameStarted && (
-              <GameContainer
-                currentPlayer={currentPlayer}
-                gameKey={gameKey.toString()}
-                attempts={0}
-                score={0}
-                gameOver={false}
-                timeRemaining={60}
-                MAX_ATTEMPTS={1}
-                handleGuess={() => {}}
-                selectRandomPlayer={selectRandomPlayer}
-                handlePlayerImageFixed={handlePlayerImageFixed}
-                isProcessingGuess={false}
-                hasLost={false}
-                startGameForPlayer={() => {}}
-                isTimerRunning={false}
-                gamesPlayed={0}
-                currentStreak={0}
-                maxStreak={0}
-                forceRefresh={forceRefresh}
-                playerChangeCount={playerChangeCount}
-                gameProgress={gameProgress}
-                currentDifficulty={currentDifficulty}
-              />
-            )}
-          </div>
+          {showAuthSelection && !gameStarted && (
+            <GameAuthSelection
+              onGuestPlay={handleGuestPlay}
+              onAuthenticatedPlay={handleAuthenticatedPlay}
+            />
+          )}
         </div>
-
-        {showTutorial && (
-          <GameTutorial
-            onComplete={onTutorialComplete}
-            onSkip={onSkipTutorial}
-          />
-        )}
-
-        {showGuestNameForm && (
-          <GuestNameForm
-            onNameSubmitted={handleGuestNameSubmitted}
-            onCancel={handleGuestNameCancel}
-          />
-        )}
-
-        {currentPlayer && gameStarted && (
-          <GameOverDialog
-            open={showGameOverDialog}
-            onClose={() => handleGameOverClose(selectRandomPlayer)}
-            playerName={currentPlayer.name}
-            score={0}
-            onResetScore={() => {}}
-            isAuthenticated={isAuthenticatedGame}
-            guestPlayerName={guestPlayerName}
-          />
-        )}
       </div>
-    </>
+
+      {showTutorial && (
+        <GameTutorial
+          onComplete={handleTutorialCompleteLocal}
+          onSkip={handleSkipTutorialLocal}
+        />
+      )}
+
+      {showGuestNameForm && (
+        <GuestNameForm
+          onNameSubmitted={handleGuestNameSubmitted}
+          onCancel={handleGuestNameCancel}
+        />
+      )}
+
+      {currentPlayer && gameStarted && (
+        <GameOverDialog
+          open={showGameOverDialog}
+          onClose={() => handleGameOverClose(selectRandomPlayer)}
+          playerName={currentPlayer.name}
+          score={score}
+          onResetScore={resetScore}
+          isAuthenticated={isAuthenticatedGame}
+          guestPlayerName={guestPlayerName}
+        />
+      )}
+    </RootLayout>
   );
 };
 
