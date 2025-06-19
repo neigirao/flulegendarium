@@ -205,7 +205,8 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     try {
       console.log(`🤔 Processando palpite adaptativo: "${guess}" para ${currentPlayer.name}`);
       
-      const isCorrect = processPlayerName(guess, currentPlayer.name, currentPlayer.nicknames || []);
+      const result = await processPlayerName(guess, currentPlayer.name, currentPlayer.id);
+      const isCorrect = result.processedName !== null && result.confidence > 0.7;
       
       if (isCorrect) {
         const pointsEarned = Math.round(5 * currentDifficulty.multiplier);
