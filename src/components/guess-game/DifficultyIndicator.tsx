@@ -5,6 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
+// Define difficulty levels mapping
+const DIFFICULTY_LEVELS: Record<string, DifficultyLevel> = {
+  muito_facil: { level: 'muito_facil', label: 'Muito Fácil', color: 'text-green-600', icon: '⭐', multiplier: 1.0 },
+  facil: { level: 'facil', label: 'Fácil', color: 'text-blue-600', icon: '⭐⭐', multiplier: 1.2 },
+  medio: { level: 'medio', label: 'Médio', color: 'text-yellow-600', icon: '⭐⭐⭐', multiplier: 1.5 },
+  dificil: { level: 'dificil', label: 'Difícil', color: 'text-orange-600', icon: '⭐⭐⭐⭐', multiplier: 2.0 },
+  muito_dificil: { level: 'muito_dificil', label: 'Muito Difícil', color: 'text-red-600', icon: '⭐⭐⭐⭐⭐', multiplier: 3.0 }
+};
+
 interface DifficultyIndicatorProps {
   currentDifficulty: DifficultyLevel | null;
   gameProgress: GameProgressInfo;

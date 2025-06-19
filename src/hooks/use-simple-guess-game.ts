@@ -1,7 +1,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Player, GameProgressInfo, DifficultyLevel } from "@/types/guess-game";
+import { Player, GameProgressInfo, DifficultyLevelType } from "@/types/guess-game";
 import { useSimpleGameTimer } from "./use-simple-game-timer";
 import { useTabVisibility } from "./use-tab-visibility";
 import { usePlayerSelection } from "./use-player-selection";
@@ -38,7 +38,7 @@ export const useSimpleGuessGame = (players: Player[] | undefined) => {
     nextDifficultyThreshold: 5
   });
   
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>('facil');
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelType>('facil');
 
   // Composed hooks
   const { currentPlayer, selectRandomPlayer, handlePlayerImageFixed, playerChangeCount } = usePlayerSelection(players);
