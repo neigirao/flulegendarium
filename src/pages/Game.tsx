@@ -129,7 +129,7 @@ const Game = () => {
           gameStarted={gameStarted}
           showImageUrl={showImageUrl}
           currentPlayer={currentPlayer}
-          gameKey={gameKey}
+          gameKey={gameKey.toString()}
           attempts={attempts.length}
           score={score}
           gameOver={gameOver}
