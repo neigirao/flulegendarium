@@ -104,7 +104,7 @@ const AdaptiveGameContainer = () => {
               key={`${gameKey}-${currentPlayer.id}`}
               player={currentPlayer}
               onImageFixed={handlePlayerImageFixed}
-              difficulty={currentDifficulty}
+              difficulty={currentDifficulty.level}
             />
             
             <GuessForm
