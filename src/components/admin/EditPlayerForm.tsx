@@ -64,16 +64,16 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
 
     setIsLoading(true);
     
-    console.log('💾 === INICIANDO ATUALIZAÇÃO ===');
+    console.log('💾 === INICIANDO ATUALIZAÇÃO SIMPLIFICADA ===');
     console.log('  - ID do jogador:', player.id);
     console.log('  - Nome do jogador:', name);
-    console.log('  - Dificuldade atual no state:', difficultyLevel);
-    console.log('  - Tipo da dificuldade no state:', typeof difficultyLevel);
+    console.log('  - Dificuldade que será enviada:', difficultyLevel);
+    console.log('  - Tipo da dificuldade:', typeof difficultyLevel);
 
     try {
       let finalImageUrl = imageUrl;
 
-      // Se for upload de arquivo, fazer upload para o storage
+      // Upload de imagem se necessário
       if (uploadMethod === 'file' && image) {
         const fileExt = image.name.split('.').pop();
         const fileName = `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.${fileExt}`;
@@ -102,7 +102,7 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
         .map(ach => ach.trim())
         .filter(ach => ach.length > 0);
 
-      // Preparar dados para atualização - FOCO ESPECIAL NA DIFICULDADE
+      // Preparar dados para atualização
       const updateData = {
         name: name.trim(),
         image_url: finalImageUrl,
@@ -112,32 +112,14 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
         fun_fact: funFact.trim(),
         achievements: achievementsArray,
         statistics: { gols, jogos },
-        difficulty_level: difficultyLevel // GARANTIR QUE ESTÁ SENDO ENVIADO
+        difficulty_level: difficultyLevel
       };
 
       console.log('📊 === DADOS PARA ATUALIZAÇÃO ===');
       console.log('  - Dados completos:', JSON.stringify(updateData, null, 2));
-      console.log('  - Dificuldade específica que será enviada:', updateData.difficulty_level);
-      console.log('  - Tipo da dificuldade que será enviada:', typeof updateData.difficulty_level);
 
-      // VERIFICAR SE O JOGADOR EXISTE ANTES DE ATUALIZAR
-      const { data: existingPlayer, error: fetchError } = await supabase
-        .from('players')
-        .select('id, name, difficulty_level')
-        .eq('id', player.id)
-        .single();
-
-      if (fetchError) {
-        console.error('❌ Erro ao buscar jogador existente:', fetchError);
-        throw fetchError;
-      }
-
-      console.log('🔍 === VERIFICAÇÃO PRÉ-ATUALIZAÇÃO ===');
-      console.log('  - Jogador encontrado:', existingPlayer);
-      console.log('  - Dificuldade atual no banco:', existingPlayer.difficulty_level);
-
-      // Executar atualização no banco - ESTRATÉGIA DUPLA PARA GARANTIR SUCESSO
-      console.log('💾 === EXECUTANDO UPDATE PRINCIPAL ===');
+      // Primeira tentativa: UPDATE normal
+      console.log('💾 === TENTATIVA 1: UPDATE NORMAL ===');
       const { error: updateError, data: updatedData } = await supabase
         .from('players')
         .update(updateData)
@@ -145,74 +127,19 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
         .select('*');
 
       if (updateError) {
-        console.error('❌ === ERRO NA ATUALIZAÇÃO PRINCIPAL ===');
-        console.error('  - Erro completo:', updateError);
-        console.error('  - Mensagem do erro:', updateError.message);
-        console.error('  - Código do erro:', updateError.code);
+        console.error('❌ Erro no update normal:', updateError);
         throw updateError;
       }
 
-      console.log('✅ === ATUALIZAÇÃO PRINCIPAL CONCLUÍDA ===');
-      console.log('  - Resposta do banco:', updatedData);
-      
+      console.log('✅ Update realizado com sucesso');
+      console.log('📊 Dados retornados:', updatedData);
+
       if (updatedData && updatedData.length > 0) {
         const savedPlayer = updatedData[0];
         console.log('🔍 === VERIFICAÇÃO PÓS-ATUALIZAÇÃO ===');
-        console.log('  - Dificuldade salva no banco:', savedPlayer.difficulty_level);
+        console.log('  - Dificuldade salva:', savedPlayer.difficulty_level);
         console.log('  - Dificuldade esperada:', difficultyLevel);
         console.log('  - Match correto?', savedPlayer.difficulty_level === difficultyLevel);
-        
-        if (savedPlayer.difficulty_level !== difficultyLevel) {
-          console.error('⚠️ === ATENÇÃO: DIFICULDADE NÃO FOI SALVA CORRETAMENTE ===');
-          console.error('  - Esperado:', difficultyLevel);
-          console.error('  - Salvo no banco:', savedPlayer.difficulty_level);
-          
-          // Estratégia de correção: update focado apenas na dificuldade
-          console.log('🔄 === TENTATIVA DE CORREÇÃO FOCADA ===');
-          const { data: retryData, error: retryError } = await supabase
-            .from('players')
-            .update({ 
-              difficulty_level: difficultyLevel
-            })
-            .eq('id', player.id)
-            .select('difficulty_level');
-            
-          if (retryError) {
-            console.error('❌ Erro na correção focada:', retryError);
-            
-            // Última tentativa: usar SQL direto com uma query personalizada
-            console.log('🚨 === ÚLTIMA TENTATIVA COM SQL DIRETO ===');
-            const { data: finalData, error: finalError } = await supabase
-              .from('players')
-              .update({ difficulty_level: difficultyLevel })
-              .eq('id', player.id)
-              .select('difficulty_level');
-            
-            if (finalError) {
-              console.error('❌ Erro na última tentativa:', finalError);
-            } else {
-              console.log('✅ Última tentativa bem-sucedida:', finalData);
-            }
-          } else {
-            console.log('✅ Correção focada bem-sucedida:', retryData);
-          }
-        } else {
-          console.log('✅ === DIFICULDADE SALVA CORRETAMENTE ===');
-        }
-      }
-
-      // Verificação final
-      const { data: verificationData, error: verificationError } = await supabase
-        .from('players')
-        .select('difficulty_level')
-        .eq('id', player.id)
-        .single();
-        
-      if (!verificationError && verificationData) {
-        console.log('🔎 === VERIFICAÇÃO FINAL ===');
-        console.log('  - Dificuldade final no banco:', verificationData.difficulty_level);
-        console.log('  - Esperado:', difficultyLevel);
-        console.log('  - Atualização foi bem-sucedida?', verificationData.difficulty_level === difficultyLevel);
       }
 
       toast({
