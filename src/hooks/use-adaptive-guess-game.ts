@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAdaptivePlayerSelection } from "./use-adaptive-player-selection";
 import { useGameTimer } from "./use-game-timer";
@@ -44,8 +45,8 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const [maxStreak, setMaxStreak] = useState(0);
   const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
 
-  // Adaptive difficulty state
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS[2]); // Start with medium
+  // Adaptive difficulty state - Start with "muito_facil" instead of "medio"
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS[0]); // Changed from index 2 to 0
   const [difficultyProgress, setDifficultyProgress] = useState(0);
   const [correctSequence, setCorrectSequence] = useState(0);
   const [incorrectSequence, setIncorrectSequence] = useState(0);
@@ -54,19 +55,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const { isVisible: isTabVisible } = useTabVisibility();
   const lastGuessTimeRef = useRef<number>(0);
 
-  // Hooks
-  const { selectPlayerByDifficulty } = useAdaptivePlayerSelection();
-
-  const {
-    startMetricsTracking,
-    recordCorrectGuess,
-    recordIncorrectGuess,
-    saveGameData,
-    saveToRanking,
-    resetMetrics,
-    getCurrentStats
-  } = useAdaptiveGameMetrics();
-
+  // Define handleTimeUp before using it
   const handleTimeUp = useCallback(() => {
     if (!currentPlayer || gameOver) return;
 
@@ -88,7 +77,20 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
 
     // Save game data
     saveGameData(score, currentDifficulty.level, currentDifficulty.multiplier);
-  }, [currentPlayer, gameOver, score, currentDifficulty, recordIncorrectGuess, saveGameData, toast]);
+  }, [currentPlayer, gameOver, score, currentDifficulty]);
+
+  // Hooks
+  const { selectPlayerByDifficulty } = useAdaptivePlayerSelection();
+
+  const {
+    startMetricsTracking,
+    recordCorrectGuess,
+    recordIncorrectGuess,
+    saveGameData,
+    saveToRanking,
+    resetMetrics,
+    getCurrentStats
+  } = useAdaptiveGameMetrics();
 
   const { timeRemaining, startTimer, stopTimer, isRunning } = useGameTimer(gameOver, handleTimeUp);
 
@@ -295,7 +297,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     setGameOver(false);
     setHasLost(false);
     setAttempts(0);
-    setCurrentDifficulty(DIFFICULTY_LEVELS[2]); // Reset to medium
+    setCurrentDifficulty(DIFFICULTY_LEVELS[0]); // Reset to "muito_facil" instead of "medio"
     setDifficultyProgress(0);
     setCorrectSequence(0);
     setIncorrectSequence(0);
