@@ -1,7 +1,6 @@
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAdaptivePlayerSelection } from "./use-adaptive-player-selection";
-import { useSimpleGameTimer } from "./use-simple-game-timer";
+import { useGameTimer } from "./use-game-timer";
 import { useAdaptiveGameMetrics } from "./use-adaptive-game-metrics";
 import { useToast } from "@/components/ui/use-toast";
 import { useTabVisibility } from "./use-tab-visibility";
@@ -57,7 +56,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
 
   // Hooks
   const { selectPlayerByDifficulty } = useAdaptivePlayerSelection();
-  const { timeRemaining, startTimer, stopTimer, isRunning } = useSimpleGameTimer(30);
+  const { timeRemaining, startTimer, stopTimer, isRunning } = useGameTimer(gameOver, handleTimeUp);
 
   const {
     startMetricsTracking,
