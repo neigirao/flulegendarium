@@ -50,6 +50,12 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     setShowRankingForm(false);
     setShowShareOptions(false);
     onResetScore();
+    onClose();
+  };
+
+  const handleSkipRanking = () => {
+    setShowRankingForm(false);
+    setShowShareOptions(true);
   };
 
   const getScoreMessage = () => {
@@ -57,13 +63,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
       return `Você conseguiu ${score} pontos no modo adaptativo${difficultyLevel ? ` (Nível: ${difficultyLevel})` : ''}!`;
     }
     return `Você conseguiu ${score} pontos!`;
-  };
-
-  const getShareText = () => {
-    if (gameMode === 'adaptive') {
-      return `🏆 Consegui ${score} pontos no Lendas do Flu - Modo Adaptativo${difficultyLevel ? ` (${difficultyLevel})` : ''}! 🔥`;
-    }
-    return `🏆 Consegui ${score} pontos no Lendas do Flu! 🔥`;
   };
 
   return (
@@ -132,8 +131,10 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
             <RankingForm
               score={score}
               onSaved={handleSaveToRanking}
-              onCancel={() => setShowRankingForm(false)}
+              onCancel={handleSkipRanking}
               isAuthenticated={isAuthenticated}
+              gameMode={gameMode}
+              difficultyLevel={difficultyLevel}
             />
           )}
 

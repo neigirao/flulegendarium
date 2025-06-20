@@ -1,4 +1,3 @@
-
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GameTutorial } from "@/components/guess-game/GameTutorial";
 import { AdaptiveTutorial } from "@/components/guess-game/AdaptiveTutorial";
@@ -292,7 +291,7 @@ const AdaptiveGuessPlayer = () => {
           playerName={currentPlayer.name}
           score={score}
           onResetScore={resetScore}
-          isAuthenticated={isAuthenticatedGame}
+          isAuthenticated={!!user}
           onSaveToRanking={saveToRanking}
           gameMode="adaptive"
           difficultyLevel={currentDifficulty.label}

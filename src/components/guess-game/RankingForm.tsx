@@ -36,20 +36,20 @@ export const RankingForm = ({
   const { trackEvent } = useAnalytics();
   const queryClient = useQueryClient();
 
-  // Auto-fill name if user is authenticated
+  // Auto-fill name if user is authenticated and set method to google
   useEffect(() => {
-    if (user) {
+    if (user && !saveMethod) {
       const displayName = user.user_metadata?.full_name || 
                          user.user_metadata?.name || 
                          user.email?.split('@')[0] || 
                          '';
       
-      console.log('👤 Preenchendo nome automaticamente:', displayName);
+      console.log('👤 Usuário logado, preenchendo automaticamente:', displayName);
       setName(displayName);
       setSaveMethod('google');
       setShowInstagramInput(true);
     }
-  }, [user]);
+  }, [user, saveMethod]);
 
   const handleGoogleSignIn = async () => {
     setIsLoading(true);
@@ -72,6 +72,11 @@ export const RankingForm = ({
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGuestOption = () => {
+    setSaveMethod('guest');
+    setShowInstagramInput(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -198,16 +203,16 @@ export const RankingForm = ({
           
           <div className="grid gap-3">
             <Button
-              onClick={() => setSaveMethod('guest')}
+              onClick={handleGuestOption}
               variant="outline"
               className="w-full p-4 h-auto flex flex-col gap-2"
             >
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5" />
-                <span className="font-semibold">Nome + Instagram</span>
+                <span className="font-semibold">Como Convidado</span>
               </div>
               <span className="text-xs text-gray-500">
-                Informe seu nome e @ do Instagram
+                Informe seu nome e @ do Instagram (opcional)
               </span>
             </Button>
             
@@ -226,14 +231,14 @@ export const RankingForm = ({
                 <span className="font-semibold">Entrar com Google</span>
               </div>
               <span className="text-xs text-white/80">
-                {isLoading ? "Entrando..." : "Faça login e adicione seu Instagram depois"}
+                {isLoading ? "Entrando..." : "Login automático + Instagram opcional"}
               </span>
             </Button>
           </div>
         </div>
       )}
 
-      {(saveMethod === 'guest' || showInstagramInput) && (
+      {showInstagramInput && (saveMethod === 'guest' || saveMethod === 'google') && (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <label htmlFor="playerName" className="block text-sm font-medium text-gray-700">
@@ -248,11 +253,11 @@ export const RankingForm = ({
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Digite seu nome..."
                 className="pl-10"
-                disabled={isLoading || !!user}
-                autoFocus={!user}
+                disabled={isLoading || (saveMethod === 'google' && !!user)}
+                autoFocus={saveMethod === 'guest'}
               />
             </div>
-            {user && (
+            {saveMethod === 'google' && user && (
               <p className="text-xs text-gray-500">
                 Nome preenchido automaticamente do seu perfil Google
               </p>
@@ -286,7 +291,7 @@ export const RankingForm = ({
               disabled={isLoading || !name.trim()}
               className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
             >
-              {isLoading ? "Salvando..." : "Salvar"}
+              {isLoading ? "Salvando..." : "Salvar no Ranking"}
             </Button>
             
             <Button
