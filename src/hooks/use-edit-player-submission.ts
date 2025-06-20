@@ -49,8 +49,8 @@ export const useEditPlayerSubmission = ({
     console.log('  - Player ID:', player.id);
     console.log('  - Nome atual:', player.name);
     console.log('  - Nome novo:', formData.name);
-    console.log('  - Dificuldade atual no banco:', player.difficulty_level);
-    console.log('  - Nova dificuldade selecionada:', formData.difficultyLevel);
+    console.log('  - Dificuldade atual:', player.difficulty_level);
+    console.log('  - Nova dificuldade:', formData.difficultyLevel);
 
     try {
       let finalImageUrl = formData.imageUrl;
@@ -89,7 +89,7 @@ export const useEditPlayerSubmission = ({
         .map(ach => ach.trim())
         .filter(ach => ach.length > 0);
 
-      // Dados para atualização - estrutura simples e direta
+      // Dados para atualização - FORMATO CORRETO para o banco
       const updateData = {
         name: formData.name.trim(),
         image_url: finalImageUrl,
@@ -98,6 +98,7 @@ export const useEditPlayerSubmission = ({
         year_highlight: formData.yearHighlight.trim() || null,
         fun_fact: formData.funFact.trim() || null,
         achievements: achievementsArray,
+        // CORRIGIDO: statistics deve ser um objeto JSON, não uma estrutura aninhada
         statistics: {
           gols: Number(formData.gols) || 0,
           jogos: Number(formData.jogos) || 0
@@ -105,12 +106,12 @@ export const useEditPlayerSubmission = ({
         difficulty_level: formData.difficultyLevel
       };
 
-      console.log('💾 === DADOS PARA UPDATE ===');
+      console.log('💾 === DADOS PARA UPDATE (FORMATO CORRETO) ===');
       console.log('Dados completos:', JSON.stringify(updateData, null, 2));
-      console.log('Tipo da difficulty_level:', typeof updateData.difficulty_level);
-      console.log('Valor da difficulty_level:', updateData.difficulty_level);
+      console.log('Tipo statistics:', typeof updateData.statistics);
+      console.log('Conteúdo statistics:', updateData.statistics);
 
-      // Fazer a atualização
+      // Fazer a atualização com .eq() e .select() corretos
       console.log('🔄 Executando UPDATE...');
       const { data: updatedPlayer, error: updateError } = await supabase
         .from('players')
@@ -121,25 +122,21 @@ export const useEditPlayerSubmission = ({
 
       if (updateError) {
         console.error('❌ ERRO NO UPDATE:', updateError);
-        console.error('Detalhes do erro:', {
-          message: updateError.message,
-          details: updateError.details,
-          hint: updateError.hint,
-          code: updateError.code
-        });
+        console.error('Código do erro:', updateError.code);
+        console.error('Mensagem:', updateError.message);
+        console.error('Detalhes:', updateError.details);
+        console.error('Hint:', updateError.hint);
         throw updateError;
       }
 
       console.log('✅ UPDATE REALIZADO COM SUCESSO!');
-      console.log('📊 Dados retornados do banco:', updatedPlayer);
+      console.log('📊 Dados retornados:', updatedPlayer);
       
       if (updatedPlayer) {
         console.log('🔍 === VERIFICAÇÃO FINAL ===');
-        console.log('  - ID:', updatedPlayer.id);
         console.log('  - Nome salvo:', updatedPlayer.name);
-        console.log('  - Dificuldade salva no banco:', updatedPlayer.difficulty_level);
-        console.log('  - Dificuldade esperada:', formData.difficultyLevel);
-        console.log('  - ✅ Dificuldade correta?', updatedPlayer.difficulty_level === formData.difficultyLevel);
+        console.log('  - Dificuldade salva:', updatedPlayer.difficulty_level);
+        console.log('  - Statistics salvas:', updatedPlayer.statistics);
       }
 
       toast({
@@ -147,7 +144,7 @@ export const useEditPlayerSubmission = ({
         description: `Jogador ${formData.name} atualizado com sucesso!`,
       });
 
-      // Aguardar um pouco antes de chamar onPlayerUpdated para garantir que o banco foi atualizado
+      // Aguardar antes de recarregar
       setTimeout(() => {
         onPlayerUpdated();
       }, 500);
@@ -156,9 +153,10 @@ export const useEditPlayerSubmission = ({
       console.error('💥 === ERRO GERAL ===');
       console.error('Erro completo:', error);
       
-      let errorMessage = 'Erro desconhecido';
-      if (error instanceof Error) {
-        errorMessage = error.message;
+      let errorMessage = 'Erro desconhecido ao atualizar jogador';
+      
+      if (error && typeof error === 'object' && 'message' in error) {
+        errorMessage = (error as Error).message;
       }
       
       toast({
