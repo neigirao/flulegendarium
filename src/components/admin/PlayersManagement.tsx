@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,6 +22,8 @@ export const PlayersManagement = () => {
   const { data: players = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-players'],
     queryFn: async () => {
+      console.log('🔍 Carregando jogadores para admin...');
+      
       const { data, error } = await supabase
         .from('players')
         .select('*')
@@ -28,18 +31,34 @@ export const PlayersManagement = () => {
       
       if (error) throw error;
       
+      console.log('📊 Dados brutos dos jogadores:', data);
+      
       // Convert Supabase row data to Player type with robust statistics conversion
-      return (data || []).map((player: PlayerRow): Player => ({
-        id: player.id,
-        name: player.name,
-        position: player.position,
-        image_url: player.image_url,
-        year_highlight: player.year_highlight || '',
-        fun_fact: player.fun_fact || '',
-        achievements: player.achievements || [],
-        nicknames: player.nicknames || [],
-        statistics: convertStatistics(player.statistics)
-      }));
+      const convertedPlayers = (data || []).map((player: PlayerRow): Player => {
+        const convertedPlayer = {
+          id: player.id,
+          name: player.name,
+          position: player.position,
+          image_url: player.image_url,
+          year_highlight: player.year_highlight || '',
+          fun_fact: player.fun_fact || '',
+          achievements: player.achievements || [],
+          nicknames: player.nicknames || [],
+          statistics: convertStatistics(player.statistics),
+          difficulty_level: player.difficulty_level as any || 'medio',
+          difficulty_score: player.difficulty_score || 50,
+          difficulty_confidence: player.difficulty_confidence || 0,
+          total_attempts: player.total_attempts || 0,
+          correct_attempts: player.correct_attempts || 0,
+          average_guess_time: player.average_guess_time || 30000
+        };
+        
+        console.log(`🎯 Jogador "${convertedPlayer.name}" - Dificuldade: "${convertedPlayer.difficulty_level}"`);
+        
+        return convertedPlayer;
+      });
+      
+      return convertedPlayers;
     },
   });
 
@@ -130,6 +149,11 @@ export const PlayersManagement = () => {
                 <div className="flex-1">
                   <CardTitle className="text-lg">{player.name}</CardTitle>
                   <p className="text-sm text-gray-600">{player.position}</p>
+                  {player.difficulty_level && (
+                    <p className="text-xs text-muted-foreground">
+                      Dificuldade: {player.difficulty_level}
+                    </p>
+                  )}
                 </div>
               </div>
             </CardHeader>

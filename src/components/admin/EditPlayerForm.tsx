@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +43,7 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('url');
 
   const handleDifficultyChange = (value: string) => {
+    console.log('🔄 Mudando dificuldade para:', value);
     setDifficultyLevel(value as DifficultyLevel);
   };
 
@@ -90,23 +92,34 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
         .map(ach => ach.trim())
         .filter(ach => ach.length > 0);
 
+      console.log('💾 Salvando jogador com dificuldade:', difficultyLevel);
+
       // Atualizar o jogador no banco
+      const updateData = {
+        name,
+        image_url: finalImageUrl,
+        nicknames: nicknamesArray,
+        position,
+        year_highlight: yearHighlight,
+        fun_fact: funFact,
+        achievements: achievementsArray,
+        statistics: { gols, jogos },
+        difficulty_level: difficultyLevel
+      };
+
+      console.log('📊 Dados para atualização:', updateData);
+
       const { error: updateError } = await supabase
         .from('players')
-        .update({
-          name,
-          image_url: finalImageUrl,
-          nicknames: nicknamesArray,
-          position,
-          year_highlight: yearHighlight,
-          fun_fact: funFact,
-          achievements: achievementsArray,
-          statistics: { gols, jogos },
-          difficulty_level: difficultyLevel
-        })
+        .update(updateData)
         .eq('id', player.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        console.error('❌ Erro ao atualizar:', updateError);
+        throw updateError;
+      }
+
+      console.log('✅ Jogador atualizado com sucesso!');
 
       toast({
         title: "Sucesso!",
@@ -115,7 +128,7 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
 
       onPlayerUpdated();
     } catch (error) {
-      console.error('Erro ao atualizar jogador:', error);
+      console.error('💥 Erro ao atualizar jogador:', error);
       toast({
         variant: "destructive",
         title: "Erro",
@@ -187,6 +200,9 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
                     ))}
                   </SelectContent>
                 </Select>
+                <div className="text-sm text-muted-foreground">
+                  Dificuldade atual selecionada: <span className="font-medium">{difficultyLevel}</span>
+                </div>
               </div>
 
               <div className="space-y-2">
