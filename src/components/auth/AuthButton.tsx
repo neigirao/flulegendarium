@@ -1,22 +1,11 @@
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import { LogIn, LogOut, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { LoadingSpinner } from "@/components/ui/loading-states";
 
 export const AuthButton = () => {
-  const { user, signInWithGoogle, signOut, loading } = useAuth();
-
-  const handleGoogleSignIn = async () => {
-    try {
-      const { error } = await signInWithGoogle();
-      if (error) {
-        console.error('❌ Erro no login Google:', error);
-      }
-    } catch (error) {
-      console.error('❌ Erro no login Google:', error);
-    }
-  };
+  const { user, signOut, loading } = useAuth();
 
   if (loading) {
     return (
@@ -51,13 +40,5 @@ export const AuthButton = () => {
     );
   }
 
-  return (
-    <Button
-      onClick={handleGoogleSignIn}
-      className="bg-flu-grena hover:bg-flu-grena/90 text-white flex items-center gap-1 sm:gap-2 font-semibold shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm px-3 sm:px-4"
-    >
-      <LogIn size={14} className="sm:w-4 sm:h-4" />
-      <span>Entrar</span>
-    </Button>
-  );
+  return null;
 };

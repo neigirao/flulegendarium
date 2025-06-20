@@ -1,3 +1,4 @@
+
 import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -24,11 +25,11 @@ const faqData = [
       },
       {
         question: "Como funciona a progressão de dificuldade?",
-        answer: "Começamos com jogadores mais conhecidos. Conforme você acerta consecutivamente, a dificuldade aumenta gradualmente, mostrando jogadores mais obscuros ou históricos. Se você errar, a dificuldade diminui para manter o jogo desafiador mas justo."
+        answer: "Começamos com jogadores mais conhecidos (Muito Fácil). Conforme você acerta consecutivamente, a dificuldade aumenta gradualmente: Fácil → Médio → Difícil → Muito Difícil, mostrando jogadores mais históricos ou menos conhecidos. Se você errar, a dificuldade diminui para manter o jogo desafiador mas justo."
       },
       {
         question: "O jogo é gratuito?",
-        answer: "Sim! Lendas do Flu é completamente gratuito. Você pode jogar sem criar conta, mas recomendamos fazer login para salvar seu progresso e participar do ranking oficial."
+        answer: "Sim! Lendas do Flu é completamente gratuito. Você pode jogar como convidado sem nenhuma restrição. Para aparecer no ranking oficial, basta inserir seu nome após cada partida."
       },
       {
         question: "Quantos jogadores estão no jogo?",
@@ -46,15 +47,15 @@ const faqData = [
       },
       {
         question: "Como o jogo sabe qual dificuldade usar?",
-        answer: "O sistema analisa seu desempenho em tempo real. Três acertos consecutivos aumentam a dificuldade, dois erros consecutivos diminuem. Assim você sempre tem um desafio equilibrado."
+        answer: "O sistema analisa seu desempenho em tempo real. Três acertos consecutivos aumentam a dificuldade, dois erros consecutivos diminuem. Assim você sempre tem um desafio equilibrado para seu nível atual."
       },
       {
         question: "Posso escolher a dificuldade manualmente?",
-        answer: "Não, a dificuldade é totalmente automática. Isso garante que você sempre tenha o nível ideal de desafio baseado na sua performance atual."
+        answer: "Não, a dificuldade é totalmente automática. Isso garante que você sempre tenha o nível ideal de desafio baseado na sua performance atual, tornando o jogo mais justo e envolvente."
       },
       {
         question: "O que significam os níveis de dificuldade?",
-        answer: "Temos 5 níveis: Muito Fácil (jogadores muito conhecidos), Fácil (jogadores conhecidos), Médio (moderadamente conhecidos), Difícil (menos conhecidos) e Muito Difícil (jogadores históricos/obscuros)."
+        answer: "Temos 5 níveis: Muito Fácil (jogadores icônicos), Fácil (jogadores conhecidos), Médio (moderadamente conhecidos), Difícil (menos conhecidos) e Muito Difícil (jogadores históricos/obscuros). Cada nível tem pontuação diferente!"
       }
     ]
   },
@@ -64,7 +65,7 @@ const faqData = [
     questions: [
       {
         question: "Como começar a jogar?",
-        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha entre jogar como convidado ou fazer login, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
+        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha jogar como convidado, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
       },
       {
         question: "Posso tentar mais de uma vez por jogador?",
@@ -76,7 +77,7 @@ const faqData = [
       },
       {
         question: "Como funciona a pontuação?",
-        answer: "Os pontos variam conforme a dificuldade do jogador - jogadores mais difíceis valem mais pontos! O objetivo é fazer o maior número de acertos consecutivos possível."
+        answer: "Os pontos variam conforme a dificuldade do jogador - jogadores mais difíceis valem mais pontos! No nível Muito Fácil você ganha 2,5 pontos, Fácil: 3,75 pontos, Médio: 5 pontos, Difícil: 7,5 pontos e Muito Difícil: 10 pontos por acerto."
       },
       {
         question: "Posso usar nomes e apelidos?",
@@ -103,24 +104,24 @@ const faqData = [
     ]
   },
   {
-    category: "Conta e Perfil",
+    category: "Ranking e Perfil",
     icon: Users,
     questions: [
       {
-        question: "Preciso criar uma conta?",
-        answer: "Não é obrigatório! Você pode jogar como convidado. Mas recomendamos fazer login para salvar seu progresso, participar do ranking oficial e acompanhar suas estatísticas detalhadas."
+        question: "Como apareço no ranking?",
+        answer: "Após cada partida, você pode inserir seu nome para aparecer no ranking global. Se quiser, pode adicionar seu @ do Instagram para que sua foto apareça no ranking e seu nome vire um link para seu perfil!"
       },
       {
-        question: "Como criar uma conta?",
-        answer: "Clique em 'Entrar' no topo da página e escolha entre fazer login com Google (mais rápido) ou criar uma conta com email e senha."
+        question: "Como adicionar meu Instagram ao ranking?",
+        answer: "Ao salvar sua pontuação, coloque seu nome seguido de (@seuinstagram). Por exemplo: 'João Silva (@joaosilva)'. Assim sua foto do Instagram aparecerá no ranking e seu nome virará um link para seu perfil."
       },
       {
         question: "Posso alterar meu nome no ranking?",
-        answer: "Sim! Acesse 'Meu Perfil Tricolor' e você pode alterar seu nome de exibição que aparece no ranking."
+        answer: "Cada entrada no ranking é individual por partida. Para mudar como você aparece, simplesmente use o nome desejado (com ou sem Instagram) na próxima vez que salvar uma pontuação."
       },
       {
-        question: "Onde vejo minhas estatísticas?",
-        answer: "Em 'Meu Perfil Tricolor' você encontra todas suas estatísticas: melhor sequência, total de jogos, pontuação média, jogadores que mais erra e muito mais!"
+        question: "Como funciona o ranking?",
+        answer: "O ranking mostra as melhores pontuações de todos os jogadores. Quanto maior sua pontuação, melhor sua posição. Jogadores com Instagram aparecem com foto e link para o perfil."
       }
     ]
   },
@@ -137,16 +138,16 @@ const faqData = [
         answer: "Feche outras abas do navegador para liberar memória. O jogo funciona melhor em navegadores atualizados como Chrome, Firefox ou Safari. Evite usar navegadores muito antigos."
       },
       {
-        question: "Não consigo fazer login. E agora?",
-        answer: "Verifique se está usando as credenciais corretas. Se esqueceu a senha, use 'Esqueci minha senha'. Para login com Google, certifique-se de que pop-ups estão habilitados."
-      },
-      {
         question: "Funciona no celular?",
         answer: "Perfeitamente! Lendas do Flu é totalmente otimizado para celulares e tablets. A experiência mobile é tão boa quanto no desktop."
       },
       {
         question: "Minha pontuação não foi salva!",
-        answer: "Isso pode acontecer se você estava jogando como convidado ou se houve problema de conexão. Faça login antes de jogar para garantir que tudo seja salvo corretamente."
+        answer: "Isso pode acontecer se houve problema de conexão durante o salvamento. Certifique-se de ter uma conexão estável ao salvar sua pontuação no ranking."
+      },
+      {
+        question: "O cronômetro está travando!",
+        answer: "Isso pode acontecer em conexões muito lentas. Tente fechar outras abas e aplicativos que usam internet. Se persistir, atualize a página e tente novamente."
       }
     ]
   }
@@ -157,7 +158,7 @@ export default function FAQ() {
     <>
       <SEOHead 
         title="FAQ - Perguntas Frequentes | Lendas do Flu"
-        description="Tire suas dúvidas sobre o Lendas do Flu. Encontre respostas para as perguntas mais comuns sobre como jogar, criar conta, pontuação e muito mais."
+        description="Tire suas dúvidas sobre o Lendas do Flu. Encontre respostas para as perguntas mais comuns sobre como jogar, ranking, pontuação e muito mais."
         keywords="faq lendas do flu, perguntas frequentes fluminense, ajuda quiz tricolor, dúvidas jogo fluminense"
         url="https://flulegendarium.lovable.app/faq"
       />
@@ -302,8 +303,8 @@ export default function FAQ() {
                     className="bg-white text-flu-grena hover:bg-gray-100"
                     asChild
                   >
-                    <Link to="/meu-perfil-tricolor">
-                      Ir para Meu Perfil
+                    <Link to="/selecionar-modo-jogo">
+                      Jogar Agora
                     </Link>
                   </Button>
                 </div>

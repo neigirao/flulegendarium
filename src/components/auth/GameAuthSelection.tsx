@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
-import { User, UserPlus, LogIn } from "lucide-react";
+import { User, UserPlus } from "lucide-react";
 
 interface GameAuthSelectionProps {
   onGuestPlay: () => void;
@@ -10,7 +10,7 @@ interface GameAuthSelectionProps {
 }
 
 export const GameAuthSelection = ({ onGuestPlay, onAuthenticatedPlay }: GameAuthSelectionProps) => {
-  const { user, signInWithGoogle, loading } = useAuth();
+  const { user } = useAuth();
 
   if (user) {
     return (
@@ -53,32 +53,7 @@ export const GameAuthSelection = ({ onGuestPlay, onAuthenticatedPlay }: GameAuth
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Opção Login */}
-        <Card className="shadow-2xl border-0 bg-gradient-to-br from-flu-grena via-flu-grena to-flu-verde text-white relative overflow-hidden hover:scale-105 transition-transform duration-300">
-          <div className="absolute inset-0 bg-black/10"></div>
-          <CardHeader className="text-center relative z-10 pb-4">
-            <div className="flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-full mx-auto mb-6 border-2 border-white/30">
-              <LogIn className="w-10 h-10 text-white" />
-            </div>
-            <CardTitle className="text-2xl font-bold mb-4">JOGAR LOGADO</CardTitle>
-            <p className="text-lg opacity-90 leading-relaxed">
-              Entre com sua conta Google e acompanhe seu progresso, conquiste achievements e apareça no ranking!
-            </p>
-          </CardHeader>
-          <CardContent className="relative z-10 pt-2">
-            <Button
-              onClick={signInWithGoogle}
-              disabled={loading}
-              size="lg"
-              className="w-full bg-white text-flu-grena hover:bg-gray-100 font-bold py-4 text-lg shadow-lg"
-            >
-              <LogIn className="mr-3" size={24} />
-              {loading ? "Carregando..." : "Entrar com Google"}
-            </Button>
-          </CardContent>
-        </Card>
-
+      <div className="grid grid-cols-1 gap-8">
         {/* Opção Convidado */}
         <Card className="shadow-2xl border-0 bg-white relative overflow-hidden hover:scale-105 transition-transform duration-300">
           <CardHeader className="text-center pb-4">
@@ -112,7 +87,7 @@ export const GameAuthSelection = ({ onGuestPlay, onAuthenticatedPlay }: GameAuth
               alt="Fluminense FC" 
               className="w-12 h-12 object-contain"
             />
-            <h3 className="text-2xl font-bold text-flu-grena">Por que fazer login?</h3>
+            <h3 className="text-2xl font-bold text-flu-grena">Sobre o Jogo</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
             <div>
@@ -133,8 +108,8 @@ export const GameAuthSelection = ({ onGuestPlay, onAuthenticatedPlay }: GameAuth
               <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🎯</span>
               </div>
-              <h4 className="font-semibold text-flu-grena mb-2">Achievements</h4>
-              <p className="text-gray-600">Desbloqueie conquistas especiais do Fluzão</p>
+              <h4 className="font-semibold text-flu-grena mb-2">Sistema Adaptativo</h4>
+              <p className="text-gray-600">Dificuldade que se ajusta ao seu conhecimento</p>
             </div>
           </div>
         </div>
