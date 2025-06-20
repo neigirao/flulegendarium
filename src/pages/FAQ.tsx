@@ -1,4 +1,3 @@
-
 import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,19 +12,19 @@ const faqData = [
     questions: [
       {
         question: "O que é Lendas do Flu?",
-        answer: "Lendas do Flu é um quiz interativo onde você testa seus conhecimentos sobre os jogadores históricos e atuais do Fluminense FC. Veja a foto do jogador e tente adivinhar quem é! É o desafio perfeito para todo tricolor que se preza."
+        answer: "Lendas do Flu é um quiz adaptativo onde você testa seus conhecimentos sobre os jogadores históricos e atuais do Fluminense FC. Veja a foto do jogador e tente adivinhar quem é! É o desafio perfeito para todo tricolor que se preza."
       },
       {
         question: "Como funciona o jogo?",
         answer: "É muito simples! Uma foto de um jogador do Fluminense aparece na tela e você tem que adivinhar o nome correto. Você tem apenas 30 segundos e UMA tentativa por jogador. Cada acerto vale pontos e você compete no ranking global com outros tricolores."
       },
       {
-        question: "O que é o Modo Adaptativo?",
-        answer: "O Modo Adaptativo é nossa mais nova funcionalidade! Ele ajusta automaticamente a dificuldade do jogo baseado no seu desempenho. Acertou várias seguidas? O jogo fica mais difícil. Errou? Diminui um pouco a dificuldade. É como ter um treinador pessoal para seu conhecimento tricolor!"
+        question: "Como funciona o sistema adaptativo?",
+        answer: "O sistema adaptativo ajusta automaticamente a dificuldade do jogo baseado no seu desempenho. Acertou várias seguidas? O jogo fica mais difícil. Errou? Diminui um pouco a dificuldade. É como ter um treinador pessoal para seu conhecimento tricolor!"
       },
       {
         question: "Como funciona a progressão de dificuldade?",
-        answer: "No Modo Adaptativo, começamos com jogadores mais conhecidos. Conforme você acerta consecutivamente, a dificuldade aumenta gradualmente, mostrando jogadores mais obscuros ou históricos. Se você errar, a dificuldade diminui para manter o jogo desafiador mas justo."
+        answer: "Começamos com jogadores mais conhecidos. Conforme você acerta consecutivamente, a dificuldade aumenta gradualmente, mostrando jogadores mais obscuros ou históricos. Se você errar, a dificuldade diminui para manter o jogo desafiador mas justo."
       },
       {
         question: "O jogo é gratuito?",
@@ -38,24 +37,24 @@ const faqData = [
     ]
   },
   {
-    category: "Modos de Jogo",
+    category: "Sistema Adaptativo",
     icon: Brain,
     questions: [
       {
-        question: "Qual é a diferença entre os modos de jogo?",
-        answer: "Temos dois modos principais: o Modo Clássico (com dificuldade fixa) e o Modo Adaptativo (que ajusta a dificuldade automaticamente). O Modo Adaptativo é ideal para quem quer um desafio personalizado que evolui com seu conhecimento."
+        question: "Por que usar um sistema adaptativo?",
+        answer: "O sistema adaptativo oferece uma experiência personalizada que se ajusta ao seu nível de conhecimento. Isso mantém o jogo sempre desafiador, mas não impossível, maximizando seu aprendizado e diversão."
       },
       {
-        question: "Qual modo devo escolher?",
-        answer: "Se você quer testar seu conhecimento de forma consistente, escolha o Modo Clássico. Se prefere um desafio que se adapta ao seu nível e quer uma experiência mais dinâmica, vá de Modo Adaptativo!"
+        question: "Como o jogo sabe qual dificuldade usar?",
+        answer: "O sistema analisa seu desempenho em tempo real. Três acertos consecutivos aumentam a dificuldade, dois erros consecutivos diminuem. Assim você sempre tem um desafio equilibrado."
       },
       {
-        question: "Posso alternar entre os modos?",
-        answer: "Claro! Você pode jogar ambos os modos quando quiser. Cada um tem seu próprio sistema de pontuação e ranking, então você pode ser craque em um e iniciante no outro."
+        question: "Posso escolher a dificuldade manualmente?",
+        answer: "Não, a dificuldade é totalmente automática. Isso garante que você sempre tenha o nível ideal de desafio baseado na sua performance atual."
       },
       {
-        question: "O Modo Adaptativo é mais difícil?",
-        answer: "Não necessariamente! Ele se adapta ao SEU nível. Se você é iniciante, começará com jogadores mais fáceis. Se você é expert, rapidamente chegará aos jogadores mais desafiadores. É personalizado para você!"
+        question: "O que significam os níveis de dificuldade?",
+        answer: "Temos 5 níveis: Muito Fácil (jogadores muito conhecidos), Fácil (jogadores conhecidos), Médio (moderadamente conhecidos), Difícil (menos conhecidos) e Muito Difícil (jogadores históricos/obscuros)."
       }
     ]
   },
@@ -65,7 +64,7 @@ const faqData = [
     questions: [
       {
         question: "Como começar a jogar?",
-        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha entre jogar como convidado ou fazer login, selecione o modo de jogo (Clássico ou Adaptativo), passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
+        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha entre jogar como convidado ou fazer login, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
       },
       {
         question: "Posso tentar mais de uma vez por jogador?",
@@ -77,7 +76,7 @@ const faqData = [
       },
       {
         question: "Como funciona a pontuação?",
-        answer: "No Modo Clássico, cada resposta correta vale 5 pontos. No Modo Adaptativo, os pontos variam conforme a dificuldade - jogadores mais difíceis valem mais pontos! O objetivo é fazer o maior número de acertos consecutivos possível."
+        answer: "Os pontos variam conforme a dificuldade do jogador - jogadores mais difíceis valem mais pontos! O objetivo é fazer o maior número de acertos consecutivos possível."
       },
       {
         question: "Posso usar nomes e apelidos?",
