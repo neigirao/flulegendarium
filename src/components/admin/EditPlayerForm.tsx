@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,8 +41,15 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(player.difficulty_level || 'medio');
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('url');
 
+  useEffect(() => {
+    console.log('🔄 Jogador carregado no formulário:');
+    console.log('  - Nome:', player.name);
+    console.log('  - Dificuldade original:', player.difficulty_level);
+    console.log('  - Dificuldade no state:', difficultyLevel);
+  }, [player, difficultyLevel]);
+
   const handleDifficultyChange = (value: string) => {
-    console.log('🔄 Mudando dificuldade para:', value);
+    console.log('🔄 Mudando dificuldade de:', difficultyLevel, 'para:', value);
     setDifficultyLevel(value as DifficultyLevel);
   };
 
@@ -92,34 +98,54 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
         .map(ach => ach.trim())
         .filter(ach => ach.length > 0);
 
-      console.log('💾 Salvando jogador com dificuldade:', difficultyLevel);
+      console.log('💾 === SALVANDO JOGADOR ===');
+      console.log('  - ID do jogador:', player.id);
+      console.log('  - Nome:', name);
+      console.log('  - Dificuldade atual no state:', difficultyLevel);
+      console.log('  - Dificuldade original do jogador:', player.difficulty_level);
 
-      // Atualizar o jogador no banco
+      // Preparar dados para atualização
       const updateData = {
-        name,
+        name: name.trim(),
         image_url: finalImageUrl,
         nicknames: nicknamesArray,
-        position,
-        year_highlight: yearHighlight,
-        fun_fact: funFact,
+        position: position.trim(),
+        year_highlight: yearHighlight.trim(),
+        fun_fact: funFact.trim(),
         achievements: achievementsArray,
         statistics: { gols, jogos },
-        difficulty_level: difficultyLevel
+        difficulty_level: difficultyLevel // Certificar que a dificuldade está sendo incluída
       };
 
-      console.log('📊 Dados para atualização:', updateData);
+      console.log('📊 Dados completos para atualização:', JSON.stringify(updateData, null, 2));
 
-      const { error: updateError } = await supabase
+      // Executar atualização no banco
+      const { error: updateError, data: updatedData } = await supabase
         .from('players')
         .update(updateData)
-        .eq('id', player.id);
+        .eq('id', player.id)
+        .select('*'); // Selecionar dados para verificar se foi atualizado
 
       if (updateError) {
-        console.error('❌ Erro ao atualizar:', updateError);
+        console.error('❌ Erro ao atualizar no banco:', updateError);
         throw updateError;
       }
 
-      console.log('✅ Jogador atualizado com sucesso!');
+      console.log('✅ Resposta do banco após atualização:', updatedData);
+      
+      // Verificar se a dificuldade foi realmente salva
+      if (updatedData && updatedData.length > 0) {
+        const savedPlayer = updatedData[0];
+        console.log('🔍 Verificação da dificuldade salva:', savedPlayer.difficulty_level);
+        
+        if (savedPlayer.difficulty_level !== difficultyLevel) {
+          console.warn('⚠️ ATENÇÃO: Dificuldade não foi salva corretamente!');
+          console.warn('  - Esperado:', difficultyLevel);
+          console.warn('  - Salvo:', savedPlayer.difficulty_level);
+        } else {
+          console.log('✅ Dificuldade salva corretamente:', savedPlayer.difficulty_level);
+        }
+      }
 
       toast({
         title: "Sucesso!",
@@ -188,7 +214,11 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="difficulty">Nível de Dificuldade</Label>
-                <Select value={difficultyLevel} onValueChange={handleDifficultyChange}>
+                <Select 
+                  value={difficultyLevel} 
+                  onValueChange={handleDifficultyChange}
+                  disabled={isLoading}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Selecione a dificuldade" />
                   </SelectTrigger>
@@ -201,7 +231,10 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
                   </SelectContent>
                 </Select>
                 <div className="text-sm text-muted-foreground">
-                  Dificuldade atual selecionada: <span className="font-medium">{difficultyLevel}</span>
+                  Dificuldade selecionada: <span className="font-medium">{difficultyLevel}</span>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Dificuldade original: <span className="font-medium">{player.difficulty_level}</span>
                 </div>
               </div>
 
