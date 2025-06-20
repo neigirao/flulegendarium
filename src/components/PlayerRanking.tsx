@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Trophy } from "lucide-react";
 import { memo, useMemo } from "react";
+import { InstagramProfile } from "@/components/ui/instagram-profile";
 
 interface RankingEntry {
   id: string;
@@ -36,7 +37,12 @@ const RankingItem = memo(({ rank, index }: { rank: RankingEntry; index: number }
           {getRankIcon(index)}
           <div>
             <div className="font-bold text-xl text-flu-grena flex items-center gap-2">
-              {rank.player_name}
+              <InstagramProfile 
+                playerName={rank.player_name}
+                avatarSize="md"
+                showLink={true}
+                className="text-xl"
+              />
               {isGuest && (
                 <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
                   Convidado

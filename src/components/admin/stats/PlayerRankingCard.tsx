@@ -2,6 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { memo } from "react";
 import { User, Trophy } from "lucide-react";
+import { InstagramProfile } from "@/components/ui/instagram-profile";
 
 interface RankingPlayer {
   id: string;
@@ -46,7 +47,11 @@ export const PlayerRankingCard = memo(({ players }: PlayerRankingCardProps) => {
                   <div className="flex items-center gap-2">
                     <span className="font-medium text-gray-600 w-6">#{index + 1}</span>
                     <div className="flex items-center gap-2">
-                      <span className="font-medium">{player.player_name}</span>
+                      <InstagramProfile 
+                        playerName={player.player_name}
+                        showLink={true}
+                        avatarSize="sm"
+                      />
                       {isGuest ? (
                         <span className="flex items-center gap-1 text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
                           <User className="w-3 h-3" />

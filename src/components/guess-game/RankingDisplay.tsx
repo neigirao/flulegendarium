@@ -5,6 +5,7 @@ import { Trophy, User } from "lucide-react";
 import { useVirtualizedRanking } from "@/hooks/use-virtualized-ranking";
 import { LoadingSkeleton } from "@/components/ui/loading-states";
 import { InlineError } from "@/components/ui/error-states";
+import { InstagramProfile } from "@/components/ui/instagram-profile";
 
 interface RankingItem {
   id: string;
@@ -88,9 +89,11 @@ export const RankingDisplay = () => {
                     {ranking.index + 1}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="font-medium text-gray-800">
-                      {ranking.player_name}
-                    </span>
+                    <InstagramProfile 
+                      playerName={ranking.player_name}
+                      showLink={true}
+                      avatarSize="sm"
+                    />
                     {isGuest && (
                       <div title="Jogador convidado">
                         <User className="w-3 h-3 text-gray-400" />
