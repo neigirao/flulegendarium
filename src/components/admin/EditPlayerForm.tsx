@@ -136,8 +136,8 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
       console.log('  - Jogador encontrado:', existingPlayer);
       console.log('  - Dificuldade atual no banco:', existingPlayer.difficulty_level);
 
-      // Executar atualização no banco
-      console.log('💾 === EXECUTANDO UPDATE ===');
+      // Executar atualização no banco - ESTRATÉGIA DUPLA PARA GARANTIR SUCESSO
+      console.log('💾 === EXECUTANDO UPDATE PRINCIPAL ===');
       const { error: updateError, data: updatedData } = await supabase
         .from('players')
         .update(updateData)
@@ -145,14 +145,14 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
         .select('*');
 
       if (updateError) {
-        console.error('❌ === ERRO NA ATUALIZAÇÃO ===');
+        console.error('❌ === ERRO NA ATUALIZAÇÃO PRINCIPAL ===');
         console.error('  - Erro completo:', updateError);
         console.error('  - Mensagem do erro:', updateError.message);
         console.error('  - Código do erro:', updateError.code);
         throw updateError;
       }
 
-      console.log('✅ === ATUALIZAÇÃO CONCLUÍDA ===');
+      console.log('✅ === ATUALIZAÇÃO PRINCIPAL CONCLUÍDA ===');
       console.log('  - Resposta do banco:', updatedData);
       
       if (updatedData && updatedData.length > 0) {
@@ -167,22 +167,51 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
           console.error('  - Esperado:', difficultyLevel);
           console.error('  - Salvo no banco:', savedPlayer.difficulty_level);
           
-          // Tentar uma segunda atualização focada apenas na dificuldade
-          console.log('🔄 === TENTATIVA DE CORREÇÃO ===');
+          // Estratégia de correção: update focado apenas na dificuldade
+          console.log('🔄 === TENTATIVA DE CORREÇÃO FOCADA ===');
           const { data: retryData, error: retryError } = await supabase
             .from('players')
-            .update({ difficulty_level: difficultyLevel })
+            .update({ 
+              difficulty_level: difficultyLevel
+            })
             .eq('id', player.id)
             .select('difficulty_level');
             
           if (retryError) {
-            console.error('❌ Erro na segunda tentativa:', retryError);
+            console.error('❌ Erro na correção focada:', retryError);
+            
+            // Última tentativa: usar RPC ou update raw
+            console.log('🚨 === ÚLTIMA TENTATIVA COM SQL DIRETO ===');
+            const { data: finalData, error: finalError } = await supabase.rpc('update_player_difficulty', {
+              player_id: player.id,
+              new_difficulty: difficultyLevel
+            });
+            
+            if (finalError) {
+              console.error('❌ Erro na última tentativa:', finalError);
+            } else {
+              console.log('✅ Última tentativa bem-sucedida:', finalData);
+            }
           } else {
-            console.log('✅ Segunda tentativa bem-sucedida:', retryData);
+            console.log('✅ Correção focada bem-sucedida:', retryData);
           }
         } else {
           console.log('✅ === DIFICULDADE SALVA CORRETAMENTE ===');
         }
+      }
+
+      // Verificação final
+      const { data: verificationData, error: verificationError } = await supabase
+        .from('players')
+        .select('difficulty_level')
+        .eq('id', player.id)
+        .single();
+        
+      if (!verificationError && verificationData) {
+        console.log('🔎 === VERIFICAÇÃO FINAL ===');
+        console.log('  - Dificuldade final no banco:', verificationData.difficulty_level);
+        console.log('  - Esperado:', difficultyLevel);
+        console.log('  - Atualização foi bem-sucedida?', verificationData.difficulty_level === difficultyLevel);
       }
 
       toast({
