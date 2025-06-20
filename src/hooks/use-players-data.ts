@@ -15,6 +15,12 @@ interface DatabasePlayer {
   achievements: string[] | null;
   nicknames: string[] | null;
   statistics: any;
+  difficulty_level: string | null;
+  difficulty_score: number | null;
+  difficulty_confidence: number | null;
+  total_attempts: number | null;
+  correct_attempts: number | null;
+  average_guess_time: number | null;
 }
 
 export const usePlayersData = () => {
@@ -26,7 +32,23 @@ export const usePlayersData = () => {
         
         const { data, error } = await supabase
           .from('players')
-          .select('*');
+          .select(`
+            id,
+            name,
+            position,
+            image_url,
+            year_highlight,
+            fun_fact,
+            achievements,
+            nicknames,
+            statistics,
+            difficulty_level,
+            difficulty_score,
+            difficulty_confidence,
+            total_attempts,
+            correct_attempts,
+            average_guess_time
+          `);
         
         if (error) {
           console.error("❌ Erro ao buscar jogadores:", error);
@@ -39,6 +61,16 @@ export const usePlayersData = () => {
         }
 
         console.log("✅ Jogadores carregados do banco:", data.length);
+        console.log("📊 Jogadores com dificuldade:", data.filter(p => p.difficulty_level).length);
+        
+        // Log da distribuição de dificuldades
+        const difficultyCount: Record<string, number> = {};
+        data.forEach(player => {
+          const difficulty = player.difficulty_level || 'sem_dificuldade';
+          difficultyCount[difficulty] = (difficultyCount[difficulty] || 0) + 1;
+        });
+        console.log("📈 Distribuição de dificuldades:", difficultyCount);
+        
         return data;
       } catch (err) {
         console.error("💥 Exceção ao buscar jogadores:", err);
@@ -70,10 +102,16 @@ export const usePlayersData = () => {
         fun_fact: player.fun_fact || '',
         achievements: Array.isArray(player.achievements) ? player.achievements : [],
         nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
-        statistics: convertStatistics(player.statistics)
+        statistics: convertStatistics(player.statistics),
+        difficulty_level: player.difficulty_level as any || 'medio',
+        difficulty_score: player.difficulty_score || 50,
+        difficulty_confidence: player.difficulty_confidence || 0,
+        total_attempts: player.total_attempts || 0,
+        correct_attempts: player.correct_attempts || 0,
+        average_guess_time: player.average_guess_time || 30000
       };
       
-      console.log(`🎯 Jogador processado: ${enhancedPlayer.name} - ${enhancedPlayer.image_url}`);
+      console.log(`🎯 Jogador processado: ${enhancedPlayer.name} - Dificuldade: ${enhancedPlayer.difficulty_level}`);
       return enhancedPlayer;
     });
   }, [rawPlayers]);
