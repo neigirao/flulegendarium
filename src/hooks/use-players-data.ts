@@ -28,7 +28,7 @@ export const usePlayersData = () => {
     queryKey: ['players'],
     queryFn: async (): Promise<DatabasePlayer[]> => {
       try {
-        console.log("🔍 Buscando jogadores no banco...");
+        console.log("🔍 === CARREGANDO DADOS DOS JOGADORES ===");
         
         const { data, error } = await supabase
           .from('players')
@@ -60,8 +60,16 @@ export const usePlayersData = () => {
           return [];
         }
 
-        console.log("✅ Jogadores carregados do banco:", data.length);
-        console.log("📊 Jogadores com dificuldade:", data.filter(p => p.difficulty_level).length);
+        console.log(`✅ Jogadores carregados do banco: ${data.length}`);
+        
+        // Log detalhado dos dados brutos do banco
+        console.log("📊 === DADOS BRUTOS DO BANCO ===");
+        data.forEach((player, index) => {
+          console.log(`${index + 1}. ID: ${player.id}`);
+          console.log(`   Nome: ${player.name}`);
+          console.log(`   Dificuldade RAW: "${player.difficulty_level}" (tipo: ${typeof player.difficulty_level})`);
+          console.log(`   ---`);
+        });
         
         // Log da distribuição de dificuldades
         const difficultyCount: Record<string, number> = {};
@@ -69,7 +77,7 @@ export const usePlayersData = () => {
           const difficulty = player.difficulty_level || 'sem_dificuldade';
           difficultyCount[difficulty] = (difficultyCount[difficulty] || 0) + 1;
         });
-        console.log("📈 Distribuição de dificuldades:", difficultyCount);
+        console.log("📈 Distribuição de dificuldades (dados brutos):", difficultyCount);
         
         return data;
       } catch (err) {
@@ -92,7 +100,9 @@ export const usePlayersData = () => {
   const players = useMemo((): Player[] => {
     if (!rawPlayers || rawPlayers.length === 0) return [];
 
-    return rawPlayers.map((player: DatabasePlayer) => {
+    console.log("🔄 === PROCESSANDO JOGADORES ===");
+    
+    const processedPlayers = rawPlayers.map((player: DatabasePlayer) => {
       const enhancedPlayer: Player = {
         id: player.id,
         name: player.name || 'Nome não informado',
@@ -111,9 +121,23 @@ export const usePlayersData = () => {
         average_guess_time: player.average_guess_time || 30000
       };
       
-      console.log(`🎯 Jogador processado: ${enhancedPlayer.name} - Dificuldade: ${enhancedPlayer.difficulty_level}`);
+      console.log(`🎯 Jogador processado: "${enhancedPlayer.name}"`);
+      console.log(`   Dificuldade original: "${player.difficulty_level}"`);
+      console.log(`   Dificuldade processada: "${enhancedPlayer.difficulty_level}"`);
+      console.log(`   ---`);
+      
       return enhancedPlayer;
     });
+
+    // Log final da distribuição após processamento
+    const finalDifficultyCount: Record<string, number> = {};
+    processedPlayers.forEach(player => {
+      const difficulty = player.difficulty_level || 'sem_dificuldade';
+      finalDifficultyCount[difficulty] = (finalDifficultyCount[difficulty] || 0) + 1;
+    });
+    console.log("📈 Distribuição final de dificuldades (após processamento):", finalDifficultyCount);
+
+    return processedPlayers;
   }, [rawPlayers]);
 
   console.log("🔄 Hook usePlayersData - Players:", players?.length || 0, "Loading:", isLoading, "Error:", !!playersError);
