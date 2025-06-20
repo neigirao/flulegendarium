@@ -56,7 +56,6 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
 
   // Hooks
   const { selectPlayerByDifficulty } = useAdaptivePlayerSelection();
-  const { timeRemaining, startTimer, stopTimer, isRunning } = useGameTimer(gameOver, handleTimeUp);
 
   const {
     startMetricsTracking,
@@ -68,13 +67,38 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     getCurrentStats
   } = useAdaptiveGameMetrics();
 
+  const handleTimeUp = useCallback(() => {
+    if (!currentPlayer || gameOver) return;
+
+    console.log('⏰ Tempo esgotado no modo adaptativo');
+    
+    setGameOver(true);
+    setHasLost(true);
+    stopTimer();
+    
+    const guessTime = Date.now() - lastGuessTimeRef.current;
+    recordIncorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
+    adjustDifficulty(false);
+
+    toast({
+      variant: "destructive",
+      title: "Tempo Esgotado!",
+      description: `Era ${currentPlayer.name}. Sua pontuação final: ${score}`,
+    });
+
+    // Save game data
+    saveGameData(score, currentDifficulty.level, currentDifficulty.multiplier);
+  }, [currentPlayer, gameOver, score, currentDifficulty, recordIncorrectGuess, saveGameData, toast]);
+
+  const { timeRemaining, startTimer, stopTimer, isRunning } = useGameTimer(gameOver, handleTimeUp);
+
   // Tab visibility handler
   useEffect(() => {
     if (!isTabVisible && isRunning && !gameOver) {
       console.log('🚫 Tab não está visível, terminando jogo');
       handleTimeUp();
     }
-  }, [isTabVisible, isRunning, gameOver]);
+  }, [isTabVisible, isRunning, gameOver, handleTimeUp]);
 
   const adjustDifficulty = useCallback((wasCorrect: boolean) => {
     let newCorrectSequence = correctSequence;
@@ -171,29 +195,6 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
       startMetricsTracking();
     }
   }, [currentPlayer, gamesPlayed, startTimer, startMetricsTracking]);
-
-  const handleTimeUp = useCallback(() => {
-    if (!currentPlayer || gameOver) return;
-
-    console.log('⏰ Tempo esgotado no modo adaptativo');
-    
-    setGameOver(true);
-    setHasLost(true);
-    stopTimer();
-    
-    const guessTime = Date.now() - lastGuessTimeRef.current;
-    recordIncorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
-    adjustDifficulty(false);
-
-    toast({
-      variant: "destructive",
-      title: "Tempo Esgotado!",
-      description: `Era ${currentPlayer.name}. Sua pontuação final: ${score}`,
-    });
-
-    // Save game data
-    saveGameData(score, currentDifficulty.level, currentDifficulty.multiplier);
-  }, [currentPlayer, gameOver, score, currentDifficulty, stopTimer, recordIncorrectGuess, adjustDifficulty, saveGameData, toast]);
 
   const handleGuess = useCallback(async (guess: string) => {
     if (!currentPlayer || gameOver || isProcessingGuess) return;
