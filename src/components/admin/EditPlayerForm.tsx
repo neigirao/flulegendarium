@@ -1,29 +1,21 @@
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Link, X, BarChart3 } from "lucide-react";
+import { X } from "lucide-react";
 import { Player, DifficultyLevel } from "@/types/guess-game";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DifficultySection } from "./form-sections/DifficultySection";
+import { ImageUploadSection } from "./form-sections/ImageUploadSection";
+import { PlayerBasicInfoSection } from "./form-sections/PlayerBasicInfoSection";
+import { PlayerStatisticsSection } from "./form-sections/PlayerStatisticsSection";
+import { PlayerDetailsSection } from "./form-sections/PlayerDetailsSection";
 
 interface EditPlayerFormProps {
   player: Player;
   onPlayerUpdated: () => void;
   onCancel: () => void;
 }
-
-const DIFFICULTY_LEVELS = [
-  { value: 'muito_facil' as DifficultyLevel, label: 'Muito Fácil', color: 'text-green-600' },
-  { value: 'facil' as DifficultyLevel, label: 'Fácil', color: 'text-blue-600' },
-  { value: 'medio' as DifficultyLevel, label: 'Médio', color: 'text-yellow-600' },
-  { value: 'dificil' as DifficultyLevel, label: 'Difícil', color: 'text-orange-600' },
-  { value: 'muito_dificil' as DifficultyLevel, label: 'Muito Difícil', color: 'text-red-600' }
-];
 
 export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayerFormProps) => {
   const { toast } = useToast();
@@ -222,198 +214,53 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Nome do Jogador *</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Ex: Fred"
-              disabled={isLoading}
-            />
-          </div>
+        <PlayerBasicInfoSection
+          name={name}
+          onNameChange={setName}
+          position={position}
+          onPositionChange={setPosition}
+          yearHighlight={yearHighlight}
+          onYearHighlightChange={setYearHighlight}
+          isLoading={isLoading}
+        />
 
-          <div className="space-y-2">
-            <Label htmlFor="position">Posição</Label>
-            <Input
-              id="position"
-              value={position}
-              onChange={(e) => setPosition(e.target.value)}
-              placeholder="Ex: Atacante"
-              disabled={isLoading}
-            />
-          </div>
-        </div>
+        <DifficultySection
+          difficultyLevel={difficultyLevel}
+          onDifficultyChange={handleDifficultyChange}
+          isLoading={isLoading}
+          originalDifficulty={player.difficulty_level}
+          difficultyScore={player.difficulty_score}
+          difficultyConfidence={player.difficulty_confidence}
+          totalAttempts={player.total_attempts}
+          correctAttempts={player.correct_attempts}
+        />
 
-        {/* Seção de Dificuldade */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 size={20} />
-              Classificação de Dificuldade
-            </CardTitle>
-            <CardDescription>
-              Configure o nível de dificuldade do jogador no modo adaptativo
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="difficulty">Nível de Dificuldade</Label>
-                <Select 
-                  value={difficultyLevel} 
-                  onValueChange={handleDifficultyChange}
-                  disabled={isLoading}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecione a dificuldade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {DIFFICULTY_LEVELS.map((level) => (
-                      <SelectItem key={level.value} value={level.value}>
-                        <span className={level.color}>{level.label}</span>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <div className="text-sm text-muted-foreground">
-                  Dificuldade atual: <span className="font-medium">{difficultyLevel}</span>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  Dificuldade original: <span className="font-medium">{player.difficulty_level}</span>
-                </div>
-              </div>
+        <ImageUploadSection
+          uploadMethod={uploadMethod}
+          onUploadMethodChange={setUploadMethod}
+          imageUrl={imageUrl}
+          onImageUrlChange={setImageUrl}
+          onImageFileChange={setImage}
+          isLoading={isLoading}
+        />
 
-              <div className="space-y-2">
-                <Label>Estatísticas Automáticas</Label>
-                <div className="text-sm text-muted-foreground space-y-1">
-                  <p>Score: {player.difficulty_score || 50}/100</p>
-                  <p>Confiança: {(player.difficulty_confidence || 0).toFixed(1)}%</p>
-                  <p>Tentativas: {player.total_attempts || 0}</p>
-                  <p>Acertos: {player.correct_attempts || 0}</p>
-                </div>
-              </div>
-            </div>
+        <PlayerStatisticsSection
+          gols={gols}
+          onGolsChange={setGols}
+          jogos={jogos}
+          onJogosChange={setJogos}
+          isLoading={isLoading}
+        />
 
-            <div className="text-xs text-muted-foreground bg-muted p-3 rounded-md">
-              <p><strong>Como funciona:</strong></p>
-              <ul className="list-disc list-inside space-y-1 mt-1">
-                <li><strong>Muito Fácil:</strong> Jogadores conhecidos (1x pontos)</li>
-                <li><strong>Fácil:</strong> Jogadores populares (1.2x pontos)</li>
-                <li><strong>Médio:</strong> Conhecimento intermediário (1.5x pontos)</li>
-                <li><strong>Difícil:</strong> Jogadores específicos (2x pontos)</li>
-                <li><strong>Muito Difícil:</strong> Lendas obscuras (3x pontos)</li>
-              </ul>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="space-y-2">
-          <Label>Imagem do Jogador</Label>
-          <Tabs value={uploadMethod} onValueChange={(value) => setUploadMethod(value as 'file' | 'url')}>
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="file" className="flex items-center gap-2">
-                <Upload size={16} />
-                Upload
-              </TabsTrigger>
-              <TabsTrigger value="url" className="flex items-center gap-2">
-                <Link size={16} />
-                URL
-              </TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="file" className="space-y-2">
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={(e) => setImage(e.target.files?.[0] || null)}
-                disabled={isLoading}
-              />
-            </TabsContent>
-            
-            <TabsContent value="url" className="space-y-2">
-              <Input
-                type="url"
-                value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
-                placeholder="https://exemplo.com/imagem.jpg"
-                disabled={isLoading}
-              />
-            </TabsContent>
-          </Tabs>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="gols">Gols</Label>
-            <Input
-              id="gols"
-              type="number"
-              value={gols}
-              onChange={(e) => setGols(Number(e.target.value))}
-              disabled={isLoading}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="jogos">Jogos</Label>
-            <Input
-              id="jogos"
-              type="number"
-              value={jogos}
-              onChange={(e) => setJogos(Number(e.target.value))}
-              disabled={isLoading}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="yearHighlight">Ano de Destaque</Label>
-          <Input
-            id="yearHighlight"
-            value={yearHighlight}
-            onChange={(e) => setYearHighlight(e.target.value)}
-            placeholder="Ex: 2010"
-            disabled={isLoading}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="nicknames">Apelidos</Label>
-          <Textarea
-            id="nicknames"
-            value={nicknames}
-            onChange={(e) => setNicknames(e.target.value)}
-            placeholder="Ex: Fred, Frederico, Chaves Guedes (separar por vírgula)"
-            disabled={isLoading}
-            rows={2}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="funFact">Curiosidade</Label>
-          <Textarea
-            id="funFact"
-            value={funFact}
-            onChange={(e) => setFunFact(e.target.value)}
-            placeholder="Curiosidade sobre o jogador"
-            disabled={isLoading}
-            rows={3}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="achievements">Conquistas</Label>
-          <Textarea
-            id="achievements"
-            value={achievements}
-            onChange={(e) => setAchievements(e.target.value)}
-            placeholder="Ex: Campeão Brasileiro 2010, Campeão Carioca 2012 (separar por vírgula)"
-            disabled={isLoading}
-            rows={3}
-          />
-        </div>
+        <PlayerDetailsSection
+          nicknames={nicknames}
+          onNicknamesChange={setNicknames}
+          funFact={funFact}
+          onFunFactChange={setFunFact}
+          achievements={achievements}
+          onAchievementsChange={setAchievements}
+          isLoading={isLoading}
+        />
 
         <div className="flex gap-2">
           <Button type="submit" disabled={isLoading} className="flex-1">
