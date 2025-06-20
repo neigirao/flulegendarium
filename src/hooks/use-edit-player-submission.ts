@@ -45,17 +45,19 @@ export const useEditPlayerSubmission = ({
 
     setIsLoading(true);
     
-    console.log('💾 === INICIANDO ATUALIZAÇÃO SIMPLIFICADA ===');
-    console.log('  - ID do jogador:', player.id);
-    console.log('  - Nome do jogador:', formData.name);
-    console.log('  - Dificuldade que será enviada:', formData.difficultyLevel);
-    console.log('  - Tipo da dificuldade:', typeof formData.difficultyLevel);
+    console.log('🚀 === INICIANDO EDIÇÃO DO JOGADOR ===');
+    console.log('  - Player ID:', player.id);
+    console.log('  - Nome atual:', player.name);
+    console.log('  - Nome novo:', formData.name);
+    console.log('  - Dificuldade atual no banco:', player.difficulty_level);
+    console.log('  - Nova dificuldade selecionada:', formData.difficultyLevel);
 
     try {
       let finalImageUrl = formData.imageUrl;
 
       // Upload de imagem se necessário
       if (formData.uploadMethod === 'file' && formData.image) {
+        console.log('📸 Fazendo upload da imagem...');
         const fileExt = formData.image.name.split('.').pop();
         const fileName = `${formData.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.${fileExt}`;
         
@@ -63,16 +65,20 @@ export const useEditPlayerSubmission = ({
           .from('players')
           .upload(fileName, formData.image);
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('❌ Erro no upload:', uploadError);
+          throw uploadError;
+        }
 
         const { data: { publicUrl } } = supabase.storage
           .from('players')
           .getPublicUrl(fileName);
 
         finalImageUrl = publicUrl;
+        console.log('✅ Upload concluído:', finalImageUrl);
       }
 
-      // Processar dados
+      // Processar arrays
       const nicknamesArray = formData.nicknames
         .split(',')
         .map(nick => nick.trim())
@@ -83,59 +89,82 @@ export const useEditPlayerSubmission = ({
         .map(ach => ach.trim())
         .filter(ach => ach.length > 0);
 
-      // Preparar dados para atualização
+      // Dados para atualização - estrutura simples e direta
       const updateData = {
         name: formData.name.trim(),
         image_url: finalImageUrl,
         nicknames: nicknamesArray,
         position: formData.position.trim(),
-        year_highlight: formData.yearHighlight.trim(),
-        fun_fact: formData.funFact.trim(),
+        year_highlight: formData.yearHighlight.trim() || null,
+        fun_fact: formData.funFact.trim() || null,
         achievements: achievementsArray,
-        statistics: { gols: formData.gols, jogos: formData.jogos },
+        statistics: {
+          gols: Number(formData.gols) || 0,
+          jogos: Number(formData.jogos) || 0
+        },
         difficulty_level: formData.difficultyLevel
       };
 
-      console.log('📊 === DADOS PARA ATUALIZAÇÃO ===');
-      console.log('  - Dados completos:', JSON.stringify(updateData, null, 2));
+      console.log('💾 === DADOS PARA UPDATE ===');
+      console.log('Dados completos:', JSON.stringify(updateData, null, 2));
+      console.log('Tipo da difficulty_level:', typeof updateData.difficulty_level);
+      console.log('Valor da difficulty_level:', updateData.difficulty_level);
 
-      // Atualização usando UPDATE normal
-      console.log('💾 === TENTATIVA: UPDATE NORMAL ===');
-      const { error: updateError, data: updatedData } = await supabase
+      // Fazer a atualização
+      console.log('🔄 Executando UPDATE...');
+      const { data: updatedPlayer, error: updateError } = await supabase
         .from('players')
         .update(updateData)
         .eq('id', player.id)
-        .select('*');
+        .select('*')
+        .single();
 
       if (updateError) {
-        console.error('❌ Erro no update normal:', updateError);
+        console.error('❌ ERRO NO UPDATE:', updateError);
+        console.error('Detalhes do erro:', {
+          message: updateError.message,
+          details: updateError.details,
+          hint: updateError.hint,
+          code: updateError.code
+        });
         throw updateError;
       }
 
-      console.log('✅ Update realizado com sucesso');
-      console.log('📊 Dados retornados:', updatedData);
-
-      if (updatedData && updatedData.length > 0) {
-        const savedPlayer = updatedData[0];
-        console.log('🔍 === VERIFICAÇÃO PÓS-ATUALIZAÇÃO ===');
-        console.log('  - Dificuldade salva:', savedPlayer.difficulty_level);
+      console.log('✅ UPDATE REALIZADO COM SUCESSO!');
+      console.log('📊 Dados retornados do banco:', updatedPlayer);
+      
+      if (updatedPlayer) {
+        console.log('🔍 === VERIFICAÇÃO FINAL ===');
+        console.log('  - ID:', updatedPlayer.id);
+        console.log('  - Nome salvo:', updatedPlayer.name);
+        console.log('  - Dificuldade salva no banco:', updatedPlayer.difficulty_level);
         console.log('  - Dificuldade esperada:', formData.difficultyLevel);
-        console.log('  - Match correto?', savedPlayer.difficulty_level === formData.difficultyLevel);
+        console.log('  - ✅ Dificuldade correta?', updatedPlayer.difficulty_level === formData.difficultyLevel);
       }
 
       toast({
         title: "Sucesso!",
-        description: `Jogador ${formData.name} atualizado com sucesso! Dificuldade: ${formData.difficultyLevel}`,
+        description: `Jogador ${formData.name} atualizado com sucesso!`,
       });
 
-      onPlayerUpdated();
+      // Aguardar um pouco antes de chamar onPlayerUpdated para garantir que o banco foi atualizado
+      setTimeout(() => {
+        onPlayerUpdated();
+      }, 500);
+
     } catch (error) {
       console.error('💥 === ERRO GERAL ===');
-      console.error('  - Erro completo:', error);
+      console.error('Erro completo:', error);
+      
+      let errorMessage = 'Erro desconhecido';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       toast({
         variant: "destructive",
-        title: "Erro",
-        description: "Falha ao atualizar jogador. " + (error instanceof Error ? error.message : 'Erro desconhecido'),
+        title: "Erro ao atualizar jogador",
+        description: errorMessage,
       });
     } finally {
       setIsLoading(false);

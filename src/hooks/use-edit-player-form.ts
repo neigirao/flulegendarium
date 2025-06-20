@@ -17,20 +17,23 @@ export const useEditPlayerForm = (player: Player) => {
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('url');
 
   useEffect(() => {
-    console.log('🔄 === FORMULÁRIO CARREGADO ===');
-    console.log('  - Nome do jogador:', player.name);
-    console.log('  - ID do jogador:', player.id);
-    console.log('  - Dificuldade original do banco:', player.difficulty_level);
-    console.log('  - Tipo da dificuldade original:', typeof player.difficulty_level);
-    console.log('  - Dificuldade no state inicial:', difficultyLevel);
+    console.log('📋 === FORMULÁRIO INICIALIZADO ===');
+    console.log('  - Player:', player.name);
+    console.log('  - Dificuldade do banco:', player.difficulty_level);
+    console.log('  - Dificuldade no state:', difficultyLevel);
+    console.log('  - Todos os dados do player:', player);
   }, [player, difficultyLevel]);
 
   const handleDifficultyChange = (value: string) => {
-    console.log('🔄 === MUDANÇA DE DIFICULDADE ===');
-    console.log('  - Dificuldade anterior:', difficultyLevel);
-    console.log('  - Nova dificuldade selecionada:', value);
-    console.log('  - Tipo da nova dificuldade:', typeof value);
-    setDifficultyLevel(value as DifficultyLevel);
+    console.log('🎯 === MUDANÇA DE DIFICULDADE ===');
+    console.log('  - Valor anterior:', difficultyLevel);
+    console.log('  - Novo valor:', value);
+    console.log('  - Tipo do novo valor:', typeof value);
+    
+    const newDifficulty = value as DifficultyLevel;
+    setDifficultyLevel(newDifficulty);
+    
+    console.log('  - State atualizado para:', newDifficulty);
   };
 
   return {
