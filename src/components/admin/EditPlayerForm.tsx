@@ -180,12 +180,13 @@ export const EditPlayerForm = ({ player, onPlayerUpdated, onCancel }: EditPlayer
           if (retryError) {
             console.error('❌ Erro na correção focada:', retryError);
             
-            // Última tentativa: usar RPC ou update raw
+            // Última tentativa: usar SQL direto com uma query personalizada
             console.log('🚨 === ÚLTIMA TENTATIVA COM SQL DIRETO ===');
-            const { data: finalData, error: finalError } = await supabase.rpc('update_player_difficulty', {
-              player_id: player.id,
-              new_difficulty: difficultyLevel
-            });
+            const { data: finalData, error: finalError } = await supabase
+              .from('players')
+              .update({ difficulty_level: difficultyLevel })
+              .eq('id', player.id)
+              .select('difficulty_level');
             
             if (finalError) {
               console.error('❌ Erro na última tentativa:', finalError);
