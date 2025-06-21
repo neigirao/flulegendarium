@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import { useLCPOptimization } from '@/hooks/use-lcp-optimization';
 
@@ -16,173 +17,82 @@ export const CriticalMeta = () => {
       viewportMeta.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no');
     };
 
-    // Critical CSS inline otimizado para LCP - ENHANCED
+    // OPTIMIZED: Minimal critical CSS inline
     const addCriticalCSS = () => {
       const criticalCSS = `
-        /* Critical above-the-fold styles optimized for LCP */
-        body { 
-          font-family: Inter, system-ui, -apple-system, sans-serif; 
-          margin: 0; 
-          line-height: 1.5;
-          -webkit-font-smoothing: antialiased;
-          -moz-osx-font-smoothing: grayscale;
-        }
-        .min-h-screen { 
-          min-height: 100vh; 
-          min-height: 100dvh; 
-        }
-        .flex { display: flex; }
-        .items-center { align-items: center; }
-        .justify-center { justify-content: center; }
-        .bg-gradient-to-b { 
-          background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); 
-        }
-        .from-flu-verde\\/50 { 
-          --tw-gradient-from: rgb(0 97 60 / 0.5); 
-          --tw-gradient-to: rgb(0 97 60 / 0); 
-          --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); 
-        }
-        .to-white { --tw-gradient-to: rgb(255 255 255); }
-        
-        /* Optimize for faster paint */
-        .flu-grena { color: #7A0213; }
-        .flu-verde { color: #006140; }
-        .bg-flu-grena { background-color: #7A0213; }
-        .bg-flu-verde { background-color: #006140; }
-        
-        /* Enhanced LCP optimizations */
-        img[data-critical="true"] {
-          content-visibility: visible;
-          contain-intrinsic-size: 400px 500px;
-        }
-        
-        /* Prevent layout shift for critical images */
-        .lcp-container {
-          aspect-ratio: 4/5;
-          contain: layout style paint;
-        }
-        
-        /* Optimize critical button interactions */
-        button[data-critical="true"] {
-          contain: layout style paint;
-          will-change: transform;
-        }
-        
-        /* Prevent layout shift for common elements */
-        img { height: auto; max-width: 100%; }
-        button { cursor: pointer; }
-        
-        /* Loading states */
-        .animate-spin {
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        
-        /* Enhanced performance hints */
-        * {
-          box-sizing: border-box;
-        }
-        
-        .performance-optimized {
-          transform: translateZ(0);
-          backface-visibility: hidden;
-        }
+        /* Minimal critical styles for LCP optimization */
+        body{font-family:Inter,system-ui,-apple-system,sans-serif;margin:0;line-height:1.5;-webkit-font-smoothing:antialiased}
+        .min-h-screen{min-height:100vh;min-height:100dvh}
+        .flex{display:flex}
+        .items-center{align-items:center}
+        .justify-center{justify-content:center}
+        .bg-gradient-to-b{background-image:linear-gradient(to bottom,var(--tw-gradient-stops))}
+        .from-flu-verde\\/50{--tw-gradient-from:rgb(0 97 60/0.5);--tw-gradient-to:rgb(0 97 60/0);--tw-gradient-stops:var(--tw-gradient-from),var(--tw-gradient-to)}
+        .to-white{--tw-gradient-to:rgb(255 255 255)}
+        .flu-grena{color:#7A0213}
+        .flu-verde{color:#006140}
+        .bg-flu-grena{background-color:#7A0213}
+        .bg-flu-verde{background-color:#006140}
+        img[data-critical="true"]{content-visibility:visible;contain-intrinsic-size:400px 500px}
+        .lcp-container{aspect-ratio:4/5;contain:layout style paint}
+        img{height:auto;max-width:100%}
+        button{cursor:pointer}
+        .animate-spin{animation:spin 1s linear infinite}
+        @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        *{box-sizing:border-box}
+        .performance-optimized{transform:translateZ(0);backface-visibility:hidden}
       `;
 
       const style = document.createElement('style');
       style.innerHTML = criticalCSS;
       style.setAttribute('data-critical', 'true');
-      style.setAttribute('data-enhanced', 'lcp');
+      style.setAttribute('data-optimized', 'minimal');
       document.head.appendChild(style);
     };
 
-    // Enhanced resource hints for LCP
+    // OPTIMIZED: Minimal resource hints
     const addResourceHints = () => {
-      // High priority preconnects for LCP
+      // Only essential preconnects
       const criticalDomains = [
         'https://fonts.googleapis.com',
         'https://fonts.gstatic.com'
       ];
 
       criticalDomains.forEach(domain => {
-        const link = document.createElement('link');
-        link.rel = 'preconnect';
-        link.href = domain;
-        link.crossOrigin = 'anonymous';
-        link.setAttribute('data-lcp-critical', 'true');
-        document.head.appendChild(link);
-      });
-
-      // DNS prefetch for non-critical domains
-      const prefetchDomains = [
-        'https://www.googletagmanager.com'
-      ];
-
-      prefetchDomains.forEach(domain => {
-        const link = document.createElement('link');
-        link.rel = 'dns-prefetch';
-        link.href = domain;
-        document.head.appendChild(link);
-      });
-
-      // Enhanced font preloading for LCP
-      const criticalFonts = [
-        {
-          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap',
-          as: 'style'
+        const existing = document.querySelector(`link[href="${domain}"][rel="preconnect"]`);
+        if (!existing) {
+          const link = document.createElement('link');
+          link.rel = 'preconnect';
+          link.href = domain;
+          link.crossOrigin = 'anonymous';
+          document.head.appendChild(link);
         }
-      ];
-
-      criticalFonts.forEach(font => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.href = font.href;
-        link.as = font.as;
-        link.crossOrigin = 'anonymous';
-        link.fetchPriority = 'high';
-        link.setAttribute('data-lcp-font', 'true');
-        document.head.appendChild(link);
-        
-        // Load the actual stylesheet with media query trick
-        const styleLink = document.createElement('link');
-        styleLink.rel = 'stylesheet';
-        styleLink.href = font.href;
-        styleLink.media = 'print';
-        styleLink.onload = function() {
-          (this as HTMLLinkElement).media = 'all';
-        };
-        document.head.appendChild(styleLink);
       });
 
-      // Preload LCP candidate images
+      // Preload only LCP candidate images
       const lcpImages = [
-        '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png', // Fluminense logo
-        '/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png'  // Game banner
+        '/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png' // Game banner - most likely LCP
       ];
 
-      lcpImages.forEach((src, index) => {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.href = src;
-        link.as = 'image';
-        link.fetchPriority = index === 0 ? 'high' : 'low';
-        link.setAttribute('data-lcp-image', 'true');
-        document.head.appendChild(link);
+      lcpImages.forEach((src) => {
+        const existing = document.querySelector(`link[href="${src}"][rel="preload"]`);
+        if (!existing) {
+          const link = document.createElement('link');
+          link.rel = 'preload';
+          link.href = src;
+          link.as = 'image';
+          link.fetchPriority = 'high';
+          document.head.appendChild(link);
+        }
       });
     };
 
-    // PWA meta tags otimizados
+    // OPTIMIZED: Minimal PWA meta tags
     const addPWAMeta = () => {
       const metas = [
         { name: 'theme-color', content: '#7A0213' },
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
-        { name: 'apple-mobile-web-app-status-bar-style', content: 'default' },
-        { name: 'apple-mobile-web-app-title', content: 'Lendas do Flu' },
-        { name: 'mobile-web-app-capable', content: 'yes' },
-        { name: 'format-detection', content: 'telephone=no' } // Prevent iOS from detecting numbers as phone numbers
+        { name: 'format-detection', content: 'telephone=no' }
       ];
 
       metas.forEach(({ name, content }) => {
@@ -194,55 +104,35 @@ export const CriticalMeta = () => {
         }
         meta.setAttribute('content', content);
       });
-
-      // Add apple touch icons
-      const appleTouchIcon = document.createElement('link');
-      appleTouchIcon.rel = 'apple-touch-icon';
-      appleTouchIcon.href = '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png';
-      document.head.appendChild(appleTouchIcon);
     };
 
-    // Performance optimizations
-    const addPerformanceOptimizations = () => {
-      // Reduce main-thread blocking
-      if ('scheduler' in window && 'postTask' in (window as any).scheduler) {
-        (window as any).scheduler.postTask(() => {
-          addPWAMeta();
-        }, { priority: 'background' });
-      } else {
-        // Fallback for browsers without scheduler API
-        setTimeout(() => {
-          addPWAMeta();
-        }, 0);
-      }
-    };
-
-    // Execute critical optimizations immediately for LCP
+    // Execute critical optimizations immediately
     updateViewport();
     addCriticalCSS();
-    
-    // Apply LCP optimizations
     optimizeForLCP();
     
     // Execute non-critical optimizations after initial render
-    if ('scheduler' in window && 'postTask' in (window as any).scheduler) {
-      (window as any).scheduler.postTask(() => {
+    const scheduler = (window as any).scheduler;
+    if (scheduler && 'postTask' in scheduler) {
+      scheduler.postTask(() => {
         addResourceHints();
+        addPWAMeta();
       }, { priority: 'background' });
     } else {
       setTimeout(() => {
         addResourceHints();
-      }, 0);
+        addPWAMeta();
+      }, 100);
     }
 
-    // Enhanced cleanup for LCP optimization
+    // OPTIMIZED: Cleanup after shorter timeout
     return () => {
       setTimeout(() => {
-        const criticalStyle = document.querySelector('style[data-enhanced="lcp"]');
+        const criticalStyle = document.querySelector('style[data-optimized="minimal"]');
         if (criticalStyle) {
           criticalStyle.remove();
         }
-      }, 5000); // Increased timeout for LCP optimization
+      }, 2000);
     };
   }, [optimizeForLCP]);
 
