@@ -17,16 +17,16 @@ export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
     setIsRunning(false);
   }, []);
 
-  // Start timer
+  // Start timer - SEMPRE reinicia do tempo total
   const startTimer = useCallback(() => {
-    if (gameOver || isRunning) return;
+    if (gameOver) return;
     
-    console.log('⏰ Iniciando timer');
+    console.log('⏰ Iniciando timer do começo');
     
     // Clear any existing timer
     clearGameTimer();
     
-    // Reset time and start
+    // SEMPRE resetar para o tempo total e começar
     setTimeRemaining(TIME_LIMIT_SECONDS);
     setIsRunning(true);
     
@@ -43,7 +43,7 @@ export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
         return prev - 1;
       });
     }, 1000);
-  }, [gameOver, isRunning, clearGameTimer, onTimeUp]);
+  }, [gameOver, clearGameTimer, onTimeUp]);
 
   // Stop timer
   const stopTimer = useCallback(() => {

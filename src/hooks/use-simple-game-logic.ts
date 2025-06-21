@@ -11,6 +11,7 @@ interface UseSimpleGameLogicProps {
   onGameEnd: () => void;
   selectRandomPlayer: () => void;
   stopTimer: () => void;
+  startTimer: () => void; // Adicionado para reiniciar o timer
 }
 
 export const useSimpleGameLogic = ({
@@ -19,7 +20,8 @@ export const useSimpleGameLogic = ({
   onIncorrectGuess,
   onGameEnd,
   selectRandomPlayer,
-  stopTimer
+  stopTimer,
+  startTimer
 }: UseSimpleGameLogicProps) => {
   const { toast } = useToast();
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
@@ -49,10 +51,14 @@ export const useSimpleGameLogic = ({
         
         stopTimer();
         
-        // Aguarda um momento e vai para o próximo jogador
+        // Aguarda um momento e vai para o próximo jogador COM TIMER REINICIADO
         setTimeout(() => {
-          console.log('🔄 Indo para próximo jogador...');
+          console.log('🔄 Indo para próximo jogador e reiniciando timer...');
           selectRandomPlayer();
+          // Reiniciar o timer do zero para o próximo jogador
+          setTimeout(() => {
+            startTimer();
+          }, 100);
           setIsProcessingGuess(false);
         }, 1500);
         
@@ -75,7 +81,7 @@ export const useSimpleGameLogic = ({
       console.error("Erro ao processar palpite:", error);
       setIsProcessingGuess(false);
     }
-  }, [currentPlayer, isProcessingGuess, onCorrectGuess, onIncorrectGuess, onGameEnd, selectRandomPlayer, stopTimer, toast]);
+  }, [currentPlayer, isProcessingGuess, onCorrectGuess, onIncorrectGuess, onGameEnd, selectRandomPlayer, stopTimer, startTimer, toast]);
 
   return {
     handleGuess,
