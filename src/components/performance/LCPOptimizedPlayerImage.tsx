@@ -3,6 +3,7 @@ import { memo, useCallback, useState, useEffect } from 'react';
 import { Player } from '@/types/guess-game';
 import { CriticalImage } from './CriticalImage';
 import { playerImagesFallbacks, defaultImage } from '@/utils/player-image/constants';
+import { cn } from '@/lib/utils';
 
 interface LCPOptimizedPlayerImageProps {
   player: Player;
