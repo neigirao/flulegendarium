@@ -13,6 +13,7 @@ interface CriticalImageProps {
   onLoad?: () => void;
   onError?: () => void;
   fallbackSrc?: string;
+  isLCPCandidate?: boolean;
 }
 
 export const CriticalImage = memo(({
@@ -25,38 +26,69 @@ export const CriticalImage = memo(({
   aspectRatio,
   onLoad,
   onError,
-  fallbackSrc = '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png'
+  fallbackSrc = '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
+  isLCPCandidate = false
 }: CriticalImageProps) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [hasError, setHasError] = useState(false);
   const [currentSrc, setCurrentSrc] = useState(src);
 
-  // Preload critical images immediately
+  // Aggressive preload for LCP candidates
   useEffect(() => {
-    if (priority && src) {
+    if (isLCPCandidate && src) {
+      console.log('🚀 LCP: Preloading critical image immediately:', src);
+      
+      // Create high priority preload
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.href = src;
+      link.as = 'image';
+      link.fetchPriority = 'high';
+      link.crossOrigin = 'anonymous';
+      
+      // Check if already exists
+      const existing = document.querySelector(`link[href="${src}"][rel="preload"]`);
+      if (!existing) {
+        document.head.appendChild(link);
+      }
+      
+      // Also preload the image directly
       const img = new Image();
       img.fetchPriority = 'high';
+      img.decoding = 'sync'; // Synchronous decoding for LCP
       img.src = src;
       
       img.onload = () => {
-        console.log('✅ Critical image preloaded:', src);
+        console.log('✅ LCP: Critical image preloaded successfully:', src);
       };
       
       img.onerror = () => {
-        console.warn('⚠️ Critical image preload failed:', src);
+        console.warn('⚠️ LCP: Critical image preload failed:', src);
       };
     }
-  }, [src, priority]);
+  }, [src, isLCPCandidate]);
 
   const handleLoad = useCallback(() => {
-    console.log('🖼️ Critical image loaded:', currentSrc);
+    console.log(`🖼️ ${isLCPCandidate ? 'LCP ' : ''}Critical image loaded:`, currentSrc);
     setIsLoaded(true);
     setHasError(false);
     onLoad?.();
-  }, [currentSrc, onLoad]);
+    
+    // Report LCP if this is a candidate
+    if (isLCPCandidate) {
+      console.log('📊 LCP: Reporting successful load of critical image');
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'lcp_image_loaded', {
+          event_category: 'Performance',
+          event_label: 'critical_image',
+          value: performance.now()
+        });
+      }
+    }
+  }, [currentSrc, onLoad, isLCPCandidate]);
 
   const handleError = useCallback(() => {
-    console.error('❌ Critical image error:', currentSrc);
+    console.error(`❌ ${isLCPCandidate ? 'LCP ' : ''}Critical image error:`, currentSrc);
     
     if (currentSrc !== fallbackSrc) {
       console.log('🔄 Switching to fallback image');
@@ -66,7 +98,7 @@ export const CriticalImage = memo(({
     }
     
     onError?.();
-  }, [currentSrc, fallbackSrc, onError]);
+  }, [currentSrc, fallbackSrc, onError, isLCPCandidate]);
 
   // Generate responsive srcset for better performance
   const generateSrcSet = useCallback((imageSrc: string) => {
@@ -84,7 +116,11 @@ export const CriticalImage = memo(({
 
   return (
     <div 
-      className={cn('relative overflow-hidden', className)}
+      className={cn(
+        'relative overflow-hidden',
+        isLCPCandidate && 'lcp-banner-container performance-optimized',
+        className
+      )}
       style={containerStyle}
     >
       {/* Reserve space to prevent layout shift */}
@@ -101,22 +137,29 @@ export const CriticalImage = memo(({
           key={currentSrc}
           src={currentSrc}
           srcSet={generateSrcSet(currentSrc)}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          sizes={isLCPCandidate ? "100vw" : "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"}
           alt={alt}
           width={width}
           height={height}
-          loading={priority ? 'eager' : 'lazy'}
-          decoding="async"
-          fetchPriority={priority ? 'high' : 'auto'}
+          loading={priority || isLCPCandidate ? 'eager' : 'lazy'}
+          decoding={isLCPCandidate ? 'sync' : 'async'}
+          fetchPriority={priority || isLCPCandidate ? 'high' : 'auto'}
+          data-lcp-critical={isLCPCandidate ? 'true' : 'false'}
           className={cn(
             'w-full h-full object-contain transition-opacity duration-200',
-            isLoaded ? 'opacity-100' : 'opacity-0'
+            isLoaded ? 'opacity-100' : 'opacity-0',
+            isLCPCandidate && 'performance-optimized'
           )}
           onLoad={handleLoad}
           onError={handleError}
           style={{
-            contentVisibility: priority ? 'visible' : 'auto',
-            containIntrinsicSize: width && height ? `${width}px ${height}px` : 'auto'
+            contentVisibility: priority || isLCPCandidate ? 'visible' : 'auto',
+            containIntrinsicSize: width && height ? `${width}px ${height}px` : 'auto',
+            ...(isLCPCandidate && {
+              willChange: 'transform',
+              transform: 'translateZ(0)',
+              backfaceVisibility: 'hidden'
+            })
           }}
         />
       )}
@@ -133,6 +176,13 @@ export const CriticalImage = memo(({
             />
             <p className="text-sm">Imagem indisponível</p>
           </div>
+        </div>
+      )}
+
+      {/* LCP Debug info in development */}
+      {process.env.NODE_ENV === 'development' && isLCPCandidate && (
+        <div className="absolute top-2 left-2 bg-green-600 text-white px-2 py-1 rounded text-xs font-bold z-10">
+          LCP CRITICAL
         </div>
       )}
     </div>
