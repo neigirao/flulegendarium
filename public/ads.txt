@@ -1,0 +1,14 @@
+
+# ads.txt file for Lendas do Flu - Quiz Oficial do Fluminense
+# Google AdSense configuration
+
+# Google AdSense
+google.com, pub-8001132507261536, DIRECT, f08c47fec0942fa0
+
+# Additional Google Ad Manager (optional backup)
+googlesyndication.com, 2371735381, DIRECT, f08c47fec0942fa0
+
+# This file authorizes digital sellers to sell advertising inventory
+# Publisher ID: pub-8001132507261536
+# Client ID: 2371735381
+# Generated on: 2025-06-21
