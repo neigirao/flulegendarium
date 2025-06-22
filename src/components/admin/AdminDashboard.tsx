@@ -1,5 +1,4 @@
 
-import { PlayerRecognitionStats } from "./PlayerRecognitionStats";
 import { PlayerPerformanceAnalysis } from "./PlayerPerformanceAnalysis";
 import { GeneralStatsCards } from "./stats/GeneralStatsCards";
 import { MostCorrectPlayersCard } from "./stats/MostCorrectPlayersCard";
@@ -50,11 +49,8 @@ export const AdminDashboard = memo(() => {
         successRate={successRate}
       />
 
-      {/* Nova Análise de Performance por Jogador */}
+      {/* Análise de Performance por Jogador - Componente principal */}
       <PlayerPerformanceAnalysis />
-
-      {/* Card de Reconhecimento por Jogador (mantido para compatibilidade) */}
-      <PlayerRecognitionStats />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <MostCorrectPlayersCard players={mostCorrectPlayers} />

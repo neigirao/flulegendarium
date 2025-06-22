@@ -4,7 +4,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NPSReport } from "./NPSReport";
 import { FeedbackReport } from "./FeedbackReport";
 import { SupportTicketsReport } from "./SupportTicketsReport";
-import { BarChart3, MessageSquare, LifeBuoy, Star } from "lucide-react";
+import { ErrorMetricsReport } from "./ErrorMetricsReport";
+import { PerformanceMetricsReport } from "./PerformanceMetricsReport";
+import { UserEngagementReport } from "./UserEngagementReport";
+import { MessageSquare, LifeBuoy, Star, AlertTriangle, Zap, Users } from "lucide-react";
 
 export const ReportsOverview = () => {
   return (
@@ -12,12 +15,12 @@ export const ReportsOverview = () => {
       <div>
         <h2 className="text-2xl font-bold text-flu-grena mb-2">Relatórios & Análises</h2>
         <p className="text-gray-600">
-          Monitore a satisfação dos usuários e questões de suporte
+          Monitore a satisfação dos usuários, performance e questões operacionais
         </p>
       </div>
 
       <Tabs defaultValue="nps" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+        <TabsList className="grid w-full grid-cols-6 max-w-4xl">
           <TabsTrigger value="nps" className="flex items-center gap-2">
             <Star size={16} />
             NPS
@@ -30,32 +33,22 @@ export const ReportsOverview = () => {
             <LifeBuoy size={16} />
             Support
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="flex items-center gap-2">
-            <BarChart3 size={16} />
-            Analytics
+          <TabsTrigger value="errors" className="flex items-center gap-2">
+            <AlertTriangle size={16} />
+            Erros
+          </TabsTrigger>
+          <TabsTrigger value="performance" className="flex items-center gap-2">
+            <Zap size={16} />
+            Performance
+          </TabsTrigger>
+          <TabsTrigger value="engagement" className="flex items-center gap-2">
+            <Users size={16} />
+            Engagement
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="nps" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <NPSReport />
-            <Card>
-              <CardHeader>
-                <CardTitle>Tendências NPS</CardTitle>
-                <CardDescription>
-                  Evolução do NPS nos últimos 6 meses
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 flex items-center justify-center text-gray-500">
-                  <div className="text-center">
-                    <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Gráfico de tendências em desenvolvimento</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <NPSReport />
         </TabsContent>
 
         <TabsContent value="feedback" className="space-y-6">
@@ -66,42 +59,16 @@ export const ReportsOverview = () => {
           <SupportTicketsReport />
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Métricas de Erro</CardTitle>
-                <CardDescription>
-                  Frequência e tipos de erros reportados
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 flex items-center justify-center text-gray-500">
-                  <div className="text-center">
-                    <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Relatório de erros em desenvolvimento</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        <TabsContent value="errors" className="space-y-6">
+          <ErrorMetricsReport />
+        </TabsContent>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Performance do App</CardTitle>
-                <CardDescription>
-                  Tempos de carregamento e responsividade
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 flex items-center justify-center text-gray-500">
-                  <div className="text-center">
-                    <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Métricas de performance em desenvolvimento</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+        <TabsContent value="performance" className="space-y-6">
+          <PerformanceMetricsReport />
+        </TabsContent>
+
+        <TabsContent value="engagement" className="space-y-6">
+          <UserEngagementReport />
         </TabsContent>
       </Tabs>
     </div>
