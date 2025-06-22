@@ -13,7 +13,12 @@ interface UseGameLogicProps {
   onGameEnd: () => void;
   selectRandomPlayer: () => void;
   stopTimer: () => void;
-  startTimer: () => void; // Adicionado para reiniciar o timer
+  startTimer: () => void;
+}
+
+interface UseGameLogicReturn {
+  handleGuess: (guess: string) => Promise<void>;
+  isProcessingGuess: boolean;
 }
 
 export const useGameLogic = ({
@@ -26,27 +31,24 @@ export const useGameLogic = ({
   selectRandomPlayer,
   stopTimer,
   startTimer
-}: UseGameLogicProps) => {
+}: UseGameLogicProps): UseGameLogicReturn => {
   const { toast } = useToast();
-  const [isProcessingGuess, setIsProcessingGuess] = useState(false);
+  const [isProcessingGuess, setIsProcessingGuess] = useState<boolean>(false);
 
-  const handleGuess = useCallback(async (guess: string) => {
+  const handleGuess = useCallback(async (guess: string): Promise<void> => {
     if (!currentPlayer || !guess || gameOver || isProcessingGuess || !gameActive) return;
     
     console.log('🎮 Processando palpite:', guess, 'para:', currentPlayer.name);
     setIsProcessingGuess(true);
     
     try {
-      const isCorrect = isCorrectGuess(guess, currentPlayer.name);
+      const isCorrect: boolean = isCorrectGuess(guess, currentPlayer.name);
       
       if (isCorrect) {
-        const points = 5;
+        const points: number = 5;
         console.log('🎯 ACERTOU! Pontos ganhos:', points);
         
-        // Para o timer primeiro
         stopTimer();
-        
-        // Atualiza pontuação
         onCorrectGuess(points);
         
         toast({
@@ -54,12 +56,10 @@ export const useGameLogic = ({
           description: `Você acertou! +${points} pontos`,
         });
         
-        // Aguarda um momento e então seleciona próximo jogador COM TIMER REINICIADO
         console.log('🔄 Preparando próximo jogador...');
         setTimeout(() => {
           console.log('🔄 Selecionando próximo jogador após acerto...');
           selectRandomPlayer();
-          // Reiniciar o timer do zero para o próximo jogador
           setTimeout(() => {
             startTimer();
           }, 100);
@@ -80,7 +80,7 @@ export const useGameLogic = ({
         
         setIsProcessingGuess(false);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Erro ao processar palpite:", error);
       setIsProcessingGuess(false);
     }

@@ -1,40 +1,45 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 
-export const TIME_LIMIT_SECONDS = 60; // 1 minute timer
+export const TIME_LIMIT_SECONDS: number = 60;
 
-export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
-  const [timeRemaining, setTimeRemaining] = useState(TIME_LIMIT_SECONDS);
-  const [isRunning, setIsRunning] = useState(false);
+interface UseGameTimerReturn {
+  timeRemaining: number;
+  isRunning: boolean;
+  startTimer: () => void;
+  stopTimer: () => void;
+  clearGameTimer: () => void;
+}
+
+export const useGameTimer = (
+  gameOver: boolean, 
+  onTimeUp: () => void
+): UseGameTimerReturn => {
+  const [timeRemaining, setTimeRemaining] = useState<number>(TIME_LIMIT_SECONDS);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
   const timerRef = useRef<number | null>(null);
 
-  // Cleanup function for timer
-  const clearGameTimer = useCallback(() => {
-    if (timerRef.current) {
+  const clearGameTimer = useCallback((): void => {
+    if (timerRef.current !== null) {
       window.clearInterval(timerRef.current);
       timerRef.current = null;
     }
     setIsRunning(false);
   }, []);
 
-  // Start timer - SEMPRE reinicia do tempo total
-  const startTimer = useCallback(() => {
+  const startTimer = useCallback((): void => {
     if (gameOver) return;
     
     console.log('⏰ Iniciando timer do começo');
     
-    // Clear any existing timer
     clearGameTimer();
     
-    // SEMPRE resetar para o tempo total e começar
     setTimeRemaining(TIME_LIMIT_SECONDS);
     setIsRunning(true);
     
-    // Start new timer
     timerRef.current = window.setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
-          // Time's up
           console.log('⏰ Tempo esgotado!');
           clearGameTimer();
           onTimeUp();
@@ -45,21 +50,18 @@ export const useGameTimer = (gameOver: boolean, onTimeUp: () => void) => {
     }, 1000);
   }, [gameOver, clearGameTimer, onTimeUp]);
 
-  // Stop timer
-  const stopTimer = useCallback(() => {
+  const stopTimer = useCallback((): void => {
     console.log('⏰ Parando timer');
     clearGameTimer();
     setTimeRemaining(TIME_LIMIT_SECONDS);
   }, [clearGameTimer]);
 
-  // Clear timer when game is over
   useEffect(() => {
     if (gameOver) {
       clearGameTimer();
     }
   }, [gameOver, clearGameTimer]);
 
-  // Cleanup timer when component unmounts
   useEffect(() => {
     return clearGameTimer;
   }, [clearGameTimer]);
