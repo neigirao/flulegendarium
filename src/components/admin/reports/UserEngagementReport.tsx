@@ -244,7 +244,7 @@ export const UserEngagementReport = () => {
                   <span className="font-medium">8.7</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm">Power Users (>5/dia)</span>
+                  <span className="text-sm">Power Users (&gt;5/dia)</span>
                   <span className="font-medium">23%</span>
                 </div>
               </div>
