@@ -131,7 +131,7 @@ export const advancedAnalyticsService = {
     return {
       user_rank: userRank,
       total_users: userAverages.length,
-      percentile: Math.round(((userAverages.length - userRank + 1) / userAverages.length) * 100),
+      percentile: Math.round(((userAverages.length - userRank + 1)  / userAverages.length) * 100),
       score_vs_average: Math.round(((userAvgScore - globalAvgScore) / globalAvgScore) * 100),
       accuracy_vs_average: Math.round(userAccuracy - globalAvgAccuracy)
     };
@@ -257,11 +257,17 @@ export const advancedAnalyticsService = {
     const secondAvg = secondHalf.reduce((sum, game) => sum + game.score, 0) / secondHalf.length;
     const learningRate = firstHalf.length > 0 ? ((secondAvg - firstAvg) / firstAvg) * 100 : 0;
 
+    // Calcular consistência baseada na variância dos scores
+    const allScores = data.map(game => game.score);
+    const avgScore = allScores.reduce((sum, score) => sum + score, 0) / allScores.length;
+    const variance = allScores.reduce((sum, score) => sum + Math.pow(score - avgScore, 2), 0) / allScores.length;
+    const consistencyScore = Math.max(0, Math.min(100, 100 - (Math.sqrt(variance) / avgScore) * 100));
+
     return {
       best_hour: parseInt(bestHour),
       best_day: bestDay,
       peak_accuracy_time: `${bestHour}:00`,
-      consistency_score: Math.round(Math.random() * 20 + 80), // Placeholder - seria calculado com base na variância
+      consistency_score: Math.round(consistencyScore),
       learning_rate: Math.round(Math.max(0, learningRate))
     };
   }
