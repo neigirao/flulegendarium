@@ -53,6 +53,17 @@ export const UserEngagementReport = () => {
     return 'text-red-600 bg-red-100';
   };
 
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('pt-BR', { 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
+  const formatFullDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('pt-BR');
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -151,14 +162,11 @@ export const UserEngagementReport = () => {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="date" 
-                tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { 
-                  month: 'short', 
-                  day: 'numeric' 
-                })}
+                tickFormatter={formatDate}
               />
               <YAxis />
               <Tooltip 
-                labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                labelFormatter={formatFullDate}
               />
               <Line 
                 type="monotone" 
@@ -201,14 +209,11 @@ export const UserEngagementReport = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="date" 
-                  tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
+                  tickFormatter={formatDate}
                 />
                 <YAxis domain={[0, 100]} />
                 <Tooltip 
-                  labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                  labelFormatter={formatFullDate}
                   formatter={(value: number) => [`${value}%`, 'Score']}
                 />
                 <Bar 
@@ -235,15 +240,12 @@ export const UserEngagementReport = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis 
                   dataKey="date" 
-                  tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { 
-                    month: 'short', 
-                    day: 'numeric' 
-                  })}
+                  tickFormatter={formatDate}
                 />
                 <YAxis yAxisId="left" />
                 <YAxis yAxisId="right" orientation="right" />
                 <Tooltip 
-                  labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                  labelFormatter={formatFullDate}
                 />
                 <Line 
                   yAxisId="left"
