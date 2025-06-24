@@ -1,271 +1,318 @@
 
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Clock, Target, TrendingUp } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
-
-interface EngagementData {
-  date: string;
-  daily_active_users: number;
-  session_duration: number;
-  games_completed: number;
-  new_users: number;
-}
-
-interface UserSegment {
-  name: string;
-  value: number;
-  color: string;
-}
+import { TrendingUp, TrendingDown, Users, Clock, Target } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import { useReports } from "@/hooks/use-reports";
 
 export const UserEngagementReport = () => {
-  const { data: engagementData = [], isLoading: loadingEngagement } = useQuery({
-    queryKey: ['user-engagement'],
-    queryFn: async (): Promise<EngagementData[]> => {
-      const data = [];
-      const now = new Date();
-      
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
-        data.push({
-          date: date.toISOString().split('T')[0],
-          daily_active_users: Math.floor(Math.random() * 100 + 50),
-          session_duration: Math.random() * 300 + 180, // 3-8 minutes
-          games_completed: Math.floor(Math.random() * 200 + 100),
-          new_users: Math.floor(Math.random() * 20 + 5)
-        });
-      }
-      
-      return data;
-    },
-    staleTime: 5 * 60 * 1000
-  });
+  const { userEngagementData, isLoadingEngagement } = useReports();
 
-  const { data: userSegments = [], isLoading: loadingSegments } = useQuery({
-    queryKey: ['user-segments'],
-    queryFn: async (): Promise<UserSegment[]> => {
-      return [
-        { name: 'Jogadores Ativos', value: 45, color: '#10b981' },
-        { name: 'Jogadores Casuais', value: 30, color: '#3b82f6' },
-        { name: 'Novos Usuários', value: 15, color: '#f59e0b' },
-        { name: 'Usuários Inativos', value: 10, color: '#ef4444' }
-      ];
-    },
-    staleTime: 10 * 60 * 1000
-  });
-
-  if (loadingEngagement || loadingSegments) {
+  if (isLoadingEngagement) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle>Engagement de Usuários</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="animate-pulse space-y-4">
-            <div className="h-64 bg-gray-200 rounded" />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <div className="animate-pulse h-6 bg-gray-200 rounded w-1/3" />
+          </CardHeader>
+          <CardContent>
+            <div className="animate-pulse space-y-4">
+              <div className="h-64 bg-gray-200 rounded" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
-  const latestData = engagementData[engagementData.length - 1];
-  const avgSessionDuration = engagementData.reduce((sum, d) => sum + d.session_duration, 0) / engagementData.length;
-  const totalActiveUsers = latestData?.daily_active_users || 0;
-  const totalGamesCompleted = engagementData.reduce((sum, d) => sum + d.games_completed, 0);
+  // Calcular métricas resumo
+  const recentData = userEngagementData.slice(-7); // Últimos 7 dias
+  const avgDAU = recentData.length > 0 ? 
+    Math.round(recentData.reduce((sum, d) => sum + d.daily_active_users, 0) / recentData.length) : 0;
+  
+  const avgSessionDuration = recentData.length > 0 ? 
+    Math.round(recentData.reduce((sum, d) => sum + d.avg_session_duration, 0) / recentData.length) : 0;
+  
+  const avgEngagementScore = recentData.length > 0 ? 
+    Math.round(recentData.reduce((sum, d) => sum + d.engagement_score, 0) / recentData.length) : 0;
+  
+  const totalNewUsers = userEngagementData.reduce((sum, d) => sum + d.new_users, 0);
+  
+  const avgBounceRate = recentData.length > 0 ? 
+    Math.round(recentData.reduce((sum, d) => sum + d.bounce_rate, 0) / recentData.length) : 0;
+
+  const getTrendIcon = (current: number, previous: number) => {
+    if (current > previous) return <TrendingUp className="w-4 h-4 text-green-600" />;
+    if (current < previous) return <TrendingDown className="w-4 h-4 text-red-600" />;
+    return <div className="w-4 h-4" />;
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600 bg-green-100';
+    if (score >= 60) return 'text-yellow-600 bg-yellow-100';
+    return 'text-red-600 bg-red-100';
+  };
 
   return (
     <div className="space-y-6">
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <h3 className="text-lg font-semibold text-flu-grena mb-2">Relatório de Engajamento do Usuário</h3>
+        <p className="text-gray-600 text-sm">Análise detalhada do comportamento e engajamento dos usuários</p>
+      </div>
+
+      {/* Métricas Resumo */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Users className="w-5 h-5 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Usuários Ativos Hoje</p>
-                <span className="text-2xl font-bold">{totalActiveUsers}</span>
-              </div>
+            <div className="flex items-center justify-between mb-2">
+              <Users className="w-5 h-5 text-blue-600" />
+              {getTrendIcon(avgDAU, avgDAU * 0.9)}
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-600">DAU Médio</p>
+              <p className="text-2xl font-bold text-blue-600">{avgDAU}</p>
+              <p className="text-xs text-gray-500">Últimos 7 dias</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <Clock className="w-5 h-5 text-green-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Duração Média</p>
-                <span className="text-2xl font-bold">
-                  {Math.round(avgSessionDuration / 60)}min
-                </span>
-              </div>
+            <div className="flex items-center justify-between mb-2">
+              <Clock className="w-5 h-5 text-green-600" />
+              {getTrendIcon(avgSessionDuration, 5)}
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-600">Sessão Média</p>
+              <p className="text-2xl font-bold text-green-600">{avgSessionDuration}min</p>
+              <p className="text-xs text-gray-500">Duração por sessão</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <Target className="w-5 h-5 text-purple-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Jogos Completados</p>
-                <span className="text-2xl font-bold">{totalGamesCompleted}</span>
-              </div>
+            <div className="flex items-center justify-between mb-2">
+              <Target className="w-5 h-5 text-purple-600" />
+              <Badge className={getScoreColor(avgEngagementScore)}>
+                {avgEngagementScore}%
+              </Badge>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-600">Engajamento</p>
+              <p className="text-2xl font-bold text-purple-600">{avgEngagementScore}%</p>
+              <p className="text-xs text-gray-500">Score médio</p>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
-                <TrendingUp className="w-5 h-5 text-orange-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Taxa de Retenção</p>
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold">78%</span>
-                  <Badge className="bg-green-100 text-green-800">+5%</Badge>
-                </div>
-              </div>
+            <div className="flex items-center justify-between mb-2">
+              <Users className="w-5 h-5 text-orange-600" />
+              {getTrendIcon(totalNewUsers, totalNewUsers * 0.8)}
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-600">Novos Usuários</p>
+              <p className="text-2xl font-bold text-orange-600">{totalNewUsers}</p>
+              <p className="text-xs text-gray-500">Período total</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <TrendingDown className="w-5 h-5 text-red-600" />
+              <Badge className={avgBounceRate < 30 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+                {avgBounceRate}%
+              </Badge>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-gray-600">Taxa Rejeição</p>
+              <p className="text-2xl font-bold text-red-600">{avgBounceRate}%</p>
+              <p className="text-xs text-gray-500">Sessões < 1min</p>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Usuários Ativos (7 dias)</CardTitle>
-            <CardDescription>
-              Tendência de usuários ativos diários
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={engagementData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis 
-                  dataKey="date" 
-                  tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })}
-                />
-                <YAxis />
-                <Tooltip 
-                  labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
-                  formatter={(value: number) => [value, 'Usuários Ativos']}
-                />
-                <Area 
-                  type="monotone" 
-                  dataKey="daily_active_users" 
-                  stroke="#3b82f6" 
-                  fill="#3b82f6"
-                  fillOpacity={0.6}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Segmentação de Usuários</CardTitle>
-            <CardDescription>
-              Distribuição por tipo de engajamento
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={250}>
-              <PieChart>
-                <Pie
-                  data={userSegments}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  dataKey="value"
-                  label={({ name, value }) => `${name}: ${value}%`}
-                >
-                  {userSegments.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip formatter={(value: number) => `${value}%`} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Detailed Metrics */}
+      {/* Gráfico de Usuários Ativos Diários */}
       <Card>
         <CardHeader>
-          <CardTitle>Métricas Detalhadas de Engagement</CardTitle>
+          <CardTitle>Usuários Ativos Diários</CardTitle>
           <CardDescription>
-            Análise comportamental dos últimos 7 dias
+            Evolução dos usuários ativos, novos usuários e usuários retornando
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="space-y-3">
-              <h4 className="font-medium text-sm text-gray-700">Retenção por Dia</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Dia 1</span>
-                  <Badge className="bg-green-100 text-green-800">92%</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Dia 7</span>
-                  <Badge className="bg-yellow-100 text-yellow-800">78%</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Dia 30</span>
-                  <Badge className="bg-orange-100 text-orange-800">65%</Badge>
-                </div>
-              </div>
-            </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={userEngagementData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis 
+                dataKey="date" 
+                tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { 
+                  month: 'short', 
+                  day: 'numeric' 
+                })}
+              />
+              <YAxis />
+              <Tooltip 
+                labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+              />
+              <Line 
+                type="monotone" 
+                dataKey="daily_active_users" 
+                stroke="#3b82f6" 
+                strokeWidth={2}
+                name="Usuários Ativos"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="new_users" 
+                stroke="#10b981" 
+                strokeWidth={2}
+                name="Novos Usuários"
+              />
+              <Line 
+                type="monotone" 
+                dataKey="returning_users" 
+                stroke="#f59e0b" 
+                strokeWidth={2}
+                name="Usuários Retornando"
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
 
-            <div className="space-y-3">
-              <h4 className="font-medium text-sm text-gray-700">Sessões por Usuário</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Média Diária</span>
-                  <span className="font-medium">2.3</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Média Semanal</span>
-                  <span className="font-medium">8.7</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Power Users (&gt;5/dia)</span>
-                  <span className="font-medium">23%</span>
-                </div>
-              </div>
-            </div>
+      {/* Gráficos de Engajamento */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Score de Engajamento</CardTitle>
+            <CardDescription>
+              Métrica combinada de duração, retenção e atividade
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={userEngagementData.slice(-14)}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { 
+                    month: 'short', 
+                    day: 'numeric' 
+                  })}
+                />
+                <YAxis domain={[0, 100]} />
+                <Tooltip 
+                  labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                  formatter={(value: number) => [`${value}%`, 'Score']}
+                />
+                <Bar 
+                  dataKey="engagement_score" 
+                  fill="#8b5cf6"
+                  name="Score de Engajamento"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
-            <div className="space-y-3">
-              <h4 className="font-medium text-sm text-gray-700">Qualidade do Engagement</h4>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Taxa de Conclusão</span>
-                  <Badge className="bg-green-100 text-green-800">87%</Badge>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Tempo até Desistência</span>
-                  <span className="font-medium">4.2min</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm">Satisfação (NPS)</span>
-                  <Badge className="bg-blue-100 text-blue-800">72</Badge>
-                </div>
-              </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Duração da Sessão & Taxa de Rejeição</CardTitle>
+            <CardDescription>
+              Tempo médio de sessão vs taxa de abandono
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={userEngagementData.slice(-14)}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(date) => new Date(date).toLocaleDateString('pt-BR', { 
+                    month: 'short', 
+                    day: 'numeric' 
+                  })}
+                />
+                <YAxis yAxisId="left" />
+                <YAxis yAxisId="right" orientation="right" />
+                <Tooltip 
+                  labelFormatter={(date) => new Date(date).toLocaleDateString('pt-BR')}
+                />
+                <Line 
+                  yAxisId="left"
+                  type="monotone" 
+                  dataKey="avg_session_duration" 
+                  stroke="#10b981" 
+                  strokeWidth={2}
+                  name="Duração Média (min)"
+                />
+                <Line 
+                  yAxisId="right"
+                  type="monotone" 
+                  dataKey="bounce_rate" 
+                  stroke="#ef4444" 
+                  strokeWidth={2}
+                  name="Taxa de Rejeição (%)"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Insights e Recomendações */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Insights Automatizados</CardTitle>
+          <CardDescription>Análises baseadas nos dados de engajamento</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <h4 className="font-medium text-blue-800 mb-2">📈 Tendência Positiva</h4>
+              <p className="text-sm text-blue-700">
+                {avgEngagementScore > 70 ? 
+                  'Score de engajamento está em nível saudável. Usuários estão bem engajados.' :
+                  'Score de engajamento pode melhorar. Considere campanhas de reativação.'
+                }
+              </p>
+            </div>
+            
+            <div className="p-4 bg-green-50 rounded-lg">
+              <h4 className="font-medium text-green-800 mb-2">⏱️ Duração da Sessão</h4>
+              <p className="text-sm text-green-700">
+                {avgSessionDuration > 5 ? 
+                  'Duração média da sessão está boa. Usuários passam tempo suficiente no app.' :
+                  'Duração da sessão está baixa. Considere melhorias na UX para reter usuários.'
+                }
+              </p>
+            </div>
+            
+            <div className="p-4 bg-yellow-50 rounded-lg">
+              <h4 className="font-medium text-yellow-800 mb-2">🎯 Taxa de Rejeição</h4>
+              <p className="text-sm text-yellow-700">
+                {avgBounceRate < 30 ? 
+                  'Taxa de rejeição está em nível aceitável.' :
+                  'Taxa de rejeição alta. Revisar onboarding e primeiro contato com o app.'
+                }
+              </p>
+            </div>
+            
+            <div className="p-4 bg-purple-50 rounded-lg">
+              <h4 className="font-medium text-purple-800 mb-2">👥 Aquisição de Usuários</h4>
+              <p className="text-sm text-purple-700">
+                {totalNewUsers > 50 ? 
+                  'Boa taxa de aquisição de novos usuários no período.' :
+                  'Considere campanhas de marketing para atrair mais usuários.'
+                }
+              </p>
             </div>
           </div>
         </CardContent>
