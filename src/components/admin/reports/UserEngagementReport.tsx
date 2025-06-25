@@ -64,6 +64,13 @@ export const UserEngagementReport = () => {
     return new Date(dateStr).toLocaleDateString('pt-BR');
   };
 
+  const formatTooltipValue = (value: number, name: string) => {
+    if (name === 'Score de Engajamento') {
+      return [`${value}%`, 'Score'];
+    }
+    return [value, name];
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -142,7 +149,7 @@ export const UserEngagementReport = () => {
             <div className="space-y-1">
               <p className="text-sm font-medium text-gray-600">Taxa Rejeição</p>
               <p className="text-2xl font-bold text-red-600">{avgBounceRate}%</p>
-              <p className="text-xs text-gray-500">Sessões < 1min</p>
+              <p className="text-xs text-gray-500">Sessões &lt; 1min</p>
             </div>
           </CardContent>
         </Card>
@@ -214,7 +221,7 @@ export const UserEngagementReport = () => {
                 <YAxis domain={[0, 100]} />
                 <Tooltip 
                   labelFormatter={formatFullDate}
-                  formatter={(value: number) => [`${value}%`, 'Score']}
+                  formatter={formatTooltipValue}
                 />
                 <Bar 
                   dataKey="engagement_score" 
