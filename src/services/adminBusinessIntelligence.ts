@@ -1,9 +1,8 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface UserSegment {
   id: string;
-  name: string;
+  segment_name: string;
   description: string;
   user_count: number;
   percentage: number;
@@ -14,25 +13,31 @@ export interface UserSegment {
   growth_rate: number;
   characteristics: string[];
   recommended_actions: string[];
+  avg_score: number;
+  avg_accuracy: number;
 }
 
 export interface CohortData {
-  cohort_month: string;
-  user_count: number;
-  retention_data: { [key: string]: number };
-  revenue_data: { [key: string]: number };
+  cohort_period: string;
+  users_acquired: number;
+  retention_week_1: number;
+  retention_week_2: number;
+  retention_week_4: number;
+  retention_week_12: number;
+  avg_ltv: number;
 }
 
 export interface OperationalMetric {
   id: string;
-  name: string;
-  value: number;
+  metric_name: string;
+  current_value: number;
   previous_value: number;
-  target: number;
+  target_value: number;
   unit: string;
   category: 'performance' | 'engagement' | 'technical' | 'business';
   trend: 'up' | 'down' | 'stable';
   status: 'healthy' | 'warning' | 'critical';
+  change_percentage: number;
   last_updated: string;
 }
 
@@ -101,7 +106,7 @@ export const adminBusinessIntelligence = {
       const segments: UserSegment[] = [
         {
           id: 'champions',
-          name: 'Champions',
+          segment_name: 'Champions',
           description: 'Usuários mais engajados com alta frequência e performance',
           user_count: 0,
           percentage: 0,
@@ -110,12 +115,14 @@ export const adminBusinessIntelligence = {
           conversion_rate: 0,
           revenue_per_user: 0,
           growth_rate: 0,
+          avg_score: 0,
+          avg_accuracy: 0,
           characteristics: ['Alta frequência de jogos', 'Pontuação acima da média', 'Sessões longas'],
           recommended_actions: ['Programa de embaixadores', 'Conteúdo exclusivo', 'Desafios especiais']
         },
         {
           id: 'loyal',
-          name: 'Usuários Fiéis',
+          segment_name: 'Usuários Fiéis',
           description: 'Usuários regulares com boa retenção',
           user_count: 0,
           percentage: 0,
@@ -124,12 +131,14 @@ export const adminBusinessIntelligence = {
           conversion_rate: 0,
           revenue_per_user: 0,
           growth_rate: 0,
+          avg_score: 0,
+          avg_accuracy: 0,
           characteristics: ['Joga regularmente', 'Boa taxa de acerto', 'Retorna frequentemente'],
           recommended_actions: ['Campanhas de fidelidade', 'Novos modos de jogo', 'Recompensas']
         },
         {
           id: 'casual',
-          name: 'Jogadores Casuais',
+          segment_name: 'Jogadores Casuais',
           description: 'Usuários que jogam esporadicamente',
           user_count: 0,
           percentage: 0,
@@ -138,12 +147,14 @@ export const adminBusinessIntelligence = {
           conversion_rate: 0,
           revenue_per_user: 0,
           growth_rate: 0,
+          avg_score: 0,
+          avg_accuracy: 0,
           characteristics: ['Sessões curtas', 'Joga ocasionalmente', 'Precisa de motivação'],
           recommended_actions: ['Notificações personalizadas', 'Tutoriais', 'Gamificação']
         },
         {
           id: 'at-risk',
-          name: 'Em Risco',
+          segment_name: 'Em Risco',
           description: 'Usuários com risco de abandono',
           user_count: 0,
           percentage: 0,
@@ -152,12 +163,16 @@ export const adminBusinessIntelligence = {
           conversion_rate: 0,
           revenue_per_user: 0,
           growth_rate: 0,
+          avg_score: 0,
+          avg_accuracy: 0,
           characteristics: ['Atividade em declínio', 'Última atividade > 7 dias', 'Performance baixa'],
           recommended_actions: ['Campanhas de reativação', 'Suporte personalizado', 'Incentivos especiais']
         }
       ];
 
       const totalUsers = Object.keys(userMetrics).length;
+      let totalScoreSum = 0;
+      let totalAccuracySum = 0;
       
       // Classificar usuários em segmentos
       Object.entries(userMetrics).forEach(([userId, metrics]: [string, any]) => {
@@ -167,6 +182,9 @@ export const adminBusinessIntelligence = {
         const daysSinceLastActivity = Math.floor(
           (Date.now() - metrics.last_activity.getTime()) / (1000 * 60 * 60 * 24)
         );
+
+        totalScoreSum += avgScore;
+        totalAccuracySum += avgAccuracy;
 
         let segment: UserSegment;
         
@@ -183,6 +201,8 @@ export const adminBusinessIntelligence = {
         segment.user_count += 1;
         segment.avg_session_duration += avgDuration;
         segment.retention_rate += daysSinceLastActivity <= 7 ? 1 : 0;
+        segment.avg_score += avgScore;
+        segment.avg_accuracy += avgAccuracy;
       });
 
       // Calcular percentuais e médias
@@ -191,6 +211,8 @@ export const adminBusinessIntelligence = {
           segment.percentage = Math.round((segment.user_count / totalUsers) * 100);
           segment.avg_session_duration = Math.round(segment.avg_session_duration / segment.user_count / 60); // em minutos
           segment.retention_rate = Math.round((segment.retention_rate / segment.user_count) * 100);
+          segment.avg_score = Math.round(segment.avg_score / segment.user_count);
+          segment.avg_accuracy = Math.round(segment.avg_accuracy / segment.user_count);
           segment.conversion_rate = Math.round(Math.random() * 20 + 60); // Simulado por enquanto
           segment.revenue_per_user = 0; // Sem monetização atual
           segment.growth_rate = Math.round((Math.random() - 0.5) * 20); // Simulado
@@ -227,46 +249,82 @@ export const adminBusinessIntelligence = {
         
         if (!cohorts[cohortMonth]) {
           cohorts[cohortMonth] = {
-            cohort_month: cohortMonth,
-            user_count: 0,
-            retention_data: {},
-            revenue_data: {}
+            cohort_period: cohortMonth,
+            users_acquired: 0,
+            retention_week_1: 0,
+            retention_week_2: 0,
+            retention_week_4: 0,
+            retention_week_12: 0,
+            avg_ltv: 0
           };
         }
         
-        cohorts[cohortMonth].user_count += 1;
+        cohorts[cohortMonth].users_acquired += 1;
       });
 
       // Calcular retenção para cada coorte
       Object.values(cohorts).forEach(cohort => {
         const cohortUsers = profiles.filter(p => 
-          new Date(p.created_at).toISOString().slice(0, 7) === cohort.cohort_month
+          new Date(p.created_at).toISOString().slice(0, 7) === cohort.cohort_period
         );
 
-        // Para cada mês após o registro, calcular quantos usuários retornaram
-        for (let monthsLater = 0; monthsLater <= 12; monthsLater++) {
-          const targetMonth = new Date(cohort.cohort_month + '-01');
-          targetMonth.setMonth(targetMonth.getMonth() + monthsLater);
-          const targetMonthStr = targetMonth.toISOString().slice(0, 7);
+        // Calcular retenção por semana
+        const cohortStartDate = new Date(cohort.cohort_period + '-01');
+        
+        // Week 1
+        const week1Start = new Date(cohortStartDate);
+        const week1End = new Date(cohortStartDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const week1ActiveUsers = cohortUsers.filter(user => {
+          return gameHistory.some(game => 
+            game.user_id === user.id &&
+            new Date(game.created_at) >= week1Start &&
+            new Date(game.created_at) < week1End
+          );
+        }).length;
+        cohort.retention_week_1 = cohort.users_acquired > 0 ? Math.round((week1ActiveUsers / cohort.users_acquired) * 100) : 0;
 
-          const activeUsers = cohortUsers.filter(user => {
-            return gameHistory.some(game => 
-              game.user_id === user.id &&
-              new Date(game.created_at).toISOString().slice(0, 7) === targetMonthStr
-            );
-          }).length;
+        // Week 2
+        const week2Start = new Date(cohortStartDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+        const week2End = new Date(cohortStartDate.getTime() + 14 * 24 * 60 * 60 * 1000);
+        const week2ActiveUsers = cohortUsers.filter(user => {
+          return gameHistory.some(game => 
+            game.user_id === user.id &&
+            new Date(game.created_at) >= week2Start &&
+            new Date(game.created_at) < week2End
+          );
+        }).length;
+        cohort.retention_week_2 = cohort.users_acquired > 0 ? Math.round((week2ActiveUsers / cohort.users_acquired) * 100) : 0;
 
-          const retentionRate = cohort.user_count > 0 ? 
-            Math.round((activeUsers / cohort.user_count) * 100) : 0;
-          
-          cohort.retention_data[`month_${monthsLater}`] = retentionRate;
-          cohort.revenue_data[`month_${monthsLater}`] = 0; // Sem receita por enquanto
-        }
+        // Week 4
+        const week4Start = new Date(cohortStartDate.getTime() + 21 * 24 * 60 * 60 * 1000);
+        const week4End = new Date(cohortStartDate.getTime() + 28 * 24 * 60 * 60 * 1000);
+        const week4ActiveUsers = cohortUsers.filter(user => {
+          return gameHistory.some(game => 
+            game.user_id === user.id &&
+            new Date(game.created_at) >= week4Start &&
+            new Date(game.created_at) < week4End
+          );
+        }).length;
+        cohort.retention_week_4 = cohort.users_acquired > 0 ? Math.round((week4ActiveUsers / cohort.users_acquired) * 100) : 0;
+
+        // Week 12
+        const week12Start = new Date(cohortStartDate.getTime() + 77 * 24 * 60 * 60 * 1000);
+        const week12End = new Date(cohortStartDate.getTime() + 84 * 24 * 60 * 60 * 1000);
+        const week12ActiveUsers = cohortUsers.filter(user => {
+          return gameHistory.some(game => 
+            game.user_id === user.id &&
+            new Date(game.created_at) >= week12Start &&
+            new Date(game.created_at) < week12End
+          );
+        }).length;
+        cohort.retention_week_12 = cohort.users_acquired > 0 ? Math.round((week12ActiveUsers / cohort.users_acquired) * 100) : 0;
+
+        cohort.avg_ltv = 0; // Sem receita por enquanto
       });
 
       return Object.values(cohorts)
-        .filter(c => c.user_count >= 5) // Apenas coortes com pelo menos 5 usuários
-        .sort((a, b) => b.cohort_month.localeCompare(a.cohort_month))
+        .filter(c => c.users_acquired >= 5) // Apenas coortes com pelo menos 5 usuários
+        .sort((a, b) => b.cohort_period.localeCompare(a.cohort_period))
         .slice(0, 12); // Últimos 12 meses
 
     } catch (error) {
@@ -336,106 +394,119 @@ export const adminBusinessIntelligence = {
       const yesterdayAvgScore = yesterdayGames?.length > 0 ?
         Math.round(yesterdayGames.reduce((sum, game) => sum + game.score, 0) / yesterdayGames.length) : 0;
 
+      const calculateChangePercentage = (current: number, previous: number) => {
+        if (previous === 0) return current > 0 ? 100 : 0;
+        return Math.round(((current - previous) / previous) * 100);
+      };
+
       const metrics: OperationalMetric[] = [
         {
           id: 'dau',
-          name: 'Usuários Ativos Diários',
-          value: todayActiveUsers,
+          metric_name: 'Usuários Ativos Diários',
+          current_value: todayActiveUsers,
           previous_value: yesterdayActiveUsers,
-          target: Math.max(50, Math.round(todayActiveUsers * 1.2)),
+          target_value: Math.max(50, Math.round(todayActiveUsers * 1.2)),
           unit: '',
           category: 'engagement',
           trend: todayActiveUsers > yesterdayActiveUsers ? 'up' : 
                  todayActiveUsers < yesterdayActiveUsers ? 'down' : 'stable',
           status: todayActiveUsers >= yesterdayActiveUsers ? 'healthy' : 'warning',
+          change_percentage: calculateChangePercentage(todayActiveUsers, yesterdayActiveUsers),
           last_updated: now.toISOString()
         },
         {
           id: 'hourly-active',
-          name: 'Usuários Ativos (Última Hora)',
-          value: recentActiveUsers,
+          metric_name: 'Usuários Ativos (Última Hora)',
+          current_value: recentActiveUsers,
           previous_value: Math.round(recentActiveUsers * 0.8),
-          target: Math.max(10, Math.round(recentActiveUsers * 1.3)),
+          target_value: Math.max(10, Math.round(recentActiveUsers * 1.3)),
           unit: '',
           category: 'performance',
           trend: 'stable',
           status: recentActiveUsers > 5 ? 'healthy' : 'warning',
+          change_percentage: 20,
           last_updated: now.toISOString()
         },
         {
           id: 'completion-rate',
-          name: 'Taxa de Conclusão',
-          value: Math.round(completionRate),
+          metric_name: 'Taxa de Conclusão',
+          current_value: Math.round(completionRate),
           previous_value: Math.round(yesterdayCompletionRate),
-          target: 85,
+          target_value: 85,
           unit: '%',
           category: 'engagement',
           trend: completionRate > yesterdayCompletionRate ? 'up' : 
                  completionRate < yesterdayCompletionRate ? 'down' : 'stable',
           status: completionRate > 70 ? 'healthy' : completionRate > 50 ? 'warning' : 'critical',
+          change_percentage: calculateChangePercentage(completionRate, yesterdayCompletionRate),
           last_updated: now.toISOString()
         },
         {
           id: 'avg-session',
-          name: 'Duração Média da Sessão',
-          value: avgSessionDuration,
+          metric_name: 'Duração Média da Sessão',
+          current_value: avgSessionDuration,
           previous_value: yesterdayAvgDuration,
-          target: 8,
+          target_value: 8,
           unit: 'min',
           category: 'engagement',
           trend: avgSessionDuration > yesterdayAvgDuration ? 'up' : 
                  avgSessionDuration < yesterdayAvgDuration ? 'down' : 'stable',
           status: avgSessionDuration >= 5 ? 'healthy' : 'warning',
+          change_percentage: calculateChangePercentage(avgSessionDuration, yesterdayAvgDuration),
           last_updated: now.toISOString()
         },
         {
           id: 'avg-score',
-          name: 'Pontuação Média',
-          value: avgScore,
+          metric_name: 'Pontuação Média',
+          current_value: avgScore,
           previous_value: yesterdayAvgScore,
-          target: 500,
+          target_value: 500,
           unit: 'pts',
           category: 'performance',
           trend: avgScore > yesterdayAvgScore ? 'up' : 
                  avgScore < yesterdayAvgScore ? 'down' : 'stable',
           status: avgScore >= 400 ? 'healthy' : avgScore >= 300 ? 'warning' : 'critical',
+          change_percentage: calculateChangePercentage(avgScore, yesterdayAvgScore),
           last_updated: now.toISOString()
         },
         {
           id: 'games-today',
-          name: 'Jogos Completados Hoje',
-          value: todayGamesCount,
+          metric_name: 'Jogos Completados Hoje',
+          current_value: todayGamesCount,
           previous_value: yesterdayGamesCount,
-          target: Math.max(100, Math.round(todayGamesCount * 1.1)),
+          target_value: Math.max(100, Math.round(todayGamesCount * 1.1)),
           unit: '',
           category: 'business',
           trend: todayGamesCount > yesterdayGamesCount ? 'up' : 
                  todayGamesCount < yesterdayGamesCount ? 'down' : 'stable',
           status: todayGamesCount >= yesterdayGamesCount ? 'healthy' : 'warning',
+          change_percentage: calculateChangePercentage(todayGamesCount, yesterdayGamesCount),
           last_updated: now.toISOString()
         },
         {
           id: 'system-health',
-          name: 'Saúde do Sistema',
-          value: 99, // Baseado na disponibilidade do Supabase
+          metric_name: 'Saúde do Sistema',
+          current_value: 99,
           previous_value: 98,
-          target: 99,
+          target_value: 99,
           unit: '%',
           category: 'technical',
           trend: 'up',
           status: 'healthy',
+          change_percentage: 1,
           last_updated: now.toISOString()
         },
         {
           id: 'response-time',
-          name: 'Tempo de Resposta Médio',
-          value: 150, // Estimativa baseada na performance
+          metric_name: 'Tempo de Resposta Médio',
+          current_value: 150,
           previous_value: 180,
-          target: 200,
+          target_value: 200,
           unit: 'ms',
           category: 'technical',
           trend: 'up',
           status: 'healthy',
+          change_percentage: -17,
           last_updated: now.toISOString()
         }
       ];
