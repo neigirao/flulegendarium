@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -138,7 +137,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{businessMetrics.average_session_duration}m</div>
+              <div className="text-2xl font-bold text-purple-600">{businessMetrics.avg_session_duration}m</div>
               <p className="text-xs text-muted-foreground">Duração média</p>
             </CardContent>
           </Card>
