@@ -7,8 +7,8 @@ import { useDecadePlayerSelection } from '@/hooks/use-decade-player-selection';
 import { useSimpleGameLogic } from '@/hooks/use-simple-game-logic';
 import { useSimpleGameCallbacks } from '@/hooks/use-simple-game-callbacks';
 import { useSimpleGameMetrics } from '@/hooks/use-simple-game-metrics';
-import { useGameTimer } from '@/hooks/use-game-timer';
-import { useGameState } from '@/hooks/use-game-state';
+import { useDecadeGameTimer } from '@/hooks/use-decade-game-timer';
+import { useDecadeGameState } from '@/hooks/use-decade-game-state';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
@@ -19,7 +19,14 @@ import { ArrowLeft, RotateCcw } from 'lucide-react';
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
-  const [playerCounts, setPlayerCounts] = useState<Record<Decade, number>>({});
+  const [playerCounts, setPlayerCounts] = useState<Record<Decade, number>>({
+    '1970s': 0,
+    '1980s': 0,
+    '1990s': 0,
+    '2000s': 0,
+    '2010s': 0,
+    '2020s': 0
+  });
   const [gameKey, setGameKey] = useState(0);
 
   // Hooks do jogo
@@ -45,7 +52,7 @@ export const DecadeGameContainer = () => {
     maxStreak,
     resetStreak,
     gamesPlayed
-  } = useGameState();
+  } = useDecadeGameState();
 
   const {
     timeRemaining,
@@ -53,7 +60,7 @@ export const DecadeGameContainer = () => {
     startTimer,
     stopTimer,
     resetTimer
-  } = useGameTimer({
+  } = useDecadeGameTimer({
     initialTime: 180,
     onTimeUp: () => console.log('Tempo esgotado')
   });
@@ -94,7 +101,14 @@ export const DecadeGameContainer = () => {
     const loadPlayerCounts = async () => {
       try {
         const availableDecades = await decadePlayerService.getAvailableDecades();
-        const counts: Record<Decade, number> = {} as Record<Decade, number>;
+        const counts: Record<Decade, number> = {
+          '1970s': 0,
+          '1980s': 0,
+          '1990s': 0,
+          '2000s': 0,
+          '2010s': 0,
+          '2020s': 0
+        };
         
         for (const decade of availableDecades) {
           const players = await decadePlayerService.getPlayersByDecade(decade);

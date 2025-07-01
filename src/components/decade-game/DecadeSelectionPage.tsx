@@ -13,7 +13,17 @@ interface DecadeSelectionPageProps {
   playerCounts?: Record<Decade, number>;
 }
 
-export const DecadeSelectionPage = ({ onDecadeSelect, playerCounts = {} }: DecadeSelectionPageProps) => {
+export const DecadeSelectionPage = ({ 
+  onDecadeSelect, 
+  playerCounts = {
+    '1970s': 0,
+    '1980s': 0,
+    '1990s': 0,
+    '2000s': 0,
+    '2010s': 0,
+    '2020s': 0
+  }
+}: DecadeSelectionPageProps) => {
   const navigate = useNavigate();
   const decades = getAllDecades();
 
@@ -66,7 +76,7 @@ export const DecadeSelectionPage = ({ onDecadeSelect, playerCounts = {} }: Decad
                   {decade.description}
                 </p>
                 
-                {playerCounts[decade.id] && (
+                {playerCounts[decade.id] > 0 && (
                   <div className="flex items-center justify-center gap-2 mb-4">
                     <Users className="w-4 h-4 text-flu-verde" />
                     <Badge variant="secondary" className="bg-flu-verde/10 text-flu-verde">
