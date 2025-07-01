@@ -1,4 +1,3 @@
-
 export interface Player {
   id: string;
   name: string;
@@ -19,6 +18,8 @@ export interface Player {
   total_attempts?: number;
   correct_attempts?: number;
   average_guess_time?: number;
+  // Campo de década
+  decade?: string;
 }
 
 export interface NameProcessingResult {
