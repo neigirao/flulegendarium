@@ -13,7 +13,7 @@ export interface DecadeInfo {
 }
 
 export interface DecadePlayer extends Player {
-  decade?: Decade;
+  decades?: Decade[];
 }
 
 export interface DecadeGameState {

@@ -282,7 +282,7 @@ export type Database = {
           average_guess_time: number | null
           correct_attempts: number | null
           created_at: string
-          decade: string | null
+          decades: string[] | null
           difficulty_confidence: number | null
           difficulty_level: string | null
           difficulty_score: number | null
@@ -301,7 +301,7 @@ export type Database = {
           average_guess_time?: number | null
           correct_attempts?: number | null
           created_at?: string
-          decade?: string | null
+          decades?: string[] | null
           difficulty_confidence?: number | null
           difficulty_level?: string | null
           difficulty_score?: number | null
@@ -320,7 +320,7 @@ export type Database = {
           average_guess_time?: number | null
           correct_attempts?: number | null
           created_at?: string
-          decade?: string | null
+          decades?: string[] | null
           difficulty_confidence?: number | null
           difficulty_level?: string | null
           difficulty_score?: number | null

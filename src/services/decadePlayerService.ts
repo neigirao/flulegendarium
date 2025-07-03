@@ -26,9 +26,9 @@ export const decadePlayerService = {
           total_attempts,
           correct_attempts,
           average_guess_time,
-          decade
+          decades
         `)
-        .eq('decade', decade);
+        .contains('decades', [decade]);
       
       if (error) {
         console.error(`❌ Erro ao buscar jogadores da década ${decade}:`, error);
@@ -58,7 +58,7 @@ export const decadePlayerService = {
         total_attempts: player.total_attempts || 0,
         correct_attempts: player.correct_attempts || 0,
         average_guess_time: player.average_guess_time || 30000,
-        decade: player.decade as Decade
+        decades: Array.isArray(player.decades) ? player.decades as Decade[] : []
       }));
 
     } catch (error) {
@@ -71,12 +71,13 @@ export const decadePlayerService = {
     try {
       const { data, error } = await supabase
         .from('players')
-        .select('decade')
-        .not('decade', 'is', null);
+        .select('decades')
+        .not('decades', 'is', null);
       
       if (error) throw error;
       
-      const decades = [...new Set(data?.map(p => p.decade).filter(Boolean))];
+      const allDecades = data?.flatMap(p => p.decades || []).filter(Boolean);
+      const decades = [...new Set(allDecades)];
       return decades.sort() as Decade[];
     } catch (error) {
       console.error('❌ Erro ao buscar décadas disponíveis:', error);
