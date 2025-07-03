@@ -1,12 +1,31 @@
 
-import React from "react";
+import React, { Suspense } from "react";
 import { RootLayout } from "@/components/RootLayout";
 import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import { LazyPlayerRanking } from "@/components/LazyComponents";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const navigate = useNavigate();
+
+  // Buscar estatísticas do jogo
+  const { data: gameStats } = useQuery({
+    queryKey: ['game-stats'],
+    queryFn: async () => {
+      const [sessionsResponse, attemptsResponse] = await Promise.all([
+        supabase.from('game_sessions').select('id'),
+        supabase.from('game_attempts').select('id')
+      ]);
+      
+      return {
+        totalGames: sessionsResponse.data?.length || 0,
+        totalAttempts: attemptsResponse.data?.length || 0
+      };
+    },
+  });
 
   return (
     <>
@@ -39,6 +58,11 @@ const Index = () => {
                 <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
                   <span className="text-flu-grena font-semibold">🎯 Quiz Adaptativo</span>
                 </div>
+                {gameStats && (
+                  <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
+                    <span className="text-flu-grena font-semibold">🎮 {gameStats.totalGames} Jogos</span>
+                  </div>
+                )}
               </div>
 
               {/* CTA Principal */}
@@ -119,6 +143,23 @@ const Index = () => {
                     ✓ Anos 70 até 2020s • ✓ Lendas por época
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Ranking Section */}
+            <div className="mt-16">
+              <h3 className="text-2xl font-bold text-center text-flu-grena mb-8">
+                🏆 Ranking dos Melhores Tricolores
+              </h3>
+              
+              <div className="max-w-2xl mx-auto">
+                <Suspense fallback={
+                  <div className="flex justify-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-flu-grena"></div>
+                  </div>
+                }>
+                  <LazyPlayerRanking />
+                </Suspense>
               </div>
             </div>
           </div>
