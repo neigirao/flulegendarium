@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { LazyPlayerRanking } from "@/components/LazyComponents";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { TopNavigation } from "@/components/navigation/TopNavigation";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -36,7 +37,8 @@ const Index = () => {
         url="https://flulegendarium.lovable.app"
       />
       <RootLayout>
-        <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10">
+        <TopNavigation />
+        <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10 pt-16">
           {/* Hero Section */}
           <div className="container mx-auto px-4 pt-12 pb-8">
             <div className="text-center mb-12">
