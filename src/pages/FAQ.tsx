@@ -16,8 +16,12 @@ const faqData = [
         answer: "Lendas do Flu é um quiz adaptativo onde você testa seus conhecimentos sobre os jogadores históricos e atuais do Fluminense FC. Veja a foto do jogador e tente adivinhar quem é! É o desafio perfeito para todo tricolor que se preza."
       },
       {
-        question: "Como funciona o jogo?",
-        answer: "É muito simples! Uma foto de um jogador do Fluminense aparece na tela e você tem que adivinhar o nome correto. Você tem apenas 30 segundos e UMA tentativa por jogador. Cada acerto vale pontos e você compete no ranking global com outros tricolores."
+        question: "Quais modos de jogo estão disponíveis?",
+        answer: "Temos dois modos: 1) Quiz Adaptativo - Sistema inteligente que ajusta a dificuldade baseado no seu desempenho; 2) Quiz por Década - Escolha uma época específica (anos 70, 80, 90, 2000s, 2010s, 2020s) e teste conhecimentos sobre jogadores daquela era."
+      },
+      {
+        question: "Como funciona o Quiz por Década?",
+        answer: "No Quiz por Década você escolhe um período específico da história do Fluminense. Por exemplo, se escolher 'Anos 2000s', aparecerão apenas jogadores que atuaram nessa década. É perfeito para nostálgicos ou para testar conhecimento sobre eras específicas!"
       },
       {
         question: "Como funciona o sistema adaptativo?",
@@ -33,7 +37,29 @@ const faqData = [
       },
       {
         question: "Quantos jogadores estão no jogo?",
-        answer: "Temos uma base crescente com dezenas de jogadores históricos e atuais do Fluminense, desde os clássicos como Castilho e Telê Santana até os ídolos mais recentes. Novos jogadores são adicionados regularmente!"
+        answer: "Temos mais de 200 jogadores históricos e atuais do Fluminense, desde os clássicos como Castilho e Telê Santana até os ídolos mais recentes. Novos jogadores são adicionados regularmente!"
+      }
+    ]
+  },
+  {
+    category: "Performance e Velocidade",
+    icon: Brain,
+    questions: [
+      {
+        question: "Por que o jogo carrega rápido?",
+        answer: "Implementamos tecnologias avançadas de otimização: Service Worker para cache inteligente, imagens pré-carregadas, CSS crítico inline e bundle otimizado. Isso garante carregamento ultra-rápido mesmo em conexões lentas!"
+      },
+      {
+        question: "O que é o Service Worker?",
+        answer: "É uma tecnologia que permite o jogo funcionar offline parcialmente e carregar muito mais rápido em visitas posteriores. As imagens e recursos são salvos no seu dispositivo para acesso instantâneo."
+      },
+      {
+        question: "Por que algumas imagens carregam instantaneamente?",
+        answer: "Usamos preload inteligente das imagens mais críticas e um sistema de cache otimizado. As imagens dos jogadores mais populares são pré-carregadas em background para experiência fluida."
+      },
+      {
+        question: "Como vocês otimizam para celulares?",
+        answer: "Temos skeletons de carregamento, lazy loading inteligente, compressão automática de imagens e detecção de formato WebP/AVIF. Tudo pensado para performance máxima em dispositivos móveis."
       }
     ]
   },
@@ -51,7 +77,7 @@ const faqData = [
       },
       {
         question: "Posso escolher a dificuldade manualmente?",
-        answer: "Não, a dificuldade é totalmente automática. Isso garante que você sempre tenha o nível ideal de desafio baseado na sua performance atual, tornando o jogo mais justo e envolvente."
+        answer: "No Quiz Adaptativo, a dificuldade é automática. Mas no Quiz por Década, você pode escolher a era que deseja jogar, o que indiretamente controla a dificuldade (décadas mais antigas tendem a ser mais difíceis)."
       },
       {
         question: "O que significam os níveis de dificuldade?",
@@ -65,7 +91,11 @@ const faqData = [
     questions: [
       {
         question: "Como começar a jogar?",
-        answer: "Clique em 'Jogar Quiz Agora' na página inicial, escolha jogar como convidado, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
+        answer: "Clique em 'Começar a Jogar' na página inicial, escolha entre Quiz Adaptativo ou Quiz por Década, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
+      },
+      {
+        question: "Qual é a diferença entre os modos?",
+        answer: "Quiz Adaptativo: dificuldade automática baseada no desempenho. Quiz por Década: você escolhe a era (70s, 80s, 90s, 2000s, 2010s, 2020s) e joga apenas com jogadores daquele período específico."
       },
       {
         question: "Posso tentar mais de uma vez por jogador?",
@@ -99,7 +129,11 @@ const faqData = [
       },
       {
         question: "E se minha conexão cair?",
-        answer: "Infelizmente, problemas de conexão também resultam em Game Over. Certifique-se de ter uma conexão estável antes de começar uma partida séria."
+        answer: "Com nosso novo Service Worker, o jogo pode continuar funcionando offline por alguns minutos. Mas para salvar pontuação no ranking, você precisará de conexão. Recomendamos conexão estável para melhor experiência."
+      },
+      {
+        question: "O jogo funciona offline?",
+        answer: "Parcialmente! Graças ao Service Worker, imagens já visualizadas ficam em cache e o jogo pode continuar por um tempo sem internet. Mas recursos novos e salvamento de ranking precisam de conexão."
       }
     ]
   },
@@ -116,8 +150,8 @@ const faqData = [
         answer: "Ao salvar sua pontuação, coloque seu nome seguido de (@seuinstagram). Por exemplo: 'João Silva (@joaosilva)'. Assim sua foto do Instagram aparecerá no ranking e seu nome virará um link para seu perfil."
       },
       {
-        question: "Posso alterar meu nome no ranking?",
-        answer: "Cada entrada no ranking é individual por partida. Para mudar como você aparece, simplesmente use o nome desejado (com ou sem Instagram) na próxima vez que salvar uma pontuação."
+        question: "Existe ranking separado por modo de jogo?",
+        answer: "O ranking mostra as melhores pontuações de todos os modos. Jogadores que conseguem alta pontuação no Quiz por Década das décadas mais antigas (mais difíceis) podem alcançar o topo mais facilmente!"
       },
       {
         question: "Como funciona o ranking?",
@@ -131,23 +165,27 @@ const faqData = [
     questions: [
       {
         question: "As imagens não carregam. O que fazer?",
-        answer: "Verifique sua conexão com a internet primeiro. Se o problema persistir, tente atualizar a página (F5) ou limpar o cache do navegador (Ctrl+F5)."
+        answer: "Primeiro, aguarde alguns segundos - nosso sistema de cache pode estar carregando. Se persistir, tente atualizar a página (F5). O Service Worker geralmente resolve problemas de carregamento automaticamente."
       },
       {
         question: "O jogo está lento. Como resolver?",
-        answer: "Feche outras abas do navegador para liberar memória. O jogo funciona melhor em navegadores atualizados como Chrome, Firefox ou Safari. Evite usar navegadores muito antigos."
+        answer: "Feche outras abas do navegador para liberar memória. O jogo tem otimizações avançadas e funciona melhor em navegadores atualizados como Chrome, Firefox ou Safari. Evite usar navegadores muito antigos."
       },
       {
         question: "Funciona no celular?",
-        answer: "Perfeitamente! Lendas do Flu é totalmente otimizado para celulares e tablets. A experiência mobile é tão boa quanto no desktop."
+        answer: "Perfeitamente! Lendas do Flu é totalmente otimizado para celulares e tablets com tecnologias móveis avançadas: touch otimizado, lazy loading, compressão automática de imagens e interface responsiva."
       },
       {
         question: "Minha pontuação não foi salva!",
-        answer: "Isso pode acontecer se houve problema de conexão durante o salvamento. Certifique-se de ter uma conexão estável ao salvar sua pontuação no ranking."
+        answer: "Isso pode acontecer se houve problema de conexão. Com o novo Service Worker, tentamos salvar automaticamente quando a conexão retorna. Certifique-se de ter conexão estável ao salvar no ranking."
       },
       {
-        question: "O cronômetro está travando!",
-        answer: "Isso pode acontecer em conexões muito lentas. Tente fechar outras abas e aplicativos que usam internet. Se persistir, atualize a página e tente novamente."
+        question: "O que são os indicadores de performance?",
+        answer: "São pequenos ícones que mostram quando imagens são críticas para carregamento (LCP), quando temos prioridade alta, ou quando recursos estão em cache. Eles ajudam a garantir performance máxima!"
+      },
+      {
+        question: "Por que vejo 'LCP Crítico' em algumas imagens?",
+        answer: "LCP (Largest Contentful Paint) é uma métrica de performance. Marcamos imagens críticas que afetam a velocidade de carregamento da página para garantir que elas carreguem primeiro e mais rápido."
       }
     ]
   }
