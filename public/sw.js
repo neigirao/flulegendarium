@@ -1,53 +1,77 @@
 
-const CACHE_NAME = 'lendas-do-flu-v2';
-const STATIC_CACHE = 'static-v2';
-const DYNAMIC_CACHE = 'dynamic-v2';
-const IMAGE_CACHE = 'images-v2';
+const CACHE_NAME = 'lendas-do-flu-v3-performance';
+const STATIC_CACHE = 'static-v3-performance';
+const DYNAMIC_CACHE = 'dynamic-v3-performance';
+const IMAGE_CACHE = 'images-v3-performance';
 
-// Static resources to cache immediately
-const staticResources = [
+// Recursos críticos para LCP otimizado
+const CRITICAL_ASSETS = [
   '/',
-  '/static/js/bundle.js',
-  '/static/css/main.css',
-  '/manifest.json',
-  '/favicon.ico',
-  '/og-image.png'
+  '/src/main.tsx',
+  '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png', // Logo Fluminense - LCP crítico
+  '/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png', // Banner principal
 ];
 
-// Install service worker
+// Recursos de preload para otimização
+const PRELOAD_ASSETS = [
+  '/lovable-uploads/16398385-eef5-4e38-b90a-39630732acba.png',
+  '/lovable-uploads/16f7afff-6bba-4b39-a454-daa6c2373151.png',
+  '/manifest.json'
+];
+
+// Install - cache recursos críticos primeiro (LCP otimização)
 self.addEventListener('install', (event) => {
+  console.log('🚀 SW: Installing performance-optimized service worker');
+  
   event.waitUntil(
     Promise.all([
+      // Cache recursos críticos com prioridade alta
       caches.open(STATIC_CACHE).then((cache) => {
-        console.log('Caching static resources');
-        return cache.addAll(staticResources.filter(url => url !== undefined));
+        console.log('📦 SW: Caching critical assets for LCP');
+        return cache.addAll(CRITICAL_ASSETS);
       }),
-      caches.open(IMAGE_CACHE).then(() => {
-        console.log('Image cache ready');
+      
+      // Cache recursos secundários com baixa prioridade
+      caches.open(IMAGE_CACHE).then((cache) => {
+        console.log('🖼️ SW: Preloading secondary images');
+        return Promise.allSettled(
+          PRELOAD_ASSETS.map(url => 
+            cache.add(url).catch(e => console.warn('SW: Failed to preload', url))
+          )
+        );
       }),
+      
       caches.open(DYNAMIC_CACHE).then(() => {
-        console.log('Dynamic cache ready');
+        console.log('⚡ SW: Dynamic cache ready');
       })
-    ])
+    ]).then(() => {
+      console.log('✅ SW: Performance installation complete');
+      self.skipWaiting();
+    })
   );
-  self.skipWaiting();
 });
 
-// Activate service worker
+// Activate - limpar caches antigos otimizado
 self.addEventListener('activate', (event) => {
+  console.log('🔄 SW: Activating performance service worker');
+  
   event.waitUntil(
     caches.keys().then((cacheNames) => {
+      const validCaches = [STATIC_CACHE, DYNAMIC_CACHE, IMAGE_CACHE];
+      
       return Promise.all(
         cacheNames.map((cacheName) => {
-          if (!cacheName.includes('v2')) {
-            console.log('Deleting old cache:', cacheName);
+          if (!validCaches.includes(cacheName)) {
+            console.log('🗑️ SW: Deleting old cache for performance:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
+    }).then(() => {
+      console.log('✅ SW: Performance activation complete');
+      self.clients.claim();
     })
   );
-  self.clients.claim();
 });
 
 // Fetch strategy
@@ -67,25 +91,42 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
-// Handle image requests with cache-first strategy
+// Cache-first otimizado para imagens (performance crítica)
 async function handleImageRequest(request) {
-  const cache = await caches.open(IMAGE_CACHE);
-  const cachedResponse = await cache.match(request);
-  
-  if (cachedResponse) {
-    return cachedResponse;
-  }
-  
   try {
-    const networkResponse = await fetch(request);
-    if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
+    const cache = await caches.open(IMAGE_CACHE);
+    const cached = await cache.match(request);
+    
+    if (cached) {
+      // Log apenas para imagens críticas LCP
+      if (request.url.includes('0aa3609f-0584-4bf4-8303-e03f50f7e131')) {
+        console.log('🎯 SW: LCP critical image from cache');
+      }
+      return cached;
     }
-    return networkResponse;
+    
+    const response = await fetch(request);
+    
+    if (response.ok) {
+      // Cache inteligente: apenas imagens pequenas/médias para quota
+      const contentLength = response.headers.get('content-length');
+      const size = contentLength ? parseInt(contentLength) : 0;
+      
+      if (size < 3 * 1024 * 1024) { // < 3MB
+        cache.put(request, response.clone());
+        
+        if (request.url.includes('0aa3609f-0584-4bf4-8303-e03f50f7e131')) {
+          console.log('🎯 SW: LCP critical image cached');
+        }
+      }
+    }
+    
+    return response;
   } catch (error) {
-    // Return offline placeholder for images
+    console.warn('SW: Image fetch failed:', error);
+    // Fallback otimizado para Fluminense
     return new Response(
-      '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="#f3f4f6"/><text x="150" y="150" text-anchor="middle" fill="#6b7280">Offline</text></svg>',
+      '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="#7A0213"/><circle cx="150" cy="150" r="50" fill="#006140"/><text x="150" y="160" text-anchor="middle" fill="white" font-size="16">FLU</text></svg>',
       { headers: { 'Content-Type': 'image/svg+xml' } }
     );
   }

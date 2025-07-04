@@ -75,8 +75,8 @@ export default defineConfig(({ mode }) => ({
     // Generate source maps only in development for better performance
     sourcemap: mode === 'development',
     
-    // Set chunk size warning limit (performance budget)
-    chunkSizeWarningLimit: 300, // Reduced from 500KB to 300KB for better performance
+    // Performance budget otimizado (based on PageSpeed Insights)
+    chunkSizeWarningLimit: 250, // Reduzido para 250KB para melhor performance
     
     // Optimize CSS
     cssCodeSplit: true,
@@ -91,7 +91,7 @@ export default defineConfig(({ mode }) => ({
     })
   },
   
-  // Optimize dependencies for better performance budget
+  // Performance-optimized dependencies
   optimizeDeps: {
     include: [
       'react',
@@ -101,9 +101,13 @@ export default defineConfig(({ mode }) => ({
       '@supabase/supabase-js'
     ],
     exclude: [
-      // Exclude large dependencies that should be lazy loaded
-      'lucide-react'
-    ]
+      // Lazy load heavy dependencies para melhor LCP
+      'lucide-react',
+      'framer-motion',
+      'recharts'
+    ],
+    // Force pre-bundling para deps críticas
+    force: true
   },
   
   // Performance optimizations

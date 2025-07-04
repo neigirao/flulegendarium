@@ -1,5 +1,5 @@
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect } from "react";
 import { RootLayout } from "@/components/RootLayout";
 import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,17 @@ import { LazyPlayerRanking } from "@/components/LazyComponents";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
+import { usePerformanceOptimization } from "@/hooks/use-performance-optimization";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { trackComponentPerformance } = usePerformanceOptimization();
+
+  // Track homepage performance
+  useEffect(() => {
+    const startTime = performance.now();
+    trackComponentPerformance('HomePage', startTime);
+  }, [trackComponentPerformance]);
 
   // Buscar estatísticas do jogo
   const { data: gameStats } = useQuery({
@@ -156,8 +164,25 @@ const Index = () => {
               
               <div className="max-w-2xl mx-auto">
                 <Suspense fallback={
-                  <div className="flex justify-center py-8">
-                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-flu-grena"></div>
+                  <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg p-6" style={{ minHeight: '400px' }}>
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between mb-6">
+                        <div className="h-6 bg-gray-200 rounded w-32 animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                      </div>
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="flex items-center justify-between py-3 border-b border-gray-100">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+                            <div className="space-y-2">
+                              <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                              <div className="h-3 bg-gray-200 rounded w-16 animate-pulse"></div>
+                            </div>
+                          </div>
+                          <div className="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 }>
                   <LazyPlayerRanking />
