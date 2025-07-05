@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useLCPOptimization } from '@/hooks/use-lcp-optimization';
 
 export const CriticalMeta = () => {

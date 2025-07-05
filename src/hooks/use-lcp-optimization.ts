@@ -1,5 +1,5 @@
 
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 
 export const useLCPOptimization = () => {
   const measureLCP = useCallback(() => {

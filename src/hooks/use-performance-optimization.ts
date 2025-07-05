@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useCoreWebVitals } from './use-core-web-vitals';
 import { useCriticalResources } from './use-critical-resources';
 import { useBundleAnalyzer } from './use-bundle-analyzer';
