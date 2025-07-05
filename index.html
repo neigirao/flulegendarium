@@ -15,12 +15,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- PERFORMANCE CRITICAL: Font optimized for LCP -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- PERFORMANCE CRITICAL: Font optimized for LCP with font-display: swap -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" fetchpriority="high">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    
+    <!-- Additional optimized fonts for fallback -->
+    <style>
+      @font-face {
+        font-family: 'Inter-fallback';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('Arial'), local('Helvetica'), sans-serif;
+        size-adjust: 107%;
+        ascent-override: 90%;
+        descent-override: 22%;
+        line-gap-override: 0%;
+      }
+    </style>
     
     <!-- Geo tags -->
     <meta name="geo.region" content="BR-RJ" />
