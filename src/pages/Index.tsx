@@ -87,6 +87,40 @@ const Index = () => {
                   Escolha seu modo preferido e teste seus conhecimentos!
                 </p>
               </div>
+
+              {/* Ranking Section */}
+              <div className="mb-16">
+                <h3 className="text-2xl font-bold text-center text-flu-grena mb-8">
+                  🏆 Ranking dos Melhores Tricolores
+                </h3>
+                
+                <div className="max-w-2xl mx-auto">
+                  <Suspense fallback={
+                    <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg p-6" style={{ minHeight: '400px' }}>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between mb-6">
+                          <div className="h-6 bg-gray-200 rounded w-32 animate-pulse"></div>
+                          <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                        </div>
+                        {[...Array(5)].map((_, i) => (
+                          <div key={i} className="flex items-center justify-between py-3 border-b border-gray-100">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+                              <div className="space-y-2">
+                                <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                                <div className="h-3 bg-gray-200 rounded w-16 animate-pulse"></div>
+                              </div>
+                            </div>
+                            <div className="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  }>
+                    <LazyPlayerRanking />
+                  </Suspense>
+                </div>
+              </div>
             </div>
 
             {/* Features Section */}
@@ -153,40 +187,6 @@ const Index = () => {
                     ✓ Anos 70 até 2020s • ✓ Lendas por época
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Ranking Section */}
-            <div className="mt-16">
-              <h3 className="text-2xl font-bold text-center text-flu-grena mb-8">
-                🏆 Ranking dos Melhores Tricolores
-              </h3>
-              
-              <div className="max-w-2xl mx-auto">
-                <Suspense fallback={
-                  <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg p-6" style={{ minHeight: '400px' }}>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between mb-6">
-                        <div className="h-6 bg-gray-200 rounded w-32 animate-pulse"></div>
-                        <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
-                      </div>
-                      {[...Array(5)].map((_, i) => (
-                        <div key={i} className="flex items-center justify-between py-3 border-b border-gray-100">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
-                            <div className="space-y-2">
-                              <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
-                              <div className="h-3 bg-gray-200 rounded w-16 animate-pulse"></div>
-                            </div>
-                          </div>
-                          <div className="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                }>
-                  <LazyPlayerRanking />
-                </Suspense>
               </div>
             </div>
           </div>
