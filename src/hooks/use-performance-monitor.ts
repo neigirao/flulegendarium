@@ -1,5 +1,7 @@
 
 import { useEffect, useCallback } from 'react';
+import { useCoreWebVitals } from './use-core-web-vitals';
+import { useBundleAnalyzer } from './use-bundle-analyzer';
 
 interface PerformanceMetrics {
   lcp: number;
@@ -10,29 +12,8 @@ interface PerformanceMetrics {
 }
 
 export const usePerformanceMonitor = () => {
-  // Simple metric reporting
-  const reportMetric = useCallback((name: string, value: number) => {
-    console.log(`📊 ${name}:`, value);
-    if (window.gtag) {
-      window.gtag('event', 'performance_metric', {
-        event_category: 'Performance',
-        event_label: name,
-        value: Math.round(value)
-      });
-    }
-  }, []);
-
-  // Simple chunk load tracking
-  const trackChunkLoad = useCallback((chunkName: string, size: number, loadTime: number) => {
-    console.log(`Chunk ${chunkName} loaded: ${size}KB in ${loadTime}ms`);
-    if (window.gtag) {
-      window.gtag('event', 'chunk_loaded', {
-        event_category: 'Performance',
-        event_label: chunkName,
-        value: Math.round(loadTime)
-      });
-    }
-  }, []);
+  const { reportMetric } = useCoreWebVitals();
+  const { trackChunkLoad } = useBundleAnalyzer();
 
   // Monitor route changes performance
   const trackRouteChange = useCallback((routeName: string) => {
@@ -153,7 +134,6 @@ export const usePerformanceMonitor = () => {
     trackRouteChange,
     trackMemoryUsage,
     checkPerformanceBudget,
-    trackChunkLoad,
-    reportMetric
+    trackChunkLoad
   };
 };

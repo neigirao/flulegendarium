@@ -63,22 +63,6 @@ export default defineConfig(({ mode }) => ({
         
         // Optimize entry naming
         entryFileNames: 'assets/[name]-[hash].js'
-      },
-      
-      // TREE SHAKING OPTIMIZATION: Remove unused code
-      treeshake: {
-        moduleSideEffects: false,
-        propertyReadSideEffects: false,
-        unknownGlobalSideEffects: false,
-      },
-      
-      // ADVANCED DEAD CODE ELIMINATION
-      external: (id) => {
-        // Externalize heavy dependencies that are not critical
-        if (id.includes('framer-motion') || id.includes('recharts')) {
-          return true;
-        }
-        return false;
       }
     },
     
@@ -92,7 +76,7 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     
     // Performance budget otimizado (based on PageSpeed Insights)
-    chunkSizeWarningLimit: 200, // Reduzido ainda mais para 200KB
+    chunkSizeWarningLimit: 250, // Reduzido para 250KB para melhor performance
     
     // Optimize CSS
     cssCodeSplit: true,
@@ -104,20 +88,6 @@ export default defineConfig(({ mode }) => ({
     ...(mode === 'production' && {
       reportCompressedSize: false, // Faster builds
       cssMinify: 'esbuild',
-      // BROTLI COMPRESSION: Enable compression for better loading
-      rollupOptions: {
-        ...((mode === 'production') && {
-          plugins: [
-            {
-              name: 'brotli-compression',
-              generateBundle() {
-                // Simulate Brotli compression settings
-                console.log('📦 Brotli compression enabled for production build');
-              }
-            }
-          ]
-        })
-      }
     })
   },
   

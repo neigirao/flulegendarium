@@ -8,34 +8,17 @@ import { LazyPlayerRanking } from "@/components/LazyComponents";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
-// import { usePerformanceOptimization } from "@/hooks/use-performance-optimization";
-// import { useCriticalRenderingPath } from "@/hooks/use-critical-rendering-path";
+import { usePerformanceOptimization } from "@/hooks/use-performance-optimization";
 
 const Index = () => {
   const navigate = useNavigate();
-  // const { trackComponentPerformance } = usePerformanceOptimization();
-  // const { optimizeCriticalPath, measurePerformanceMetrics } = useCriticalRenderingPath();
+  const { trackComponentPerformance } = usePerformanceOptimization();
 
-  // // Initialize critical rendering path optimizations
-  // useEffect(() => {
-  //   const initializeOptimizations = async () => {
-  //     const startTime = performance.now();
-  //     
-  //     // Apply critical path optimizations
-  //     optimizeCriticalPath();
-  //     
-  //     // Track homepage performance
-  //     trackComponentPerformance('HomePage', startTime);
-  //     
-  //     // Measure and log performance metrics after initial render
-  //     setTimeout(() => {
-  //       const metrics = measurePerformanceMetrics();
-  //       console.log('🚀 Critical Rendering Path Metrics:', metrics);
-  //     }, 2000);
-  //   };
-  //   
-  //   initializeOptimizations();
-  // }, [trackComponentPerformance, optimizeCriticalPath, measurePerformanceMetrics]);
+  // Track homepage performance
+  useEffect(() => {
+    const startTime = performance.now();
+    trackComponentPerformance('HomePage', startTime);
+  }, [trackComponentPerformance]);
 
   // Buscar estatísticas do jogo
   const { data: gameStats } = useQuery({
