@@ -7,18 +7,12 @@
     <title>Lendas do Flu - Quiz Oficial do Fluminense | Teste seu Conhecimento Tricolor</title>
     <meta name="description" content="🏆 Descubra se você realmente conhece as lendas do Fluminense! Quiz interativo para adivinhar jogadores históricos pelas fotos. Jogue grátis, compete no ranking e prove que é um verdadeiro tricolor das Laranjeiras!" />
     
-    <!-- CRITICAL LCP OPTIMIZATION - Preload banner image immediately -->
-    <link rel="preload" href="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png" as="image" fetchpriority="high" type="image/png">
-    <link rel="preload" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" as="image" fetchpriority="high" type="image/png">
-    
-    <!-- Critical resource preconnects -->
+    <!-- MINIMAL CRITICAL PRELOADS - Only most essential -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- PERFORMANCE CRITICAL: Font optimized for LCP with font-display: swap -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" fetchpriority="high">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    <!-- PERFORMANCE CRITICAL: Font optimized for LCP -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="all">
     
     <!-- Additional optimized fonts for fallback -->
     <style>
@@ -88,7 +82,7 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
     <meta name="theme-color" content="#800020" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Lendas do Flu" />
     <link rel="apple-touch-icon" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" />
