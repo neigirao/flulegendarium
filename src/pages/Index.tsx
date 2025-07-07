@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { usePerformanceOptimization } from "@/hooks/use-performance-optimization";
+import { Instagram } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -186,6 +187,34 @@ const Index = () => {
                   <div className="text-xs text-flu-verde">
                     ✓ Anos 70 até 2020s • ✓ Lendas por época
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Instagram Section */}
+            <div className="mt-16 text-center">
+              <h3 className="text-2xl font-bold text-flu-grena mb-6">
+                🤝 Conecte-se Conosco
+              </h3>
+              
+              <div className="max-w-md mx-auto">
+                <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-6 text-white shadow-lg">
+                  <div className="flex items-center justify-center mb-4">
+                    <Instagram className="w-8 h-8 mr-3" />
+                    <span className="text-xl font-semibold">@jogolendasdoflu</span>
+                  </div>
+                  <p className="text-sm mb-4 opacity-90">
+                    Siga-nos no Instagram para novidades, dicas e muito mais conteúdo tricolor!
+                  </p>
+                  <a
+                    href="https://www.instagram.com/jogolendasdoflu"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105"
+                  >
+                    <Instagram className="w-5 h-5" />
+                    Seguir no Instagram
+                  </a>
                 </div>
               </div>
             </div>
