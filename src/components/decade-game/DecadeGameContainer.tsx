@@ -51,7 +51,10 @@ export const DecadeGameContainer = () => {
     currentStreak,
     maxStreak,
     resetStreak,
-    gamesPlayed
+    gamesPlayed,
+    currentDifficulty,
+    difficultyProgress,
+    adjustDifficulty
   } = useDecadeGameState();
 
   const {
@@ -61,8 +64,12 @@ export const DecadeGameContainer = () => {
     stopTimer,
     resetTimer
   } = useDecadeGameTimer({
-    initialTime: 180,
-    onTimeUp: () => console.log('Tempo esgotado')
+    initialTime: 60,
+    onTimeUp: () => {
+      console.log('Tempo esgotado no jogo da década');
+      endGame();
+      resetStreak();
+    }
   });
 
   const {
@@ -260,6 +267,19 @@ export const DecadeGameContainer = () => {
             maxStreak={maxStreak}
             forceRefresh={forceRefresh}
             playerChangeCount={playerChangeCount}
+            gameProgress={{ 
+              currentRound: gamesPlayed + 1,
+              currentStreak: currentStreak,
+              allowedDifficulties: ['muito_facil', 'facil', 'medio', 'dificil', 'muito_dificil'],
+              nextDifficultyThreshold: difficultyProgress
+            }}
+            currentDifficulty={{ 
+              label: currentDifficulty.label, 
+              level: currentDifficulty.level,
+              color: 'bg-flu-grena',
+              icon: '🎯',
+              multiplier: currentDifficulty.multiplier
+            } as any}
           />
         )}
       </div>

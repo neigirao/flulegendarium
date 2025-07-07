@@ -6,7 +6,7 @@ interface UseDecadeGameTimerProps {
   onTimeUp: () => void;
 }
 
-export const useDecadeGameTimer = ({ initialTime, onTimeUp }: UseDecadeGameTimerProps) => {
+export const useDecadeGameTimer = ({ initialTime = 60, onTimeUp }: UseDecadeGameTimerProps) => {
   const [timeRemaining, setTimeRemaining] = useState(initialTime);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const timerRef = useRef<number | null>(null);
