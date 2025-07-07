@@ -8,33 +8,26 @@ import { LazyPlayerRanking } from "@/components/LazyComponents";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
-import { usePerformanceOptimization } from "@/hooks/use-performance-optimization";
-import { Instagram } from "lucide-react";
+import { Instagram, Timer, Brain, Trophy, Target, Users, Star, TrendingUp } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { trackComponentPerformance } = usePerformanceOptimization();
 
-  // Track homepage performance
-  useEffect(() => {
-    const startTime = performance.now();
-    trackComponentPerformance('HomePage', startTime);
-  }, [trackComponentPerformance]);
-
-  // Buscar estatísticas do jogo
+  // Buscar estatísticas do jogo otimizado
   const { data: gameStats } = useQuery({
     queryKey: ['game-stats'],
     queryFn: async () => {
       const [sessionsResponse, attemptsResponse] = await Promise.all([
-        supabase.from('game_sessions').select('id'),
-        supabase.from('game_attempts').select('id')
+        supabase.from('game_sessions').select('id', { count: 'exact', head: true }),
+        supabase.from('game_attempts').select('id', { count: 'exact', head: true })
       ]);
       
       return {
-        totalGames: sessionsResponse.data?.length || 0,
-        totalAttempts: attemptsResponse.data?.length || 0
+        totalGames: sessionsResponse.count || 0,
+        totalAttempts: attemptsResponse.count || 0
       };
     },
+    staleTime: 5 * 60 * 1000, // Cache por 5 minutos
   });
 
   return (
@@ -48,177 +41,277 @@ const Index = () => {
       <RootLayout>
         <TopNavigation />
         <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10 pt-16">
+          
           {/* Hero Section */}
-          <div className="container mx-auto px-4 pt-12 pb-8">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-6xl font-bold text-flu-grena mb-4">
+          <section className="container mx-auto px-4 pt-8 pb-12">
+            <div className="text-center mb-16 animate-fade-in">
+              <h1 className="text-5xl md:text-7xl font-bold text-flu-grena mb-6 leading-tight">
                 Lendas do Flu
               </h1>
-              <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto">
-                Teste seus conhecimentos sobre os grandes ídolos e lendas do Fluminense! 
-                Descubra o quanto você realmente conhece sobre os craques tricolores.
+              <p className="text-2xl md:text-3xl text-gray-700 mb-4 font-medium">
+                O Quiz Definitivo do Fluminense
+              </p>
+              <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
+                Teste seus conhecimentos sobre os grandes ídolos tricolores! 
+                Desde lendas históricas até estrelas atuais - descubra o quanto você realmente conhece sobre o Flu.
               </p>
               
-              <div className="flex flex-wrap justify-center gap-4 mb-8">
-                <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
-                  <span className="text-flu-grena font-semibold">🏆 +200 Jogadores</span>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
-                  <span className="text-flu-grena font-semibold">⚽ Todas as Épocas</span>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
-                  <span className="text-flu-grena font-semibold">🎯 Quiz Adaptativo</span>
-                </div>
-                {gameStats && (
-                  <div className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
-                    <span className="text-flu-grena font-semibold">🎮 {gameStats.totalGames} Jogos</span>
-                  </div>
-                )}
-              </div>
-
               {/* CTA Principal */}
-              <div className="mb-12">
+              <div className="mb-16">
                 <Button
                   onClick={() => navigate('/selecionar-modo-jogo')}
-                  className="bg-flu-grena hover:bg-flu-grena/90 text-white text-lg px-8 py-4 rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+                  className="bg-flu-grena hover:bg-flu-grena/90 text-white text-xl px-12 py-6 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 hover-scale"
                 >
-                  🚀 Começar a Jogar
+                  🚀 Começar a Jogar Agora
                 </Button>
-                <p className="text-sm text-gray-600 mt-3">
-                  Escolha seu modo preferido e teste seus conhecimentos!
+                <p className="text-sm text-gray-500 mt-4">
+                  Gratuito • Sem cadastro necessário • Mais de 200 jogadores
                 </p>
               </div>
 
-              {/* Ranking Section */}
-              <div className="mb-16">
-                <h3 className="text-2xl font-bold text-center text-flu-grena mb-8">
-                  🏆 Ranking dos Melhores Tricolores
-                </h3>
-                
-                <div className="max-w-2xl mx-auto">
-                  <Suspense fallback={
-                    <div className="bg-white/70 backdrop-blur-sm rounded-xl shadow-lg p-6" style={{ minHeight: '400px' }}>
-                      <div className="space-y-4">
-                        <div className="flex items-center justify-between mb-6">
-                          <div className="h-6 bg-gray-200 rounded w-32 animate-pulse"></div>
+              {/* Stats Cards */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16">
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
+                  <div className="text-3xl font-bold text-flu-grena">200+</div>
+                  <div className="text-sm text-gray-600">Jogadores</div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
+                  <div className="text-3xl font-bold text-flu-verde">5</div>
+                  <div className="text-sm text-gray-600">Décadas</div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
+                  <div className="text-3xl font-bold text-flu-grena">
+                    {gameStats ? `${Math.floor(gameStats.totalGames / 100)}k+` : '2k+'}
+                  </div>
+                  <div className="text-sm text-gray-600">Jogos</div>
+                </div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
+                  <div className="text-3xl font-bold text-flu-verde">
+                    {gameStats ? `${Math.floor(gameStats.totalAttempts / 1000)}k+` : '10k+'}
+                  </div>
+                  <div className="text-sm text-gray-600">Tentativas</div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Como Funciona */}
+          <section className="bg-white/50 py-20">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-flu-grena mb-6">
+                  Como Funciona o Quiz?
+                </h2>
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  É simples: veja a foto de um jogador e adivinhe quem é!
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div className="text-center group">
+                  <div className="bg-flu-verde/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-flu-verde/20 transition-colors">
+                    <Target className="w-10 h-10 text-flu-verde" />
+                  </div>
+                  <h3 className="text-xl font-bold text-flu-grena mb-4">1. Veja a Foto</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Uma foto de um jogador do Fluminense aparece na tela. Pode ser atual ou histórico!
+                  </p>
+                </div>
+
+                <div className="text-center group">
+                  <div className="bg-flu-grena/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-flu-grena/20 transition-colors">
+                    <Brain className="w-10 h-10 text-flu-grena" />
+                  </div>
+                  <h3 className="text-xl font-bold text-flu-grena mb-4">2. Digite o Nome</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Digite o nome do jogador. Pode usar apelidos ou nome completo - nosso sistema é inteligente!
+                  </p>
+                </div>
+
+                <div className="text-center group">
+                  <div className="bg-flu-verde/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-flu-verde/20 transition-colors">
+                    <Trophy className="w-10 h-10 text-flu-verde" />
+                  </div>
+                  <h3 className="text-xl font-bold text-flu-grena mb-4">3. Ganhe Pontos</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Acertou? Ganhe pontos e continue! O jogo fica mais difícil conforme você evolui.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Modos de Jogo */}
+          <section className="py-20">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-flu-grena mb-6">
+                  Escolha Seu Desafio
+                </h2>
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  Dois modos únicos para testar seu conhecimento tricolor
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                {/* Quiz Adaptativo */}
+                <div className="bg-gradient-to-br from-flu-verde/5 to-flu-verde/10 rounded-2xl p-8 border border-flu-verde/20 hover:shadow-xl transition-all hover-scale">
+                  <div className="flex items-center mb-6">
+                    <div className="bg-flu-verde/20 p-4 rounded-xl mr-4">
+                      <TrendingUp className="w-8 h-8 text-flu-verde" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-flu-grena">Quiz Adaptativo</h3>
+                      <p className="text-flu-verde font-medium">Recomendado para iniciantes</p>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-700 mb-6 leading-relaxed">
+                    Sistema inteligente que ajusta a dificuldade baseado no seu desempenho. 
+                    Comece fácil e evolua até os jogadores mais desafiadores!
+                  </p>
+                  
+                  <div className="space-y-3 mb-8">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Star className="w-4 h-4 text-flu-verde mr-2" />
+                      Dificuldade automática baseada no seu nível
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Timer className="w-4 h-4 text-flu-verde mr-2" />
+                      60 segundos para cada resposta
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Trophy className="w-4 h-4 text-flu-verde mr-2" />
+                      Pontuação inteligente com multiplicadores
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => navigate('/quiz-adaptativo')}
+                    className="w-full bg-flu-verde hover:bg-flu-verde/90 text-white font-semibold py-3"
+                  >
+                    Jogar Adaptativo
+                  </Button>
+                </div>
+
+                {/* Quiz por Década */}
+                <div className="bg-gradient-to-br from-flu-grena/5 to-flu-grena/10 rounded-2xl p-8 border border-flu-grena/20 hover:shadow-xl transition-all hover-scale relative">
+                  <div className="absolute top-4 right-4">
+                    <span className="bg-flu-grena text-white text-xs px-3 py-1 rounded-full font-medium">NOVO</span>
+                  </div>
+                  
+                  <div className="flex items-center mb-6">
+                    <div className="bg-flu-grena/20 p-4 rounded-xl mr-4">
+                      <Timer className="w-8 h-8 text-flu-grena" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-bold text-flu-grena">Quiz por Década</h3>
+                      <p className="text-flu-grena font-medium">Para conhecedores da história</p>
+                    </div>
+                  </div>
+                  
+                  <p className="text-gray-700 mb-6 leading-relaxed">
+                    Escolha uma época específica e teste seus conhecimentos sobre os jogadores 
+                    daquela geração. Dos anos 70 até os dias atuais!
+                  </p>
+                  
+                  <div className="space-y-3 mb-8">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Star className="w-4 h-4 text-flu-grena mr-2" />
+                      Escolha entre 6 décadas diferentes
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Timer className="w-4 h-4 text-flu-grena mr-2" />
+                      60 segundos por resposta
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Users className="w-4 h-4 text-flu-grena mr-2" />
+                      Focado em lendas de cada época
+                    </div>
+                  </div>
+                  
+                  <Button 
+                    onClick={() => navigate('/quiz-decada')}
+                    className="w-full bg-flu-grena hover:bg-flu-grena/90 text-white font-semibold py-3"
+                  >
+                    Jogar por Década
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Ranking Section */}
+          <section className="bg-white/50 py-20">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-flu-grena mb-6">
+                  🏆 Hall da Fama Tricolor
+                </h2>
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  Os maiores conhecedores das lendas do Flu. Será que você consegue chegar ao topo?
+                </p>
+              </div>
+              
+              <div className="max-w-3xl mx-auto">
+                <Suspense fallback={
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8" style={{ minHeight: '400px' }}>
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between mb-8">
+                        <div className="h-6 bg-gray-200 rounded w-40 animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                      </div>
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="flex items-center justify-between py-4 border-b border-gray-100">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+                            <div className="space-y-2">
+                              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+                              <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                            </div>
+                          </div>
                           <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
                         </div>
-                        {[...Array(5)].map((_, i) => (
-                          <div key={i} className="flex items-center justify-between py-3 border-b border-gray-100">
-                            <div className="flex items-center space-x-3">
-                              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
-                              <div className="space-y-2">
-                                <div className="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
-                                <div className="h-3 bg-gray-200 rounded w-16 animate-pulse"></div>
-                              </div>
-                            </div>
-                            <div className="h-4 bg-gray-200 rounded w-12 animate-pulse"></div>
-                          </div>
-                        ))}
-                      </div>
+                      ))}
                     </div>
-                  }>
-                    <LazyPlayerRanking />
-                  </Suspense>
-                </div>
+                  </div>
+                }>
+                  <LazyPlayerRanking />
+                </Suspense>
               </div>
             </div>
+          </section>
 
-            {/* Features Section */}
-            <div className="text-center">
-              <h3 className="text-2xl font-bold text-flu-grena mb-8">
-                Por que jogar Lendas do Flu?
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                  <div className="text-4xl mb-4">🧠</div>
-                  <h4 className="font-semibold text-flu-grena mb-2">Teste seu Conhecimento</h4>
-                  <p className="text-gray-700 text-sm">
-                    Descubra o quanto você realmente sabe sobre a história tricolor
-                  </p>
-                </div>
-                
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                  <div className="text-4xl mb-4">📚</div>
-                  <h4 className="font-semibold text-flu-grena mb-2">Aprenda História</h4>
-                  <p className="text-gray-700 text-sm">
-                    Conheça curiosidades e fatos sobre os ídolos do Fluminense
-                  </p>
-                </div>
-                
-                <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 shadow-lg">
-                  <div className="text-4xl mb-4">🏆</div>
-                  <h4 className="font-semibold text-flu-grena mb-2">Desafie-se</h4>
-                  <p className="text-gray-700 text-sm">
-                    Supere seus limites e torne-se um verdadeiro conhecedor tricolor
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Prévia dos Modos */}
-            <div className="mt-16">
-              <h3 className="text-2xl font-bold text-center text-flu-grena mb-8">
-                Modos de Jogo Disponíveis
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-flu-verde/20">
-                  <div className="text-3xl mb-3">🎯</div>
-                  <h4 className="font-semibold text-flu-grena mb-2 text-lg">Quiz Adaptativo</h4>
-                  <p className="text-gray-700 text-sm mb-3">
-                    Sistema inteligente que ajusta a dificuldade baseado no seu desempenho
-                  </p>
-                  <div className="text-xs text-flu-verde">
-                    ✓ Dificuldade automática • ✓ Pontuação inteligente
-                  </div>
-                </div>
-                
-                <div className="bg-white/70 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-flu-grena/20 relative">
-                  <div className="absolute top-2 right-2">
-                    <span className="bg-flu-verde text-white text-xs px-2 py-1 rounded-full">NOVO</span>
-                  </div>
-                  <div className="text-3xl mb-3">🕰️</div>
-                  <h4 className="font-semibold text-flu-grena mb-2 text-lg">Quiz por Década</h4>
-                  <p className="text-gray-700 text-sm mb-3">
-                    Escolha uma época e teste conhecimentos sobre jogadores específicos
-                  </p>
-                  <div className="text-xs text-flu-verde">
-                    ✓ Anos 70 até 2020s • ✓ Lendas por época
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Instagram Section */}
-            <div className="mt-16 text-center">
-              <h3 className="text-2xl font-bold text-flu-grena mb-6">
+          {/* Instagram Section */}
+          <section className="py-20">
+            <div className="container mx-auto px-4 text-center">
+              <h2 className="text-4xl font-bold text-flu-grena mb-8">
                 🤝 Conecte-se Conosco
-              </h3>
+              </h2>
               
-              <div className="max-w-md mx-auto">
-                <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-6 text-white shadow-lg">
-                  <div className="flex items-center justify-center mb-4">
-                    <Instagram className="w-8 h-8 mr-3" />
-                    <span className="text-xl font-semibold">@jogolendasdoflu</span>
+              <div className="max-w-lg mx-auto">
+                <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl p-8 text-white shadow-xl hover-scale">
+                  <div className="flex items-center justify-center mb-6">
+                    <Instagram className="w-10 h-10 mr-4" />
+                    <span className="text-2xl font-bold">@jogolendasdoflu</span>
                   </div>
-                  <p className="text-sm mb-4 opacity-90">
-                    Siga-nos no Instagram para novidades, dicas e muito mais conteúdo tricolor!
+                  <p className="text-lg mb-6 opacity-90 leading-relaxed">
+                    Siga-nos no Instagram para novidades, dicas exclusivas e muito mais conteúdo tricolor!
                   </p>
                   <a
                     href="https://www.instagram.com/jogolendasdoflu"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-lg font-semibold transition-all transform hover:scale-105"
+                    className="inline-flex items-center gap-3 bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-xl font-bold transition-all transform hover:scale-105"
                   >
-                    <Instagram className="w-5 h-5" />
+                    <Instagram className="w-6 h-6" />
                     Seguir no Instagram
                   </a>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
+
         </div>
       </RootLayout>
     </>

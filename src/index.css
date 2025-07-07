@@ -224,6 +224,11 @@
   @apply transition-all duration-200 hover:scale-105 active:scale-95 focus-ring;
 }
 
+/* Hover scale para performance */
+.hover-scale {
+  @apply transition-transform duration-200 hover:scale-105;
+}
+
 /* Gradientes temáticos */
 .gradient-flu {
   background: linear-gradient(135deg, #7A0213 0%, #00613C 100%);
