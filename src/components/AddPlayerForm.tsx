@@ -7,7 +7,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Upload, Link } from "lucide-react";
+import { DifficultyLevel } from "@/types/guess-game";
+import { getAllDecades } from "@/data/decades";
+
+const DIFFICULTY_LEVELS = [
+  { value: 'muito_facil' as DifficultyLevel, label: 'Muito Fácil' },
+  { value: 'facil' as DifficultyLevel, label: 'Fácil' },
+  { value: 'medio' as DifficultyLevel, label: 'Médio' },
+  { value: 'dificil' as DifficultyLevel, label: 'Difícil' },
+  { value: 'muito_dificil' as DifficultyLevel, label: 'Muito Difícil' }
+];
 
 export const AddPlayerForm = () => {
   const { toast } = useToast();
@@ -17,6 +29,10 @@ export const AddPlayerForm = () => {
   const [image, setImage] = useState<File | null>(null);
   const [nicknames, setNicknames] = useState("");
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('file');
+  const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>('medio');
+  const [selectedDecades, setSelectedDecades] = useState<string[]>([]);
+
+  const decades = getAllDecades();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +100,8 @@ export const AddPlayerForm = () => {
           image_url: finalImageUrl,
           nicknames: nicknamesArray,
           position: 'Não informada', // Valor padrão já que ainda é obrigatório no banco
+          difficulty_level: difficultyLevel,
+          decades: selectedDecades,
         })
         .select()
         .single();
@@ -100,6 +118,8 @@ export const AddPlayerForm = () => {
       setImageUrl("");
       setImage(null);
       setNicknames("");
+      setDifficultyLevel('medio');
+      setSelectedDecades([]);
     } catch (error) {
       console.error('Erro ao adicionar jogador:', error);
       toast({
@@ -172,6 +192,50 @@ export const AddPlayerForm = () => {
         />
         <p className="text-sm text-gray-500">
           Separe múltiplos apelidos por vírgula. Estes apelidos serão aceitos no jogo.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="difficulty">Nível de Dificuldade</Label>
+        <Select value={difficultyLevel} onValueChange={(value) => setDifficultyLevel(value as DifficultyLevel)} disabled={isLoading}>
+          <SelectTrigger>
+            <SelectValue placeholder="Selecione a dificuldade" />
+          </SelectTrigger>
+          <SelectContent>
+            {DIFFICULTY_LEVELS.map((level) => (
+              <SelectItem key={level.value} value={level.value}>
+                {level.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Décadas do Jogador (opcional)</Label>
+        <div className="grid grid-cols-2 gap-2">
+          {decades.map((decade) => (
+            <div key={decade.id} className="flex items-center space-x-2">
+              <Checkbox
+                id={decade.id}
+                checked={selectedDecades.includes(decade.id)}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setSelectedDecades([...selectedDecades, decade.id]);
+                  } else {
+                    setSelectedDecades(selectedDecades.filter(d => d !== decade.id));
+                  }
+                }}
+                disabled={isLoading}
+              />
+              <Label htmlFor={decade.id} className="text-sm font-normal">
+                {decade.label}
+              </Label>
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-gray-500">
+          Selecione as décadas em que o jogador atuou.
         </p>
       </div>
 
