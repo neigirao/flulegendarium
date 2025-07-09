@@ -95,6 +95,47 @@ const Index = () => {
             </div>
           </section>
 
+          {/* Ranking Section - Hall da Fama */}
+          <section className="bg-white/50 py-20">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-16">
+                <h2 className="text-4xl font-bold text-flu-grena mb-6">
+                  🏆 Hall da Fama Tricolor
+                </h2>
+                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                  Os maiores conhecedores das lendas do Flu. Será que você consegue chegar ao topo?
+                </p>
+              </div>
+              
+              <div className="max-w-3xl mx-auto">
+                <Suspense fallback={
+                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8" style={{ minHeight: '400px' }}>
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between mb-8">
+                        <div className="h-6 bg-gray-200 rounded w-40 animate-pulse"></div>
+                        <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                      </div>
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="flex items-center justify-between py-4 border-b border-gray-100">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
+                            <div className="space-y-2">
+                              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
+                              <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                            </div>
+                          </div>
+                          <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                }>
+                  <LazyPlayerRanking />
+                </Suspense>
+              </div>
+            </div>
+          </section>
+
           {/* Como Funciona */}
           <section className="bg-white/50 py-20">
             <div className="container mx-auto px-4">
@@ -241,46 +282,6 @@ const Index = () => {
             </div>
           </section>
 
-          {/* Ranking Section */}
-          <section className="bg-white/50 py-20">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold text-flu-grena mb-6">
-                  🏆 Hall da Fama Tricolor
-                </h2>
-                <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                  Os maiores conhecedores das lendas do Flu. Será que você consegue chegar ao topo?
-                </p>
-              </div>
-              
-              <div className="max-w-3xl mx-auto">
-                <Suspense fallback={
-                  <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-8" style={{ minHeight: '400px' }}>
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between mb-8">
-                        <div className="h-6 bg-gray-200 rounded w-40 animate-pulse"></div>
-                        <div className="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
-                      </div>
-                      {[...Array(5)].map((_, i) => (
-                        <div key={i} className="flex items-center justify-between py-4 border-b border-gray-100">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-10 h-10 bg-gray-200 rounded-full animate-pulse"></div>
-                            <div className="space-y-2">
-                              <div className="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
-                              <div className="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
-                            </div>
-                          </div>
-                          <div className="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                }>
-                  <LazyPlayerRanking />
-                </Suspense>
-              </div>
-            </div>
-          </section>
 
           {/* Instagram Section */}
           <section className="py-20">

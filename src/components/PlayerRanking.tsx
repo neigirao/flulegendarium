@@ -88,24 +88,6 @@ export const PlayerRanking = memo(() => {
     refetchOnWindowFocus: true,
   });
 
-  // Default ranking data if no real data is available
-  const defaultRankings: RankingEntry[] = useMemo(() => [
-    { id: '1', player_name: 'Braga', score: 135, games_played: 1, user_id: null, created_at: '' },
-    { id: '2', player_name: 'Fulano', score: 92, games_played: 1, user_id: null, created_at: '' },
-    { id: '3', player_name: 'Sicrano', score: 70, games_played: 1, user_id: null, created_at: '' },
-    { id: '4', player_name: 'Rodrigo Costa', score: 60, games_played: 1, user_id: null, created_at: '' },
-    { id: '5', player_name: 'João Silva', score: 55, games_played: 1, user_id: null, created_at: '' },
-    { id: '6', player_name: 'Pedro Santos', score: 50, games_played: 1, user_id: null, created_at: '' },
-    { id: '7', player_name: 'Carlos Lima', score: 45, games_played: 1, user_id: null, created_at: '' },
-    { id: '8', player_name: 'Fernando Dias', score: 40, games_played: 1, user_id: null, created_at: '' },
-    { id: '9', player_name: 'Rafael Costa', score: 35, games_played: 1, user_id: null, created_at: '' },
-    { id: '10', player_name: 'Lucas Alves', score: 30, games_played: 1, user_id: null, created_at: '' },
-  ], []);
-
-  const displayRankings = useMemo(() => 
-    rankings.length > 0 ? rankings : defaultRankings,
-    [rankings, defaultRankings]
-  );
 
   if (isLoading) {
     return (
@@ -123,20 +105,24 @@ export const PlayerRanking = memo(() => {
     console.error('Erro no ranking:', error);
   }
 
-  return (
-    <div className="max-w-4xl mx-auto">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {displayRankings.map((rank, index) => (
-          <RankingItem key={`${rank.id}-${index}`} rank={rank} index={index} />
-        ))}
-      </div>
-      
-      {rankings.length === 0 && (
+  if (rankings.length === 0) {
+    return (
+      <div className="max-w-4xl mx-auto">
         <div className="text-center text-gray-500 py-8">
           <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
           <p className="text-lg">Seja o primeiro no ranking tricolor!</p>
         </div>
-      )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {rankings.map((rank, index) => (
+          <RankingItem key={`${rank.id}-${index}`} rank={rank} index={index} />
+        ))}
+      </div>
     </div>
   );
 });
