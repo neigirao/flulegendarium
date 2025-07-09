@@ -17,14 +17,16 @@ const Index = () => {
   const { data: gameStats } = useQuery({
     queryKey: ['game-stats'],
     queryFn: async () => {
-      const [sessionsResponse, attemptsResponse] = await Promise.all([
+      const [sessionsResponse, attemptsResponse, playersResponse] = await Promise.all([
         supabase.from('game_sessions').select('id', { count: 'exact', head: true }),
-        supabase.from('game_attempts').select('id', { count: 'exact', head: true })
+        supabase.from('game_attempts').select('id', { count: 'exact', head: true }),
+        supabase.from('players').select('id', { count: 'exact', head: true })
       ]);
       
       return {
         totalGames: sessionsResponse.count || 0,
-        totalAttempts: attemptsResponse.count || 0
+        totalAttempts: attemptsResponse.count || 0,
+        totalPlayers: playersResponse.count || 0
       };
     },
     staleTime: 5 * 60 * 1000, // Cache por 5 minutos
@@ -65,14 +67,16 @@ const Index = () => {
                   🚀 Começar a Jogar Agora
                 </Button>
                 <p className="text-sm text-gray-500 mt-4">
-                  Gratuito • Sem cadastro necessário • Mais de 200 jogadores
+                  Gratuito • Sem cadastro necessário • {gameStats ? `${gameStats.totalPlayers}+` : '200+'} jogadores
                 </p>
               </div>
 
               {/* Stats Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16">
                 <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
-                  <div className="text-3xl font-bold text-flu-grena">200+</div>
+                  <div className="text-3xl font-bold text-flu-grena">
+                    {gameStats ? `${gameStats.totalPlayers}+` : '200+'}
+                  </div>
                   <div className="text-sm text-gray-600">Jogadores</div>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
@@ -81,13 +85,13 @@ const Index = () => {
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
                   <div className="text-3xl font-bold text-flu-grena">
-                    {gameStats ? `${Math.floor(gameStats.totalGames / 100)}k+` : '2k+'}
+                    {gameStats ? `${gameStats.totalGames > 0 ? Math.max(1, Math.floor(gameStats.totalGames / 100)) : 1}k+` : '1k+'}
                   </div>
                   <div className="text-sm text-gray-600">Jogos</div>
                 </div>
                 <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
                   <div className="text-3xl font-bold text-flu-verde">
-                    {gameStats ? `${Math.floor(gameStats.totalAttempts / 1000)}k+` : '10k+'}
+                    {gameStats ? `${gameStats.totalAttempts > 0 ? Math.max(1, Math.floor(gameStats.totalAttempts / 1000)) : 1}k+` : '1k+'}
                   </div>
                   <div className="text-sm text-gray-600">Tentativas</div>
                 </div>
