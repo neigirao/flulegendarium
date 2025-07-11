@@ -15,7 +15,6 @@ interface MostMissedPlayersCardProps {
 }
 
 export const MostMissedPlayersCard = memo(({ players }: MostMissedPlayersCardProps) => {
-  console.log('🎯 MostMissedPlayersCard rendering with players:', players);
   
   return (
     <Card>

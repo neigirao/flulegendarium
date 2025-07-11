@@ -13,7 +13,6 @@ interface MostCorrectPlayersCardProps {
 }
 
 export const MostCorrectPlayersCard = memo(({ players }: MostCorrectPlayersCardProps) => {
-  console.log('🏆 MostCorrectPlayersCard rendering with players:', players);
   
   return (
     <Card>

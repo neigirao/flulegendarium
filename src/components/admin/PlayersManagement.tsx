@@ -22,27 +22,14 @@ export const PlayersManagement = () => {
   const { data: players = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-players'],
     queryFn: async () => {
-      console.log('🔍 === CARREGANDO JOGADORES PARA ADMIN ===');
-      
       const { data, error } = await supabase
         .from('players')
         .select('*')
         .order('name');
       
       if (error) {
-        console.error('❌ Erro ao carregar jogadores:', error);
         throw error;
       }
-      
-      console.log('📊 Dados brutos dos jogadores do banco:', data?.length || 0, 'jogadores');
-      
-      // Log detalhado dos dados vindos diretamente do banco
-      data?.forEach((player, index) => {
-        console.log(`${index + 1}. ${player.name}:`);
-        console.log(`   - ID: ${player.id}`);
-        console.log(`   - Dificuldade RAW do banco: "${player.difficulty_level}"`);
-        console.log(`   - Tipo da dificuldade: ${typeof player.difficulty_level}`);
-      });
       
       // Convert Supabase row data to Player type with robust statistics conversion
       const convertedPlayers = (data || []).map((player: PlayerRow): Player => {
@@ -64,20 +51,8 @@ export const PlayersManagement = () => {
           average_guess_time: player.average_guess_time || 30000
         };
         
-        console.log(`✅ Jogador "${convertedPlayer.name}" processado:`);
-        console.log(`   - Dificuldade original: "${player.difficulty_level}"`);
-        console.log(`   - Dificuldade convertida: "${convertedPlayer.difficulty_level}"`);
-        
         return convertedPlayer;
       });
-      
-      console.log('📈 Distribuição final de dificuldades:');
-      const difficultyCount: Record<string, number> = {};
-      convertedPlayers.forEach(player => {
-        const difficulty = player.difficulty_level || 'sem_dificuldade';
-        difficultyCount[difficulty] = (difficultyCount[difficulty] || 0) + 1;
-      });
-      console.log(difficultyCount);
       
       return convertedPlayers;
     },
@@ -91,15 +66,10 @@ export const PlayersManagement = () => {
   );
 
   const handleEditPlayer = (player: Player) => {
-    console.log('✏️ Abrindo edição do jogador:');
-    console.log('  - Nome:', player.name);
-    console.log('  - Dificuldade atual:', player.difficulty_level);
-    console.log('  - ID:', player.id);
     setEditingPlayer(player);
   };
 
   const handlePlayerUpdated = () => {
-    console.log('🔄 Jogador atualizado, recarregando lista...');
     setEditingPlayer(null);
     refetch();
   };

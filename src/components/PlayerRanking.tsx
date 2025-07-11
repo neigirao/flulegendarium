@@ -1,10 +1,10 @@
-
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Trophy } from "lucide-react";
 import { memo, useMemo, useState } from "react";
 import { InstagramProfile } from "@/components/ui/instagram-profile";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useDecades, useOptimizedQuery } from "@/hooks/use-optimized-queries";
+import { supabase } from "@/integrations/supabase/client";
+import { SkeletonLoader } from "@/components/performance/SkeletonLoader";
 
 interface RankingEntry {
   id: string;
@@ -64,40 +64,12 @@ const RankingItem = memo(({ rank, index }: { rank: RankingEntry; index: number }
 
 RankingItem.displayName = 'RankingItem';
 
-// Hook para buscar as décadas disponíveis
-const useDecades = () => {
-  return useQuery({
-    queryKey: ['decades'],
-    queryFn: async () => {
-      const { data: playersData, error: playersError } = await supabase
-        .from('players')
-        .select('decades')
-        .not('decades', 'is', null);
-      
-      if (playersError) throw playersError;
-      
-      const decades = new Set<string>();
-      playersData?.forEach(player => {
-        if (player.decades && Array.isArray(player.decades)) {
-          player.decades.forEach((decade: string) => decades.add(decade));
-        }
-      });
-      
-      return Array.from(decades).sort();
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutos
-  });
-};
-
-// Hook para buscar rankings por década
+// Hook para buscar rankings por década - otimizado
 const useRankingsByDecade = (decade?: string) => {
-  return useQuery({
-    queryKey: ['rankings', decade],
-    queryFn: async () => {
-      console.log('🏆 Buscando ranking para a década:', decade || 'todas');
-      
+  return useOptimizedQuery(
+    ['rankings-optimized', decade || 'all'],
+    async () => {
       if (!decade || decade === 'all') {
-        // Buscar todos os rankings
         const { data, error } = await supabase
           .from('rankings')
           .select('*')
@@ -108,38 +80,38 @@ const useRankingsByDecade = (decade?: string) => {
         return data as RankingEntry[];
       }
       
-      // Buscar rankings filtrados por década
-      // Primeiro, buscar jogadores da década específica
-      const { data: playersData, error: playersError } = await supabase
-        .from('players')
-        .select('name')
-        .contains('decades', [decade]);
-      
-      if (playersError) throw playersError;
-      
-      const playerNames = playersData.map(p => p.name);
-      
-      if (playerNames.length === 0) {
-        return [];
-      }
-      
-      // Agora buscar rankings desses jogadores
+      // Query otimizada: buscar rankings com join para filtrar por década
       const { data, error } = await supabase
         .from('rankings')
-        .select('*')
-        .in('player_name', playerNames)
+        .select(`
+          id,
+          player_name,
+          score,
+          games_played,
+          user_id,
+          created_at,
+          players!inner(decades)
+        `)
+        .contains('players.decades', [decade])
         .order('score', { ascending: false })
         .limit(10);
       
       if (error) throw error;
       
-      console.log('✅ Rankings carregados para', decade, ':', data?.length || 0);
-      return data as RankingEntry[];
+      return (data || []).map(item => ({
+        id: item.id,
+        player_name: item.player_name,
+        score: item.score,
+        games_played: item.games_played,
+        user_id: item.user_id,
+        created_at: item.created_at
+      })) as RankingEntry[];
     },
-    staleTime: 30 * 1000,
-    refetchInterval: 60 * 1000,
-    refetchOnWindowFocus: true,
-  });
+    { 
+      staleTime: 2 * 60 * 1000,
+      cacheTime: 10 * 60 * 1000
+    }
+  );
 };
 
 // Componente para renderizar lista de rankings
@@ -147,21 +119,15 @@ const RankingList = ({ decade }: { decade?: string }) => {
   const { data: rankings = [], isLoading, error } = useRankingsByDecade(decade);
 
   if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {Array.from({ length: 10 }).map((_, i) => (
-          <div key={i} className="bg-gray-200 rounded-xl p-6 animate-pulse h-24" />
-        ))}
-      </div>
-    );
+    return <SkeletonLoader type="ranking" rows={10} />;
   }
 
   if (error) {
-    console.error('Erro no ranking:', error);
     return (
       <div className="text-center text-gray-500 py-8">
         <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
         <p className="text-lg">Erro ao carregar ranking</p>
+        <p className="text-sm mt-2 text-gray-400">Tente novamente em alguns instantes</p>
       </div>
     );
   }

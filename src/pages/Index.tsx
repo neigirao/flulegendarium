@@ -13,9 +13,9 @@ import { Instagram, Timer, Brain, Trophy, Target, Users, Star, TrendingUp } from
 const Index = () => {
   const navigate = useNavigate();
 
-  // Buscar estatísticas do jogo otimizado
+  // Usar hook otimizado para estatísticas
   const { data: gameStats } = useQuery({
-    queryKey: ['game-stats'],
+    queryKey: ['game-stats-optimized'],
     queryFn: async () => {
       const [sessionsResponse, attemptsResponse, playersResponse] = await Promise.all([
         supabase.from('game_sessions').select('id', { count: 'exact', head: true }),
@@ -29,7 +29,10 @@ const Index = () => {
         totalPlayers: playersResponse.count || 0
       };
     },
-    staleTime: 5 * 60 * 1000, // Cache por 5 minutos
+    staleTime: 10 * 60 * 1000, // Cache otimizado por 10 minutos
+    gcTime: 30 * 60 * 1000, // Manter em cache por 30 minutos
+    refetchOnWindowFocus: false,
+    retry: 1
   });
 
   return (
