@@ -1,10 +1,11 @@
 
-import { useState } from 'react';
-import { Share2, Twitter, Instagram, Facebook, Copy, Download, MessageCircle } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Share2, Twitter, Instagram, Facebook, Copy, Download, MessageCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { ShareCard } from './ShareCard';
+import { ShareSuccessToast } from './ShareSuccessToast';
 import { Achievement } from "@/types/achievements";
 import html2canvas from 'html2canvas';
 
@@ -31,6 +32,9 @@ export const SocialShareModal = ({
 }: SocialShareModalProps) => {
   const { toast } = useToast();
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [shareSuccess, setShareSuccess] = useState(false);
+  const [lastSharedAchievement, setLastSharedAchievement] = useState<Achievement | undefined>();
+  const shareCardRef = useRef<HTMLDivElement>(null);
 
   const shareText = `🔥 Acabei de fazer ${correctGuesses} acertos seguidos no Lendas do Flu! 
 ⚽ ${score} pontos no modo ${gameMode}
@@ -103,6 +107,11 @@ Você consegue superar? Teste seus conhecimentos sobre os ídolos tricolores:`;
     const hashtags = "Fluminense,LendasDoFlu,Tricolor";
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}&hashtags=${hashtags}`;
     window.open(url, '_blank');
+    
+    if (achievements.length > 0) {
+      setLastSharedAchievement(achievements[0]);
+      setShareSuccess(true);
+    }
   };
 
   const shareOnFacebook = () => {
@@ -241,7 +250,24 @@ Você consegue superar? Teste seus conhecimentos sobre os ídolos tricolores:`;
               <p className="text-sm text-gray-800 whitespace-pre-line">{shareText}</p>
             </div>
           </div>
+
+          {achievements.length > 0 && (
+            <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-center gap-2 text-yellow-800">
+                <CheckCircle className="w-5 h-5" />
+                <span className="font-medium">Conquista Desbloqueada!</span>
+              </div>
+              <p className="text-sm text-yellow-700 mt-1">
+                Compartilhe sua conquista "{achievements[0]?.name}" e inspire outros jogadores!
+              </p>
+            </div>
+          )}
         </div>
+
+        <ShareSuccessToast 
+          achievement={lastSharedAchievement} 
+          trigger={shareSuccess}
+        />
       </DialogContent>
     </Dialog>
   );

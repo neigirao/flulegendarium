@@ -11,6 +11,9 @@ import { Trophy, RotateCcw, Home, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
+import { QuickActions } from "@/components/ux/QuickActions";
+import { GameInsights } from "@/components/ux/GameInsights";
+import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
 
 interface GameOverDialogProps {
   open: boolean;
@@ -94,36 +97,67 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
           </div>
 
           {!showRankingForm && !showShareOptions && (
-            <div className="space-y-3">
-              {score > 0 && (
+            <div className="space-y-4">
+              {/* Game Insights */}
+              <GameInsights
+                score={score}
+                correctGuesses={Math.floor(score / 5)}
+                totalAttempts={Math.max(1, Math.floor(score / 3))}
+                streak={0}
+                gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
+                difficulty={difficultyLevel}
+              />
+
+              {/* Quick Actions */}
+              <QuickActions
+                score={score}
+                correctGuesses={Math.floor(score / 5)}
+                gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
+                playerName={playerName}
+                onRestart={handleNewGame}
+              />
+
+              {/* Primary Actions */}
+              <div className="space-y-3">
+                {score > 0 && (
+                  <Button
+                    onClick={() => setShowRankingForm(true)}
+                    className="w-full bg-flu-grena hover:bg-flu-grena/90"
+                  >
+                    <Trophy className="w-4 h-4 mr-2" />
+                    Salvar no Ranking
+                  </Button>
+                )}
+                
                 <Button
-                  onClick={() => setShowRankingForm(true)}
-                  className="w-full bg-flu-grena hover:bg-flu-grena/90"
+                  onClick={handleNewGame}
+                  variant="outline"
+                  className="w-full"
                 >
-                  <Trophy className="w-4 h-4 mr-2" />
-                  Salvar no Ranking
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Jogar Novamente
                 </Button>
-              )}
-              
-              <Button
-                onClick={handleNewGame}
-                variant="outline"
-                className="w-full"
-              >
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Jogar Novamente
-              </Button>
-              
-              <Button
-                variant="ghost"
-                className="w-full"
-                asChild
-              >
-                <Link to="/">
-                  <Home className="w-4 h-4 mr-2" />
-                  Voltar ao Início
-                </Link>
-              </Button>
+                
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  asChild
+                >
+                  <Link to="/">
+                    <Home className="w-4 h-4 mr-2" />
+                    Voltar ao Início
+                  </Link>
+                </Button>
+
+                {/* Feedback Button */}
+                <QuickFeedbackButton
+                  gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
+                  playerName={playerName}
+                  variant="ghost"
+                  size="sm"
+                  className="w-full"
+                />
+              </div>
             </div>
           )}
 

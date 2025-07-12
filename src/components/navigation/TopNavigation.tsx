@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { Shield, HelpCircle } from "lucide-react";
 
 export const TopNavigation = () => {
@@ -24,6 +25,8 @@ export const TopNavigation = () => {
               <HelpCircle className="h-4 w-4 mr-1" />
               FAQ
             </Button>
+            
+            <NotificationCenter />
             
             <Button
               variant="ghost"
