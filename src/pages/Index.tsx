@@ -9,9 +9,19 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { Instagram, Timer, Brain, Trophy, Target, Users, Star, TrendingUp } from "lucide-react";
+import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
+import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
+import { DynamicSEO } from "@/components/seo/DynamicSEO";
 
 const Index = () => {
   const navigate = useNavigate();
+  const analytics = useEnhancedAnalytics();
+  const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
+  
+  useEffect(() => {
+    analytics.trackPageView('/');
+    analytics.trackUserEngagement('homepage_view');
+  }, [analytics]);
 
   // Usar hook otimizado para estatísticas
   const { data: gameStats } = useQuery({
@@ -37,11 +47,9 @@ const Index = () => {
 
   return (
     <>
-      <SEOHead 
-        title="Lendas do Flu | Quiz Interativo dos Jogadores do Fluminense"
-        description="🏆 Teste seus conhecimentos sobre os grandes ídolos e lendas do Fluminense! Quiz adaptativo com diferentes níveis de dificuldade."
-        keywords="fluminense, quiz, jogadores, futebol, tricolor, lendas do flu"
-        url="https://flulegendarium.lovable.app"
+      <DynamicSEO 
+        customTitle="Lendas do Flu | Quiz Interativo dos Jogadores do Fluminense"
+        customDescription="🏆 Teste seus conhecimentos sobre os grandes ídolos e lendas do Fluminense! Quiz adaptativo com diferentes níveis de dificuldade."
       />
       <RootLayout>
         <TopNavigation />
@@ -64,8 +72,11 @@ const Index = () => {
               {/* CTA Principal */}
               <div className="mb-16">
                 <Button
-                  onClick={() => navigate('/selecionar-modo-jogo')}
-                  className="bg-flu-grena hover:bg-flu-grena/90 text-white text-xl px-12 py-6 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 hover-scale"
+                  onClick={() => {
+                    analytics.trackUserEngagement('cta_click', 'main_hero');
+                    navigate('/selecionar-modo-jogo');
+                  }}
+                  className={`bg-flu-grena hover:bg-flu-grena/90 text-white text-xl px-12 py-6 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105 hover-scale ${getTouchTargetSize('large')}`}
                 >
                   🚀 Começar a Jogar Agora
                 </Button>
@@ -235,8 +246,11 @@ const Index = () => {
                   </div>
                   
                   <Button 
-                    onClick={() => navigate('/quiz-adaptativo')}
-                    className="w-full bg-flu-verde hover:bg-flu-verde/90 text-white font-semibold py-3"
+                    onClick={() => {
+                      analytics.trackUserEngagement('game_mode_selection', 'adaptive');
+                      navigate('/quiz-adaptativo');
+                    }}
+                    className={`w-full bg-flu-verde hover:bg-flu-verde/90 text-white font-semibold py-3 ${getTouchTargetSize()}`}
                   >
                     Jogar Adaptativo
                   </Button>
@@ -279,8 +293,11 @@ const Index = () => {
                   </div>
                   
                   <Button 
-                    onClick={() => navigate('/quiz-decada')}
-                    className="w-full bg-flu-grena hover:bg-flu-grena/90 text-white font-semibold py-3"
+                    onClick={() => {
+                      analytics.trackUserEngagement('game_mode_selection', 'decade');
+                      navigate('/quiz-decada');
+                    }}
+                    className={`w-full bg-flu-grena hover:bg-flu-grena/90 text-white font-semibold py-3 ${getTouchTargetSize()}`}
                   >
                     Jogar por Década
                   </Button>
@@ -310,7 +327,8 @@ const Index = () => {
                     href="https://www.instagram.com/jogolendasdoflu"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-3 bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-xl font-bold transition-all transform hover:scale-105"
+                    onClick={() => analytics.trackUserEngagement('social_follow', 'instagram')}
+                    className={`inline-flex items-center gap-3 bg-white/20 hover:bg-white/30 text-white px-8 py-4 rounded-xl font-bold transition-all transform hover:scale-105 ${getTouchTargetSize()}`}
                   >
                     <Instagram className="w-6 h-6" />
                     Seguir no Instagram
