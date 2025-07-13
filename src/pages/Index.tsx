@@ -12,11 +12,18 @@ import { Instagram, Timer, Brain, Trophy, Target, Users, Star, TrendingUp } from
 import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
 import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
+import { ResourceOptimizer } from "@/components/performance/ResourceOptimizer";
+import { useResourceHints } from "@/hooks/use-resource-hints";
+import { usePerformanceMonitor } from "@/hooks/use-performance-monitor";
 
 const Index = () => {
   const navigate = useNavigate();
   const analytics = useEnhancedAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
+  
+  // Performance hooks
+  useResourceHints();
+  usePerformanceMonitor();
   
   useEffect(() => {
     analytics.trackPageView('/');
@@ -51,6 +58,7 @@ const Index = () => {
         customTitle="Lendas do Flu | Quiz Interativo dos Jogadores do Fluminense"
         customDescription="🏆 Teste seus conhecimentos sobre os grandes ídolos e lendas do Fluminense! Quiz adaptativo com diferentes níveis de dificuldade."
       />
+      <ResourceOptimizer />
       <RootLayout>
         <TopNavigation />
         <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10 pt-16">

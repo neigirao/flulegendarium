@@ -2,6 +2,7 @@
 import { useEffect, useCallback } from 'react';
 import { useCoreWebVitals } from './use-core-web-vitals';
 import { useBundleAnalyzer } from './use-bundle-analyzer';
+import { Logger } from '@/utils/logger';
 
 interface PerformanceMetrics {
   lcp: number;
@@ -26,7 +27,7 @@ export const usePerformanceMonitor = () => {
       const endTime = performance.now();
       const duration = endTime - startTime;
       
-      console.log(`🚀 Route change to ${routeName}: ${duration.toFixed(2)}ms`);
+      Logger.info(`Route change to ${routeName}:`, { duration: `${duration.toFixed(2)}ms` });
       
       // Track slow route changes
       if (duration > 500) {

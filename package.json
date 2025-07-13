@@ -69,6 +69,7 @@
     "uuid": "^11.1.0",
     "vaul": "^0.9.3",
     "vitest": "^1.6.1",
+    "web-vitals": "^5.0.3",
     "zod": "^3.23.8"
   },
   "devDependencies": {
