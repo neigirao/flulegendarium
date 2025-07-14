@@ -142,6 +142,48 @@ export type Database = {
           },
         ]
       }
+      daily_challenges: {
+        Row: {
+          challenge_type: string
+          created_at: string
+          description: string
+          end_date: string
+          id: string
+          is_active: boolean | null
+          reward_points: number | null
+          start_date: string
+          target_metric: string
+          target_value: number
+          title: string
+        }
+        Insert: {
+          challenge_type: string
+          created_at?: string
+          description: string
+          end_date: string
+          id?: string
+          is_active?: boolean | null
+          reward_points?: number | null
+          start_date: string
+          target_metric: string
+          target_value: number
+          title: string
+        }
+        Update: {
+          challenge_type?: string
+          created_at?: string
+          description?: string
+          end_date?: string
+          id?: string
+          is_active?: boolean | null
+          reward_points?: number | null
+          start_date?: string
+          target_metric?: string
+          target_value?: number
+          title?: string
+        }
+        Relationships: []
+      }
       game_attempts: {
         Row: {
           attempt_number: number
@@ -239,6 +281,110 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      live_events: {
+        Row: {
+          created_at: string
+          description: string
+          end_time: string | null
+          event_type: string
+          id: string
+          is_active: boolean | null
+          metadata: Json | null
+          start_time: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          end_time?: string | null
+          event_type: string
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          start_time: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          end_time?: string | null
+          event_type?: string
+          id?: string
+          is_active?: boolean | null
+          metadata?: Json | null
+          start_time?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      live_stats: {
+        Row: {
+          id: string
+          stat_key: string
+          stat_value: number
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          stat_key: string
+          stat_value?: number
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          stat_key?: string
+          stat_value?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      player_comments: {
+        Row: {
+          comment: string
+          created_at: string
+          id: string
+          is_approved: boolean | null
+          is_moderated: boolean | null
+          player_id: string
+          rating: number | null
+          updated_at: string
+          user_id: string | null
+          user_name: string
+        }
+        Insert: {
+          comment: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean | null
+          is_moderated?: boolean | null
+          player_id: string
+          rating?: number | null
+          updated_at?: string
+          user_id?: string | null
+          user_name: string
+        }
+        Update: {
+          comment?: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean | null
+          is_moderated?: boolean | null
+          player_id?: string
+          rating?: number | null
+          updated_at?: string
+          user_id?: string | null
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "player_comments_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       player_difficulty_stats: {
         Row: {
@@ -583,6 +729,47 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      user_challenge_progress: {
+        Row: {
+          challenge_id: string
+          completed_at: string | null
+          created_at: string
+          current_progress: number | null
+          id: string
+          is_completed: boolean | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          challenge_id: string
+          completed_at?: string | null
+          created_at?: string
+          current_progress?: number | null
+          id?: string
+          is_completed?: boolean | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          challenge_id?: string
+          completed_at?: string | null
+          created_at?: string
+          current_progress?: number | null
+          id?: string
+          is_completed?: boolean | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_challenge_progress_challenge_id_fkey"
+            columns: ["challenge_id"]
+            isOneToOne: false
+            referencedRelation: "daily_challenges"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_feedback: {
         Row: {

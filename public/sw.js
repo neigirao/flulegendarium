@@ -1,8 +1,8 @@
 
-const CACHE_NAME = 'lendas-do-flu-v3-performance';
-const STATIC_CACHE = 'static-v3-performance';
-const DYNAMIC_CACHE = 'dynamic-v3-performance';
-const IMAGE_CACHE = 'images-v3-performance';
+const CACHE_NAME = 'lendas-do-flu-v4-realtime';
+const STATIC_CACHE = 'static-v4-realtime';
+const DYNAMIC_CACHE = 'dynamic-v4-realtime';
+const IMAGE_CACHE = 'images-v4-realtime';
 
 // Recursos críticos para LCP otimizado
 const CRITICAL_ASSETS = [
@@ -192,14 +192,65 @@ async function handleStaticRequest(request) {
   }
 }
 
-// Background sync for game scores
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'background-sync-score') {
-    event.waitUntil(syncGameScore());
+// Push notification handling for real-time features
+self.addEventListener('push', (event) => {
+  const data = event.data ? event.data.json() : {};
+  
+  const options = {
+    body: data.body || 'Nova atualização no Lendas do Flu!',
+    icon: '/og-image.png',
+    badge: '/og-image.png',
+    vibrate: [100, 50, 100],
+    data: {
+      url: data.url || '/',
+      type: data.type || 'general'
+    },
+    actions: [
+      {
+        action: 'open',
+        title: 'Abrir',
+        icon: '/og-image.png'
+      },
+      {
+        action: 'close',
+        title: 'Fechar'
+      }
+    ],
+    requireInteraction: data.requireInteraction || false,
+    silent: data.silent || false
+  };
+
+  event.waitUntil(
+    self.registration.showNotification('🏆 Lendas do Flu', options)
+  );
+});
+
+// Notification click handling
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'open' || !event.action) {
+    event.waitUntil(
+      clients.openWindow(event.notification.data.url || '/')
+    );
   }
 });
 
-async function syncGameScore() {
-  // Implementation for syncing scores when back online
-  console.log('Syncing game scores in background');
+// Background sync for real-time data
+self.addEventListener('sync', (event) => {
+  if (event.tag === 'sync-live-stats') {
+    event.waitUntil(syncLiveStats());
+  } else if (event.tag === 'sync-challenge-progress') {
+    event.waitUntil(syncChallengeProgress());
+  }
+});
+
+async function syncLiveStats() {
+  console.log('🔄 SW: Syncing live stats');
+  // Implementation for syncing live stats when back online
+}
+
+async function syncChallengeProgress() {
+  console.log('🎯 SW: Syncing challenge progress');
+  // Implementation for syncing challenge progress when back online
 }

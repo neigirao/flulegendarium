@@ -18,6 +18,10 @@ import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { ResourceOptimizer } from "@/components/performance/ResourceOptimizer";
 import { useResourceHints } from "@/hooks/use-resource-hints";
 import { usePerformanceMonitor } from "@/hooks/use-performance-monitor";
+import { LiveStatsWidget } from "@/components/realtime/LiveStatsWidget";
+import { DailyChallengesWidget } from "@/components/realtime/DailyChallengesWidget";
+import { LiveEventBanner } from "@/components/realtime/LiveEventBanner";
+import { useRealtimePresence } from "@/hooks/use-realtime-presence";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -27,6 +31,9 @@ const Index = () => {
   // Performance hooks
   useResourceHints();
   usePerformanceMonitor();
+  
+  // Real-time presence tracking
+  useRealtimePresence();
   
   useEffect(() => {
     analytics.trackPageView('/');
@@ -65,6 +72,9 @@ const Index = () => {
       <RootLayout>
         <TopNavigation />
         <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10 pt-16">
+          
+          {/* Live Event Banner */}
+          <LiveEventBanner />
           
           {/* Hero Section */}
           <section className="container mx-auto px-4 pt-8 pb-12">
@@ -140,6 +150,25 @@ const Index = () => {
                     <div className="text-sm text-muted-foreground mt-2">Tentativas</div>
                   </FluCardContent>
                 </FluCard>
+              </div>
+            </div>
+          </section>
+
+          {/* Real-time Features Section */}
+          <section className="bg-gradient-to-r from-primary/5 to-secondary/5 py-16">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-flu-grena mb-4">
+                  🔥 Acontecendo Agora
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Estatísticas em tempo real e desafios especiais para todos os tricolores
+                </p>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                <LiveStatsWidget />
+                <DailyChallengesWidget />
               </div>
             </div>
           </section>
