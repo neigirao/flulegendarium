@@ -26,9 +26,13 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         flu: {
-          grena: "#7A0213", // Cor grená do Fluminense (vermelho escuro/bordô)
-          verde: "#00613C", // Cor verde do Fluminense
-          branco: "#FFFFFF", // Cor branca do Fluminense
+          grena: "hsl(var(--primary))",
+          "grena-light": "hsl(var(--primary-light))",
+          "grena-dark": "hsl(var(--primary-dark))",
+          verde: "hsl(var(--secondary))",
+          "verde-light": "hsl(var(--secondary-light))",
+          "verde-dark": "hsl(var(--secondary-dark))",
+          branco: "hsl(var(--accent))",
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",

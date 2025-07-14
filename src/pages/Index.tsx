@@ -9,6 +9,9 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { Instagram, Timer, Brain, Trophy, Target, Users, Star, TrendingUp } from "lucide-react";
+import { FluCard, FluCardContent, FluCardHeader, FluCardTitle } from "@/components/ui/flu-card";
+import { ScoreDisplay } from "@/components/ui/score-display";
+import { ProgressRing } from "@/components/ui/progress-ring";
 import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
 import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
@@ -95,28 +98,48 @@ const Index = () => {
 
               {/* Stats Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16">
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
-                  <div className="text-3xl font-bold text-flu-grena">
-                    {gameStats ? `${gameStats.totalPlayers}+` : '200+'}
-                  </div>
-                  <div className="text-sm text-gray-600">Jogadores</div>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
-                  <div className="text-3xl font-bold text-flu-verde">5</div>
-                  <div className="text-sm text-gray-600">Décadas</div>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
-                  <div className="text-3xl font-bold text-flu-grena">
-                    {gameStats ? `${gameStats.totalGames > 0 ? Math.max(1, Math.floor(gameStats.totalGames / 100)) : 1}k+` : '1k+'}
-                  </div>
-                  <div className="text-sm text-gray-600">Jogos</div>
-                </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-xl px-4 py-6 shadow-lg hover-scale">
-                  <div className="text-3xl font-bold text-flu-verde">
-                    {gameStats ? `${gameStats.totalAttempts > 0 ? Math.max(1, Math.floor(gameStats.totalAttempts / 1000)) : 1}k+` : '1k+'}
-                  </div>
-                  <div className="text-sm text-gray-600">Tentativas</div>
-                </div>
+                <FluCard variant="tricolor" hover="glow" size="sm">
+                  <FluCardContent className="text-center py-6">
+                    <ScoreDisplay 
+                      score={gameStats?.totalPlayers || 200} 
+                      variant="tricolor" 
+                      size="lg"
+                      suffix="+"
+                    />
+                    <div className="text-sm text-muted-foreground mt-2">Jogadores</div>
+                  </FluCardContent>
+                </FluCard>
+                
+                <FluCard variant="verde" hover="lift" size="sm">
+                  <FluCardContent className="text-center py-6">
+                    <ScoreDisplay score={5} variant="verde" size="lg" />
+                    <div className="text-sm text-muted-foreground mt-2">Décadas</div>
+                  </FluCardContent>
+                </FluCard>
+                
+                <FluCard variant="grena" hover="scale" size="sm">
+                  <FluCardContent className="text-center py-6">
+                    <ScoreDisplay 
+                      score={gameStats ? Math.max(1, Math.floor((gameStats.totalGames || 1000) / 100)) : 1} 
+                      variant="grena" 
+                      size="lg"
+                      suffix="k+"
+                    />
+                    <div className="text-sm text-muted-foreground mt-2">Jogos</div>
+                  </FluCardContent>
+                </FluCard>
+                
+                <FluCard variant="elegant" hover="glow" size="sm">
+                  <FluCardContent className="text-center py-6">
+                    <ScoreDisplay 
+                      score={gameStats ? Math.max(1, Math.floor((gameStats.totalAttempts || 1000) / 1000)) : 1} 
+                      variant="success" 
+                      size="lg"
+                      suffix="k+"
+                    />
+                    <div className="text-sm text-muted-foreground mt-2">Tentativas</div>
+                  </FluCardContent>
+                </FluCard>
               </div>
             </div>
           </section>
@@ -222,94 +245,102 @@ const Index = () => {
               
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
                 {/* Quiz Adaptativo */}
-                <div className="bg-gradient-to-br from-flu-verde/5 to-flu-verde/10 rounded-2xl p-8 border border-flu-verde/20 hover:shadow-xl transition-all hover-scale">
-                  <div className="flex items-center mb-6">
-                    <div className="bg-flu-verde/20 p-4 rounded-xl mr-4">
-                      <TrendingUp className="w-8 h-8 text-flu-verde" />
+                <FluCard variant="verde" hover="glow" size="lg">
+                  <FluCardHeader>
+                    <div className="flex items-center">
+                      <div className="bg-flu-verde/20 p-4 rounded-xl mr-4">
+                        <TrendingUp className="w-8 h-8 text-flu-verde" />
+                      </div>
+                      <div>
+                        <FluCardTitle className="text-flu-verde">Quiz Adaptativo</FluCardTitle>
+                        <p className="text-flu-verde-light font-medium">Recomendado para iniciantes</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-flu-grena">Quiz Adaptativo</h3>
-                      <p className="text-flu-verde font-medium">Recomendado para iniciantes</p>
-                    </div>
-                  </div>
+                  </FluCardHeader>
                   
-                  <p className="text-gray-700 mb-6 leading-relaxed">
-                    Sistema inteligente que ajusta a dificuldade baseado no seu desempenho. 
-                    Comece fácil e evolua até os jogadores mais desafiadores!
-                  </p>
-                  
-                  <div className="space-y-3 mb-8">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Star className="w-4 h-4 text-flu-verde mr-2" />
-                      Dificuldade automática baseada no seu nível
+                  <FluCardContent>
+                    <p className="text-gray-700 mb-6 leading-relaxed">
+                      Sistema inteligente que ajusta a dificuldade baseado no seu desempenho. 
+                      Comece fácil e evolua até os jogadores mais desafiadores!
+                    </p>
+                    
+                    <div className="space-y-3 mb-8">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Star className="w-4 h-4 text-flu-verde mr-2" />
+                        Dificuldade automática baseada no seu nível
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Timer className="w-4 h-4 text-flu-verde mr-2" />
+                        60 segundos para cada resposta
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Trophy className="w-4 h-4 text-flu-verde mr-2" />
+                        Pontuação inteligente com multiplicadores
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Timer className="w-4 h-4 text-flu-verde mr-2" />
-                      60 segundos para cada resposta
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Trophy className="w-4 h-4 text-flu-verde mr-2" />
-                      Pontuação inteligente com multiplicadores
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={() => {
-                      analytics.trackUserEngagement('game_mode_selection', 'adaptive');
-                      navigate('/quiz-adaptativo');
-                    }}
-                    className={`w-full bg-flu-verde hover:bg-flu-verde/90 text-white font-semibold py-3 ${getTouchTargetSize()}`}
-                  >
-                    Jogar Adaptativo
-                  </Button>
-                </div>
+                    
+                    <Button 
+                      onClick={() => {
+                        analytics.trackUserEngagement('game_mode_selection', 'adaptive');
+                        navigate('/quiz-adaptativo');
+                      }}
+                      className={`w-full bg-flu-verde hover:bg-flu-verde/90 text-white font-semibold py-3 ${getTouchTargetSize()}`}
+                    >
+                      Jogar Adaptativo
+                    </Button>
+                  </FluCardContent>
+                </FluCard>
 
                 {/* Quiz por Década */}
-                <div className="bg-gradient-to-br from-flu-grena/5 to-flu-grena/10 rounded-2xl p-8 border border-flu-grena/20 hover:shadow-xl transition-all hover-scale relative">
+                <FluCard variant="grena" hover="scale" size="lg" className="relative">
                   <div className="absolute top-4 right-4">
                     <span className="bg-flu-grena text-white text-xs px-3 py-1 rounded-full font-medium">NOVO</span>
                   </div>
                   
-                  <div className="flex items-center mb-6">
-                    <div className="bg-flu-grena/20 p-4 rounded-xl mr-4">
-                      <Timer className="w-8 h-8 text-flu-grena" />
+                  <FluCardHeader>
+                    <div className="flex items-center">
+                      <div className="bg-flu-grena/20 p-4 rounded-xl mr-4">
+                        <Timer className="w-8 h-8 text-flu-grena" />
+                      </div>
+                      <div>
+                        <FluCardTitle className="text-flu-grena">Quiz por Década</FluCardTitle>
+                        <p className="text-flu-grena-light font-medium">Para conhecedores da história</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-2xl font-bold text-flu-grena">Quiz por Década</h3>
-                      <p className="text-flu-grena font-medium">Para conhecedores da história</p>
-                    </div>
-                  </div>
+                  </FluCardHeader>
                   
-                  <p className="text-gray-700 mb-6 leading-relaxed">
-                    Escolha uma época específica e teste seus conhecimentos sobre os jogadores 
-                    daquela geração. Dos anos 70 até os dias atuais!
-                  </p>
-                  
-                  <div className="space-y-3 mb-8">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Star className="w-4 h-4 text-flu-grena mr-2" />
-                      Escolha entre 6 décadas diferentes
+                  <FluCardContent>
+                    <p className="text-gray-700 mb-6 leading-relaxed">
+                      Escolha uma época específica e teste seus conhecimentos sobre os jogadores 
+                      daquela geração. Dos anos 70 até os dias atuais!
+                    </p>
+                    
+                    <div className="space-y-3 mb-8">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Star className="w-4 h-4 text-flu-grena mr-2" />
+                        Escolha entre 6 décadas diferentes
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Timer className="w-4 h-4 text-flu-grena mr-2" />
+                        60 segundos por resposta
+                      </div>
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Users className="w-4 h-4 text-flu-grena mr-2" />
+                        Focado em lendas de cada época
+                      </div>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Timer className="w-4 h-4 text-flu-grena mr-2" />
-                      60 segundos por resposta
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Users className="w-4 h-4 text-flu-grena mr-2" />
-                      Focado em lendas de cada época
-                    </div>
-                  </div>
-                  
-                  <Button 
-                    onClick={() => {
-                      analytics.trackUserEngagement('game_mode_selection', 'decade');
-                      navigate('/quiz-decada');
-                    }}
-                    className={`w-full bg-flu-grena hover:bg-flu-grena/90 text-white font-semibold py-3 ${getTouchTargetSize()}`}
-                  >
-                    Jogar por Década
-                  </Button>
-                </div>
+                    
+                    <Button 
+                      onClick={() => {
+                        analytics.trackUserEngagement('game_mode_selection', 'decade');
+                        navigate('/quiz-decada');
+                      }}
+                      className={`w-full bg-flu-grena hover:bg-flu-grena/90 text-white font-semibold py-3 ${getTouchTargetSize()}`}
+                    >
+                      Jogar por Década
+                    </Button>
+                  </FluCardContent>
+                </FluCard>
               </div>
             </div>
           </section>
