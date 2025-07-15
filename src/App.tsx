@@ -20,6 +20,7 @@ const AdminLogin = lazy(() => import("@/pages/AdminLogin"))
 const AdminDashboard = lazy(() => import("@/pages/Admin"))
 const FAQ = lazy(() => import("@/pages/FAQ"))
 const NotFound = lazy(() => import("@/pages/NotFound"))
+const Auth = lazy(() => import("@/pages/Auth"))
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -56,6 +57,7 @@ function App() {
                 </div>}>
                   <Routes>
                     <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
                     <Route path="/selecionar-modo-jogo" element={<SelectGameMode />} />
                     <Route 
                       path="/quiz-adaptativo" 

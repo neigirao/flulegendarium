@@ -26,11 +26,13 @@ import { GameInsights } from "@/components/ux/GameInsights";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { SocialShareModal } from "@/components/social/SocialShareModal";
+import { useAuth } from "@/hooks/useAuth";
 
 const Index = () => {
   const navigate = useNavigate();
   const analytics = useEnhancedAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
+  const { user } = useAuth();
   
   // Performance hooks
   useResourceHints();
@@ -158,20 +160,23 @@ const Index = () => {
             </div>
           </section>
 
-          {/* UX Enhancements Section */}
-          <section className="bg-white/50 py-12">
-            <div className="container mx-auto px-4">
-              <div className="max-w-4xl mx-auto">
-                <QuickActions />
-                <GameInsights />
+          {/* UX Enhancements Section - Only for logged in users */}
+          {user && (
+            <section className="bg-white/50 py-12">
+              <div className="container mx-auto px-4">
+                <div className="max-w-4xl mx-auto">
+                  <QuickActions />
+                  <GameInsights />
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
-          {/* Ranking Section - Hall da Fama */}
-          <section id="ranking-section" className="bg-gradient-to-r from-primary/5 to-secondary/5 py-20">
-            <div className="container mx-auto px-4">
-              <div className="text-center mb-16">
+          {/* Ranking Section - Hall da Fama - Only for logged in users */}
+          {user && (
+            <section id="ranking-section" className="bg-gradient-to-r from-primary/5 to-secondary/5 py-20">
+              <div className="container mx-auto px-4">
+                <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-flu-grena mb-6">
                   🏆 Hall da Fama Tricolor
                 </h2>
@@ -208,6 +213,7 @@ const Index = () => {
               </div>
             </div>
           </section>
+          )}
 
           {/* What's Happening Now Section */}
           <section className="bg-white/50 py-16">
