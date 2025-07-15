@@ -5,6 +5,12 @@ import { ProgressRing } from '@/components/ui/progress-ring';
 import { ScoreDisplay } from '@/components/ui/score-display';
 
 interface GameInsightsProps {
+  score?: number;
+  correctGuesses?: number;
+  totalAttempts?: number;
+  streak?: number;
+  gameMode?: string;
+  difficulty?: string;
   data?: {
     totalGames: number;
     accuracy: number;
@@ -15,7 +21,7 @@ interface GameInsightsProps {
   };
 }
 
-export const GameInsights = ({ data }: GameInsightsProps) => {
+export const GameInsights = ({ score, correctGuesses, totalAttempts, streak, gameMode, difficulty, data }: GameInsightsProps) => {
   // Mock data for demo
   const insights = data || {
     totalGames: 42,
@@ -85,7 +91,7 @@ export const GameInsights = ({ data }: GameInsightsProps) => {
           <div className="text-center">
             <div className="mx-auto mb-2">
               <ProgressRing 
-                value={insights.accuracy} 
+                progress={insights.accuracy} 
                 size="lg"
                 strokeWidth={4}
                 className="text-flu-grena"
@@ -132,7 +138,7 @@ export const GameInsights = ({ data }: GameInsightsProps) => {
           <div className="text-center">
             <div className="mx-auto mb-2">
               <ProgressRing 
-                value={insights.weeklyProgress} 
+                progress={insights.weeklyProgress} 
                 size="lg"
                 strokeWidth={4}
                 className="text-flu-verde"

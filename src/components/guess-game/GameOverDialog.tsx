@@ -109,13 +109,11 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
               />
 
               {/* Quick Actions */}
-              <QuickActions
-                score={score}
-                correctGuesses={Math.floor(score / 5)}
-                gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
-                playerName={playerName}
-                onRestart={handleNewGame}
-              />
+              <div className="flex gap-2 justify-center">
+                <Button onClick={handleNewGame} variant="outline" size="sm">
+                  Jogar Novamente
+                </Button>
+              </div>
 
               {/* Primary Actions */}
               <div className="space-y-3">

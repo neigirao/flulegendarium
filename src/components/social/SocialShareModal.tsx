@@ -13,21 +13,33 @@ import { toast } from 'sonner';
 
 interface SocialShareModalProps {
   trigger?: React.ReactNode;
+  isOpen?: boolean;
+  onClose?: () => void;
   title?: string;
-  score?: number;
-  accuracy?: number;
+  score: number;
+  correctGuesses: number;
+  gameMode?: string;
   streak?: number;
+  achievements?: any[];
+  playerName?: string;
 }
 
 export const SocialShareModal = ({ 
   trigger, 
+  isOpen,
+  onClose,
   title = "Resultado do Quiz",
   score = 0,
-  accuracy = 0,
-  streak = 0
+  correctGuesses = 0,
+  gameMode = "Clássico",
+  streak = 0,
+  achievements = [],
+  playerName
 }: SocialShareModalProps) => {
   const [copied, setCopied] = useState(false);
 
+  const accuracy = correctGuesses > 0 ? Math.round((correctGuesses / (correctGuesses + 1)) * 100) : 0;
+  
   const shareText = `🏆 Acabei de testar meus conhecimentos sobre o Fluminense!
 📊 ${score} pontos, ${accuracy}% de acertos, ${streak} sequência máxima
 ⚽ Será que você consegue me superar? 
@@ -71,7 +83,7 @@ Jogue em: ${window.location.origin}
   );
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>

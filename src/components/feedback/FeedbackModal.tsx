@@ -16,7 +16,10 @@ import { toast } from 'sonner';
 interface FeedbackModalProps {
   trigger?: React.ReactNode;
   isOpen?: boolean;
+  onClose?: () => void;
   onOpenChange?: (open: boolean) => void;
+  gameMode?: string;
+  playerName?: string;
 }
 
 const FEEDBACK_CATEGORIES = [
@@ -28,7 +31,7 @@ const FEEDBACK_CATEGORIES = [
   { id: 'suggestion', label: 'Sugestão', emoji: '💡' }
 ];
 
-export const FeedbackModal = ({ trigger, isOpen, onOpenChange }: FeedbackModalProps) => {
+export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode, playerName }: FeedbackModalProps) => {
   const [rating, setRating] = useState(0);
   const [category, setCategory] = useState('');
   const [comment, setComment] = useState('');
@@ -63,6 +66,7 @@ export const FeedbackModal = ({ trigger, isOpen, onOpenChange }: FeedbackModalPr
       setComment('');
       setUserEmail('');
       onOpenChange?.(false);
+      onClose?.();
     } catch (error) {
       console.error('Error submitting feedback:', error);
       toast.error('Erro ao enviar feedback. Tente novamente.');
