@@ -19,9 +19,13 @@ import { ResourceOptimizer } from "@/components/performance/ResourceOptimizer";
 import { useResourceHints } from "@/hooks/use-resource-hints";
 import { usePerformanceMonitor } from "@/hooks/use-performance-monitor";
 import { LiveStatsWidget } from "@/components/realtime/LiveStatsWidget";
-import { DailyChallengesWidget } from "@/components/realtime/DailyChallengesWidget";
 import { LiveEventBanner } from "@/components/realtime/LiveEventBanner";
 import { useRealtimePresence } from "@/hooks/use-realtime-presence";
+import { QuickActions } from "@/components/ux/QuickActions";
+import { GameInsights } from "@/components/ux/GameInsights";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { FeedbackModal } from "@/components/feedback/FeedbackModal";
+import { SocialShareModal } from "@/components/social/SocialShareModal";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -154,27 +158,18 @@ const Index = () => {
             </div>
           </section>
 
-          {/* Real-time Features Section */}
-          <section className="bg-gradient-to-r from-primary/5 to-secondary/5 py-16">
+          {/* UX Enhancements Section */}
+          <section className="bg-white/50 py-12">
             <div className="container mx-auto px-4">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-flu-grena mb-4">
-                  🔥 Acontecendo Agora
-                </h2>
-                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                  Estatísticas em tempo real e desafios especiais para todos os tricolores
-                </p>
-              </div>
-              
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                <LiveStatsWidget />
-                <DailyChallengesWidget />
+              <div className="max-w-4xl mx-auto">
+                <QuickActions />
+                <GameInsights />
               </div>
             </div>
           </section>
 
           {/* Ranking Section - Hall da Fama */}
-          <section className="bg-white/50 py-20">
+          <section id="ranking-section" className="bg-gradient-to-r from-primary/5 to-secondary/5 py-20">
             <div className="container mx-auto px-4">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-flu-grena mb-6">
@@ -210,6 +205,24 @@ const Index = () => {
                 }>
                   <LazyPlayerRanking />
                 </Suspense>
+              </div>
+            </div>
+          </section>
+
+          {/* What's Happening Now Section */}
+          <section className="bg-white/50 py-16">
+            <div className="container mx-auto px-4">
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-flu-grena mb-4">
+                  🔥 O que está acontecendo agora
+                </h2>
+                <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                  Estatísticas em tempo real da comunidade tricolor
+                </p>
+              </div>
+              
+              <div className="max-w-4xl mx-auto">
+                <LiveStatsWidget />
               </div>
             </div>
           </section>

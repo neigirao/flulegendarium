@@ -1,150 +1,100 @@
-import { useState } from 'react';
+import React from 'react';
+import { Play, BarChart3, Trophy, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { RotateCcw, Share2, MessageSquare, Trophy, Zap, Info } from 'lucide-react';
-import { QuickShareButton } from '@/components/social/QuickShareButton';
-import { QuickFeedbackButton } from '@/components/feedback/QuickFeedbackButton';
-import { Achievement } from '@/types/achievements';
+import { FluCard, FluCardContent, FluCardHeader, FluCardTitle } from '@/components/ui/flu-card';
 
-interface QuickActionsProps {
-  score: number;
-  correctGuesses: number;
-  gameMode?: string;
-  streak?: number;
-  achievements?: Achievement[];
-  playerName?: string;
-  onRestart?: () => void;
-  onShowTutorial?: () => void;
-  className?: string;
+interface QuickAction {
+  id: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  action: () => void;
+  variant: 'verde' | 'grena' | 'tricolor' | 'elegant';
 }
 
-export const QuickActions = ({
-  score,
-  correctGuesses,
-  gameMode = "Clássico",
-  streak = 0,
-  achievements = [],
-  playerName,
-  onRestart,
-  onShowTutorial,
-  className = ""
-}: QuickActionsProps) => {
-  const [showAllActions, setShowAllActions] = useState(false);
+export const QuickActions = () => {
+  const navigate = useNavigate();
+
+  const actions: QuickAction[] = [
+    {
+      id: 'play-adaptive',
+      title: 'Jogar Agora',
+      description: 'Quiz adaptativo rápido',
+      icon: <Play className="w-5 h-5" />,
+      action: () => navigate('/quiz-adaptativo'),
+      variant: 'verde'
+    },
+    {
+      id: 'view-stats',
+      title: 'Minhas Stats',
+      description: 'Ver estatísticas pessoais',
+      icon: <BarChart3 className="w-5 h-5" />,
+      action: () => navigate('/perfil'),
+      variant: 'tricolor'
+    },
+    {
+      id: 'leaderboard',
+      title: 'Ranking',
+      description: 'Hall da fama tricolor',
+      icon: <Trophy className="w-5 h-5" />,
+      action: () => {
+        document.getElementById('ranking-section')?.scrollIntoView({ 
+          behavior: 'smooth' 
+        });
+      },
+      variant: 'grena'
+    },
+    {
+      id: 'social',
+      title: 'Comunidade',
+      description: 'Interagir com outros fãs',
+      icon: <Users className="w-5 h-5" />,
+      action: () => navigate('/social'),
+      variant: 'elegant'
+    }
+  ];
 
   return (
-    <Card className={`${className}`}>
-      <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-muted-foreground">Ações Rápidas</h3>
-          {achievements.length > 0 && (
-            <Badge variant="secondary" className="flex items-center gap-1">
-              <Trophy className="w-3 h-3" />
-              {achievements.length} conquista{achievements.length > 1 ? 's' : ''}
-            </Badge>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-2">
-          {/* Ações principais sempre visíveis */}
-          <QuickShareButton
-            score={score}
-            correctGuesses={correctGuesses}
-            gameMode={gameMode}
-            streak={streak}
-            achievements={achievements}
-            playerName={playerName}
-            variant="outline"
-            size="sm"
-            className="w-full"
-          />
-
-          <QuickFeedbackButton
-            gameMode={gameMode}
-            playerName={playerName}
-            variant="outline"
-            size="sm"
-            className="w-full"
-          />
-
-          {/* Ações secundárias */}
-          {showAllActions && (
-            <>
-              {onRestart && (
-                <Button
-                  onClick={onRestart}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <RotateCcw className="w-4 h-4" />
-                  Reiniciar
-                </Button>
-              )}
-
-              {onShowTutorial && (
-                <Button
-                  onClick={onShowTutorial}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <Info className="w-4 h-4" />
-                  Tutorial
-                </Button>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* Botão para mostrar mais ações */}
-        {(onRestart || onShowTutorial) && (
-          <Button
-            onClick={() => setShowAllActions(!showAllActions)}
-            variant="ghost"
-            size="sm"
-            className="w-full mt-2 text-xs"
-          >
-            {showAllActions ? 'Menos opções' : 'Mais opções'}
-          </Button>
-        )}
-
-        {/* Estatísticas rápidas */}
-        <div className="mt-4 pt-3 border-t border-border">
-          <div className="grid grid-cols-3 gap-2 text-center">
-            <div>
-              <div className="text-lg font-bold text-primary">{score}</div>
-              <div className="text-xs text-muted-foreground">Pontos</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-green-600">{correctGuesses}</div>
-              <div className="text-xs text-muted-foreground">Acertos</div>
-            </div>
-            <div>
-              <div className="text-lg font-bold text-orange-600">{streak}</div>
-              <div className="text-xs text-muted-foreground">Sequência</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Indicador de performance */}
-        <div className="mt-3">
-          <div className="flex items-center gap-2">
-            <Zap className="w-4 h-4 text-yellow-500" />
-            <div className="flex-1">
-              <div className="text-xs text-muted-foreground mb-1">
-                Performance: {score > 50 ? 'Excelente' : score > 25 ? 'Boa' : 'Iniciante'}
+    <FluCard variant="elegant" className="mb-8">
+      <FluCardHeader>
+        <FluCardTitle className="flex items-center gap-2">
+          <Play className="w-5 h-5 text-flu-grena" />
+          Ações Rápidas
+        </FluCardTitle>
+      </FluCardHeader>
+      
+      <FluCardContent>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {actions.map((action) => (
+            <Button
+              key={action.id}
+              variant="outline"
+              onClick={action.action}
+              className={`h-auto p-4 flex flex-col items-center gap-2 hover:scale-105 transition-all group ${
+                action.variant === 'verde' ? 'hover:border-flu-verde hover:bg-flu-verde/5' :
+                action.variant === 'grena' ? 'hover:border-flu-grena hover:bg-flu-grena/5' :
+                action.variant === 'tricolor' ? 'hover:border-flu-verde hover:bg-gradient-to-r hover:from-flu-verde/5 hover:to-flu-grena/5' :
+                'hover:border-gray-400 hover:bg-gray-50'
+              }`}
+            >
+              <div className={`p-2 rounded-lg ${
+                action.variant === 'verde' ? 'bg-flu-verde/10 text-flu-verde group-hover:bg-flu-verde/20' :
+                action.variant === 'grena' ? 'bg-flu-grena/10 text-flu-grena group-hover:bg-flu-grena/20' :
+                action.variant === 'tricolor' ? 'bg-gradient-to-r from-flu-verde/10 to-flu-grena/10 text-flu-grena' :
+                'bg-gray-100 text-gray-600 group-hover:bg-gray-200'
+              }`}>
+                {action.icon}
               </div>
-              <div className="w-full bg-secondary rounded-full h-2">
-                <div 
-                  className="bg-gradient-to-r from-yellow-400 to-orange-500 h-2 rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, (score / 100) * 100)}%` }}
-                />
+              
+              <div className="text-center">
+                <div className="font-medium text-sm">{action.title}</div>
+                <div className="text-xs text-gray-500 mt-1">{action.description}</div>
               </div>
-            </div>
-          </div>
+            </Button>
+          ))}
         </div>
-      </CardContent>
-    </Card>
+      </FluCardContent>
+    </FluCard>
   );
 };

@@ -1,169 +1,185 @@
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Lightbulb, TrendingUp, TrendingDown, Target, Clock, Brain } from 'lucide-react';
+import React from 'react';
+import { TrendingUp, Target, Clock, Award, Zap, Brain } from 'lucide-react';
+import { FluCard, FluCardContent, FluCardHeader, FluCardTitle } from '@/components/ui/flu-card';
+import { ProgressRing } from '@/components/ui/progress-ring';
+import { ScoreDisplay } from '@/components/ui/score-display';
 
 interface GameInsightsProps {
-  score: number;
-  correctGuesses: number;
-  totalAttempts: number;
-  averageTime?: number;
-  streak: number;
-  gameMode: string;
-  difficulty?: string;
-  className?: string;
+  data?: {
+    totalGames: number;
+    accuracy: number;
+    averageTime: number;
+    longestStreak: number;
+    difficultyLevel: string;
+    weeklyProgress: number;
+  };
 }
 
-export const GameInsights = ({
-  score,
-  correctGuesses,
-  totalAttempts,
-  averageTime = 0,
-  streak,
-  gameMode,
-  difficulty,
-  className = ""
-}: GameInsightsProps) => {
-  const [insights, setInsights] = useState<string[]>([]);
-  const [accuracy, setAccuracy] = useState(0);
-
-  useEffect(() => {
-    const calculatedAccuracy = totalAttempts > 0 ? (correctGuesses / totalAttempts) * 100 : 0;
-    setAccuracy(calculatedAccuracy);
-
-    // Gerar insights baseados na performance
-    const newInsights: string[] = [];
-
-    if (calculatedAccuracy >= 80) {
-      newInsights.push("🎯 Excelente precisão! Você tem ótimo conhecimento dos jogadores.");
-    } else if (calculatedAccuracy >= 60) {
-      newInsights.push("📈 Boa performance! Continue praticando para melhorar ainda mais.");
-    } else if (calculatedAccuracy >= 40) {
-      newInsights.push("🎮 Você está aprendendo! Observe mais detalhes dos jogadores.");
-    } else {
-      newInsights.push("💡 Dica: Foque nas características físicas marcantes dos jogadores.");
-    }
-
-    if (streak >= 5) {
-      newInsights.push("🔥 Sequência impressionante! Você está em grande forma!");
-    } else if (streak >= 3) {
-      newInsights.push("⚡ Boa sequência! Continue assim!");
-    }
-
-    if (averageTime > 0) {
-      if (averageTime < 3) {
-        newInsights.push("⚡ Você é muito rápido! Cuidado para não errar por pressa.");
-      } else if (averageTime > 10) {
-        newInsights.push("🤔 Tente confiar mais no seu primeiro instinto.");
-      }
-    }
-
-    if (gameMode === "adaptive" && difficulty) {
-      newInsights.push(`🎚️ Nível ${difficulty}: O jogo está se adaptando ao seu desempenho.`);
-    }
-
-    setInsights(newInsights);
-  }, [score, correctGuesses, totalAttempts, averageTime, streak, gameMode, difficulty]);
-
-  const getPerformanceLevel = () => {
-    if (accuracy >= 80) return { level: 'Mestre', color: 'text-yellow-600', bgColor: 'bg-yellow-100' };
-    if (accuracy >= 60) return { level: 'Avançado', color: 'text-green-600', bgColor: 'bg-green-100' };
-    if (accuracy >= 40) return { level: 'Intermediário', color: 'text-blue-600', bgColor: 'bg-blue-100' };
-    return { level: 'Iniciante', color: 'text-gray-600', bgColor: 'bg-gray-100' };
+export const GameInsights = ({ data }: GameInsightsProps) => {
+  // Mock data for demo
+  const insights = data || {
+    totalGames: 42,
+    accuracy: 78,
+    averageTime: 12.5,
+    longestStreak: 15,
+    difficultyLevel: 'Intermediário',
+    weeklyProgress: 65
   };
 
-  const performance = getPerformanceLevel();
+  const getDifficultyColor = (level: string) => {
+    switch (level.toLowerCase()) {
+      case 'iniciante': return 'text-green-600';
+      case 'intermediário': return 'text-yellow-600';
+      case 'avançado': return 'text-orange-600';
+      case 'expert': return 'text-red-600';
+      default: return 'text-gray-600';
+    }
+  };
+
+  const getPerformanceMessage = (accuracy: number) => {
+    if (accuracy >= 90) return { message: 'Excelente! Você é um verdadeiro conhecedor!', emoji: '🏆', color: 'text-yellow-600' };
+    if (accuracy >= 75) return { message: 'Muito bom! Continue assim!', emoji: '⭐', color: 'text-flu-verde' };
+    if (accuracy >= 60) return { message: 'Bom trabalho! Pode melhorar ainda mais!', emoji: '👍', color: 'text-blue-600' };
+    return { message: 'Continue praticando, você está evoluindo!', emoji: '💪', color: 'text-flu-grena' };
+  };
+
+  const performance = getPerformanceMessage(insights.accuracy);
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Brain className="w-5 h-5" />
-          Insights de Performance
-        </CardTitle>
-        <CardDescription>
-          Análise do seu desempenho atual
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="space-y-4">
-        {/* Nível de Performance */}
-        <div className="flex items-center justify-between">
-          <span className="text-sm font-medium">Nível Atual</span>
-          <Badge className={`${performance.bgColor} ${performance.color} border-0`}>
-            {performance.level}
-          </Badge>
-        </div>
-
-        {/* Precisão */}
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Precisão</span>
+    <FluCard variant="tricolor" className="mb-8">
+      <FluCardHeader>
+        <FluCardTitle className="flex items-center gap-2">
+          <Brain className="w-5 h-5 text-flu-grena" />
+          Suas Estatísticas de Jogo
+        </FluCardTitle>
+      </FluCardHeader>
+      
+      <FluCardContent>
+        {/* Performance Summary */}
+        <div className="bg-gradient-to-r from-flu-verde/10 to-flu-grena/10 rounded-xl p-4 mb-6">
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-2xl">{performance.emoji}</span>
+            <div>
+              <div className={`font-semibold ${performance.color}`}>
+                {performance.message}
+              </div>
+              <div className="text-sm text-gray-600">
+                Baseado no seu desempenho de {insights.accuracy}% de acertos
+              </div>
             </div>
-            <span className="text-sm font-bold">{accuracy.toFixed(0)}%</span>
-          </div>
-          <Progress value={accuracy} className="h-2" />
-        </div>
-
-        {/* Estatísticas rápidas */}
-        <div className="grid grid-cols-3 gap-2 pt-2">
-          <div className="text-center">
-            <div className="text-lg font-bold text-primary">{correctGuesses}</div>
-            <div className="text-xs text-muted-foreground">Acertos</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-orange-600">{streak}</div>
-            <div className="text-xs text-muted-foreground">Sequência</div>
-          </div>
-          <div className="text-center">
-            <div className="text-lg font-bold text-green-600">{score}</div>
-            <div className="text-xs text-muted-foreground">Pontos</div>
           </div>
         </div>
 
-        {/* Tempo médio */}
-        {averageTime > 0 && (
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Tempo médio</span>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+          {/* Total Games */}
+          <div className="text-center">
+            <div className="bg-flu-verde/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Target className="w-6 h-6 text-flu-verde" />
             </div>
-            <span className="text-sm">{averageTime.toFixed(1)}s</span>
+            <ScoreDisplay score={insights.totalGames} variant="verde" size="lg" />
+            <div className="text-sm text-gray-600 mt-1">Jogos</div>
           </div>
-        )}
+
+          {/* Accuracy */}
+          <div className="text-center">
+            <div className="mx-auto mb-2">
+              <ProgressRing 
+                value={insights.accuracy} 
+                size="lg"
+                strokeWidth={4}
+                className="text-flu-grena"
+              />
+            </div>
+            <div className="text-sm text-gray-600">Precisão</div>
+          </div>
+
+          {/* Average Time */}
+          <div className="text-center">
+            <div className="bg-flu-grena/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Clock className="w-6 h-6 text-flu-grena" />
+            </div>
+            <ScoreDisplay 
+              score={Math.round(insights.averageTime)} 
+              variant="grena" 
+              size="lg" 
+              suffix="s"
+            />
+            <div className="text-sm text-gray-600 mt-1">Tempo Médio</div>
+          </div>
+
+          {/* Longest Streak */}
+          <div className="text-center">
+            <div className="bg-yellow-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Award className="w-6 h-6 text-yellow-600" />
+            </div>
+            <ScoreDisplay score={insights.longestStreak} variant="success" size="lg" />
+            <div className="text-sm text-gray-600 mt-1">Maior Sequência</div>
+          </div>
+
+          {/* Difficulty Level */}
+          <div className="text-center">
+            <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-2">
+              <Zap className="w-6 h-6 text-blue-600" />
+            </div>
+            <div className={`text-lg font-bold ${getDifficultyColor(insights.difficultyLevel)}`}>
+              {insights.difficultyLevel}
+            </div>
+            <div className="text-sm text-gray-600 mt-1">Nível Atual</div>
+          </div>
+
+          {/* Weekly Progress */}
+          <div className="text-center">
+            <div className="mx-auto mb-2">
+              <ProgressRing 
+                value={insights.weeklyProgress} 
+                size="lg"
+                strokeWidth={4}
+                className="text-flu-verde"
+              />
+            </div>
+            <div className="text-sm text-gray-600">Progresso Semanal</div>
+          </div>
+        </div>
 
         {/* Insights */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 text-sm font-medium">
-            <Lightbulb className="w-4 h-4 text-yellow-500" />
-            Insights
-          </div>
-          <div className="space-y-2">
-            {insights.map((insight, index) => (
-              <div key={index} className="text-sm text-muted-foreground bg-muted/30 p-2 rounded">
-                {insight}
+        <div className="border-t pt-4">
+          <h4 className="font-semibold text-flu-grena mb-3 flex items-center gap-2">
+            <TrendingUp className="w-4 h-4" />
+            Dicas para Melhorar
+          </h4>
+          
+          <div className="space-y-2 text-sm">
+            {insights.accuracy < 75 && (
+              <div className="flex items-center gap-2 text-gray-600">
+                <Target className="w-4 h-4 text-flu-verde" />
+                Pratique mais para aumentar sua precisão
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Tendência */}
-        <div className="pt-2 border-t">
-          <div className="flex items-center gap-2">
-            {accuracy >= 70 ? (
-              <TrendingUp className="w-4 h-4 text-green-500" />
-            ) : (
-              <TrendingDown className="w-4 h-4 text-red-500" />
             )}
-            <span className="text-sm font-medium">
-              {accuracy >= 70 ? 'Performance crescente' : 'Foque na melhoria'}
-            </span>
+            
+            {insights.averageTime > 15 && (
+              <div className="flex items-center gap-2 text-gray-600">
+                <Clock className="w-4 h-4 text-flu-grena" />
+                Tente ser mais rápido nas respostas
+              </div>
+            )}
+            
+            {insights.longestStreak < 10 && (
+              <div className="flex items-center gap-2 text-gray-600">
+                <Award className="w-4 h-4 text-yellow-600" />
+                Foque em manter sequências maiores de acertos
+              </div>
+            )}
+            
+            {insights.accuracy >= 85 && insights.averageTime <= 10 && (
+              <div className="flex items-center gap-2 text-flu-verde font-medium">
+                <Zap className="w-4 h-4" />
+                Excelente desempenho! Você domina o jogo!
+              </div>
+            )}
           </div>
         </div>
-      </CardContent>
-    </Card>
+      </FluCardContent>
+    </FluCard>
   );
 };

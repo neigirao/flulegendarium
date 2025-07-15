@@ -1,101 +1,121 @@
-import { useState, useEffect } from 'react';
-import { Bell, X, Trophy, Star, Gamepad2, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, BellRing, Trophy, Star, Target, Users, X } from 'lucide-react';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { useAuth } from '@/hooks/useAuth';
+import { FluCard } from '@/components/ui/flu-card';
 
 interface Notification {
   id: string;
-  type: 'achievement' | 'progress' | 'challenge' | 'tip';
+  type: 'achievement' | 'challenge' | 'social' | 'system';
   title: string;
-  description: string;
+  message: string;
   timestamp: Date;
   read: boolean;
   icon?: React.ReactNode;
 }
 
-export const NotificationCenter = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
-  const { user } = useAuth();
+// Simulated notifications for demo
+const DEMO_NOTIFICATIONS: Notification[] = [
+  {
+    id: '1',
+    type: 'achievement',
+    title: 'Novo Recorde!',
+    message: 'Você acertou 15 jogadores seguidos! 🔥',
+    timestamp: new Date(Date.now() - 5 * 60 * 1000),
+    read: false,
+    icon: <Trophy className="w-4 h-4 text-yellow-500" />
+  },
+  {
+    id: '2',
+    type: 'challenge',
+    title: 'Desafio Diário',
+    message: 'Novo desafio disponível: Lendas dos Anos 80',
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    read: false,
+    icon: <Target className="w-4 h-4 text-flu-verde" />
+  },
+  {
+    id: '3',
+    type: 'social',
+    title: 'Hall da Fama',
+    message: 'Você subiu para o 5º lugar no ranking!',
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
+    read: true,
+    icon: <Star className="w-4 h-4 text-flu-grena" />
+  },
+  {
+    id: '4',
+    type: 'system',
+    title: 'Novos Jogadores',
+    message: '10 novos jogadores adicionados ao quiz',
+    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
+    read: true,
+    icon: <Users className="w-4 h-4 text-blue-500" />
+  }
+];
 
-  // Simulação de notificações (em produção viria do backend)
-  useEffect(() => {
-    if (user) {
-      const sampleNotifications: Notification[] = [
-        {
-          id: '1',
-          type: 'achievement',
-          title: 'Nova Conquista!',
-          description: 'Você desbloqueou "Especialista em Anos 80"',
-          timestamp: new Date(Date.now() - 5 * 60 * 1000),
-          read: false,
-          icon: <Trophy className="w-4 h-4 text-yellow-500" />
-        },
-        {
-          id: '2',
-          type: 'progress',
-          title: 'Progresso Impressionante!',
-          description: 'Você está em uma sequência de 5 acertos consecutivos',
-          timestamp: new Date(Date.now() - 30 * 60 * 1000),
-          read: false,
-          icon: <TrendingUp className="w-4 h-4 text-green-500" />
-        },
-        {
-          id: '3',
-          type: 'tip',
-          title: 'Dica do Dia',
-          description: 'Tente focar nas características físicas dos jogadores',
-          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-          read: true,
-          icon: <Star className="w-4 h-4 text-blue-500" />
-        }
-      ];
-      setNotifications(sampleNotifications);
-    }
-  }, [user]);
+export const NotificationCenter = () => {
+  const [notifications, setNotifications] = useState<Notification[]>(DEMO_NOTIFICATIONS);
+  const [isOpen, setIsOpen] = useState(false);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
   const markAsRead = (id: string) => {
-    setNotifications(prev => 
+    setNotifications(prev =>
       prev.map(n => n.id === id ? { ...n, read: true } : n)
     );
   };
 
   const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    setNotifications(prev =>
+      prev.map(n => ({ ...n, read: true }))
+    );
   };
 
   const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   };
 
-  const getTimeAgo = (timestamp: Date) => {
+  const formatTime = (timestamp: Date) => {
     const now = new Date();
-    const diffInMs = now.getTime() - timestamp.getTime();
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diff = now.getTime() - timestamp.getTime();
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
-    if (diffInMinutes < 1) return 'Agora mesmo';
-    if (diffInMinutes < 60) return `${diffInMinutes}m atrás`;
-    if (diffInHours < 24) return `${diffInHours}h atrás`;
-    return `${Math.floor(diffInHours / 24)}d atrás`;
+    if (minutes < 60) return `${minutes}m atrás`;
+    if (hours < 24) return `${hours}h atrás`;
+    return `${days}d atrás`;
   };
 
-  if (!user) return null;
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'achievement': return 'bg-yellow-100 text-yellow-800';
+      case 'challenge': return 'bg-flu-verde/10 text-flu-verde';
+      case 'social': return 'bg-flu-grena/10 text-flu-grena';
+      case 'system': return 'bg-blue-100 text-blue-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="sm" className="relative">
-          <Bell className="w-5 h-5" />
+          {unreadCount > 0 ? (
+            <BellRing className="w-5 h-5" />
+          ) : (
+            <Bell className="w-5 h-5" />
+          )}
           {unreadCount > 0 && (
             <Badge 
-              className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-              variant="destructive"
+              variant="destructive" 
+              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
             >
               {unreadCount}
             </Badge>
@@ -104,83 +124,94 @@ export const NotificationCenter = () => {
       </PopoverTrigger>
       
       <PopoverContent className="w-80 p-0" align="end">
-        <Card className="border-0 shadow-none">
-          <CardHeader className="border-b">
+        <FluCard className="border-0 shadow-lg">
+          <div className="p-4 border-b">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Notificações</CardTitle>
+              <h3 className="font-semibold text-flu-grena">Notificações</h3>
               {unreadCount > 0 && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={markAllAsRead}
-                  className="text-xs"
+                  className="text-xs text-flu-verde hover:text-flu-verde/80"
                 >
                   Marcar todas como lidas
                 </Button>
               )}
             </div>
-          </CardHeader>
-          
-          <CardContent className="p-0 max-h-96 overflow-y-auto">
+          </div>
+
+          <div className="max-h-96 overflow-y-auto">
             {notifications.length === 0 ? (
-              <div className="p-6 text-center text-muted-foreground">
-                <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <div className="p-8 text-center text-gray-500">
+                <Bell className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>Nenhuma notificação</p>
               </div>
             ) : (
               <div className="divide-y">
                 {notifications.map((notification) => (
-                  <div 
+                  <div
                     key={notification.id}
-                    className={`p-4 hover:bg-muted/50 transition-colors cursor-pointer ${
-                      !notification.read ? 'bg-primary/5' : ''
+                    className={`p-4 hover:bg-gray-50 transition-colors ${
+                      !notification.read ? 'bg-flu-verde/5 border-l-2 border-l-flu-verde' : ''
                     }`}
-                    onClick={() => markAsRead(notification.id)}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-1">
-                        {notification.icon || <Gamepad2 className="w-4 h-4 text-muted-foreground" />}
+                        {notification.icon}
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h4 className={`text-sm font-medium ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        <div className="flex items-center justify-between mb-1">
+                          <p className="text-sm font-medium text-gray-900 truncate">
                             {notification.title}
-                          </h4>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0 hover:bg-destructive hover:text-destructive-foreground"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              removeNotification(notification.id);
-                            }}
-                          >
-                            <X className="w-3 h-3" />
-                          </Button>
+                          </p>
+                          <div className="flex items-center gap-1">
+                            <Badge 
+                              variant="secondary" 
+                              className={`text-xs ${getTypeColor(notification.type)}`}
+                            >
+                              {notification.type}
+                            </Badge>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => removeNotification(notification.id)}
+                              className="w-6 h-6 p-0 hover:bg-red-100"
+                            >
+                              <X className="w-3 h-3" />
+                            </Button>
+                          </div>
                         </div>
                         
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {notification.description}
+                        <p className="text-sm text-gray-600 mb-2">
+                          {notification.message}
                         </p>
                         
-                        <p className="text-xs text-muted-foreground mt-2">
-                          {getTimeAgo(notification.timestamp)}
-                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-500">
+                            {formatTime(notification.timestamp)}
+                          </span>
+                          
+                          {!notification.read && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => markAsRead(notification.id)}
+                              className="text-xs text-flu-verde hover:text-flu-verde/80"
+                            >
+                              Marcar como lida
+                            </Button>
+                          )}
+                        </div>
                       </div>
-                      
-                      {!notification.read && (
-                        <div className="flex-shrink-0">
-                          <div className="w-2 h-2 bg-primary rounded-full"></div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </FluCard>
       </PopoverContent>
     </Popover>
   );
