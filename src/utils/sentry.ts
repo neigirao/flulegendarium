@@ -1,13 +1,34 @@
 import * as Sentry from '@sentry/react';
 
+// Add testSentry to window for manual testing
+declare global {
+  interface Window {
+    testSentry: () => void;
+  }
+}
+
 // Simple Sentry initialization as per documentation
 export const initializeSentry = () => {
   Sentry.init({
     dsn: "https://f9c46da6b7626a7ae61c9b0e87f46eba@o4509675988385792.ingest.us.sentry.io/4509676034392064",
     // Setting this option to true will send default PII data to Sentry.
     // For example, automatic IP address collection on events
-    sendDefaultPii: true
+    sendDefaultPii: true,
+    debug: true // Enable debug mode to see if Sentry is working
   });
+  
+  // Test if Sentry is working
+  console.log('Sentry initialized successfully');
+  
+  // Add a way to manually test Sentry
+  window.testSentry = () => {
+    try {
+      throw new Error("Manual Sentry test error!");
+    } catch (error) {
+      Sentry.captureException(error);
+      console.log('Test error sent to Sentry');
+    }
+  };
 };
 
 // Custom error boundary for Sentry
