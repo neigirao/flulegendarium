@@ -27,6 +27,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { SocialShareModal } from "@/components/social/SocialShareModal";
 import { useAuth } from "@/hooks/useAuth";
+import { SentryTestButton } from "@/components/SentryTestButton";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -93,8 +94,13 @@ const Index = () => {
               </p>
               <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto leading-relaxed">
                 Teste seus conhecimentos sobre os grandes ídolos tricolores! 
-                Desde lendas históricas até estrelas atuais - descubra o quanto você realmente conhece sobre o Flu.
-              </p>
+                 Desde lendas históricas até estrelas atuais - descubra o quanto você realmente conhece sobre o Flu.
+               </p>
+               
+               {/* Sentry Test Button - Remover após teste */}
+               <div className="mb-8">
+                 <SentryTestButton />
+               </div>
               
               {/* CTA Principal */}
               <div className="mb-16">
