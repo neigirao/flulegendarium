@@ -107,24 +107,24 @@ const Index = () => {
                 >
                   🚀 Começar a Jogar Agora
                 </Button>
-                <p className="text-sm text-gray-500 mt-4">
-                  Gratuito • Sem cadastro necessário • {gameStats ? `${gameStats.totalPlayers}+` : '200+'} jogadores
-                </p>
+                 <p className="text-sm text-gray-500 mt-4">
+                   Gratuito • Sem cadastro necessário • {gameStats ? `${gameStats.totalPlayers}+` : 'Muitos'} jogadores
+                 </p>
               </div>
 
               {/* Stats Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16">
-                <FluCard variant="tricolor" hover="glow" size="sm">
-                  <FluCardContent className="text-center py-6">
-                    <ScoreDisplay 
-                      score={gameStats?.totalPlayers || 200} 
-                      variant="tricolor" 
-                      size="lg"
-                      suffix="+"
-                    />
-                    <div className="text-sm text-muted-foreground mt-2">Jogadores</div>
-                  </FluCardContent>
-                </FluCard>
+                 <FluCard variant="tricolor" hover="glow" size="sm">
+                   <FluCardContent className="text-center py-6">
+                     <ScoreDisplay 
+                       score={gameStats?.totalPlayers || 0} 
+                       variant="tricolor" 
+                       size="lg"
+                       suffix={gameStats?.totalPlayers ? "+" : ""}
+                     />
+                     <div className="text-sm text-muted-foreground mt-2">Jogadores</div>
+                   </FluCardContent>
+                 </FluCard>
                 
                 <FluCard variant="verde" hover="lift" size="sm">
                   <FluCardContent className="text-center py-6">
@@ -133,29 +133,29 @@ const Index = () => {
                   </FluCardContent>
                 </FluCard>
                 
-                <FluCard variant="grena" hover="scale" size="sm">
-                  <FluCardContent className="text-center py-6">
-                    <ScoreDisplay 
-                      score={gameStats ? Math.max(1, Math.floor((gameStats.totalGames || 1000) / 100)) : 1} 
-                      variant="grena" 
-                      size="lg"
-                      suffix="k+"
-                    />
-                    <div className="text-sm text-muted-foreground mt-2">Jogos</div>
-                  </FluCardContent>
-                </FluCard>
+                 <FluCard variant="grena" hover="scale" size="sm">
+                   <FluCardContent className="text-center py-6">
+                     <ScoreDisplay 
+                       score={gameStats?.totalGames || 0} 
+                       variant="grena" 
+                       size="lg"
+                       suffix=""
+                     />
+                     <div className="text-sm text-muted-foreground mt-2">Jogos</div>
+                   </FluCardContent>
+                 </FluCard>
                 
-                <FluCard variant="elegant" hover="glow" size="sm">
-                  <FluCardContent className="text-center py-6">
-                    <ScoreDisplay 
-                      score={gameStats ? Math.max(1, Math.floor((gameStats.totalAttempts || 1000) / 1000)) : 1} 
-                      variant="success" 
-                      size="lg"
-                      suffix="k+"
-                    />
-                    <div className="text-sm text-muted-foreground mt-2">Tentativas</div>
-                  </FluCardContent>
-                </FluCard>
+                 <FluCard variant="elegant" hover="glow" size="sm">
+                   <FluCardContent className="text-center py-6">
+                     <ScoreDisplay 
+                       score={gameStats?.totalAttempts || 0} 
+                       variant="success" 
+                       size="lg"
+                       suffix=""
+                     />
+                     <div className="text-sm text-muted-foreground mt-2">Tentativas</div>
+                   </FluCardContent>
+                 </FluCard>
               </div>
             </div>
           </section>

@@ -22,15 +22,20 @@ interface GameInsightsProps {
 }
 
 export const GameInsights = ({ score, correctGuesses, totalAttempts, streak, gameMode, difficulty, data }: GameInsightsProps) => {
-  // Mock data for demo
-  const insights = data || {
-    totalGames: 42,
-    accuracy: 78,
-    averageTime: 12.5,
-    longestStreak: 15,
-    difficultyLevel: 'Intermediário',
-    weeklyProgress: 65
-  };
+  // Return early if no data is provided
+  if (!data) {
+    return (
+      <FluCard variant="tricolor" className="mb-8">
+        <FluCardContent className="text-center py-12">
+          <Brain className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+          <p className="text-gray-500 mb-2">Nenhuma estatística disponível</p>
+          <p className="text-sm text-gray-400">Jogue algumas partidas para ver suas estatísticas!</p>
+        </FluCardContent>
+      </FluCard>
+    );
+  }
+
+  const insights = data;
 
   const getDifficultyColor = (level: string) => {
     switch (level.toLowerCase()) {

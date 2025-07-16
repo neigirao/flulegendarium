@@ -1,37 +1,42 @@
-import { useState } from 'react';
-import { Heart, MessageCircle, Share2, Users, Crown } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useState } from 'react';
+import { Users, Crown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { FluCard } from '@/components/ui/flu-card';
 import { TopNavigation } from '@/components/navigation/TopNavigation';
 import { RootLayout } from '@/components/RootLayout';
 import { PlayerCommentsSection } from '@/components/social/PlayerCommentsSection';
 
-// Mock data para demonstração
-const mockPlayers = [
-  {
-    id: '1',
-    name: 'Fred',
-    image_url: '/lovable-uploads/efaf362c-8726-4049-98bc-ebb26dcdd4e1.png',
-    position: 'Atacante',
-    decade: '2010s'
-  },
-  {
-    id: '2', 
-    name: 'Germán Cano',
-    image_url: '/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png',
-    position: 'Atacante',
-    decade: '2020s'
-  }
-];
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export const SocialPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedPlayer, setSelectedPlayer] = useState(mockPlayers[0]);
+  const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
 
-  const filteredPlayers = mockPlayers.filter(player =>
+  // Fetch players from Supabase
+  const { data: players = [], isLoading } = useQuery({
+    queryKey: ['players-social'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('players')
+        .select('id, name, image_url, position, decades')
+        .order('name');
+      
+      if (error) throw error;
+      return data;
+    }
+  });
+
+  const filteredPlayers = players.filter(player =>
     player.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Set first player as selected when data loads
+  React.useEffect(() => {
+    if (players.length > 0 && !selectedPlayer) {
+      setSelectedPlayer(players[0]);
+    }
+  }, [players, selectedPlayer]);
 
   return (
     <RootLayout>
@@ -66,34 +71,55 @@ export const SocialPage = () => {
                   className="mb-4"
                 />
 
-                <div className="space-y-3">
-                  {filteredPlayers.map((player) => (
-                    <div
-                      key={player.id}
-                      onClick={() => setSelectedPlayer(player)}
-                      className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
-                        selectedPlayer.id === player.id
-                          ? 'bg-primary/10 border border-primary/20'
-                          : 'hover:bg-muted/50'
-                      }`}
-                    >
-                      <img
-                        src={player.image_url}
-                        alt={player.name}
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                      <div className="flex-1">
-                        <h4 className="font-medium text-sm">{player.name}</h4>
-                        <p className="text-xs text-muted-foreground">
-                          {player.position} • {player.decade}
-                        </p>
-                      </div>
-                      {selectedPlayer.id === player.id && (
-                        <Crown className="w-4 h-4 text-primary" />
-                      )}
-                    </div>
-                  ))}
-                </div>
+                 <div className="space-y-3">
+                   {isLoading ? (
+                     <div className="space-y-3">
+                       {[...Array(5)].map((_, i) => (
+                         <div key={i} className="flex items-center gap-3 p-3">
+                           <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse"></div>
+                           <div className="flex-1 space-y-2">
+                             <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+                             <div className="h-3 bg-gray-200 rounded w-3/4 animate-pulse"></div>
+                           </div>
+                         </div>
+                       ))}
+                     </div>
+                   ) : filteredPlayers.length > 0 ? (
+                     filteredPlayers.map((player) => (
+                       <div
+                         key={player.id}
+                         onClick={() => setSelectedPlayer(player)}
+                         className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-all ${
+                           selectedPlayer?.id === player.id
+                             ? 'bg-primary/10 border border-primary/20'
+                             : 'hover:bg-muted/50'
+                         }`}
+                       >
+                         <img
+                           src={player.image_url}
+                           alt={player.name}
+                           className="w-12 h-12 rounded-full object-cover"
+                           onError={(e) => {
+                             (e.target as HTMLImageElement).src = '/placeholder.svg';
+                           }}
+                         />
+                         <div className="flex-1">
+                           <h4 className="font-medium text-sm">{player.name}</h4>
+                           <p className="text-xs text-muted-foreground">
+                             {player.position} • {player.decades?.[0] || 'N/A'}
+                           </p>
+                         </div>
+                         {selectedPlayer?.id === player.id && (
+                           <Crown className="w-4 h-4 text-primary" />
+                         )}
+                       </div>
+                     ))
+                   ) : (
+                     <div className="text-center py-8 text-gray-500">
+                       <p>Nenhum jogador encontrado</p>
+                     </div>
+                   )}
+                 </div>
               </FluCard>
             </div>
 
@@ -108,36 +134,6 @@ export const SocialPage = () => {
             </div>
           </div>
 
-          {/* Community Stats */}
-          <div className="mt-12">
-            <FluCard className="p-6">
-              <h3 className="text-lg font-semibold mb-6 text-center">
-                📊 Estatísticas da Comunidade
-              </h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-primary mb-1">1.2k</div>
-                  <div className="text-sm text-muted-foreground">Comentários</div>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-secondary mb-1">347</div>
-                  <div className="text-sm text-muted-foreground">Membros Ativos</div>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-accent mb-1">4.8</div>
-                  <div className="text-sm text-muted-foreground">Avaliação Média</div>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-flu-verde mb-1">89%</div>
-                  <div className="text-sm text-muted-foreground">Aprovação</div>
-                </div>
-              </div>
-            </FluCard>
-          </div>
         </div>
       </div>
     </RootLayout>
