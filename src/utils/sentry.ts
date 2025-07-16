@@ -20,21 +20,19 @@ export const initializeSentry = async () => {
 
     Sentry.init({
       dsn: config.dsn,
-      environment: config.environment,
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
-        maskAllText: false,
-        blockAllMedia: false,
-      }),
-    ],
-    
-    // Performance Monitoring
-    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
-    
-    // Session Replay
-    replaysSessionSampleRate: 0.1, // 10% of sessions will be recorded
-    replaysOnErrorSampleRate: 1.0, // 100% of sessions with an error will be recorded
+      integrations: [Sentry.browserTracingIntegration()],
+      
+      // Set tracesSampleRate to 1.0 to capture 100%
+      // of transactions for performance monitoring.
+      // We recommend adjusting this value in production
+      tracesSampleRate: 1.0,
+      
+      // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
+      tracePropagationTargets: [
+        "localhost", 
+        /^https:\/\/.*\.supabase\.co\//, 
+        /^https:\/\/.*\.lovable\.app\//
+      ],
     
     beforeSend(event, hint) {
       // Filter out noisy errors
