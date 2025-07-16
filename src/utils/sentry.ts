@@ -7,38 +7,14 @@ declare global {
   }
 }
 
-// Initialize Sentry with configuration from Supabase
-export const initializeSentry = async () => {
-  try {
-    // Get Sentry config from edge function
-    const { supabase } = await import('@/integrations/supabase/client');
-    const { data, error } = await supabase.functions.invoke('get-sentry-config');
-    
-    if (error || !data?.dsn) {
-      console.warn('Failed to get Sentry config, using fallback:', error);
-      // Fallback to hardcoded DSN
-      Sentry.init({
-        dsn: "https://f9c46da6b7626a7ae61c9b0e87f46eba@o4509675988385792.ingest.us.sentry.io/4509676034392064",
-        sendDefaultPii: true,
-        debug: true
-      });
-    } else {
-      Sentry.init({
-        dsn: data.dsn,
-        environment: data.environment || 'production',
-        sendDefaultPii: true,
-        debug: true
-      });
-    }
-  } catch (err) {
-    console.error('Error initializing Sentry:', err);
-    // Fallback initialization
-    Sentry.init({
-      dsn: "https://f9c46da6b7626a7ae61c9b0e87f46eba@o4509675988385792.ingest.us.sentry.io/4509676034392064",
-      sendDefaultPii: true,
-      debug: true
-    });
-  }
+// Initialize Sentry as early as possible in your application's lifecycle
+export const initializeSentry = () => {
+  Sentry.init({
+    dsn: "https://f9c46da6b7626a7ae61c9b0e87f46eba@o4509675988385792.ingest.us.sentry.io/4509676034392064",
+    // Setting this option to true will send default PII data to Sentry.
+    // For example, automatic IP address collection on events
+    sendDefaultPii: true
+  });
   
   // Test if Sentry is working
   console.log('Sentry initialized successfully');
