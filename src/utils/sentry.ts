@@ -3,7 +3,7 @@ import * as Sentry from '@sentry/react';
 // Initialize Sentry with performance monitoring
 export const initializeSentry = () => {
   Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN || 'https://YOUR_SENTRY_DSN_HERE@o4508048625508352.ingest.us.sentry.io/4508048628785152',
+    dsn: import.meta.env.VITE_SENTRY_DSN,
     environment: import.meta.env.MODE,
     integrations: [
       Sentry.browserTracingIntegration(),
