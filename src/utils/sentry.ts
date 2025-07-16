@@ -1,10 +1,26 @@
 import * as Sentry from '@sentry/react';
 
 // Initialize Sentry with performance monitoring
-export const initializeSentry = () => {
-  Sentry.init({
-    dsn: import.meta.env.VITE_SENTRY_DSN,
-    environment: import.meta.env.MODE,
+export const initializeSentry = async () => {
+  try {
+    // Fetch Sentry configuration from edge function
+    const response = await fetch('https://hafxruwnggitvtyngedy.supabase.co/functions/v1/get-sentry-config', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      console.warn('Failed to fetch Sentry config, skipping initialization');
+      return;
+    }
+
+    const config = await response.json();
+
+    Sentry.init({
+      dsn: config.dsn,
+      environment: config.environment,
     integrations: [
       Sentry.browserTracingIntegration(),
       Sentry.replayIntegration({
@@ -45,7 +61,10 @@ export const initializeSentry = () => {
         component: 'lendas-do-flu'
       }
     }
-  });
+    });
+  } catch (error) {
+    console.error('Failed to initialize Sentry:', error);
+  }
 };
 
 // Custom error boundary for Sentry
