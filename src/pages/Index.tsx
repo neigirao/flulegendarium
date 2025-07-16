@@ -27,6 +27,7 @@ import { NotificationCenter } from "@/components/notifications/NotificationCente
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { SocialShareModal } from "@/components/social/SocialShareModal";
 import { useAuth } from "@/hooks/useAuth";
+import { PlayerRanking } from "@/components/PlayerRanking";
 
 
 const Index = () => {
@@ -112,7 +113,20 @@ const Index = () => {
                  <p className="text-sm text-gray-500 mt-4">
                    Gratuito • Sem cadastro necessário • {gameStats ? `${gameStats.totalPlayers}+` : 'Muitos'} jogadores
                  </p>
-              </div>
+               </div>
+
+               {/* Hall da Fama */}
+               <div className="mb-16">
+                 <div className="text-center mb-8">
+                   <h2 className="text-3xl font-bold text-flu-grena mb-4">
+                     🏆 Hall da Fama Tricolor
+                   </h2>
+                   <p className="text-lg text-gray-600">
+                     Os maiores conhecedores do Fluminense
+                   </p>
+                 </div>
+                 <PlayerRanking />
+               </div>
 
               {/* Stats Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16">
