@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy } from "react";
+import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -11,16 +11,22 @@ import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBounda
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
 
-const Index = lazy(() => import("@/pages/Index"))
-const AdaptiveGuessPlayerSimple = lazy(() => import("@/pages/AdaptiveGuessPlayerSimple"))
-const DecadeGuessPlayer = lazy(() => import("@/pages/DecadeGuessPlayer"))
-const SelectGameMode = lazy(() => import("@/pages/GameModeSelection"))
-const Profile = lazy(() => import("@/pages/Profile"))
-const AdminLogin = lazy(() => import("@/pages/AdminLogin"))
-const AdminDashboard = lazy(() => import("@/pages/Admin"))
-const FAQ = lazy(() => import("@/pages/FAQ"))
-const NotFound = lazy(() => import("@/pages/NotFound"))
-const Auth = lazy(() => import("@/pages/Auth"))
+// Core pages (immediate load)
+import Index from "@/pages/Index";
+
+// Lazy loaded modules with optimized loading
+import {
+  LazyAdaptiveGuessPlayer,
+  LazyDecadeGuessPlayer,
+  LazyGameModeSelection,
+  LazyAdmin,
+  LazyAdminLogin,
+  LazyProfile,
+  LazyAuth,
+  LazyFAQ
+} from "@/components/lazy-modules";
+
+const NotFound = React.lazy(() => import("@/pages/NotFound"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -57,13 +63,13 @@ function App() {
                 </div>}>
                   <Routes>
                     <Route path="/" element={<Index />} />
-                    <Route path="/auth" element={<Auth />} />
-                    <Route path="/selecionar-modo-jogo" element={<SelectGameMode />} />
+                    <Route path="/auth" element={<LazyAuth />} />
+                    <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
                     <Route 
                       path="/quiz-adaptativo" 
                       element={
                         <GameErrorBoundary>
-                          <AdaptiveGuessPlayerSimple />
+                          <LazyAdaptiveGuessPlayer />
                         </GameErrorBoundary>
                       } 
                     />
@@ -71,18 +77,18 @@ function App() {
                       path="/quiz-decada" 
                       element={
                         <GameErrorBoundary>
-                          <DecadeGuessPlayer />
+                          <LazyDecadeGuessPlayer />
                         </GameErrorBoundary>
                       } 
                     />
-                    <Route path="/meu-perfil-tricolor" element={<Profile />} />
-                    <Route path="/faq" element={<FAQ />} />
-                    <Route path="/admin/login-administrador" element={<AdminLogin />} />
+                    <Route path="/meu-perfil-tricolor" element={<LazyProfile />} />
+                    <Route path="/faq" element={<LazyFAQ />} />
+                    <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
                     <Route 
                       path="/admin" 
                       element={
                         <AdminErrorBoundary>
-                          <AdminDashboard />
+                          <LazyAdmin />
                         </AdminErrorBoundary>
                       } 
                     />
@@ -90,7 +96,7 @@ function App() {
                       path="/admin/dashboard" 
                       element={
                         <AdminErrorBoundary>
-                          <AdminDashboard />
+                          <LazyAdmin />
                         </AdminErrorBoundary>
                       } 
                     />

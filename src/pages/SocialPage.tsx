@@ -139,3 +139,5 @@ export const SocialPage = () => {
     </RootLayout>
   );
 };
+
+export default SocialPage;
