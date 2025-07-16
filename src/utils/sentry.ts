@@ -1,54 +1,51 @@
 import * as Sentry from '@sentry/react';
-import React from 'react';
 
 // Initialize Sentry with performance monitoring
 export const initializeSentry = () => {
-  if (import.meta.env.PROD) {
-    Sentry.init({
-      dsn: import.meta.env.VITE_SENTRY_DSN || 'YOUR_SENTRY_DSN_HERE',
-      environment: import.meta.env.MODE,
-      integrations: [
-        Sentry.browserTracingIntegration(),
-        Sentry.replayIntegration({
-          maskAllText: false,
-          blockAllMedia: false,
-        }),
-      ],
-      
-      // Performance Monitoring
-      tracesSampleRate: 0.1, // 10% of transactions for performance monitoring
-      
-      // Session Replay
-      replaysSessionSampleRate: 0.01, // 1% of sessions will be recorded
-      replaysOnErrorSampleRate: 1.0, // 100% of sessions with an error will be recorded
-      
-      beforeSend(event, hint) {
-        // Filter out noisy errors
-        if (event.exception) {
-          const error = hint.originalException;
-          
-          // Skip network errors
-          if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
-            return null;
-          }
-          
-          // Skip ChunkLoadError - these are expected in development
-          if (error instanceof Error && error.name === 'ChunkLoadError') {
-            return null;
-          }
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN || 'https://YOUR_SENTRY_DSN_HERE@o4508048625508352.ingest.us.sentry.io/4508048628785152',
+    environment: import.meta.env.MODE,
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration({
+        maskAllText: false,
+        blockAllMedia: false,
+      }),
+    ],
+    
+    // Performance Monitoring
+    tracesSampleRate: import.meta.env.PROD ? 0.1 : 1.0,
+    
+    // Session Replay
+    replaysSessionSampleRate: 0.1, // 10% of sessions will be recorded
+    replaysOnErrorSampleRate: 1.0, // 100% of sessions with an error will be recorded
+    
+    beforeSend(event, hint) {
+      // Filter out noisy errors
+      if (event.exception) {
+        const error = hint.originalException;
+        
+        // Skip network errors
+        if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+          return null;
         }
         
-        return event;
-      },
-      
-      // Custom tags for better organization
-      initialScope: {
-        tags: {
-          component: 'lendas-do-flu'
+        // Skip ChunkLoadError - these are expected in development
+        if (error instanceof Error && error.name === 'ChunkLoadError') {
+          return null;
         }
       }
-    });
-  }
+      
+      return event;
+    },
+    
+    // Custom tags for better organization
+    initialScope: {
+      tags: {
+        component: 'lendas-do-flu'
+      }
+    }
+  });
 };
 
 // Custom error boundary for Sentry
