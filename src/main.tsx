@@ -6,8 +6,8 @@ import './index.css'
 import { initializeSentry } from './utils/sentry'
 
 // Initialize monitoring and app
-(() => {
-  initializeSentry();
+(async () => {
+  await initializeSentry();
 
   const rootElement = document.getElementById("root");
   if (!rootElement) {
