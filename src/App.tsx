@@ -26,27 +26,12 @@ import {
   LazyFAQ
 } from "@/components/lazy-modules";
 
+import { PerformanceDashboard } from "@/components/observability/PerformanceDashboard";
+import { createOptimizedQueryClient } from "@/utils/performance/cacheOptimization";
+
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: (failureCount, error) => {
-        // Don't retry on 4xx errors
-        if (error && 'status' in error && typeof error.status === 'number') {
-          if (error.status >= 400 && error.status < 500) {
-            console.warn('⚠️ Não tentando novamente para erro 4xx:', error.status);
-            return false;
-          }
-        }
-        // Retry up to 3 times for other errors
-        return failureCount < 3;
-      },
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-    },
-  },
-});
+const queryClient = createOptimizedQueryClient();
 
 function App() {
   return (
@@ -105,6 +90,7 @@ function App() {
                 </Suspense>
               </div>
               <Toaster />
+              <PerformanceDashboard />
             </TooltipProvider>
           </AuthProvider>
         </BrowserRouter>

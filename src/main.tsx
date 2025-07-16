@@ -3,6 +3,10 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import { initializeSentry } from './utils/sentry'
+
+// Initialize monitoring
+initializeSentry();
 
 const rootElement = document.getElementById("root");
 if (!rootElement) {
