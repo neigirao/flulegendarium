@@ -13,7 +13,14 @@ export const initializeSentry = () => {
   Sentry.init({
     dsn: "https://f9c46da6b7626a7ae61c9b0e87f46eba@o4509675988385792.ingest.us.sentry.io/4509676034392064",
     integrations: [
-      Sentry.browserTracingIntegration(),
+      Sentry.browserTracingIntegration({
+        // Enable automatic instrumentation of user interactions
+        enableInp: true,
+        // Enable long task tracking for performance monitoring
+        enableLongTask: true,
+        // Enable HTTP request timing
+        enableHTTPTimings: true,
+      }),
       Sentry.replayIntegration(),
     ],
     
@@ -117,6 +124,53 @@ export const SentryErrorBoundary = Sentry.withErrorBoundary;
 export const measurePerformance = {
   startTransaction: (name: string, op: string = 'navigation') => {
     return Sentry.startSpan({ name, op }, () => {});
+  },
+  
+  // Track route changes manually
+  trackRouteChange: (routeName: string, previousRoute?: string) => {
+    return Sentry.startSpan(
+      {
+        name: `Route: ${routeName}`,
+        op: 'navigation',
+      },
+      () => {
+        Sentry.addBreadcrumb({
+          category: 'navigation',
+          message: `Navigated to ${routeName}`,
+          level: 'info',
+          data: { previousRoute, currentRoute: routeName },
+        });
+        
+        // Set context for current route
+        Sentry.setContext('navigation', {
+          currentRoute: routeName,
+          previousRoute,
+          timestamp: Date.now(),
+        });
+        
+        // Set tags for easier filtering
+        Sentry.setTag('route', routeName);
+        
+        return routeName;
+      }
+    );
+  },
+  
+  // Track component rendering performance
+  trackComponentRender: (componentName: string, renderTime?: number) => {
+    Sentry.addBreadcrumb({
+      category: 'ui',
+      message: `Component rendered: ${componentName}`,
+      level: 'info',
+      data: {
+        component: componentName,
+        renderTime,
+      },
+    });
+    
+    if (renderTime) {
+      Sentry.setMeasurement(`component.${componentName}.render`, renderTime, 'millisecond');
+    }
   },
   
   measureFunction: <T extends (...args: any[]) => any>(
