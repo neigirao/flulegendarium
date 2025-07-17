@@ -14,10 +14,7 @@ export const initializeSentry = () => {
     dsn: "https://f9c46da6b7626a7ae61c9b0e87f46eba@o4509675988385792.ingest.us.sentry.io/4509676034392064",
     integrations: [
       Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration({
-        maskAllText: false,
-        blockAllMedia: false,
-      }),
+      Sentry.replayIntegration(),
     ],
     
     // Set tracesSampleRate to 1.0 to capture 100%
