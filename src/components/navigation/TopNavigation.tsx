@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { AuthButton } from "@/components/auth/AuthButton";
-import { Shield, HelpCircle } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { Shield, HelpCircle, User } from "lucide-react";
 
 export const TopNavigation = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-flu-verde/20">
@@ -26,6 +28,18 @@ export const TopNavigation = () => {
               <HelpCircle className="h-4 w-4 mr-1" />
               FAQ
             </Button>
+            
+            {user && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/profile')}
+                className="text-flu-grena hover:bg-flu-verde/10"
+              >
+                <User className="h-4 w-4 mr-1" />
+                Meu Perfil
+              </Button>
+            )}
             
             <NotificationCenter />
             

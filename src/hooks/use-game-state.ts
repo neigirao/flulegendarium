@@ -7,7 +7,7 @@ interface UseGameStateProps {
 
 export const useGameState = ({ hasLost }: UseGameStateProps) => {
   const [showGameOverDialog, setShowGameOverDialog] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(true);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [isAuthenticatedGame, setIsAuthenticatedGame] = useState(false);
   const [showGuestNameForm, setShowGuestNameForm] = useState(false);
