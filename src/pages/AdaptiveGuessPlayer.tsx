@@ -22,7 +22,7 @@ import { useGameMetrics } from "@/hooks/use-game-metrics";
 
 const AdaptiveGuessPlayer = () => {
   const { user } = useAuth();
-  const [showAuthSelection, setShowAuthSelection] = useState(true);
+  const [showAuthSelection, setShowAuthSelection] = useState(!user);
   const [showAdaptiveTutorial, setShowAdaptiveTutorial] = useState(false);
   const { showImageUrl, handleDebugClick } = useDebug();
   const { trackError, log } = useObservability();
@@ -97,6 +97,11 @@ const AdaptiveGuessPlayer = () => {
     });
   }, [log, user, players, gameStarted, currentDifficulty]);
 
+  // Update auth selection when user changes
+  useEffect(() => {
+    setShowAuthSelection(!user && !gameStarted);
+  }, [user, gameStarted]);
+
   // Show adaptive tutorial after regular tutorial
   useEffect(() => {
     if (gameStarted && !showTutorial) {
@@ -125,14 +130,14 @@ const AdaptiveGuessPlayer = () => {
   const handleGuestPlay = () => {
     log('info', 'Adaptive guest play selected');
     setShowAuthSelection(false);
-    // Don't start game immediately, let tutorial flow handle it
+    // Trigger tutorial after auth selection
   };
 
   const handleAuthenticatedPlay = () => {
     log('info', 'Adaptive authenticated play selected', { userId: user?.id });
     trackConversion(false, 'login');
     setShowAuthSelection(false);
-    // Don't start game immediately, let tutorial flow handle it
+    // Trigger tutorial after auth selection
   };
 
   // Track game abandonment on unmount
@@ -255,10 +260,22 @@ const AdaptiveGuessPlayer = () => {
           )}
 
           {showAuthSelection && !gameStarted && (
-            <GameAuthSelection
-              onGuestPlay={handleGuestPlay}
-              onAuthenticatedPlay={handleAuthenticatedPlay}
-            />
+            <div className="text-center py-8">
+              <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-8 shadow-xl max-w-lg mx-auto">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <img 
+                    src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
+                    alt="Fluminense FC" 
+                    className="w-12 h-12 object-contain"
+                  />
+                  <h2 className="text-2xl font-bold text-flu-grena">Como você quer jogar?</h2>
+                </div>
+                <GameAuthSelection
+                  onGuestPlay={handleGuestPlay}
+                  onAuthenticatedPlay={handleAuthenticatedPlay}
+                />
+              </div>
+            </div>
           )}
         </div>
       </div>

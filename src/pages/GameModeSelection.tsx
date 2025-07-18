@@ -1,83 +1,13 @@
-
-import React, { useState } from "react";
+import React from "react";
 import { RootLayout } from "@/components/RootLayout";
 import { SEOHead } from "@/components/SEOHead";
 import { GameModeCard } from "@/components/GameModeCard";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { GameAuthSelection } from "@/components/auth/GameAuthSelection";
-import { useAuth } from "@/hooks/useAuth";
 
 const GameModeSelection = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [showAuthSelection, setShowAuthSelection] = useState(true);
-
-  const handleGuestPlay = () => {
-    setShowAuthSelection(false);
-  };
-
-  const handleAuthenticatedPlay = () => {
-    setShowAuthSelection(false);
-  };
-
-  // Se o usuário não está logado e ainda não escolheu entre login/convidado
-  if (!user && showAuthSelection) {
-    return (
-      <>
-        <SEOHead 
-          title="Escolha seu Modo de Jogo - Lendas do Flu"
-          description="🎮 Escolha entre diferentes modos de jogo: Quiz Adaptativo ou Quiz por Década. Teste seus conhecimentos sobre o Fluminense!"
-          keywords="modos de jogo fluminense, quiz adaptativo, quiz por década, tricolor"
-          url="https://flulegendarium.lovable.app/selecionar-modo-jogo"
-        />
-        <RootLayout>
-          <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10 flex items-center justify-center p-4">
-            <div className="w-full max-w-lg">
-              <div className="text-center mb-8">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate('/')}
-                  className="mb-4"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Voltar ao Início
-                </Button>
-                
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <img 
-                    src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
-                    alt="Fluminense FC" 
-                    className="w-12 h-12 object-contain"
-                  />
-                  <h1 className="text-3xl font-bold text-flu-grena">Como você quer jogar?</h1>
-                </div>
-                <p className="text-gray-600 mb-6">
-                  Escolha entre fazer login para salvar seu progresso ou jogar como convidado
-                </p>
-              </div>
-              
-              <GameAuthSelection 
-                onGuestPlay={handleGuestPlay}
-                onAuthenticatedPlay={handleAuthenticatedPlay}
-              />
-              
-              <div className="mt-6 text-center">
-                <Button
-                  variant="link"
-                  onClick={() => navigate('/auth')}
-                  className="text-flu-grena hover:text-flu-grena/80"
-                >
-                  Fazer login ou criar conta
-                </Button>
-              </div>
-            </div>
-          </div>
-        </RootLayout>
-      </>
-    );
-  }
 
   return (
     <>
