@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
+import { AuthButton } from "@/components/auth/AuthButton";
 import { Shield, HelpCircle } from "lucide-react";
 
 export const TopNavigation = () => {
@@ -27,6 +28,8 @@ export const TopNavigation = () => {
             </Button>
             
             <NotificationCenter />
+            
+            <AuthButton />
             
             <Button
               variant="ghost"
