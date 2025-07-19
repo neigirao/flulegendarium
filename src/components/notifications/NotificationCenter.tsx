@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Bell, BellRing, Trophy, Star, Target, Users, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Bell, BellRing, Trophy, Star, Target, Users, X, Megaphone } from 'lucide-react';
 import {
   Popover,
   PopoverContent,
@@ -8,82 +8,62 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { FluCard } from '@/components/ui/flu-card';
+import { useAdminNotifications } from '@/hooks/use-admin-notifications';
+import { AdminNotification } from '@/hooks/use-admin-notifications';
 
-interface Notification {
-  id: string;
-  type: 'achievement' | 'challenge' | 'social' | 'system';
-  title: string;
-  message: string;
-  timestamp: Date;
-  read: boolean;
-  icon?: React.ReactNode;
-}
-
-// Simulated notifications for demo
-const DEMO_NOTIFICATIONS: Notification[] = [
-  {
-    id: '1',
-    type: 'achievement',
-    title: 'Novo Recorde!',
-    message: 'Você acertou 15 jogadores seguidos! 🔥',
-    timestamp: new Date(Date.now() - 5 * 60 * 1000),
-    read: false,
-    icon: <Trophy className="w-4 h-4 text-yellow-500" />
-  },
-  {
-    id: '2',
-    type: 'challenge',
-    title: 'Desafio Diário',
-    message: 'Novo desafio disponível: Lendas dos Anos 80',
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-    read: false,
-    icon: <Target className="w-4 h-4 text-flu-verde" />
-  },
-  {
-    id: '3',
-    type: 'social',
-    title: 'Hall da Fama',
-    message: 'Você subiu para o 5º lugar no ranking!',
-    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-    read: true,
-    icon: <Star className="w-4 h-4 text-flu-grena" />
-  },
-  {
-    id: '4',
-    type: 'system',
-    title: 'Novos Jogadores',
-    message: '10 novos jogadores adicionados ao quiz',
-    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000),
-    read: true,
-    icon: <Users className="w-4 h-4 text-blue-500" />
+const getNotificationIcon = (type: AdminNotification['type']) => {
+  switch (type) {
+    case 'achievement':
+      return <Trophy className="w-4 h-4 text-yellow-500" />;
+    case 'challenge':
+      return <Target className="w-4 h-4 text-flu-verde" />;
+    case 'social':
+      return <Star className="w-4 h-4 text-flu-grena" />;
+    case 'system':
+      return <Users className="w-4 h-4 text-blue-500" />;
+    case 'announcement':
+      return <Megaphone className="w-4 h-4 text-purple-500" />;
+    default:
+      return <Bell className="w-4 h-4 text-gray-500" />;
   }
-];
+};
+
+const getTypeColor = (type: AdminNotification['type']) => {
+  switch (type) {
+    case 'achievement': return 'bg-yellow-100 text-yellow-800';
+    case 'challenge': return 'bg-flu-verde/10 text-flu-verde';
+    case 'social': return 'bg-flu-grena/10 text-flu-grena';
+    case 'system': return 'bg-blue-100 text-blue-800';
+    case 'announcement': return 'bg-purple-100 text-purple-800';
+    default: return 'bg-gray-100 text-gray-800';
+  }
+};
+
+const getPriorityColor = (priority: AdminNotification['priority']) => {
+  switch (priority) {
+    case 'urgent': return 'border-l-red-500 bg-red-50';
+    case 'high': return 'border-l-orange-500 bg-orange-50';
+    case 'normal': return 'border-l-flu-verde bg-flu-verde/5';
+    case 'low': return 'border-l-gray-400 bg-gray-50';
+    default: return 'border-l-flu-verde bg-flu-verde/5';
+  }
+};
 
 export const NotificationCenter = () => {
-  const [notifications, setNotifications] = useState<Notification[]>(DEMO_NOTIFICATIONS);
   const [isOpen, setIsOpen] = useState(false);
+  const { 
+    notifications, 
+    isLoading, 
+    unreadCount, 
+    markAsRead, 
+    markAllAsRead,
+    isMarkingRead 
+  } = useAdminNotifications();
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-
-  const markAsRead = (id: string) => {
-    setNotifications(prev =>
-      prev.map(n => n.id === id ? { ...n, read: true } : n)
-    );
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(prev =>
-      prev.map(n => ({ ...n, read: true }))
-    );
-  };
-
-  const removeNotification = (id: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-  };
-
-  const formatTime = (timestamp: Date) => {
+  const formatTime = (timestamp: string) => {
     const now = new Date();
-    const diff = now.getTime() - timestamp.getTime();
+    const notificationTime = new Date(timestamp);
+    const diff = now.getTime() - notificationTime.getTime();
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -93,15 +73,13 @@ export const NotificationCenter = () => {
     return `${days}d atrás`;
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'achievement': return 'bg-yellow-100 text-yellow-800';
-      case 'challenge': return 'bg-flu-verde/10 text-flu-verde';
-      case 'social': return 'bg-flu-grena/10 text-flu-grena';
-      case 'system': return 'bg-blue-100 text-blue-800';
-      default: return 'bg-gray-100 text-gray-800';
-    }
-  };
+  if (isLoading) {
+    return (
+      <Button variant="ghost" size="sm" className="relative" disabled>
+        <Bell className="w-5 h-5" />
+      </Button>
+    );
+  }
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -117,7 +95,7 @@ export const NotificationCenter = () => {
               variant="destructive" 
               className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
             >
-              {unreadCount}
+              {unreadCount > 99 ? '99+' : unreadCount}
             </Badge>
           )}
         </Button>
@@ -132,10 +110,11 @@ export const NotificationCenter = () => {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={markAllAsRead}
+                  onClick={() => markAllAsRead()}
+                  disabled={isMarkingRead}
                   className="text-xs text-flu-verde hover:text-flu-verde/80"
                 >
-                  Marcar todas como lidas
+                  {isMarkingRead ? 'Marcando...' : 'Marcar todas como lidas'}
                 </Button>
               )}
             </div>
@@ -152,56 +131,52 @@ export const NotificationCenter = () => {
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 hover:bg-gray-50 transition-colors ${
-                      !notification.read ? 'bg-flu-verde/5 border-l-2 border-l-flu-verde' : ''
+                    className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
+                      !notification.is_read 
+                        ? `${getPriorityColor(notification.priority as AdminNotification['priority'])} border-l-2` 
+                        : ''
                     }`}
+                    onClick={() => {
+                      if (!notification.is_read) {
+                        markAsRead(notification.id);
+                      }
+                    }}
                   >
                     <div className="flex items-start gap-3">
                       <div className="flex-shrink-0 mt-1">
-                        {notification.icon}
+                        {getNotificationIcon(notification.type as AdminNotification['type'])}
                       </div>
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-medium text-gray-900 truncate">
+                          <p className={`text-sm font-medium truncate ${
+                            !notification.is_read ? 'text-gray-900' : 'text-gray-600'
+                          }`}>
                             {notification.title}
                           </p>
                           <div className="flex items-center gap-1">
                             <Badge 
                               variant="secondary" 
-                              className={`text-xs ${getTypeColor(notification.type)}`}
+                              className={`text-xs ${getTypeColor(notification.type as AdminNotification['type'])}`}
                             >
                               {notification.type}
                             </Badge>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeNotification(notification.id)}
-                              className="w-6 h-6 p-0 hover:bg-red-100"
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
                           </div>
                         </div>
                         
-                        <p className="text-sm text-gray-600 mb-2">
+                        <p className={`text-sm mb-2 ${
+                          !notification.is_read ? 'text-gray-700' : 'text-gray-500'
+                        }`}>
                           {notification.message}
                         </p>
                         
                         <div className="flex items-center justify-between">
                           <span className="text-xs text-gray-500">
-                            {formatTime(notification.timestamp)}
+                            {formatTime(notification.created_at)}
                           </span>
                           
-                          {!notification.read && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => markAsRead(notification.id)}
-                              className="text-xs text-flu-verde hover:text-flu-verde/80"
-                            >
-                              Marcar como lida
-                            </Button>
+                          {!notification.is_read && (
+                            <span className="w-2 h-2 bg-flu-verde rounded-full"></span>
                           )}
                         </div>
                       </div>

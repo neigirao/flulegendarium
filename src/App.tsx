@@ -22,7 +22,8 @@ import {
   LazyAdmin,
   LazyAdminLogin,
   LazyAuth,
-  LazyFAQ
+  LazyFAQ,
+  LazySocialPage
 } from "@/components/lazy-modules";
 
 import { PerformanceDashboard } from "@/components/observability/PerformanceDashboard";
@@ -66,6 +67,7 @@ function App() {
                       } 
                     />
                     
+                    <Route path="/social" element={<LazySocialPage />} />
                     <Route path="/faq" element={<LazyFAQ />} />
                     <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
                     <Route 

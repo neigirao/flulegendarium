@@ -5,8 +5,11 @@ import { MostCorrectPlayersCard } from "./stats/MostCorrectPlayersCard";
 import { MostMissedPlayersCard } from "./stats/MostMissedPlayersCard";
 import { PlayerRankingCard } from "./stats/PlayerRankingCard";
 import { ProgressStatsCard } from "./stats/ProgressStatsCard";
+import { NotificationManagement } from "./notifications/NotificationManagement";
 import { useAdminStats } from "@/hooks/use-admin-stats";
-import { memo } from "react";
+import { memo, useState } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Bell, BarChart3, Users } from "lucide-react";
 
 export const AdminDashboard = memo(() => {
   const {
@@ -40,25 +43,42 @@ export const AdminDashboard = memo(() => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Estatísticas Gerais */}
-      <GeneralStatsCards
-        totalAttempts={generalStats?.totalAttempts || 0}
-        totalSessions={generalStats?.totalSessions || 0}
-        totalPlayers={generalStats?.totalPlayers || 0}
-        successRate={successRate}
-      />
+    <Tabs defaultValue="stats" className="space-y-6">
+      <TabsList className="grid w-full grid-cols-2 max-w-md">
+        <TabsTrigger value="stats" className="flex items-center gap-2">
+          <BarChart3 size={16} />
+          Estatísticas
+        </TabsTrigger>
+        <TabsTrigger value="notifications" className="flex items-center gap-2">
+          <Bell size={16} />
+          Notificações
+        </TabsTrigger>
+      </TabsList>
 
-      {/* Análise de Performance por Jogador - Componente principal */}
-      <PlayerPerformanceAnalysis />
+      <TabsContent value="stats" className="space-y-6">
+        {/* Estatísticas Gerais */}
+        <GeneralStatsCards
+          totalAttempts={generalStats?.totalAttempts || 0}
+          totalSessions={generalStats?.totalSessions || 0}
+          totalPlayers={generalStats?.totalPlayers || 0}
+          successRate={successRate}
+        />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <MostCorrectPlayersCard players={mostCorrectPlayers} />
-        <MostMissedPlayersCard players={mostMissedPlayers} />
-        <PlayerRankingCard players={playerRanking} />
-        <ProgressStatsCard stats={progressStats} />
-      </div>
-    </div>
+        {/* Análise de Performance por Jogador - Componente principal */}
+        <PlayerPerformanceAnalysis />
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <MostCorrectPlayersCard players={mostCorrectPlayers} />
+          <MostMissedPlayersCard players={mostMissedPlayers} />
+          <PlayerRankingCard players={playerRanking} />
+          <ProgressStatsCard stats={progressStats} />
+        </div>
+      </TabsContent>
+
+      <TabsContent value="notifications">
+        <NotificationManagement />
+      </TabsContent>
+    </Tabs>
   );
 });
 
