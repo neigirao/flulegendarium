@@ -3,9 +3,6 @@ import React, { lazy, Suspense } from 'react';
 import { PlayerImageSkeleton } from '@/components/ui/skeleton-loader';
 
 // Lazy load heavy components
-export const LazyUserProfile = lazy(() => 
-  import('@/components/UserProfile').then(module => ({ default: module.UserProfile }))
-);
 
 export const LazyAdminDashboard = lazy(() => 
   import('@/components/admin/AdminDashboard').then(module => ({ default: module.AdminDashboard }))

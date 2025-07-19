@@ -29,17 +29,6 @@ export const TopNavigation = () => {
               FAQ
             </Button>
             
-            {user && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/profile')}
-                className="text-flu-grena hover:bg-flu-verde/10"
-              >
-                <User className="h-4 w-4 mr-1" />
-                Meu Perfil
-              </Button>
-            )}
             
             <NotificationCenter />
             

@@ -21,7 +21,6 @@ import {
   LazyGameModeSelection,
   LazyAdmin,
   LazyAdminLogin,
-  LazyProfile,
   LazyAuth,
   LazyFAQ
 } from "@/components/lazy-modules";
@@ -66,7 +65,7 @@ function App() {
                         </GameErrorBoundary>
                       } 
                     />
-                    <Route path="/meu-perfil-tricolor" element={<LazyProfile />} />
+                    
                     <Route path="/faq" element={<LazyFAQ />} />
                     <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
                     <Route 

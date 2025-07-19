@@ -35,11 +35,6 @@ export const LazySocialPage = createLazyComponent(
   React.createElement(PerformanceSkeleton, { height: 600 })
 );
 
-// Profile Module
-export const LazyProfile = createLazyComponent(
-  () => import('@/pages/Profile'),
-  React.createElement(PerformanceSkeleton, { height: 500 })
-);
 
 // Auth Module
 export const LazyAuth = createLazyComponent(
