@@ -13,18 +13,18 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     
-    /* Paleta Oficial Fluminense - Lendas do Flu */
-    --primary: 339 100% 27%; /* Core Grená #8B0029 */
+    /* Fluminense Tricolor Palette Refinada */
+    --primary: 351 98% 24%; /* Grená principal */
     --primary-foreground: 0 0% 100%;
-    --primary-light: 339 100% 35%;
-    --primary-dark: 339 100% 20%;
+    --primary-light: 351 85% 35%;
+    --primary-dark: 351 100% 18%;
     
-    --secondary: 154 100% 21%; /* Core Verde #006A3D */
+    --secondary: 159 100% 19%; /* Verde Fluminense */
     --secondary-foreground: 0 0% 100%;
-    --secondary-light: 154 100% 30%;
-    --secondary-dark: 154 100% 15%;
+    --secondary-light: 159 80% 30%;
+    --secondary-dark: 159 100% 12%;
     
-    --accent: 45 72% 54%; /* Dourado Lenda #DDAF37 */
+    --accent: 0 0% 98%; /* Branco elegante */
     --accent-foreground: 222.2 84% 4.9%;
     
     --muted: 210 40% 96.1%;
@@ -33,24 +33,19 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 339 100% 27%;
+    --ring: 351 98% 24%;
     
-    /* Cores Lendas do Flu */
-    --flu-grena: 339 100% 27%; /* Core Grená */
-    --flu-verde: 154 100% 21%; /* Core Verde */
-    --flu-branco: 0 0% 100%; /* Branco Puro */
-    --flu-dourado: 45 72% 54%; /* Dourado Lenda */
+    /* Tricolor Gradients */
+    --gradient-tricolor: linear-gradient(135deg, hsl(351 98% 24%) 0%, hsl(159 100% 19%) 50%, hsl(0 0% 98%) 100%);
+    --gradient-grena: linear-gradient(135deg, hsl(351 85% 35%) 0%, hsl(351 100% 18%) 100%);
+    --gradient-verde: linear-gradient(135deg, hsl(159 80% 30%) 0%, hsl(159 100% 12%) 100%);
+    --gradient-elegante: linear-gradient(135deg, hsl(351 98% 24% / 0.1) 0%, hsl(159 100% 19% / 0.1) 100%);
     
-    /* Gradientes Oficiais */
-    --gradient-flu-radial: radial-gradient(circle, hsl(154 100% 21% / 0.3), hsl(339 100% 27% / 0.8));
-    --gradient-flu-diagonal: linear-gradient(135deg, hsl(154 100% 21%), hsl(339 100% 27%));
-    --gradient-flu-tricolor: linear-gradient(90deg, hsl(339 100% 27%) 33%, hsl(0 0% 100%) 33%, hsl(0 0% 100%) 67%, hsl(154 100% 21%) 67%);
-    --gradient-flu-button: linear-gradient(135deg, hsl(339 100% 27%), hsl(339 100% 30%));
-    
-    /* Sombras com Cores Oficiais */
-    --shadow-flu-grena: 0 4px 20px hsl(339 100% 27% / 0.15);
-    --shadow-flu-verde: 0 4px 20px hsl(154 100% 21% / 0.15);
-    --shadow-flu-dourado: 0 4px 20px hsl(45 72% 54% / 0.15);
+    /* Tricolor Shadows */
+    --shadow-tricolor: 0 10px 30px -10px hsl(351 98% 24% / 0.3);
+    --shadow-verde: 0 10px 30px -10px hsl(159 100% 19% / 0.3);
+    --shadow-elegante: 0 4px 20px hsl(351 98% 24% / 0.15);
+    --shadow-success: 0 4px 20px hsl(159 100% 19% / 0.25);
     
     --radius: 0.75rem;
   }
@@ -62,19 +57,19 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 339 100% 27%; /* Core Grená */
-    --primary-foreground: 0 0% 100%;
-    --secondary: 154 100% 21%; /* Core Verde */
-    --secondary-foreground: 0 0% 100%;
+    --primary: 351 98% 24%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 159 100% 19%;
+    --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 45 72% 54%; /* Dourado Lenda */
-    --accent-foreground: 222.2 84% 4.9%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 339 100% 27%;
+    --ring: 351 98% 24%;
   }
 }
  
@@ -105,37 +100,29 @@
   }
 }
 
-/* Cores Oficiais Lendas do Flu */
+/* Cores personalizadas do Fluminense */
 .flu-grena {
-  color: hsl(339 100% 27%); /* Core Grená #8B0029 */
+  color: rgb(122, 2, 19);
 }
 
 .bg-flu-grena {
-  background-color: hsl(339 100% 27%);
+  background-color: rgb(122, 2, 19);
 }
 
 .flu-verde {
-  color: hsl(154 100% 21%); /* Core Verde #006A3D */
+  color: rgb(0, 97, 60);
 }
 
 .bg-flu-verde {
-  background-color: hsl(154 100% 21%);
+  background-color: rgb(0, 97, 60);
 }
 
 .flu-branco {
-  color: hsl(0 0% 100%); /* Branco Puro #FFFFFF */
+  color: rgb(255, 255, 255);
 }
 
 .bg-flu-branco {
-  background-color: hsl(0 0% 100%);
-}
-
-.flu-dourado {
-  color: hsl(45 72% 54%); /* Dourado Lenda #DDAF37 */
-}
-
-.bg-flu-dourado {
-  background-color: hsl(45 72% 54%);
+  background-color: rgb(255, 255, 255);
 }
 
 /* Componentes essenciais */
@@ -152,20 +139,7 @@
 }
 
 .flu-shadow {
-  box-shadow: var(--shadow-flu-grena), var(--shadow-flu-verde);
-}
-
-/* Novos utilitários com cores oficiais */
-.gradient-flu-radial {
-  background: var(--gradient-flu-radial);
-}
-
-.gradient-flu-diagonal {
-  background: var(--gradient-flu-diagonal);
-}
-
-.gradient-flu-tricolor {
-  background: var(--gradient-flu-tricolor);
+  box-shadow: 0 4px 20px rgba(122, 2, 19, 0.2), 0 2px 10px rgba(0, 97, 60, 0.15);
 }
 
 /* Layout essencial */
