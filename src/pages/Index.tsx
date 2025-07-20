@@ -19,6 +19,7 @@ import { useRealtimePresence } from "@/hooks/use-realtime-presence";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { FeedbackModal } from "@/components/feedback/FeedbackModal";
 import { useAuth } from "@/hooks/useAuth";
+import TopTenRanking from "@/components/TopTenRanking";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -167,44 +168,8 @@ const Index = () => {
                   ))}
                 </div>
                 
-                {/* Ranking Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                  <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-flu-dourado rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold text-xl">1</span>
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-gray-900">Leonardo Marinho</h3>
-                          <p className="text-gray-600">230 pontos</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-gray-900">290</div>
-                        <div className="text-gray-600">pontos</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="w-12 h-12 bg-flu-verde rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold text-xl">2</span>
-                        </div>
-                        <div>
-                          <h3 className="font-bold text-gray-900">Leonardo Marinho</h3>
-                          <p className="text-gray-600">295 pontos</p>
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-gray-900">255</div>
-                        <div className="text-gray-600">pontos</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                {/* Top 10 Ranking Cards */}
+                <TopTenRanking />
               </div>
             </div>
           </section>
