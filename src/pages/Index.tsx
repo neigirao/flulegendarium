@@ -188,24 +188,13 @@ const Index = () => {
               </Tabs>
             </div>
 
-            {/* Como Funciona + Stats Integration */}
+            {/* Como Funciona */}
             <div className="mb-16">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-white mb-4">Como funciona o Quiz?</h2>
                 <p className="text-white/80 text-lg max-w-2xl mx-auto">
-                  É simples e divertido! Milhares já jogaram e você pode ser o próximo
+                  É simples e divertido! Teste seus conhecimentos sobre os ídolos tricolores
                 </p>
-              </div>
-
-              {/* Stats Display */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-12 max-w-md mx-auto border border-white/20">
-                <div className="text-center">
-                  <div className="text-5xl font-bold text-white mb-2">{gameStats?.totalGames || 0}</div>
-                  <div className="text-white/70 text-lg">jogos já jogados</div>
-                  <div className="text-white/60 text-sm mt-2">
-                    por {gameStats?.totalPlayers || 0}+ jogadores
-                  </div>
-                </div>
               </div>
 
               {/* Game Instructions */}
@@ -248,60 +237,6 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Game Modes Section */}
-            <div className="mb-16">
-              <h2 className="text-2xl font-bold text-white mb-8">Escolha Seu Desafio</h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                {/* Quiz Mode 1 */}
-                <Card className="bg-white/10 backdrop-blur-sm border-white/20 p-8">
-                  <CardContent className="space-y-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-flu-verde rounded-full flex items-center justify-center text-white font-bold text-xl">
-                        1
-                      </div>
-                      <div>
-                        <h3 className="text-white font-bold text-lg">Responda perguntas</h3>
-                        <p className="text-white/70">sobre os ídolos tricolores</p>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      onClick={() => navigate('/quiz-adaptativo')}
-                      className="w-full bg-flu-verde hover:bg-flu-verde/90 text-white font-semibold py-3"
-                    >
-                      JOGAR AGORA
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Quiz Mode 2 */}
-                <Card className="bg-white/10 backdrop-blur-sm border-white/20 p-8 relative">
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-flu-grena text-white text-xs px-3 py-1 rounded-full font-medium">NOVO</span>
-                  </div>
-                  
-                  <CardContent className="space-y-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 bg-flu-grena rounded-full flex items-center justify-center text-white font-bold text-xl">
-                        2
-                      </div>
-                      <div>
-                        <h3 className="text-white font-bold text-lg">Acumule pontos</h3>
-                        <p className="text-white/70">com respostas corretas</p>
-                      </div>
-                    </div>
-                    
-                    <Button 
-                      onClick={() => navigate('/quiz-decada')}
-                      className="w-full bg-flu-grena hover:bg-flu-grena/90 text-white font-semibold py-3"
-                    >
-                      JOGAR AGORA
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
 
             {/* Instagram Section */}
             <div className="max-w-lg mx-auto">
