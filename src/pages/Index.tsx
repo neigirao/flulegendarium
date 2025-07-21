@@ -188,17 +188,69 @@ const Index = () => {
               </Tabs>
             </div>
 
-            {/* Games Played Stats */}
+            {/* Como Funciona + Stats Integration */}
             <div className="mb-16">
-              <div className="text-center">
-                <div className="text-6xl font-bold text-white mb-4">{gameStats?.totalGames || 0}</div>
-                <div className="text-white/70 text-xl">jogos já jogados</div>
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-white mb-4">Como funciona o Quiz?</h2>
+                <p className="text-white/80 text-lg max-w-2xl mx-auto">
+                  É simples e divertido! Milhares já jogaram e você pode ser o próximo
+                </p>
+              </div>
+
+              {/* Stats Display */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 mb-12 max-w-md mx-auto border border-white/20">
+                <div className="text-center">
+                  <div className="text-5xl font-bold text-white mb-2">{gameStats?.totalGames || 0}</div>
+                  <div className="text-white/70 text-lg">jogos já jogados</div>
+                  <div className="text-white/60 text-sm mt-2">
+                    por {gameStats?.totalPlayers || 0}+ jogadores
+                  </div>
+                </div>
+              </div>
+
+              {/* Game Instructions */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12">
+                <div className="text-center group">
+                  <div className="bg-white/10 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-white/20 transition-all duration-300 border border-white/20">
+                    <div className="w-12 h-12 bg-flu-verde rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      1
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">Veja a Foto</h3>
+                  <p className="text-white/80 leading-relaxed">
+                    Uma foto de um jogador do Fluminense aparece na tela. Pode ser atual ou histórico!
+                  </p>
+                </div>
+
+                <div className="text-center group">
+                  <div className="bg-white/10 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-white/20 transition-all duration-300 border border-white/20">
+                    <div className="w-12 h-12 bg-flu-grena rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      2
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">Digite o Nome</h3>
+                  <p className="text-white/80 leading-relaxed">
+                    Digite o nome do jogador. Pode usar apelidos ou nome completo - nosso sistema é inteligente!
+                  </p>
+                </div>
+
+                <div className="text-center group">
+                  <div className="bg-white/10 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-white/20 transition-all duration-300 border border-white/20">
+                    <div className="w-12 h-12 bg-flu-verde rounded-full flex items-center justify-center text-white font-bold text-lg">
+                      3
+                    </div>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">Ganhe Pontos</h3>
+                  <p className="text-white/80 leading-relaxed">
+                    Acertou? Ganhe pontos e continue! O jogo fica mais difícil conforme você evolui.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Como Funciona */}
+            {/* Game Modes Section */}
             <div className="mb-16">
-              <h2 className="text-2xl font-bold text-white mb-12">Como funciona o Quiz?</h2>
+              <h2 className="text-2xl font-bold text-white mb-8">Escolha Seu Desafio</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 {/* Quiz Mode 1 */}
@@ -235,7 +287,7 @@ const Index = () => {
                         2
                       </div>
                       <div>
-                        <h3 className="text-white font-bold text-lg">Acumule ponto</h3>
+                        <h3 className="text-white font-bold text-lg">Acumule pontos</h3>
                         <p className="text-white/70">com respostas corretas</p>
                       </div>
                     </div>
@@ -249,11 +301,6 @@ const Index = () => {
                   </CardContent>
                 </Card>
               </div>
-            </div>
-
-            {/* Escolha Seu Desafio */}
-            <div className="mb-16">
-              <h2 className="text-2xl font-bold text-white mb-12">Escolha Seu Desafio</h2>
             </div>
 
             {/* Instagram Section */}
