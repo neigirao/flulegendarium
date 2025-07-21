@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,7 +42,7 @@ const Index = () => {
     retry: 1
   });
 
-  // Fetch top rankings
+  // Fetch top 10 rankings
   const { data: rankings } = useQuery({
     queryKey: ['top-rankings'],
     queryFn: async () => {
@@ -50,19 +50,12 @@ const Index = () => {
         .from('rankings')
         .select('*')
         .order('score', { ascending: false })
-        .limit(2);
+        .limit(10);
       
       if (error) throw error;
       return data || [];
     },
     staleTime: 5 * 60 * 1000,
-  });
-
-  // Live stats
-  const [liveStats, setLiveStats] = useState({
-    online: 183,
-    playing: 54,
-    completed: 428
   });
 
   return (
@@ -164,25 +157,27 @@ const Index = () => {
                 </TabsList>
 
                 <TabsContent value="geral" className="mt-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                    {rankings?.slice(0, 2).map((ranking, index) => (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+                    {rankings?.map((ranking, index) => (
                       <Card key={ranking.id} className="bg-white/10 backdrop-blur-sm border-white/20">
-                        <CardContent className="p-6">
+                        <CardContent className="p-4">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-4">
-                              <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-white ${
-                                index === 0 ? 'bg-yellow-500' : 'bg-flu-verde'
+                            <div className="flex items-center space-x-3">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white text-sm ${
+                                index === 0 ? 'bg-yellow-500' : 
+                                index === 1 ? 'bg-gray-400' : 
+                                index === 2 ? 'bg-amber-600' : 'bg-flu-verde'
                               }`}>
                                 {index + 1}
                               </div>
                               <div>
-                                <h3 className="text-white font-bold">{ranking.player_name}</h3>
-                                <p className="text-white/70 text-sm">{ranking.score} pontos</p>
+                                <h3 className="text-white font-bold text-sm">{ranking.player_name}</h3>
+                                <p className="text-white/70 text-xs">{ranking.score} pontos</p>
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-3xl font-bold text-white">{ranking.score}</div>
-                              <div className="text-white/70 text-sm">pontos</div>
+                              <div className="text-lg font-bold text-white">{ranking.score}</div>
+                              <div className="text-white/70 text-xs">pontos</div>
                             </div>
                           </div>
                         </CardContent>
@@ -193,22 +188,11 @@ const Index = () => {
               </Tabs>
             </div>
 
-            {/* Live Stats */}
+            {/* Games Played Stats */}
             <div className="mb-16">
-              <h2 className="text-2xl font-bold text-white mb-8">O que esta acontecendo agora</h2>
-              <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-white mb-2">{liveStats.online}</div>
-                  <div className="text-white/70">Aloyôns</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-white mb-2">{liveStats.playing}</div>
-                  <div className="text-white/70">ongacongando</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-4xl font-bold text-white mb-2">{liveStats.completed}</div>
-                  <div className="text-white/70">completados</div>
-                </div>
+              <div className="text-center">
+                <div className="text-6xl font-bold text-white mb-4">{gameStats?.totalGames || 0}</div>
+                <div className="text-white/70 text-xl">jogos já jogados</div>
               </div>
             </div>
 
