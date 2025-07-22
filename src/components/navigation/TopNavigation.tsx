@@ -28,6 +28,15 @@ export const TopNavigation = () => {
               <HelpCircle className="h-4 w-4 mr-1" />
               FAQ
             </Button>
+
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/noticias')}
+              className="text-flu-grena hover:bg-flu-verde/10"
+            >
+              📰 Portal de Notícias
+            </Button>
             
             
             <NotificationCenter />
