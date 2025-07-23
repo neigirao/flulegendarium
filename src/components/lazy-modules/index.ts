@@ -47,3 +47,14 @@ export const LazyFAQ = createLazyComponent(
   () => import('@/pages/FAQ'),
   React.createElement(PerformanceSkeleton, { height: 500 })
 );
+
+// News Module
+export const LazyNewsPortal = createLazyComponent(
+  () => import('@/pages/NewsPortal'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);
+
+export const LazyNewsArticle = createLazyComponent(
+  () => import('@/pages/NewsArticle'),
+  React.createElement(PerformanceSkeleton, { height: 800 })
+);

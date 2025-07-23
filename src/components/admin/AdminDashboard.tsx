@@ -6,10 +6,11 @@ import { MostMissedPlayersCard } from "./stats/MostMissedPlayersCard";
 import { PlayerRankingCard } from "./stats/PlayerRankingCard";
 import { ProgressStatsCard } from "./stats/ProgressStatsCard";
 import { NotificationManagement } from "./notifications/NotificationManagement";
+import { NewsManagement } from "./news/NewsManagement";
 import { useAdminStats } from "@/hooks/use-admin-stats";
 import { memo, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bell, BarChart3, Users } from "lucide-react";
+import { Bell, BarChart3, Users, Newspaper } from "lucide-react";
 
 export const AdminDashboard = memo(() => {
   const {
@@ -44,7 +45,7 @@ export const AdminDashboard = memo(() => {
 
   return (
     <Tabs defaultValue="stats" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-2 max-w-md">
+      <TabsList className="grid w-full grid-cols-3 max-w-lg">
         <TabsTrigger value="stats" className="flex items-center gap-2">
           <BarChart3 size={16} />
           Estatísticas
@@ -52,6 +53,10 @@ export const AdminDashboard = memo(() => {
         <TabsTrigger value="notifications" className="flex items-center gap-2">
           <Bell size={16} />
           Notificações
+        </TabsTrigger>
+        <TabsTrigger value="news" className="flex items-center gap-2">
+          <Newspaper size={16} />
+          Notícias
         </TabsTrigger>
       </TabsList>
 
@@ -77,6 +82,10 @@ export const AdminDashboard = memo(() => {
 
       <TabsContent value="notifications">
         <NotificationManagement />
+      </TabsContent>
+
+      <TabsContent value="news">
+        <NewsManagement />
       </TabsContent>
     </Tabs>
   );
