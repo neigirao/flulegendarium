@@ -5,15 +5,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, Rocket, Brain, Settings, Instagram, HelpCircle, Shield, User } from "lucide-react";
+import { Trophy, Rocket, Instagram } from "lucide-react";
 import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
-import { useAuth } from "@/hooks/useAuth";
+import { TopNavigation } from "@/components/navigation/TopNavigation";
 
 const Index = () => {
   const navigate = useNavigate();
   const analytics = useEnhancedAnalytics();
-  const { user } = useAuth();
 
   useEffect(() => {
     analytics.trackPageView('/');
@@ -66,45 +65,10 @@ const Index = () => {
       />
       
       <div className="min-h-screen bg-gradient-to-br from-flu-verde via-slate-700 to-flu-grena">
-        {/* Header Navigation */}
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-sm border-b border-flu-verde/20">
-          <div className="container mx-auto px-4 py-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <div className="bg-flu-grena p-2 rounded-lg">
-                  <div className="w-8 h-8 bg-white rounded text-flu-grena flex items-center justify-center font-bold">
-                    LF
-                  </div>
-                </div>
-                <h2 className="text-xl font-bold text-flu-grena">LENDAS DO FLU</h2>
-              </div>
-              
-              <div className="flex items-center space-x-4">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/faq')}
-                  className="text-white hover:bg-white/20"
-                >
-                  <HelpCircle className="h-4 w-4 mr-1" />
-                  FAQ
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate('/admin/login-administrador')}
-                  className="text-white hover:bg-white/20"
-                >
-                  <User className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </nav>
-
+        <TopNavigation />
+        
         {/* Main Content */}
-        <div className="pt-16">
+        <div className="pt-24">
           {/* Hero Section */}
           <section className="container mx-auto px-4 pt-16 pb-8 text-center">
             <h1 className="text-6xl md:text-8xl font-bold text-white mb-6">
