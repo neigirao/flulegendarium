@@ -86,53 +86,96 @@ export const GameContainer = ({
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Imagem do Jogador - MOVIDA PARA O TOPO */}
-      <div className="mb-8">
-        <FastPlayerImage
-          key={`${currentPlayer.id}-${gameKey}`}
-          player={currentPlayer}
-          onImageLoaded={handlePlayerImageFixed}
-        />
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-flu-grena via-red-800 to-flu-verde p-4">
+      {/* Header com Logo */}
+      <div className="flex items-center justify-center mb-8 mt-8">
+        <h1 className="text-4xl md:text-5xl font-bold text-white mr-4">LENDAS DO F</h1>
+        <div className="w-16 h-16 bg-white rounded-lg p-2">
+          <div className="w-full h-full bg-flu-grena rounded flex items-center justify-center">
+            <span className="text-white font-bold text-lg">F</span>
+          </div>
+        </div>
       </div>
 
-      {/* Indicador de Dificuldade - apenas se disponível */}
-      {gameProgress && currentDifficulty && (
-        <div className="mb-6 flex justify-center">
-          <DifficultyIndicator 
-            currentDifficulty={currentDifficulty}
-            gameProgress={gameProgress}
-            className="bg-white/80 backdrop-blur-sm rounded-lg px-4 py-2 shadow-sm"
+      {/* Card Principal do Jogo */}
+      <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl">
+        {/* Imagem do Jogador */}
+        <div className="relative mb-4">
+          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden">
+            <FastPlayerImage
+              key={`${currentPlayer.id}-${gameKey}`}
+              player={currentPlayer}
+              onImageLoaded={handlePlayerImageFixed}
+            />
+          </div>
+        </div>
+
+        {/* Classificação de Dificuldade */}
+        <div className="text-center mb-4">
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            {currentDifficulty?.label || 'Muito Fácil'}
+          </h2>
+          
+          {/* Estrelas de Progresso */}
+          <div className="flex justify-center gap-1 mb-2">
+            {[1, 2, 3].map((star) => (
+              <div
+                key={star}
+                className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                  star <= (currentStreak || 0) 
+                    ? 'bg-yellow-400' 
+                    : 'bg-gray-200'
+                }`}
+              >
+                <span className="text-white text-sm">★</span>
+              </div>
+            ))}
+          </div>
+          
+          {/* Próximo Nível */}
+          <p className="text-gray-600 text-sm">
+            Próximo nível: {currentStreak || 0}/3
+          </p>
+        </div>
+
+        {/* Campo de Input */}
+        <div className="mb-4">
+          <GuessForm
+            onSubmitGuess={handleGuess}
+            disabled={isProcessingGuess || gameOver}
+            isProcessing={isProcessingGuess}
           />
         </div>
-      )}
 
-      {/* Status do Jogo */}
-      <GameStatus
-        score={score}
-        timeRemaining={timeRemaining}
-        attempts={attempts}
-        maxAttempts={MAX_ATTEMPTS}
-        currentStreak={currentStreak}
-        maxStreak={maxStreak}
-        gamesPlayed={gamesPlayed}
-        gameOver={gameOver}
-        isTimerRunning={isTimerRunning}
-        onNextPlayer={selectRandomPlayer}
-      />
+        {/* Explicação e Botão Sair */}
+        <div className="text-center space-y-3">
+          <p className="text-sm text-gray-600">
+            Digite o nome do jogador da foto acima
+          </p>
+          
+          <button
+            onClick={() => window.location.href = '/'}
+            className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+          >
+            Sair do Jogo
+          </button>
+        </div>
+      </div>
 
-      {/* Formulário de Palpite */}
-      {!gameOver && (
-        <GuessForm
-          onSubmitGuess={handleGuess}
-          disabled={isProcessingGuess || gameOver}
-          isProcessing={isProcessingGuess}
-        />
-      )}
+      {/* Tempo Restante */}
+      <div className="flex items-center gap-3 mt-6 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3">
+        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+          <span className="text-flu-grena text-lg">⏰</span>
+        </div>
+        <div className="text-white">
+          <p className="text-lg font-bold">TEMPO RESTANTE</p>
+          <p className="text-2xl font-bold">{timeRemaining}s</p>
+        </div>
+      </div>
 
       {/* Controles de Debug */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="mt-8 p-4 bg-gray-100 rounded-lg">
+        <div className="mt-8 p-4 bg-black/20 backdrop-blur-sm rounded-lg text-white">
           <h4 className="font-semibold mb-2">Debug Controls</h4>
           <div className="flex gap-2 mb-2">
             <button
@@ -148,12 +191,11 @@ export const GameContainer = ({
               Refresh
             </button>
           </div>
-          <div className="text-xs text-gray-600">
+          <div className="text-xs">
             <p>Player: {currentPlayer.name}</p>
             <p>Difficulty: {currentPlayer.difficulty_level || 'N/A'}</p>
             <p>Game Key: {gameKey}</p>
             <p>Changes: {playerChangeCount}</p>
-            <p>Image URL: {currentPlayer.image_url}</p>
           </div>
         </div>
       )}
