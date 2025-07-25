@@ -44,8 +44,12 @@ export const TopNavigation = () => {
             className="flex items-center space-x-3 cursor-pointer group"
             onClick={() => navigate('/')}
           >
-            <div className="w-10 h-10 bg-gradient-to-br from-flu-grena to-flu-verde rounded-full flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
-              <span className="text-white font-bold text-sm">LF</span>
+            <div className="w-10 h-10 flex items-center justify-center">
+              <img 
+                src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.png" 
+                alt="Lendas do Flu Logo" 
+                className="w-10 h-10 object-contain group-hover:scale-105 transition-transform"
+              />
             </div>
             <div className="flex flex-col">
               <h1 className="text-xl font-bold text-flu-grena leading-tight">
@@ -95,8 +99,12 @@ export const TopNavigation = () => {
               <SheetContent side="right" className="w-80 bg-background border-l border-flu-verde/20">
                 <div className="flex flex-col space-y-4 mt-8">
                   <div className="flex items-center space-x-3 pb-4 border-b border-flu-verde/20">
-                    <div className="w-12 h-12 bg-gradient-to-br from-flu-grena to-flu-verde rounded-full flex items-center justify-center">
-                      <span className="text-white font-bold">LF</span>
+                    <div className="w-12 h-12 flex items-center justify-center">
+                      <img 
+                        src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.png" 
+                        alt="Lendas do Flu Logo" 
+                        className="w-12 h-12 object-contain"
+                      />
                     </div>
                     <div>
                       <h2 className="font-bold text-flu-grena">Lendas do Flu</h2>
