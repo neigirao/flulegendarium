@@ -45,9 +45,25 @@
   <!-- FAQ -->
   <url>
     <loc>https://lendasdoflu.com/faq</loc>
-    <lastmod>2025-06-21</lastmod>
+    <lastmod>2025-01-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <!-- Portal de Notícias -->
+  <url>
+    <loc>https://lendasdoflu.com/noticias</loc>
+    <lastmod>2025-01-25</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Doações -->
+  <url>
+    <loc>https://lendasdoflu.com/doacoes</loc>
+    <lastmod>2025-01-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 
   <!-- URLs Semânticas para SEO -->
