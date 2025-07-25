@@ -113,16 +113,16 @@ const Donations = () => {
                 {donationValues.map((donation) => (
                   <div 
                     key={donation.amount}
-                    className="bg-white/10 backdrop-blur-sm rounded-lg p-4 text-center hover:bg-white/20 transition-colors cursor-pointer"
+                    className="bg-white/20 backdrop-blur-sm rounded-lg p-6 text-center border border-white/30"
                   >
-                    <div className="text-3xl mb-2">{donation.icon}</div>
-                    <div className="text-2xl font-bold text-white mb-1">
+                    <div className="text-4xl mb-3">{donation.icon}</div>
+                    <div className="text-3xl font-bold text-white mb-2">
                       R$ {donation.amount}
                     </div>
-                    <div className="text-sm text-white/90 font-medium mb-1">
+                    <div className="text-base text-white font-medium mb-1">
                       {donation.label}
                     </div>
-                    <div className="text-xs text-white/70">
+                    <div className="text-sm text-white/90">
                       {donation.description}
                     </div>
                   </div>
@@ -134,26 +134,10 @@ const Donations = () => {
           {/* Thank You Section */}
           <FluCard variant="glass">
             <FluCardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold text-white mb-6 flex items-center justify-center gap-2">
+              <h3 className="text-2xl font-bold text-white mb-4 flex items-center justify-center gap-2">
                 <Heart className="h-6 w-6 text-red-400" />
                 Agradecemos muito pelo seu apoio!
               </h3>
-              
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold text-white flex items-center justify-center gap-2">
-                  <Users className="h-5 w-5 text-flu-verde" />
-                  Apoiadores recentes
-                </h4>
-                
-                <div className="space-y-2">
-                  {recentSupporters.map((supporter, index) => (
-                    <div key={index} className="flex justify-between items-center bg-white/10 rounded-lg px-4 py-2">
-                      <span className="text-white font-medium">{supporter.name}</span>
-                      <span className="text-flu-verde font-bold">R$ {supporter.amount}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
             </FluCardContent>
           </FluCard>
 
