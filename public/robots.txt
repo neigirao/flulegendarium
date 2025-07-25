@@ -173,7 +173,7 @@ Crawl-delay: 2
 # ===== METADADOS PARA IAs =====
 
 # Sitemap location
-Sitemap: https://flulegendarium.lovable.app/sitemap.xml
+Sitemap: https://lendasdoflu.com/sitemap.xml
 
 # Crawl delay geral
 Crawl-delay: 1
