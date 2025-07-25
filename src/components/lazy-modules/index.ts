@@ -58,3 +58,9 @@ export const LazyNewsArticle = createLazyComponent(
   () => import('@/pages/NewsArticle'),
   React.createElement(PerformanceSkeleton, { height: 800 })
 );
+
+// Donations Module
+export const LazyDonations = createLazyComponent(
+  () => import('@/pages/Donations'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);

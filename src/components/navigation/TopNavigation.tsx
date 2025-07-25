@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
-import { Shield, HelpCircle, User, Menu, X, Newspaper } from "lucide-react";
+import { Shield, HelpCircle, User, Menu, X, Newspaper, Heart } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export const TopNavigation = () => {
@@ -17,6 +17,11 @@ export const TopNavigation = () => {
       label: "Portal de Notícias",
       onClick: () => navigate('/noticias'),
       icon: Newspaper,
+    },
+    {
+      label: "Doações",
+      onClick: () => navigate('/doacoes'),
+      icon: Heart,
     },
     {
       label: "FAQ",
