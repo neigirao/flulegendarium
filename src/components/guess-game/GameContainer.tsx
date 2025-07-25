@@ -87,12 +87,19 @@ export const GameContainer = ({
 
   return (
     <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-flu-grena via-red-800 to-flu-verde p-4">
-      {/* Header com Logo */}
-      <div className="flex items-center justify-center mb-8 mt-8">
-        <h1 className="text-4xl md:text-5xl font-bold text-white mr-4">LENDAS DO F</h1>
-        <div className="w-16 h-16 bg-white rounded-lg p-2">
-          <div className="w-full h-full bg-flu-grena rounded flex items-center justify-center">
-            <span className="text-white font-bold text-lg">F</span>
+      {/* Header com Pontos e Tempo */}
+      <div className="flex items-center justify-between w-full max-w-md mb-8 mt-8">
+        <div className="bg-white rounded-lg px-4 py-2">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-flu-grena">{score}</div>
+            <div className="text-sm text-gray-600">pontos</div>
+          </div>
+        </div>
+        
+        <div className="bg-white rounded-lg px-4 py-2">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-flu-grena">{timeRemaining}</div>
+            <div className="text-sm text-gray-600">segundos</div>
           </div>
         </div>
       </div>
@@ -162,16 +169,6 @@ export const GameContainer = ({
         </div>
       </div>
 
-      {/* Tempo Restante */}
-      <div className="flex items-center gap-3 mt-6 bg-white/10 backdrop-blur-sm rounded-full px-6 py-3">
-        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
-          <span className="text-flu-grena text-lg">⏰</span>
-        </div>
-        <div className="text-white">
-          <p className="text-lg font-bold">TEMPO RESTANTE</p>
-          <p className="text-2xl font-bold">{timeRemaining}s</p>
-        </div>
-      </div>
 
       {/* Controles de Debug */}
       {process.env.NODE_ENV === 'development' && (
