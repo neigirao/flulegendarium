@@ -86,23 +86,60 @@ export const GameContainer = ({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-flu-grena via-red-800 to-flu-verde flex items-center justify-center p-4">
-      {/* Card Principal - Baseado na imagem fornecida */}
-      <div className="relative w-full max-w-sm">
+    <div className="min-h-screen bg-gradient-to-br from-flu-grena via-red-800 to-flu-verde">
+      
+      {/* Header com Menu e Pontos */}
+      <div className="flex items-center justify-between p-4 pt-12">
+        <button 
+          onClick={() => window.location.href = '/'}
+          className="bg-white/90 backdrop-blur-sm rounded-full px-4 py-2 flex items-center gap-2 shadow-lg"
+        >
+          <svg className="w-5 h-5 text-flu-grena" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          <span className="text-flu-grena font-medium">Menu</span>
+        </button>
         
-        {/* Card do Jogador */}
-        <div className="bg-white rounded-3xl p-6 shadow-2xl relative overflow-hidden">
-          
-          {/* Imagem do Jogador */}
-          <div className="relative mb-6">
-            <div className="aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden">
-              <FastPlayerImage
-                key={`${currentPlayer.id}-${gameKey}`}
-                player={currentPlayer}
-                onImageLoaded={handlePlayerImageFixed}
-              />
-            </div>
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-lg">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-flu-grena">{score}</div>
+            <div className="text-sm text-flu-grena font-medium">pontos</div>
           </div>
+        </div>
+        
+        <div className="flex gap-2">
+          <button className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+          </button>
+          <button className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      {/* Container Principal Centralizado */}
+      <div className="flex items-center justify-center px-4 pb-4">
+        <div className="relative w-full max-w-sm">
+          
+          {/* Card do Jogador */}
+          <div className="bg-white rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+            
+            {/* Imagem do Jogador com Borda Verde */}
+            <div className="relative mb-6">
+              <div className="aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden border-4 border-flu-verde p-2">
+                <div className="w-full h-full rounded-xl overflow-hidden">
+                  <FastPlayerImage
+                    key={`${currentPlayer.id}-${gameKey}`}
+                    player={currentPlayer}
+                    onImageLoaded={handlePlayerImageFixed}
+                  />
+                </div>
+              </div>
+            </div>
 
           {/* Título da Dificuldade */}
           <div className="text-center mb-6">
@@ -159,16 +196,6 @@ export const GameContainer = ({
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Botão Sair - Pequeno e discreto */}
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => window.location.href = '/'}
-            className="text-white/80 hover:text-white text-sm underline transition-colors"
-          >
-            Sair do Jogo
-          </button>
         </div>
       </div>
 
