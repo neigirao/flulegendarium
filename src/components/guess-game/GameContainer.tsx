@@ -198,6 +198,7 @@ export const GameContainer = ({
           </div>
         </div>
       </div>
+      </div>
 
       {/* Controles de Debug */}
       {process.env.NODE_ENV === 'development' && (
