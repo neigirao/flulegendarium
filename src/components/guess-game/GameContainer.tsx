@@ -86,112 +86,113 @@ export const GameContainer = ({
   }
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gradient-to-br from-flu-grena via-red-800 to-flu-verde p-4">
-      {/* Header com Pontos e Tempo */}
-      <div className="flex items-center justify-between w-full max-w-md mb-8 mt-8">
-        <div className="bg-white rounded-lg px-4 py-2">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-flu-grena">{score}</div>
-            <div className="text-sm text-gray-600">pontos</div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-flu-grena via-red-800 to-flu-verde flex items-center justify-center p-4">
+      {/* Card Principal - Baseado na imagem fornecida */}
+      <div className="relative w-full max-w-sm">
         
-        <div className="bg-white rounded-lg px-4 py-2">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-flu-grena">{timeRemaining}</div>
-            <div className="text-sm text-gray-600">segundos</div>
+        {/* Card do Jogador */}
+        <div className="bg-white rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+          
+          {/* Imagem do Jogador */}
+          <div className="relative mb-6">
+            <div className="aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden">
+              <FastPlayerImage
+                key={`${currentPlayer.id}-${gameKey}`}
+                player={currentPlayer}
+                onImageLoaded={handlePlayerImageFixed}
+              />
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Card Principal do Jogo */}
-      <div className="bg-white rounded-3xl p-6 max-w-md w-full shadow-2xl">
-        {/* Imagem do Jogador */}
-        <div className="relative mb-4">
-          <div className="aspect-square bg-gray-100 rounded-2xl overflow-hidden">
-            <FastPlayerImage
-              key={`${currentPlayer.id}-${gameKey}`}
-              player={currentPlayer}
-              onImageLoaded={handlePlayerImageFixed}
+          {/* Título da Dificuldade */}
+          <div className="text-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+              {currentDifficulty?.label || 'Muito Fácil'}
+            </h1>
+            
+            {/* Estrelas de Progresso */}
+            <div className="flex justify-center gap-2 mb-3">
+              {[1, 2, 3].map((star) => (
+                <div
+                  key={star}
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    star <= (currentStreak || 0) 
+                      ? 'bg-yellow-400' 
+                      : 'bg-gray-200'
+                  }`}
+                >
+                  <span className="text-white text-lg font-bold">★</span>
+                </div>
+              ))}
+            </div>
+            
+            {/* Próximo Nível */}
+            <p className="text-gray-600 text-base font-medium">
+              Próximo nível: {currentStreak || 0}/3
+            </p>
+          </div>
+
+          {/* Campo de Input */}
+          <div className="mb-6">
+            <GuessForm
+              onSubmitGuess={handleGuess}
+              disabled={isProcessingGuess || gameOver}
+              isProcessing={isProcessingGuess}
             />
           </div>
         </div>
 
-        {/* Classificação de Dificuldade */}
-        <div className="text-center mb-4">
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">
-            {currentDifficulty?.label || 'Muito Fácil'}
-          </h2>
-          
-          {/* Estrelas de Progresso */}
-          <div className="flex justify-center gap-1 mb-2">
-            {[1, 2, 3].map((star) => (
-              <div
-                key={star}
-                className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                  star <= (currentStreak || 0) 
-                    ? 'bg-yellow-400' 
-                    : 'bg-gray-200'
-                }`}
-              >
-                <span className="text-white text-sm">★</span>
+        {/* Seção Tempo Restante - Fora do card, na parte inferior */}
+        <div className="mt-6 bg-flu-grena rounded-2xl p-4 shadow-lg">
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+              <svg className="w-6 h-6 text-flu-grena" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="text-center">
+              <h2 className="text-white text-xl font-bold uppercase tracking-wide">
+                TEMPO RESTANTE
+              </h2>
+              <div className="text-white text-2xl font-bold mt-1">
+                {timeRemaining}s
               </div>
-            ))}
+            </div>
           </div>
-          
-          {/* Próximo Nível */}
-          <p className="text-gray-600 text-sm">
-            Próximo nível: {currentStreak || 0}/3
-          </p>
         </div>
 
-        {/* Campo de Input */}
-        <div className="mb-4">
-          <GuessForm
-            onSubmitGuess={handleGuess}
-            disabled={isProcessingGuess || gameOver}
-            isProcessing={isProcessingGuess}
-          />
-        </div>
-
-        {/* Explicação e Botão Sair */}
-        <div className="text-center space-y-3">
-          <p className="text-sm text-gray-600">
-            Digite o nome do jogador da foto acima
-          </p>
-          
+        {/* Botão Sair - Pequeno e discreto */}
+        <div className="mt-4 text-center">
           <button
             onClick={() => window.location.href = '/'}
-            className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition-colors"
+            className="text-white/80 hover:text-white text-sm underline transition-colors"
           >
             Sair do Jogo
           </button>
         </div>
       </div>
 
-
       {/* Controles de Debug */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="mt-8 p-4 bg-black/20 backdrop-blur-sm rounded-lg text-white">
-          <h4 className="font-semibold mb-2">Debug Controls</h4>
+        <div className="fixed bottom-4 right-4 p-4 bg-black/80 backdrop-blur-sm rounded-lg text-white text-xs">
+          <h4 className="font-semibold mb-2">Debug</h4>
           <div className="flex gap-2 mb-2">
             <button
               onClick={selectRandomPlayer}
-              className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+              className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
             >
-              Próximo Jogador
+              Next
             </button>
             <button
               onClick={forceRefresh}
-              className="px-3 py-1 bg-green-500 text-white rounded text-sm"
+              className="px-2 py-1 bg-green-500 text-white rounded text-xs"
             >
               Refresh
             </button>
           </div>
-          <div className="text-xs">
+          <div className="text-xs space-y-1">
             <p>Player: {currentPlayer.name}</p>
             <p>Difficulty: {currentPlayer.difficulty_level || 'N/A'}</p>
-            <p>Game Key: {gameKey}</p>
             <p>Changes: {playerChangeCount}</p>
           </div>
         </div>
