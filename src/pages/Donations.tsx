@@ -18,7 +18,7 @@ const Donations = () => {
     { name: 'Daniel', amount: 10 }
   ];
 
-  const pixKey = "lendas.do.flu@pix.com"; // Substitua pela chave PIX real
+  const pixKey = "a772f096-c75d-4c0f-a4fe-2ae2e7884649";
 
   const copyPixKey = () => {
     navigator.clipboard.writeText(pixKey);
@@ -73,14 +73,13 @@ const Donations = () => {
                   <h3 className="text-2xl font-bold text-white">Use o PIX para doar</h3>
                 </div>
                 
-                {/* QR Code Placeholder */}
+                {/* QR Code */}
                 <div className="bg-white rounded-lg p-6 max-w-xs mx-auto">
-                  <div className="w-48 h-48 bg-gray-200 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <div className="text-center text-gray-500">
-                      <div className="text-4xl mb-2">📱</div>
-                      <div className="text-sm font-medium">PIX QR Code</div>
-                    </div>
-                  </div>
+                  <img 
+                    src="/lovable-uploads/9ebcfdf2-e75b-4bf5-bee4-6f5a1998ce33.png"
+                    alt="PIX QR Code para doações"
+                    className="w-48 h-48 object-contain mx-auto mb-4"
+                  />
                   <p className="text-sm text-gray-600 font-medium">PIX QR Code</p>
                 </div>
                 
