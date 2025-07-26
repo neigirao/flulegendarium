@@ -76,7 +76,7 @@ const Donations = () => {
                 {/* QR Code */}
                 <div className="bg-white rounded-lg p-6 max-w-xs mx-auto">
                   <img 
-                    src="/lovable-uploads/9ebcfdf2-e75b-4bf5-bee4-6f5a1998ce33.png"
+                    src="/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png"
                     alt="PIX QR Code para doações"
                     className="w-48 h-48 object-contain mx-auto mb-4"
                   />
