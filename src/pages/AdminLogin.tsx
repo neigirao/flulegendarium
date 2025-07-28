@@ -69,16 +69,16 @@ const AdminLogin = () => {
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-flu-grena font-medium">
-                  Email
+                  Usuário
                 </Label>
                 <Input
                   id="username"
-                  type="email"
+                  type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
                   className="focus:ring-flu-grena focus:border-flu-grena"
-                  placeholder="Digite seu email"
+                  placeholder="Digite seu usuário"
                 />
               </div>
               <div className="space-y-2">
