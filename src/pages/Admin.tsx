@@ -37,7 +37,7 @@ export default function Admin() {
           <div className="flex justify-between items-center py-4">
             <div>
               <h1 className="text-2xl font-bold text-flu-grena">Área Administrativa - Lendas do Flu</h1>
-              <p className="text-gray-600">Bem-vindo, {adminData?.username}</p>
+              <p className="text-gray-600">Bem-vindo, {adminData?.user?.email}</p>
             </div>
             <Button variant="outline" onClick={logout} className="flex items-center gap-2">
               <LogOut size={16} />

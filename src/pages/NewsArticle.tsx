@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { SkeletonLoader } from "@/components/ui/skeleton-loader";
 import { toast } from "sonner";
+import { SafeHtml } from "@/utils/htmlSanitizer";
 
 const NewsArticle = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -215,9 +216,9 @@ const NewsArticle = () => {
 
               {/* Article Content */}
               <div className="prose prose-lg max-w-none">
-                <div 
+                <SafeHtml 
+                  html={article.content.replace(/\n/g, '<br>')}
                   className="text-gray-800 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br>') }}
                 />
               </div>
 

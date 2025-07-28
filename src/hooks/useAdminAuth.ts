@@ -1,11 +1,12 @@
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 interface AdminAuth {
-  userId: string;
-  username: string;
-  loginTime: number;
+  user: User;
+  isAdmin: boolean;
 }
 
 export const useAdminAuth = () => {
@@ -16,58 +17,116 @@ export const useAdminAuth = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const checkAuth = () => {
+    const checkAuth = async () => {
       try {
-        const authData = localStorage.getItem('adminAuth');
-        if (authData) {
-          const parsedAuth: AdminAuth = JSON.parse(authData);
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          // Check if user has admin role
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
           
-          // Verificar se a sessão não expirou (24 horas)
-          const now = Date.now();
-          const sessionDuration = 24 * 60 * 60 * 1000; // 24 horas
+          const isAdmin = profile?.role === 'admin';
           
-          if (now - parsedAuth.loginTime < sessionDuration) {
+          if (isAdmin) {
             setIsAuthenticated(true);
-            setAdminData(parsedAuth);
+            setAdminData({
+              user: session.user,
+              isAdmin: true
+            });
           } else {
-            // Sessão expirada
-            localStorage.removeItem('adminAuth');
             setIsAuthenticated(false);
             setAdminData(null);
           }
+        } else {
+          setIsAuthenticated(false);
+          setAdminData(null);
         }
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error);
-        localStorage.removeItem('adminAuth');
         setIsAuthenticated(false);
         setAdminData(null);
+        setError('Erro ao verificar permissões de administrador');
       } finally {
         setIsLoading(false);
       }
     };
 
     checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          // Check if user has admin role
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+          
+          const isAdmin = profile?.role === 'admin';
+          
+          if (isAdmin) {
+            setIsAuthenticated(true);
+            setAdminData({
+              user: session.user,
+              isAdmin: true
+            });
+          } else {
+            setIsAuthenticated(false);
+            setAdminData(null);
+          }
+        } else {
+          setIsAuthenticated(false);
+          setAdminData(null);
+        }
+        setIsLoading(false);
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (username: string, password: string) => {
+  const login = async (email: string, password: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Credenciais atualizadas
-      if (username === 'neigirao' && password === 'PCFClub!21') {
-        const adminAuth: AdminAuth = {
-          userId: 'admin-neigirao',
-          username: username,
-          loginTime: Date.now()
-        };
-        
-        localStorage.setItem('adminAuth', JSON.stringify(adminAuth));
-        setIsAuthenticated(true);
-        setAdminData(adminAuth);
-        navigate('/admin');
-      } else {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
         setError('Credenciais inválidas');
+        return;
+      }
+
+      if (data.user) {
+        // Check if user has admin role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single();
+        
+        const isAdmin = profile?.role === 'admin';
+        
+        if (isAdmin) {
+          setIsAuthenticated(true);
+          setAdminData({
+            user: data.user,
+            isAdmin: true
+          });
+          navigate('/admin');
+        } else {
+          setError('Acesso negado. Apenas administradores podem acessar esta área.');
+          await supabase.auth.signOut();
+        }
       }
     } catch (error) {
       console.error('Erro no login:', error);
@@ -77,8 +136,8 @@ export const useAdminAuth = () => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('adminAuth');
+  const logout = async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
     setAdminData(null);
     navigate('/admin/login-administrador');
