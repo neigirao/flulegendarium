@@ -19,25 +19,22 @@ export const useAdminAuth = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (session?.user) {
-          // Check if user has admin role
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
+        // Check for stored admin session
+        const storedSession = localStorage.getItem('admin_session');
+        if (storedSession) {
+          const session = JSON.parse(storedSession);
+          // Check if session is still valid (24 hours)
+          const sessionAge = Date.now() - session.timestamp;
+          const maxAge = 24 * 60 * 60 * 1000; // 24 hours
           
-          const isAdmin = profile?.role === 'admin';
-          
-          if (isAdmin) {
+          if (sessionAge < maxAge) {
             setIsAuthenticated(true);
             setAdminData({
               user: session.user,
               isAdmin: true
             });
           } else {
+            localStorage.removeItem('admin_session');
             setIsAuthenticated(false);
             setAdminData(null);
           }
@@ -56,78 +53,56 @@ export const useAdminAuth = () => {
     };
 
     checkAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          // Check if user has admin role
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-          
-          const isAdmin = profile?.role === 'admin';
-          
-          if (isAdmin) {
-            setIsAuthenticated(true);
-            setAdminData({
-              user: session.user,
-              isAdmin: true
-            });
-          } else {
-            setIsAuthenticated(false);
-            setAdminData(null);
-          }
-        } else {
-          setIsAuthenticated(false);
-          setAdminData(null);
-        }
-        setIsLoading(false);
-      }
-    );
-
-    return () => subscription.unsubscribe();
   }, []);
 
-  const login = async (email: string, password: string) => {
+  const login = async (username: string, password: string) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      // Check admin credentials in admin_users table
+      const { data: adminUser, error: adminError } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('username', username)
+        .single();
 
-      if (signInError) {
+      if (adminError || !adminUser) {
         setError('Credenciais inválidas');
         return;
       }
 
-      if (data.user) {
-        // Check if user has admin role
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-        
-        const isAdmin = profile?.role === 'admin';
-        
-        if (isAdmin) {
-          setIsAuthenticated(true);
-          setAdminData({
-            user: data.user,
-            isAdmin: true
-          });
-          navigate('/admin');
-        } else {
-          setError('Acesso negado. Apenas administradores podem acessar esta área.');
-          await supabase.auth.signOut();
-        }
+      // Verify password (in a real scenario, you'd use proper password hashing)
+      // For now, we'll use a simple comparison
+      const bcrypt = await import('bcryptjs');
+      const isValidPassword = await bcrypt.compare(password, adminUser.password_hash);
+
+      if (!isValidPassword) {
+        setError('Credenciais inválidas');
+        return;
       }
+
+      // Create a mock user object for admin
+      const mockUser = {
+        id: adminUser.id,
+        email: `${username}@admin.local`,
+        user_metadata: { username },
+        app_metadata: { role: 'admin' }
+      } as any;
+
+      setIsAuthenticated(true);
+      setAdminData({
+        user: mockUser,
+        isAdmin: true
+      });
+      
+      // Store admin session in localStorage
+      localStorage.setItem('admin_session', JSON.stringify({
+        user: mockUser,
+        timestamp: Date.now()
+      }));
+
+      navigate('/admin');
     } catch (error) {
       console.error('Erro no login:', error);
       setError('Erro interno do servidor');
@@ -137,7 +112,7 @@ export const useAdminAuth = () => {
   };
 
   const logout = async () => {
-    await supabase.auth.signOut();
+    localStorage.removeItem('admin_session');
     setIsAuthenticated(false);
     setAdminData(null);
     navigate('/admin/login-administrador');
