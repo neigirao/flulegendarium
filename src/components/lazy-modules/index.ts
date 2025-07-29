@@ -3,16 +3,6 @@ import { createLazyComponent } from '@/components/LazyLoad';
 import { PerformanceSkeleton } from '@/components/performance/PerformanceSkeleton';
 
 // Quiz Module
-export const LazyAdaptiveGuessPlayer = createLazyComponent(
-  () => import('@/pages/AdaptiveGuessPlayer'),
-  React.createElement(PerformanceSkeleton, { height: 600 })
-);
-
-export const LazyDecadeGuessPlayer = createLazyComponent(
-  () => import('@/pages/DecadeGuessPlayer'),
-  React.createElement(PerformanceSkeleton, { height: 600 })
-);
-
 export const LazyGameModeSelection = createLazyComponent(
   () => import('@/pages/GameModeSelection'),
   React.createElement(PerformanceSkeleton, { height: 500 })

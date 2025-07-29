@@ -16,8 +16,6 @@ import Index from "@/pages/Index";
 
 // Lazy loaded modules with optimized loading
 import {
-  LazyAdaptiveGuessPlayer,
-  LazyDecadeGuessPlayer,
   LazyGameModeSelection,
   LazyAdmin,
   LazyAdminLogin,
@@ -53,22 +51,6 @@ function App() {
                     <Route path="/" element={<Index />} />
                     <Route path="/auth" element={<LazyAuth />} />
                     <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
-                    <Route 
-                      path="/quiz-adaptativo" 
-                      element={
-                        <GameErrorBoundary>
-                          <LazyAdaptiveGuessPlayer />
-                        </GameErrorBoundary>
-                      } 
-                    />
-                    <Route 
-                      path="/quiz-decada" 
-                      element={
-                        <GameErrorBoundary>
-                          <LazyDecadeGuessPlayer />
-                        </GameErrorBoundary>
-                      } 
-                    />
                     
                     <Route path="/social" element={<LazySocialPage />} />
                     <Route path="/faq" element={<LazyFAQ />} />
