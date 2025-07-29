@@ -14,6 +14,7 @@ import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoun
 // Core pages (immediate load)
 import Index from "@/pages/Index";
 import AdaptiveGuessPlayerSimple from "@/pages/AdaptiveGuessPlayerSimple";
+import DecadeGuessPlayerSimple from "@/pages/DecadeGuessPlayerSimple";
 
 // Lazy loaded modules with optimized loading
 import {
@@ -57,6 +58,14 @@ function App() {
                       element={
                         <GameErrorBoundary>
                           <AdaptiveGuessPlayerSimple />
+                        </GameErrorBoundary>
+                      } 
+                    />
+                    <Route 
+                      path="/quiz-decada" 
+                      element={
+                        <GameErrorBoundary>
+                          <DecadeGuessPlayerSimple />
                         </GameErrorBoundary>
                       } 
                     />
