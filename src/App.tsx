@@ -13,6 +13,7 @@ import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoun
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
+import AdaptiveGuessPlayerSimple from "@/pages/AdaptiveGuessPlayerSimple";
 
 // Lazy loaded modules with optimized loading
 import {
@@ -51,6 +52,14 @@ function App() {
                     <Route path="/" element={<Index />} />
                     <Route path="/auth" element={<LazyAuth />} />
                     <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
+                    <Route 
+                      path="/quiz-adaptativo" 
+                      element={
+                        <GameErrorBoundary>
+                          <AdaptiveGuessPlayerSimple />
+                        </GameErrorBoundary>
+                      } 
+                    />
                     
                     <Route path="/social" element={<LazySocialPage />} />
                     <Route path="/faq" element={<LazyFAQ />} />
