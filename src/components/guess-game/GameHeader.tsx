@@ -1,18 +1,21 @@
 
-import { ArrowLeft, Info, Trophy, Star, Brain } from "lucide-react";
+import { ArrowLeft, Info, Trophy, Star, Brain, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { GameRulesTooltip } from "./GameRulesTooltip";
 import { cn } from "@/lib/utils";
 import { DifficultyLevel } from "@/types/guess-game";
+import { GameTimer } from "./GameTimer";
 
 interface GameHeaderProps {
   score: number;
   onDebugClick: () => void;
   currentDifficulty?: DifficultyLevel;
   isAdaptiveMode?: boolean;
+  timeRemaining?: number;
+  gameActive?: boolean;
 }
 
-export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveMode }: GameHeaderProps) => {
+export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveMode, timeRemaining, gameActive }: GameHeaderProps) => {
   console.log('🎮 GameHeader - Score recebido e exibindo:', score);
   
   const getScoreVariant = () => {
@@ -52,8 +55,9 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
           </div>
         </Link>
         
-        {/* Score principal centralizado e responsivo com indicador de modo */}
-        <div className="flex-1 flex justify-center">
+        {/* Score e Timer lado a lado */}
+        <div className="flex-1 flex justify-center gap-4">
+          {/* Score */}
           <div className={cn(
             "relative px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 rounded-xl sm:rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 cursor-default",
             "text-center border backdrop-blur-sm min-w-[120px] sm:min-w-[160px] md:min-w-[180px]",
@@ -84,11 +88,6 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
                 <span className="text-xs sm:text-sm opacity-90 font-medium leading-tight">
                   {score === 1 ? "ponto" : "pontos"}
                 </span>
-                {currentDifficulty && (
-                  <span className="text-xs opacity-75 leading-tight hidden sm:block">
-                    {currentDifficulty.replace('_', ' ')}
-                  </span>
-                )}
               </div>
               
               {score >= 50 && <Star className="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 animate-spin" style={{ animationDirection: 'reverse' }} />}
@@ -114,6 +113,21 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
               </div>
             )}
           </div>
+
+          {/* Timer */}
+          {timeRemaining !== undefined && (
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Clock className="w-4 h-4 text-flu-grena" />
+                <span className="text-sm font-medium text-gray-600">Tempo</span>
+              </div>
+              <GameTimer 
+                timeRemaining={timeRemaining} 
+                isRunning={gameActive || false} 
+                gameOver={!gameActive}
+              />
+            </div>
+          )}
         </div>
         
         {/* Controles à direita otimizados */}

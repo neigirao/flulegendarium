@@ -66,52 +66,33 @@ export const AdaptiveDifficultyIndicator = ({
 
   return (
     <div className={cn(
-      "relative p-6 rounded-2xl border-2 transition-all duration-300",
+      "relative p-3 rounded-xl border transition-all duration-300",
       config.bgColor,
       config.borderColor
     )}>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className={cn("p-2 rounded-full", config.color)}>
-            <Icon className="w-5 h-5 text-white" />
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className={cn("p-1.5 rounded-full", config.color)}>
+            <Icon className="w-4 h-4 text-white" />
           </div>
           <div>
-            <h3 className={cn("text-lg font-bold", config.textColor)}>
+            <h3 className={cn("text-sm font-bold", config.textColor)}>
               Nível: {config.label}
             </h3>
-            <p className="text-sm text-gray-600">{config.description}</p>
+            <p className="text-xs text-gray-600">{config.description}</p>
           </div>
         </div>
-      </div>
-
-      {/* Progress bar */}
-      <div className="space-y-2">
-        <div className="flex justify-between text-sm">
-          <span className="text-gray-600">Progresso para próximo nível</span>
-          <span className={cn("font-medium", config.textColor)}>{Math.round(progress)}%</span>
-        </div>
-        <div className="w-full bg-white/60 rounded-full h-2 overflow-hidden">
-          <div
-            className={cn("h-full transition-all duration-500 rounded-full", config.color)}
-            style={{ width: `${Math.min(progress, 100)}%` }}
-          />
-        </div>
-      </div>
-
-      {/* Level badges */}
-      <div className="flex justify-center mt-4 gap-1">
-        {Object.keys(difficultyConfig).map((level, index) => {
-          const isActive = Object.keys(difficultyConfig).indexOf(currentDifficulty) >= index;
-          return (
+        
+        {/* Progress indicator compacto */}
+        <div className="flex items-center gap-2">
+          <span className={cn("text-xs font-medium", config.textColor)}>{Math.round(progress)}%</span>
+          <div className="w-12 bg-white/60 rounded-full h-1.5 overflow-hidden">
             <div
-              key={level}
-              className={cn(
-                "w-3 h-3 rounded-full transition-all duration-300",
-                isActive ? difficultyConfig[level as DifficultyLevel].color : "bg-gray-300"
-              )}
+              className={cn("h-full transition-all duration-500 rounded-full", config.color)}
+              style={{ width: `${Math.min(progress, 100)}%` }}
             />
-          );
-        })}
+          </div>
+        </div>
       </div>
     </div>
   );

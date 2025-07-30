@@ -4,7 +4,7 @@ import { useAdaptiveGuessGame } from "@/hooks/use-adaptive-guess-game";
 import { usePlayersData } from "@/hooks/use-players-data";
 import { useAuth } from "@/hooks/useAuth";
 import { GameHeader } from "./GameHeader";
-import { AdaptiveGameStatus } from "./AdaptiveGameStatus";
+
 import { AdaptiveDifficultyIndicator } from "./AdaptiveDifficultyIndicator";
 import { AdaptivePlayerImage } from "./AdaptivePlayerImage";
 import { GuessForm } from "./GuessForm";
@@ -106,21 +106,15 @@ const AdaptiveGameContainer = () => {
         <GameHeader 
           score={score} 
           onDebugClick={() => setShowDebug(!showDebug)}
+          isAdaptiveMode={true}
+          timeRemaining={timeRemaining}
+          gameActive={!gameOver && isTimerRunning}
         />
         
         <div className="mt-6 space-y-6">
           <AdaptiveDifficultyIndicator 
             currentDifficulty={currentDifficulty.level as any}
             progress={difficultyProgress}
-          />
-          
-          <AdaptiveGameStatus
-            timeRemaining={timeRemaining}
-            currentStreak={currentStreak}
-            gamesPlayed={gamesPlayed}
-            maxStreak={maxStreak}
-            attempts={[]}
-            gameActive={!gameOver && isTimerRunning}
           />
 
           {currentPlayer && (
