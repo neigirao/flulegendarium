@@ -1,14 +1,26 @@
 import { QueryClient } from '@tanstack/react-query';
 
-// Advanced caching strategies
+// Detect if we're in iframe context
+const isInIframe = () => {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true;
+  }
+};
+
+// Advanced caching strategies with iframe context awareness
 export const createOptimizedQueryClient = () => {
+  const inIframe = isInIframe();
+  
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // Cache for 5 minutes by default
-        staleTime: 5 * 60 * 1000,
-        // Keep in cache for 10 minutes
-        gcTime: 10 * 60 * 1000,
+        // Shorter cache for iframe context to ensure fresh data
+        staleTime: inIframe ? 30 * 1000 : 5 * 60 * 1000, // 30s in iframe, 5min standalone
+        gcTime: inIframe ? 2 * 60 * 1000 : 10 * 60 * 1000, // 2min in iframe, 10min standalone
+        // Force refresh on mount in iframe context
+        refetchOnMount: inIframe ? 'always' : true,
         // Retry failed requests
         retry: (failureCount, error: any) => {
           // Don't retry on 4xx errors
@@ -18,44 +30,43 @@ export const createOptimizedQueryClient = () => {
           return failureCount < 3;
         },
         // Background refetch optimizations
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: inIframe ? true : false, // More aggressive in iframe
         refetchOnReconnect: true,
-        refetchOnMount: true,
       },
     },
   });
 };
 
-// Smart cache invalidation strategies
+// Smart cache invalidation strategies with iframe awareness
 export const cacheStrategies = {
-  // Players data - long cache, infrequent updates
+  // Players data - adjust based on context
   players: {
-    staleTime: 30 * 60 * 1000, // 30 minutes
-    gcTime: 60 * 60 * 1000, // 1 hour
+    staleTime: isInIframe() ? 5 * 60 * 1000 : 30 * 60 * 1000, // 5min iframe, 30min standalone
+    gcTime: isInIframe() ? 10 * 60 * 1000 : 60 * 60 * 1000, // 10min iframe, 1h standalone
   },
   
-  // Game stats - medium cache, moderate updates
+  // Game stats - critical for homepage, shorter cache in iframe
   gameStats: {
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    gcTime: 15 * 60 * 1000, // 15 minutes
+    staleTime: isInIframe() ? 1 * 60 * 1000 : 5 * 60 * 1000, // 1min iframe, 5min standalone
+    gcTime: isInIframe() ? 5 * 60 * 1000 : 15 * 60 * 1000, // 5min iframe, 15min standalone
   },
   
-  // Live data - short cache, frequent updates
+  // Live data - very short cache, especially in iframe
   liveStats: {
-    staleTime: 30 * 1000, // 30 seconds
-    gcTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: isInIframe() ? 10 * 1000 : 30 * 1000, // 10s iframe, 30s standalone
+    gcTime: isInIframe() ? 1 * 60 * 1000 : 2 * 60 * 1000, // 1min iframe, 2min standalone
   },
   
-  // User specific data - session cache
+  // User specific data - session cache, aggressive refresh in iframe
   userStats: {
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    gcTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: isInIframe() ? 30 * 1000 : 2 * 60 * 1000, // 30s iframe, 2min standalone
+    gcTime: isInIframe() ? 5 * 60 * 1000 : 10 * 60 * 1000, // 5min iframe, 10min standalone
   },
   
-  // Rankings - moderate cache
+  // Rankings - critical for homepage, shorter cache in iframe
   rankings: {
-    staleTime: 10 * 60 * 1000, // 10 minutes
-    gcTime: 30 * 60 * 1000, // 30 minutes
+    staleTime: isInIframe() ? 2 * 60 * 1000 : 10 * 60 * 1000, // 2min iframe, 10min standalone
+    gcTime: isInIframe() ? 10 * 60 * 1000 : 30 * 60 * 1000, // 10min iframe, 30min standalone
   }
 };
 

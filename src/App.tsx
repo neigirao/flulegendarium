@@ -31,6 +31,7 @@ import {
 
 import { PerformanceDashboard } from "@/components/observability/PerformanceDashboard";
 import { createOptimizedQueryClient } from "@/utils/performance/cacheOptimization";
+import { useIframeCache } from "@/hooks/use-iframe-cache";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
 
