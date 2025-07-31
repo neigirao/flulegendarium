@@ -10,12 +10,6 @@ import { MobileViewport } from "@/components/mobile/MobileViewport";
 import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBoundary";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
-import { EnhancedSEORouter } from "@/components/seo/EnhancedSEORouter";
-import { CoreWebVitalsOptimizer } from "@/components/performance/CoreWebVitalsOptimizer";
-import { AdvancedSchemaMarkup } from "@/components/seo/AdvancedSchemaMarkup";
-import { SmartBreadcrumbs } from "@/components/seo/SmartBreadcrumbs";
-import { AdvancedServiceWorker } from "@/components/performance/AdvancedServiceWorker";
-import { PerformanceBudgetMonitor } from "@/components/performance/PerformanceBudgetMonitor";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
@@ -52,21 +46,12 @@ function App() {
             <TooltipProvider>
               <CriticalMeta />
               <MobileViewport />
-              <CoreWebVitalsOptimizer>
-                <AdvancedServiceWorker />
-                <PerformanceBudgetMonitor />
-                <EnhancedSEORouter>
-                  <AdvancedSchemaMarkup type="Organization" />
-                  <AdvancedSchemaMarkup type="SportsTeam" />
-                  <AdvancedSchemaMarkup type="WebApplication" />
-                  
-                  <div className="min-h-screen bg-background font-sans antialiased">
-                    <SmartBreadcrumbs className="container mx-auto px-4" />
-                    
-                    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
-                    </div>}>
-                      <Routes>
+              
+              <div className="min-h-screen bg-background font-sans antialiased">
+                <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
+                </div>}>
+                  <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/auth" element={<LazyAuth />} />
                     <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
@@ -110,13 +95,11 @@ function App() {
                       } 
                     />
                     <Route path="*" element={<NotFound />} />
-                      </Routes>
-                    </Suspense>
-                  </div>
-                  <Toaster />
-                  <PerformanceDashboard />
-                </EnhancedSEORouter>
-              </CoreWebVitalsOptimizer>
+                  </Routes>
+                </Suspense>
+              </div>
+              <Toaster />
+              <PerformanceDashboard />
             </TooltipProvider>
           </AuthProvider>
         </BrowserRouter>
