@@ -26,28 +26,37 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: {
-          // Core React libraries - loaded first
+          // Core React libraries - loaded first and cached aggressively
           vendor: ['react', 'react-dom'],
           
-          // Router - separate chunk for navigation
+          // Router - separate chunk for navigation with preloading
           router: ['react-router-dom'],
           
-          // UI components - separate chunk to allow caching
-          ui: [
+          // UI components - modular chunks for better caching
+          'ui-core': [
             '@radix-ui/react-dialog', 
             '@radix-ui/react-toast',
-            '@radix-ui/react-select',
-            '@radix-ui/react-dropdown-menu'
+            '@radix-ui/react-select'
+          ],
+          'ui-extended': [
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-tooltip',
+            '@radix-ui/react-tabs'
           ],
           
-          // Data fetching - separate chunk
+          // Data layer - optimized for performance
           query: ['@tanstack/react-query'],
-          
-          // Database - separate chunk
           supabase: ['@supabase/supabase-js'],
           
-          // Icons - separate chunk since they're large
-          icons: ['lucide-react']
+          // Heavy dependencies - separate chunks for lazy loading
+          icons: ['lucide-react'],
+          charts: ['recharts'],
+          animations: ['framer-motion'],
+          
+          // Game-specific chunks for better caching
+          'game-core': [],
+          'game-adaptive': [],
+          'admin-panel': []
         },
         
         // Optimize chunk naming for better caching
@@ -78,7 +87,7 @@ export default defineConfig(({ mode }) => ({
     sourcemap: mode === 'development',
     
     // Performance budget otimizado (based on PageSpeed Insights)
-    chunkSizeWarningLimit: 250, // Reduzido para 250KB para melhor performance
+    chunkSizeWarningLimit: 200, // Reduzido para 200KB para melhor performance
     
     // Optimize CSS
     cssCodeSplit: true,

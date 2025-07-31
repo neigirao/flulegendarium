@@ -1,50 +1,47 @@
-
-// Global type declarations for the application
+import { Database } from '@/integrations/supabase/types';
 
 declare global {
+  type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+  type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
+
+  // Google Analytics gtag types
   interface Window {
-    gtag?: (...args: any[]) => void;
-    __vitePreload?: (moduleId: string, ...args: any[]) => Promise<any>;
-    scheduler?: {
-      postTask: (callback: () => void, options?: { priority: 'background' | 'user-blocking' | 'user-visible' }) => void;
-    };
+    gtag?: (
+      command: 'config' | 'event' | 'exception' | 'page_view' | 'purchase' | 'refund' | 'select_content' | 'share' | 'sign_up' | 'timing_complete' | 'custom',
+      targetId: string,
+      config?: any
+    ) => void;
+    dataLayer?: any[];
   }
 
-  // Extend Performance API
-  interface Performance {
-    measureUserAgentSpecificMemory?: () => Promise<{
-      bytes: number;
-      breakdown: Array<{
-        bytes: number;
-        attribution: any[];
-        types: string[];
-      }>;
-    }>;
+  // Declare gtag as global function
+  declare function gtag(
+    command: 'config' | 'event' | 'exception' | 'page_view' | 'purchase' | 'refund' | 'select_content' | 'share' | 'sign_up' | 'timing_complete' | 'custom',
+    targetId: string,
+    config?: any
+  ): void;
+
+  // Scheduler API types
+  interface Scheduler {
+    postTask(callback: () => void, options?: { priority?: 'user-blocking' | 'user-visible' | 'background' }): Promise<void>;
   }
-}
 
-// Tipos para analytics e tracking
-export interface AnalyticsEvent {
-  event_category: string;
-  event_label?: string;
-  value?: number;
-}
+  interface Window {
+    scheduler?: Scheduler;
+  }
 
-// Tipos para performance
-export interface PerformanceMetrics {
-  lcp?: number;
-  fid?: number;
-  cls?: number;
-  fcp?: number;
-  ttfb?: number;
-}
+  // Web Vitals types
+  interface PerformanceNavigationTiming extends PerformanceEntry {
+    fetchStart: number;
+    responseStart: number;
+    responseEnd: number;
+  }
 
-// Tipos para erros
-export interface ErrorInfo {
-  message: string;
-  stack?: string;
-  componentStack?: string;
-  errorBoundary?: string;
+  // Layout shift entry type
+  interface LayoutShiftEntry extends PerformanceEntry {
+    value: number;
+    hadRecentInput: boolean;
+  }
 }
 
 export {};
