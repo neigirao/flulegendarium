@@ -179,53 +179,48 @@ export const DecadeGameContainer = () => {
   const decadeInfo = getDecadeInfo(selectedDecade);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10 p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header do Jogo */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              onClick={handleBackToSelection}
-              className="flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Escolher Década
-            </Button>
-            
-            <div className="flex items-center gap-3">
-              <div className={`w-8 h-8 rounded-full ${decadeInfo.color} flex items-center justify-center text-white text-sm`}>
-                {decadeInfo.icon}
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-flu-grena">
-                  Quiz {decadeInfo.label}
-                </h1>
-                <p className="text-sm text-gray-600">
-                  {decadeInfo.description}
-                </p>
-              </div>
-            </div>
-          </div>
-
+    <div className="container mx-auto px-4 py-6 max-w-4xl">
+      {/* Header do Jogo - Compacto como no Adaptativo */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="outline"
+            onClick={handleBackToSelection}
+            className="flex items-center gap-2 text-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Décadas
+          </Button>
+          
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-flu-verde/10 text-flu-verde">
-              {availablePlayers.length} jogadores disponíveis
-            </Badge>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleResetGame}
-              className="flex items-center gap-2"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Reiniciar
-            </Button>
+            <div className={`w-6 h-6 rounded-full ${decadeInfo.color} flex items-center justify-center text-white text-xs`}>
+              {decadeInfo.icon}
+            </div>
+            <h1 className="text-lg font-bold text-flu-grena">
+              {decadeInfo.label}
+            </h1>
           </div>
         </div>
 
-        {/* Container do Jogo */}
+        <div className="flex items-center gap-2">
+          <Badge variant="secondary" className="bg-flu-verde/10 text-flu-verde text-xs">
+            {availablePlayers.length} jogadores
+          </Badge>
+          
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleResetGame}
+            className="flex items-center gap-1 text-xs"
+          >
+            <RotateCcw className="w-3 h-3" />
+            Reset
+          </Button>
+        </div>
+      </div>
+
+      {/* Container do Jogo - Layout igual ao Adaptativo */}
+      <div className="mt-6 space-y-6">
         {playersLoading ? (
           <div className="flex justify-center items-center py-20">
             <div className="text-center">
