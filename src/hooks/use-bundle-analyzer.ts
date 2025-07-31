@@ -36,7 +36,7 @@ export const useBundleAnalyzer = () => {
       
       // Track to analytics if bundle is too large
       if (totalJSSize > 400 * 1024) { // Reduced threshold to 400KB
-        if (window.gtag) {
+        if (typeof window !== 'undefined' && window.gtag) {
           window.gtag('event', 'large_bundle', {
             event_category: 'Performance',
             value: Math.round(totalJSSize / 1024),
@@ -47,7 +47,7 @@ export const useBundleAnalyzer = () => {
       
       // Track slow chunk loading
       if (avgLoadTime > 1000) { // > 1s
-        if (window.gtag) {
+        if (typeof window !== 'undefined' && window.gtag) {
           window.gtag('event', 'slow_chunk_loading', {
             event_category: 'Performance',
             value: Math.round(avgLoadTime),
@@ -62,38 +62,46 @@ export const useBundleAnalyzer = () => {
       setTimeout(trackBundleMetrics, 1000);
     });
     
-    // Track dynamic imports using Vite's preload mechanism
-    const originalVitePreload = window.__vitePreload;
-    if (originalVitePreload) {
-      window.__vitePreload = async (moduleId: string, ...args: any[]) => {
-        const startTime = performance.now();
+    // Track dynamic imports with proper typing
+    const trackDynamicImports = () => {
+      // Override the dynamic import to track performance
+      const originalImport = window.eval;
+      
+      // Monitor module loading through performance observer
+      if ('PerformanceObserver' in window) {
         try {
-          const result = await originalVitePreload(moduleId, ...args);
-          const loadTime = performance.now() - startTime;
-          
-          console.log(`Dynamic import loaded in ${loadTime.toFixed(2)}ms:`, moduleId);
-          
-          if (window.gtag) {
-            window.gtag('event', 'dynamic_import', {
-              event_category: 'Performance',
-              value: Math.round(loadTime),
-              event_label: moduleId
+          const observer = new PerformanceObserver((list) => {
+            const entries = list.getEntries();
+            entries.forEach(entry => {
+              if (entry.name.includes('.js') && entry.name.includes('assets/')) {
+                const loadTime = entry.duration;
+                console.log(`Dynamic chunk loaded in ${loadTime.toFixed(2)}ms:`, entry.name);
+                
+                if (window.gtag) {
+                  window.gtag('event', 'dynamic_import', {
+                    event_category: 'Performance',
+                    value: Math.round(loadTime),
+                    event_label: entry.name
+                  });
+                }
+              }
             });
-          }
+          });
           
-          return result;
+          observer.observe({ entryTypes: ['resource'] });
         } catch (error) {
-          console.error('Dynamic import failed:', error);
-          throw error;
+          console.warn('Dynamic import tracking not supported:', error);
         }
-      };
-    }
+      }
+    };
+    
+    trackDynamicImports();
   }, []);
   
   const trackChunkLoad = (chunkName: string, size: number, loadTime: number) => {
     console.log(`Chunk ${chunkName} loaded: ${size}KB in ${loadTime}ms`);
     
-    if (window.gtag) {
+    if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'chunk_loaded', {
         event_category: 'Performance',
         event_label: chunkName,
