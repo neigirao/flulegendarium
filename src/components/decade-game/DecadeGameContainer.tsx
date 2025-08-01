@@ -15,9 +15,13 @@ import { getDecadeInfo } from '@/data/decades';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
+import { useUX } from '@/components/ux/UXProvider';
+import { ResponsiveContainer } from '@/components/ux/ResponsiveContainer';
+import { LoadingState } from '@/components/ux/LoadingStates';
 
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
+  const { showContextualFeedback } = useUX();
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
   const [playerCounts, setPlayerCounts] = useState<Record<Decade, number>>({
     '1970s': 0,
@@ -179,7 +183,7 @@ export const DecadeGameContainer = () => {
   const decadeInfo = getDecadeInfo(selectedDecade);
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl">
+    <ResponsiveContainer variant="game" maxWidth="xl">
       {/* Header do Jogo - Compacto como no Adaptativo */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
@@ -223,10 +227,10 @@ export const DecadeGameContainer = () => {
       <div className="mt-6 space-y-6">
         {playersLoading ? (
           <div className="flex justify-center items-center py-20">
-            <div className="text-center">
-              <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-              <p className="text-gray-600">Carregando jogadores dos {decadeInfo.label}...</p>
-            </div>
+            <LoadingState 
+              type="general" 
+              message={`Carregando jogadores dos ${decadeInfo.label}...`} 
+            />
           </div>
         ) : availablePlayers.length === 0 ? (
           <div className="text-center py-20">
@@ -278,7 +282,7 @@ export const DecadeGameContainer = () => {
           />
         )}
       </div>
-    </div>
+    </ResponsiveContainer>
   );
 };
 

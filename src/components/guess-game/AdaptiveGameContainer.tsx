@@ -19,6 +19,9 @@ import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
 import { AchievementToast } from "@/components/achievements/AchievementToast";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
+import { useUX } from "@/components/ux/UXProvider";
+import { ResponsiveContainer } from "@/components/ux/ResponsiveContainer";
+import { LoadingState } from "@/components/ux/LoadingStates";
 
 const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
@@ -31,6 +34,7 @@ const AdaptiveGameContainer = () => {
   const { pendingAchievements, checkAndUnlockAchievements, clearPendingAchievements } = useAchievementSystem();
   const analytics = useEnhancedAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
+  const { showContextualFeedback } = useUX();
   
   const {
     currentPlayer,
@@ -77,12 +81,12 @@ const AdaptiveGameContainer = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4 p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
-          <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-flu-grena font-semibold">Carregando jogadores...</p>
-        </div>
-      </div>
+      <ResponsiveContainer variant="game" className="min-h-screen flex items-center justify-center">
+        <LoadingState 
+          type="general" 
+          message="Carregando jogadores..." 
+        />
+      </ResponsiveContainer>
     );
   }
 
@@ -102,7 +106,7 @@ const AdaptiveGameContainer = () => {
         player={currentPlayer}
       />
       
-      <div className={`container mx-auto px-4 py-6 max-w-4xl ${viewportInfo.isMobile ? 'px-2' : ''}`}>
+      <ResponsiveContainer variant="game" maxWidth="xl" className={viewportInfo.isMobile ? 'px-2' : ''}>
         <GameHeader 
           score={score} 
           onDebugClick={() => setShowDebug(!showDebug)}
@@ -170,7 +174,7 @@ const AdaptiveGameContainer = () => {
             onClose={clearDifficultyChange}
           />
         )}
-      </div>
+      </ResponsiveContainer>
       
       {pendingAchievements.length > 0 && (
         <AchievementToast

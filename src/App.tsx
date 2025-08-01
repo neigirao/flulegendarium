@@ -10,6 +10,7 @@ import { MobileViewport } from "@/components/mobile/MobileViewport";
 import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBoundary";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
+import { UXProvider } from "@/components/ux/UXProvider";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
@@ -43,13 +44,14 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <AuthProvider>
-            <TooltipProvider>
-              <CriticalMeta />
-              <MobileViewport />
+            <UXProvider>
+              <TooltipProvider>
+                <CriticalMeta />
+                <MobileViewport />
               
               <div className="min-h-screen bg-background font-sans antialiased">
                 <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-flu-grena"></div>
+                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
                 </div>}>
                   <Routes>
                     <Route path="/" element={<Index />} />
@@ -98,9 +100,10 @@ function App() {
                   </Routes>
                 </Suspense>
               </div>
-              <Toaster />
-              <PerformanceDashboard />
-            </TooltipProvider>
+                <Toaster />
+                <PerformanceDashboard />
+              </TooltipProvider>
+            </UXProvider>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
