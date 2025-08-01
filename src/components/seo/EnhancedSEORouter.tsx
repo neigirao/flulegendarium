@@ -58,7 +58,7 @@ export const EnhancedSEORouter = ({ children }: EnhancedSEORouterProps) => {
   const generateBreadcrumbSchema = () => {
     const pathSegments = location.pathname.split('/').filter(Boolean);
     const breadcrumbs = [
-      { name: 'Início', url: 'https://flulegendarium.lovable.app/' }
+      { name: 'Início', url: 'https://lendasdoflu.com/' }
     ];
 
     let currentPath = '';
@@ -68,7 +68,7 @@ export const EnhancedSEORouter = ({ children }: EnhancedSEORouterProps) => {
       if (routeData) {
         breadcrumbs.push({
           name: routeData.title.split(' - ')[0],
-          url: `https://flulegendarium.lovable.app${currentPath}`
+          url: `https://lendasdoflu.com${currentPath}`
         });
       }
     });
@@ -151,8 +151,8 @@ export const EnhancedSEORouter = ({ children }: EnhancedSEORouterProps) => {
         title={currentSEO.title}
         description={currentSEO.description}
         keywords={currentSEO.keywords}
-        canonical={`https://flulegendarium.lovable.app${location.pathname}`}
-        url={`https://flulegendarium.lovable.app${location.pathname}`}
+        canonical={`https://lendasdoflu.com${location.pathname}`}
+        url={`https://lendasdoflu.com${location.pathname}`}
       />
       
       <StructuredData 
