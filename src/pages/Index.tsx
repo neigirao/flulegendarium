@@ -2,13 +2,15 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trophy, Rocket, Instagram } from "lucide-react";
 import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
+import { ResponsiveContainer, HeaderContainer } from "@/components/ux/ResponsiveContainer";
+import { TouchOptimizedButton, TouchOptimizedCard } from "@/components/ux/TouchOptimized";
+import { LoadingState } from "@/components/ux/LoadingStates";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -84,16 +86,18 @@ const Index = () => {
 
             {/* Main CTA Button */}
             <div className="mb-8">
-              <Button
+              <TouchOptimizedButton
                 onClick={() => {
                   analytics.trackUserEngagement('cta_click', 'main_hero');
                   navigate('/selecionar-modo-jogo');
                 }}
-                className="bg-flu-grena hover:bg-flu-grena/90 text-white text-xl px-12 py-6 rounded-xl font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-105"
+                variant="primary"
+                size="lg"
+                className="text-xl px-12 py-6 shadow-xl hover:shadow-2xl"
               >
-                <Rocket className="w-6 h-6 mr-2" />
-                COMEÇAR A JOGAR AGORA
-              </Button>
+                <Rocket className="w-6 h-6" />
+                <span>COMEÇAR A JOGAR AGORA</span>
+              </TouchOptimizedButton>
             </div>
 
             <p className="text-white/70 text-sm mb-16">

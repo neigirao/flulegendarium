@@ -1,10 +1,9 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Loader2, Send } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { GuessConfirmDialog } from "./GuessConfirmDialog";
+import { TouchOptimizedButton, TouchOptimizedInput } from "@/components/ux/TouchOptimized";
 
 interface GuessFormProps {
   disabled: boolean;
@@ -49,27 +48,31 @@ export const GuessForm = ({ disabled, onSubmitGuess, isProcessing }: GuessFormPr
     <>
       <div className="w-full">
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            type="text"
+          <TouchOptimizedInput
             value={guess}
-            onChange={(e) => setGuess(e.target.value)}
+            onChange={setGuess}
             placeholder="Digite o nome do jogador..."
             disabled={disabled || isProcessing}
-            className="w-full text-lg py-4 px-6 border-2 border-gray-200 focus:border-flu-verde rounded-xl text-center font-medium placeholder:text-gray-400"
+            className="text-center font-medium text-lg"
             autoComplete="off"
           />
           
-          <Button
+          <TouchOptimizedButton
             type="submit"
             disabled={!guess.trim() || disabled || isProcessing}
-            className="w-full bg-flu-grena hover:bg-flu-grena/90 text-white py-4 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-[1.02]"
+            variant="primary"
+            size="lg"
+            className="w-full"
           >
             {isProcessing ? (
               <Loader2 className="w-6 h-6 animate-spin" />
             ) : (
-              "Confirmar Nome"
+              <>
+                <Send className="w-5 h-5" />
+                <span>Confirmar Nome</span>
+              </>
             )}
-          </Button>
+          </TouchOptimizedButton>
         </form>
       </div>
 

@@ -100,29 +100,29 @@
   }
 }
 
-/* Cores personalizadas do Fluminense */
+/* Cores personalizadas do Fluminense usando design tokens */
 .flu-grena {
-  color: rgb(122, 2, 19);
+  color: hsl(var(--primary));
 }
 
 .bg-flu-grena {
-  background-color: rgb(122, 2, 19);
+  background-color: hsl(var(--primary));
 }
 
 .flu-verde {
-  color: rgb(0, 97, 60);
+  color: hsl(var(--secondary));
 }
 
 .bg-flu-verde {
-  background-color: rgb(0, 97, 60);
+  background-color: hsl(var(--secondary));
 }
 
 .flu-branco {
-  color: rgb(255, 255, 255);
+  color: hsl(var(--accent));
 }
 
 .bg-flu-branco {
-  background-color: rgb(255, 255, 255);
+  background-color: hsl(var(--accent));
 }
 
 /* Componentes essenciais */
@@ -135,11 +135,11 @@
 }
 
 .flu-gradient {
-  @apply bg-gradient-to-r from-flu-grena via-flu-branco to-flu-verde;
+  background: var(--gradient-tricolor);
 }
 
 .flu-shadow {
-  box-shadow: 0 4px 20px rgba(122, 2, 19, 0.2), 0 2px 10px rgba(0, 97, 60, 0.15);
+  box-shadow: var(--shadow-tricolor);
 }
 
 /* Layout essencial */
@@ -251,13 +251,26 @@
   @apply transition-transform duration-200 hover:scale-105;
 }
 
-/* Gradientes temáticos */
+/* Gradientes temáticos usando design tokens */
 .gradient-flu {
-  background: linear-gradient(135deg, #7A0213 0%, #00613C 100%);
+  background: var(--gradient-grena);
 }
 
 .gradient-success {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: var(--gradient-verde);
+}
+
+/* UX Enhancement Classes */
+.interactive-feedback {
+  @apply transition-all duration-200 hover:scale-105 active:scale-95 transform-gpu;
+}
+
+.touch-target {
+  @apply min-h-[44px] min-w-[44px] touch-manipulation;
+}
+
+.focus-ring-enhanced {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
 }
 
 /* Mobile optimizations */

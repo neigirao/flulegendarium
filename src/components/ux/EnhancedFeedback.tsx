@@ -1,0 +1,160 @@
+import { CheckCircle, XCircle, Clock, Target, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface FeedbackType {
+  type: 'success' | 'error' | 'timeout' | 'hint' | 'achievement';
+  title: string;
+  message: string;
+  points?: number;
+  streak?: number;
+}
+
+interface EnhancedFeedbackProps {
+  feedback: FeedbackType;
+  show: boolean;
+  onClose: () => void;
+}
+
+export const EnhancedFeedback = ({ feedback, show, onClose }: EnhancedFeedbackProps) => {
+  if (!show) return null;
+
+  const feedbackStyles = {
+    success: {
+      bg: "bg-gradient-to-r from-green-500 to-emerald-600",
+      icon: CheckCircle,
+      iconColor: "text-white",
+      textColor: "text-white",
+      border: "border-green-400",
+      shadow: "shadow-green-500/50"
+    },
+    error: {
+      bg: "bg-gradient-to-r from-red-500 to-rose-600",
+      icon: XCircle,
+      iconColor: "text-white",
+      textColor: "text-white",
+      border: "border-red-400",
+      shadow: "shadow-red-500/50"
+    },
+    timeout: {
+      bg: "bg-gradient-to-r from-orange-500 to-amber-600",
+      icon: Clock,
+      iconColor: "text-white",
+      textColor: "text-white",
+      border: "border-orange-400",
+      shadow: "shadow-orange-500/50"
+    },
+    hint: {
+      bg: "bg-gradient-to-r from-blue-500 to-cyan-600",
+      icon: Target,
+      iconColor: "text-white",
+      textColor: "text-white",
+      border: "border-blue-400",
+      shadow: "shadow-blue-500/50"
+    },
+    achievement: {
+      bg: "bg-gradient-to-r from-purple-500 to-pink-600",
+      icon: Sparkles,
+      iconColor: "text-white",
+      textColor: "text-white",
+      border: "border-purple-400",
+      shadow: "shadow-purple-500/50"
+    }
+  };
+
+  const style = feedbackStyles[feedback.type];
+  const Icon = style.icon;
+
+  return (
+    <div 
+      className={cn(
+        "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50",
+        "w-[90%] max-w-md mx-auto"
+      )}
+    >
+      <div 
+        className={cn(
+          "relative p-6 rounded-2xl border-2 backdrop-blur-sm shadow-2xl",
+          "animate-scale-in transform-gpu transition-all duration-300",
+          style.bg,
+          style.border,
+          style.shadow
+        )}
+        onClick={onClose}
+      >
+        {/* Background pattern */}
+        <div className="absolute inset-0 rounded-2xl overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-black/10"></div>
+        </div>
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col items-center text-center space-y-4">
+          {/* Icon with animation */}
+          <div className="relative">
+            <div className={cn(
+              "w-16 h-16 rounded-full bg-white/20 flex items-center justify-center",
+              feedback.type === 'success' && "animate-bounce",
+              feedback.type === 'achievement' && "animate-pulse"
+            )}>
+              <Icon className={cn("w-8 h-8", style.iconColor)} />
+            </div>
+            
+            {/* Ripple effect for success */}
+            {feedback.type === 'success' && (
+              <div className="absolute inset-0 rounded-full border-4 border-white/30 animate-ping"></div>
+            )}
+          </div>
+
+          {/* Title */}
+          <h3 className={cn("text-xl font-bold", style.textColor)}>
+            {feedback.title}
+          </h3>
+
+          {/* Message */}
+          <p className={cn("text-sm opacity-90", style.textColor)}>
+            {feedback.message}
+          </p>
+
+          {/* Points and streak display */}
+          {(feedback.points !== undefined || feedback.streak !== undefined) && (
+            <div className="flex items-center gap-4 pt-2">
+              {feedback.points !== undefined && (
+                <div className="flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full">
+                  <Target className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium">+{feedback.points}</span>
+                </div>
+              )}
+              
+              {feedback.streak !== undefined && feedback.streak > 1 && (
+                <div className="flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full">
+                  <Sparkles className="w-4 h-4 text-white" />
+                  <span className="text-white font-medium">{feedback.streak}x</span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Touch to close hint */}
+          <p className="text-xs opacity-60 text-white pt-2">
+            Toque para continuar
+          </p>
+        </div>
+
+        {/* Decorative elements */}
+        {feedback.type === 'achievement' && (
+          <>
+            <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '1.5s' }}></div>
+          </>
+        )}
+      </div>
+
+      {/* Overlay */}
+      <div 
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm -z-10"
+        onClick={onClose}
+      ></div>
+    </div>
+  );
+};

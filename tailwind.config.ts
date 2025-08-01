@@ -89,6 +89,18 @@ export default {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-10px)" },
         },
+        "scale-in": {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "slide-up": {
+          "0%": { transform: "translateY(20px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -96,6 +108,9 @@ export default {
         "fade-in": "fade-in 0.3s ease-out",
         fadeIn: "fadeIn 0.5s ease-out",
         float: "float 3s ease-in-out infinite",
+        "scale-in": "scale-in 0.2s ease-out",
+        "slide-up": "slide-up 0.3s ease-out",
+        shimmer: "shimmer 2s infinite",
       },
       backgroundImage: {
         'flu-stripes': "linear-gradient(90deg, #7A0213 33%, #00613C 33%, #00613C 67%, #7A0213 67%)",
