@@ -1,6 +1,7 @@
 import { ReactNode, createContext, useContext } from 'react';
 import { useUXFeedback } from '@/hooks/use-ux-feedback';
 import { EnhancedFeedback } from './EnhancedFeedback';
+import { AchievementSystemProvider } from '@/components/achievements/AchievementSystemProvider';
 
 interface UXContextType {
   showSuccess: (points: number, streak?: number, playerName?: string) => void;
@@ -49,16 +50,18 @@ export const UXProvider = ({ children }: UXProviderProps) => {
 
   return (
     <UXContext.Provider value={contextValue}>
-      {children}
-      
-      {/* Feedback overlay global */}
-      {feedback && (
-        <EnhancedFeedback
-          feedback={feedback}
-          show={feedback.show}
-          onClose={closeFeedback}
-        />
-      )}
+      <AchievementSystemProvider>
+        {children}
+        
+        {/* Feedback overlay global */}
+        {feedback && (
+          <EnhancedFeedback
+            feedback={feedback}
+            show={feedback.show}
+            onClose={closeFeedback}
+          />
+        )}
+      </AchievementSystemProvider>
     </UXContext.Provider>
   );
 };

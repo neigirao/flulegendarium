@@ -11,6 +11,11 @@ import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBounda
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
 import { UXProvider } from "@/components/ux/UXProvider";
+import { CoreWebVitalsOptimizer } from "@/components/performance/CoreWebVitalsOptimizer";
+import { PerformanceBudgetMonitor } from "@/components/performance/PerformanceBudgetMonitor";
+import { AdvancedServiceWorker } from "@/components/performance/AdvancedServiceWorker";
+import { OptimizedCSS } from "@/components/performance/OptimizedCSS";
+import { PerformanceMetricsReporter } from "@/components/performance/PerformanceMetricsReporter";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
@@ -45,7 +50,7 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <UXProvider>
-              <TooltipProvider>
+                  <TooltipProvider>
                 <CriticalMeta />
                 <MobileViewport />
               
@@ -100,10 +105,17 @@ function App() {
                   </Routes>
                 </Suspense>
               </div>
-                <Toaster />
-                <PerformanceDashboard />
-              </TooltipProvider>
-            </UXProvider>
+                    <Toaster />
+                    <PerformanceDashboard />
+                    <AdvancedServiceWorker />
+                    <OptimizedCSS />
+                    <PerformanceMetricsReporter />
+                  </TooltipProvider>
+                </UXProvider>
+                <CoreWebVitalsOptimizer>
+                  <div></div>
+                </CoreWebVitalsOptimizer>
+                <PerformanceBudgetMonitor />
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>

@@ -14,9 +14,8 @@ import { AdaptiveProgressionNotification } from "./AdaptiveProgressionNotificati
 import { DebugInfo } from "./DebugInfo";
 import { EmptyPlayersDisplay } from "./EmptyPlayersDisplay";
 import { ErrorDisplay } from "./ErrorDisplay";
-import { useAchievementSystem } from "@/hooks/use-achievement-system";
+import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
-import { AchievementToast } from "@/components/achievements/AchievementToast";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { useUX } from "@/components/ux/UXProvider";
@@ -30,8 +29,8 @@ const AdaptiveGameContainer = () => {
   const { user } = useAuth();
   const { players, isLoading, playersError } = usePlayersData();
   
-  // Sprint 2 hooks
-  const { pendingAchievements, checkAndUnlockAchievements, clearPendingAchievements } = useAchievementSystem();
+  // Achievement hooks
+  const { checkProgressAchievements } = useAchievementSystem();
   const analytics = useEnhancedAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
   const { showContextualFeedback } = useUX();
@@ -176,12 +175,6 @@ const AdaptiveGameContainer = () => {
         )}
       </ResponsiveContainer>
       
-      {pendingAchievements.length > 0 && (
-        <AchievementToast
-          achievementIds={pendingAchievements}
-          onComplete={clearPendingAchievements}
-        />
-      )}
     </>
   );
 };
