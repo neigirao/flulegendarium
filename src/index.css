@@ -148,6 +148,18 @@
   min-height: 100dvh;
 }
 
+/* Prevent layout shift with fixed dimensions */
+img[width][height] {
+  aspect-ratio: attr(width) / attr(height);
+}
+
+/* Force stable layout for images */
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .container {
   max-width: 100%;
   margin-left: auto;

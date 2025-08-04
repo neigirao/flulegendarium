@@ -70,7 +70,7 @@ const Index = () => {
         <TopNavigation />
         
         {/* Main Content */}
-        <div className="pt-24">
+        <div className="pt-24 min-h-screen">
           {/* Hero Section */}
           <section className="container mx-auto px-4 pt-16 pb-8 text-center">
             <h1 className="text-6xl md:text-8xl font-bold text-white mb-6">

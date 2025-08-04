@@ -53,7 +53,11 @@ export const TopNavigation = () => {
               <img 
                 src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.png" 
                 alt="Lendas do Flu Logo" 
+                width="40"
+                height="40"
                 className="w-10 h-10 object-contain group-hover:scale-105 transition-transform"
+                loading="eager"
+                decoding="sync"
               />
             </div>
             <div className="flex flex-col">

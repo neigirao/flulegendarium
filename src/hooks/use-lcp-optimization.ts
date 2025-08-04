@@ -84,28 +84,23 @@ export const useLCPOptimization = () => {
   }, []);
 
   const preloadLCPElements = useCallback(() => {
-    // Preload the most likely LCP elements with high priority
-    const lcpCandidates = [
-      '/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png', // Game banner - most likely LCP
-      '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png'  // Fluminense logo
-    ];
-
-    lcpCandidates.forEach((src, index) => {
-      const existing = document.querySelector(`link[href="${src}"][data-lcp-candidate="true"]`);
-      if (!existing) {
-        const link = document.createElement('link');
-        link.rel = 'preload';
-        link.href = src;
-        link.as = 'image';
-        link.fetchPriority = 'high';
-        link.crossOrigin = 'anonymous';
-        link.setAttribute('data-lcp-candidate', 'true');
-        link.type = 'image/png';
-        
-        document.head.appendChild(link);
-        console.log(`🚀 Preloading LCP candidate ${index + 1}:`, src);
-      }
-    });
+    // Only preload the logo which is actually used immediately
+    const logoSrc = '/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.png';
+    
+    const existing = document.querySelector(`link[href="${logoSrc}"][data-lcp-candidate="true"]`);
+    if (!existing) {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.href = logoSrc;
+      link.as = 'image';
+      link.fetchPriority = 'high';
+      link.crossOrigin = 'anonymous';
+      link.setAttribute('data-lcp-candidate', 'true');
+      link.type = 'image/png';
+      
+      document.head.appendChild(link);
+      console.log(`🚀 Preloading logo image:`, logoSrc);
+    }
   }, []);
 
   const identifyLCPElement = useCallback(() => {
