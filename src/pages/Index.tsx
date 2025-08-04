@@ -1,4 +1,6 @@
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Trophy, Rocket, Instagram } from "lucide-react";
@@ -10,12 +12,21 @@ const Index = () => {
     window.location.href = '/selecionar-modo-jogo';
   };
 
-  const mockRankings = [
-    { id: 1, player_name: "Tricolor #1", score: 850 },
-    { id: 2, player_name: "Flu Expert", score: 720 },
-    { id: 3, player_name: "Guerreiro", score: 680 },
-    { id: 4, player_name: "Nense", score: 650 },
-  ];
+  // Fetch top 10 rankings
+  const { data: rankings } = useQuery({
+    queryKey: ['top-rankings'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('rankings')
+        .select('*')
+        .order('score', { ascending: false })
+        .limit(10);
+      
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   return (
     <>
@@ -67,7 +78,7 @@ const Index = () => {
               <p className="text-white/80 mb-8">Os maiores conhecedores do Fluminense</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {mockRankings.map((ranking, index) => (
+                {rankings?.map((ranking, index) => (
                   <Card key={ranking.id} className="bg-white/10 backdrop-blur-sm border-white/20">
                     <CardContent className="p-4">
                       <div className="flex items-center justify-between">
@@ -91,7 +102,24 @@ const Index = () => {
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                )) || (
+                  // Fallback enquanto carrega
+                  Array.from({ length: 4 }, (_, index) => (
+                    <Card key={index} className="bg-white/10 backdrop-blur-sm border-white/20">
+                      <CardContent className="p-4">
+                        <div className="animate-pulse">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 rounded-full bg-white/20"></div>
+                            <div className="space-y-2">
+                              <div className="h-4 bg-white/20 rounded w-24"></div>
+                              <div className="h-3 bg-white/20 rounded w-16"></div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))
+                )}
               </div>
             </div>
 
