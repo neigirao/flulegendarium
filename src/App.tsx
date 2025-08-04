@@ -14,7 +14,7 @@ import { UXProvider } from "@/components/ux/UXProvider";
 import { CoreWebVitalsOptimizer } from "@/components/performance/CoreWebVitalsOptimizer";
 import { PerformanceBudgetMonitor } from "@/components/performance/PerformanceBudgetMonitor";
 import { AdvancedServiceWorker } from "@/components/performance/AdvancedServiceWorker";
-import { OptimizedCSS } from "@/components/performance/OptimizedCSS";
+
 import { PerformanceMetricsReporter } from "@/components/performance/PerformanceMetricsReporter";
 
 // Core pages (immediate load)
@@ -108,6 +108,7 @@ function App() {
                 </CoreWebVitalsOptimizer>
                 
                 <Toaster />
+                <AdvancedServiceWorker />
                 <PerformanceDashboard />
                 <PerformanceMetricsReporter />
                 <PerformanceBudgetMonitor />
