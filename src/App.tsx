@@ -109,8 +109,6 @@ function App() {
                 
                 <Toaster />
                 <PerformanceDashboard />
-                <AdvancedServiceWorker />
-                <OptimizedCSS />
                 <PerformanceMetricsReporter />
                 <PerformanceBudgetMonitor />
               </TooltipProvider>

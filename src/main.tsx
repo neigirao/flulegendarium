@@ -23,11 +23,4 @@ import { initializeSentry } from './utils/sentry'
   );
 })();
 
-// Simple service worker registration
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(() => console.log('✅ SW registered'))
-      .catch(() => console.warn('⚠️ SW registration failed'));
-  });
-}
+// ServiceWorker is handled by AdvancedServiceWorker component
