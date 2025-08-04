@@ -56,14 +56,7 @@ export const usePerformanceOptimization = () => {
     // Preload imagens críticas imediatamente
     preloadCriticalImages();
 
-    // Remover CSS crítico após carregamento
-    setTimeout(() => {
-      const criticalStyle = document.querySelector('style[data-critical="true"]');
-      if (criticalStyle) {
-        criticalStyle.remove();
-        console.log('🗑️ Critical CSS removed after load');
-      }
-    }, 3000);
+    // Keep critical CSS - do not remove to prevent layout breaking
 
     // Carregar recursos não críticos com baixa prioridade
     setTimeout(() => {

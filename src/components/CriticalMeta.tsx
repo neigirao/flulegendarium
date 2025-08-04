@@ -125,14 +125,9 @@ export const CriticalMeta = () => {
       }, 100);
     }
 
-    // OPTIMIZED: Cleanup after shorter timeout
+    // Keep critical CSS - do not remove
     return () => {
-      setTimeout(() => {
-        const criticalStyle = document.querySelector('style[data-optimized="minimal"]');
-        if (criticalStyle) {
-          criticalStyle.remove();
-        }
-      }, 2000);
+      // No cleanup needed - critical CSS should persist
     };
   }, [optimizeForLCP]);
 
