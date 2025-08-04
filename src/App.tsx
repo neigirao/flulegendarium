@@ -50,72 +50,71 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <UXProvider>
-                  <TooltipProvider>
+              <TooltipProvider>
                 <CriticalMeta />
                 <MobileViewport />
-              
-              <div className="min-h-screen bg-background font-sans antialiased">
-                <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-                </div>}>
-                  <Routes>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/auth" element={<LazyAuth />} />
-                    <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
-                    <Route 
-                      path="/quiz-adaptativo" 
-                      element={
-                        <GameErrorBoundary>
-                          <AdaptiveGuessPlayerSimple />
-                        </GameErrorBoundary>
-                      } 
-                    />
-                    <Route 
-                      path="/quiz-decada" 
-                      element={
-                        <GameErrorBoundary>
-                          <DecadeGuessPlayerSimple />
-                        </GameErrorBoundary>
-                      } 
-                    />
-                    
-                    <Route path="/social" element={<LazySocialPage />} />
-                    <Route path="/faq" element={<LazyFAQ />} />
-                    <Route path="/noticias" element={<LazyNewsPortal />} />
-                    <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
-                    <Route path="/doacoes" element={<LazyDonations />} />
-                    <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
-                    <Route 
-                      path="/admin" 
-                      element={
-                        <AdminErrorBoundary>
-                          <LazyAdmin />
-                        </AdminErrorBoundary>
-                      } 
-                    />
-                    <Route 
-                      path="/admin/dashboard" 
-                      element={
-                        <AdminErrorBoundary>
-                          <LazyAdmin />
-                        </AdminErrorBoundary>
-                      } 
-                    />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </Suspense>
-              </div>
-                    <Toaster />
-                    <PerformanceDashboard />
-                    <AdvancedServiceWorker />
-                    <OptimizedCSS />
-                    <PerformanceMetricsReporter />
-                  </TooltipProvider>
-                </UXProvider>
                 <CoreWebVitalsOptimizer>
-                  <div></div>
+                  <div className="min-h-screen bg-background font-sans antialiased">
+                    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
+                      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+                    </div>}>
+                      <Routes>
+                        <Route path="/" element={<Index />} />
+                        <Route path="/auth" element={<LazyAuth />} />
+                        <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
+                        <Route 
+                          path="/quiz-adaptativo" 
+                          element={
+                            <GameErrorBoundary>
+                              <AdaptiveGuessPlayerSimple />
+                            </GameErrorBoundary>
+                          } 
+                        />
+                        <Route 
+                          path="/quiz-decada" 
+                          element={
+                            <GameErrorBoundary>
+                              <DecadeGuessPlayerSimple />
+                            </GameErrorBoundary>
+                          } 
+                        />
+                        
+                        <Route path="/social" element={<LazySocialPage />} />
+                        <Route path="/faq" element={<LazyFAQ />} />
+                        <Route path="/noticias" element={<LazyNewsPortal />} />
+                        <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
+                        <Route path="/doacoes" element={<LazyDonations />} />
+                        <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
+                        <Route 
+                          path="/admin" 
+                          element={
+                            <AdminErrorBoundary>
+                              <LazyAdmin />
+                            </AdminErrorBoundary>
+                          } 
+                        />
+                        <Route 
+                          path="/admin/dashboard" 
+                          element={
+                            <AdminErrorBoundary>
+                              <LazyAdmin />
+                            </AdminErrorBoundary>
+                          } 
+                        />
+                        <Route path="*" element={<NotFound />} />
+                      </Routes>
+                    </Suspense>
+                  </div>
                 </CoreWebVitalsOptimizer>
+                
+                <Toaster />
+                <PerformanceDashboard />
+                <AdvancedServiceWorker />
+                <OptimizedCSS />
+                <PerformanceMetricsReporter />
                 <PerformanceBudgetMonitor />
+              </TooltipProvider>
+            </UXProvider>
           </AuthProvider>
         </BrowserRouter>
       </QueryClientProvider>
