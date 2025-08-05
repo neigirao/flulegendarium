@@ -6,7 +6,7 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#800020",
+  "theme_color": "#7A0213",
   "orientation": "portrait-primary",
   "scope": "/",
   "categories": ["games", "sports", "entertainment", "education"],
@@ -15,21 +15,33 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon",
+      "src": "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png",
+      "sizes": "192x192",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/og-image.png",
-      "type": "image/png",
+      "src": "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png",
       "sizes": "512x512",
-      "purpose": "any maskable"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/og-image.png",
-      "type": "image/png", 
+      "src": "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png",
       "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon",
       "purpose": "any"
     }
   ],

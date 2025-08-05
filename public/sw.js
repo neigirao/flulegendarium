@@ -1,22 +1,28 @@
 
-const CACHE_NAME = 'lendas-do-flu-v4-realtime';
-const STATIC_CACHE = 'static-v4-realtime';
-const DYNAMIC_CACHE = 'dynamic-v4-realtime';
-const IMAGE_CACHE = 'images-v4-realtime';
+// Enhanced Service Worker for Lendas do Flu PWA
+const CACHE_NAME = 'lendas-flu-pwa-v2.0.0';
+const STATIC_CACHE = 'lendas-flu-static-v2.0.0';
+const DYNAMIC_CACHE = 'lendas-flu-dynamic-v2.0.0';
+const IMAGE_CACHE = 'lendas-flu-images-v2.0.0';
 
-// Recursos críticos para LCP otimizado
+// Critical assets for optimized LCP and PWA functionality
 const CRITICAL_ASSETS = [
   '/',
-  '/src/main.tsx',
-  '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png', // Logo Fluminense - LCP crítico
-  '/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png', // Banner principal
+  '/manifest.json',
+  '/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png', // Hero banner
+  '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png'  // Logo/Icon
 ];
 
-// Recursos de preload para otimização
+// Additional assets to preload
 const PRELOAD_ASSETS = [
-  '/lovable-uploads/16398385-eef5-4e38-b90a-39630732acba.png',
-  '/lovable-uploads/16f7afff-6bba-4b39-a454-daa6c2373151.png',
-  '/manifest.json'
+  '/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.png',
+  '/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png',
+  '/lovable-uploads/16f7afff-6bba-4b39-a454-daa6c2373151.png'
+];
+
+// PWA specific assets
+const PWA_ASSETS = [
+  '/offline.html' // Fallback page for offline
 ];
 
 // Install - cache recursos críticos primeiro (LCP otimização)
