@@ -8,6 +8,7 @@ import { UXProvider } from "@/components/ux/UXProvider";
 import { PWAProvider } from "@/components/pwa/PWAProvider";
 import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
 import { PWAStatusIndicator } from "@/components/pwa/PWAStatusIndicator";
+import { PushNotificationManager } from "@/components/notifications/PushNotificationManager";
 import { AdvancedServiceWorker } from "@/components/performance/AdvancedServiceWorker";
 import { RootLayout } from "@/components/RootLayout";
 import { MobileViewport } from "@/components/mobile/MobileViewport";
@@ -57,6 +58,7 @@ function App() {
                   <AdvancedServiceWorker />
                   <PWAStatusIndicator />
                   <PWAInstallPrompt />
+                  <PushNotificationManager />
                   
                   <RootLayout>
                     <div className="min-h-screen bg-background font-sans antialiased">

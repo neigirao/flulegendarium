@@ -1,112 +1,85 @@
+import { useState, useCallback, useRef } from 'react';
 
-import { useCallback, useRef } from 'react';
+interface TouchPoint {
+  x: number;
+  y: number;
+  time: number;
+}
 
-export interface TouchGestureHandlers {
+interface GestureState {
+  isLongPressing: boolean;
+  direction: 'left' | 'right' | 'up' | 'down' | null;
+  distance: number;
+}
+
+interface UseTouchProps {
   onSwipeLeft?: () => void;
   onSwipeRight?: () => void;
   onSwipeUp?: () => void;
   onSwipeDown?: () => void;
   onTap?: () => void;
   onDoubleTap?: () => void;
+  onLongPress?: () => void;
+  threshold?: number;
   minSwipeDistance?: number;
-  maxTapDuration?: number;
+  longPressThreshold?: number;
+  doubleTapThreshold?: number;
+  disabled?: boolean;
 }
 
-export function useTouchGestures(handlers: TouchGestureHandlers) {
-  const {
-    onSwipeLeft,
-    onSwipeRight,
-    onSwipeUp,
-    onSwipeDown,
-    onTap,
-    onDoubleTap,
-    minSwipeDistance = 50,
-    maxTapDuration = 300,
-  } = handlers;
+export const useTouch = ({
+  onSwipeLeft,
+  onSwipeRight,
+  onSwipeUp,
+  onSwipeDown,
+  onTap,
+  onDoubleTap,
+  onLongPress,
+  threshold = 50,
+  longPressThreshold = 500,
+  doubleTapThreshold = 300,
+  disabled = false
+}: UseTouchProps) => {
+  const [gestureState, setGestureState] = useState<GestureState>({
+    isLongPressing: false,
+    direction: null,
+    distance: 0
+  });
 
-  const touchStart = useRef<{ x: number; y: number; time: number } | null>(null);
+  const touchStart = useRef<TouchPoint | null>(null);
   const lastTap = useRef<number>(0);
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent) => {
-      const touch = e.touches[0];
-      touchStart.current = {
-        x: touch.clientX,
-        y: touch.clientY,
-        time: Date.now(),
-      };
-    },
-    []
-  );
+  const startTouch = useCallback((e: any) => {
+    if (disabled) return;
+    const touch = e.touches?.[0] || e;
+    touchStart.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      time: Date.now()
+    };
+  }, [disabled]);
 
-  const handleTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      if (!touchStart.current) return;
+  const endTouch = useCallback((e: any) => {
+    if (disabled || !touchStart.current) return;
+    const touch = e.changedTouches?.[0] || e;
+    const deltaX = touch.clientX - touchStart.current.x;
+    const deltaY = touch.clientY - touchStart.current.y;
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
-      const touch = e.changedTouches[0];
-      const deltaX = touch.clientX - touchStart.current.x;
-      const deltaY = touch.clientY - touchStart.current.y;
-      const deltaTime = Date.now() - touchStart.current.time;
-      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-      // Handle tap gestures
-      if (distance < minSwipeDistance && deltaTime < maxTapDuration) {
-        const now = Date.now();
-        const timeSinceLastTap = now - lastTap.current;
-        
-        if (timeSinceLastTap < 300 && onDoubleTap) {
-          onDoubleTap();
-          lastTap.current = 0; // Reset to prevent triple tap
-        } else {
-          lastTap.current = now;
-          // Delay single tap to check for double tap
-          setTimeout(() => {
-            if (lastTap.current === now && onTap) {
-              onTap();
-            }
-          }, 300);
-        }
-        return;
+    if (distance < 10) {
+      onTap?.();
+    } else if (distance >= threshold) {
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        deltaX > 0 ? onSwipeRight?.() : onSwipeLeft?.();
+      } else {
+        deltaY > 0 ? onSwipeDown?.() : onSwipeUp?.();
       }
+    }
+    touchStart.current = null;
+  }, [disabled, threshold, onSwipeLeft, onSwipeRight, onSwipeUp, onSwipeDown, onTap]);
 
-      // Handle swipe gestures
-      if (distance >= minSwipeDistance) {
-        const absDeltaX = Math.abs(deltaX);
-        const absDeltaY = Math.abs(deltaY);
+  return { startTouch, endTouch, gestureState };
+};
 
-        if (absDeltaX > absDeltaY) {
-          // Horizontal swipe
-          if (deltaX > 0 && onSwipeRight) {
-            onSwipeRight();
-          } else if (deltaX < 0 && onSwipeLeft) {
-            onSwipeLeft();
-          }
-        } else {
-          // Vertical swipe
-          if (deltaY > 0 && onSwipeDown) {
-            onSwipeDown();
-          } else if (deltaY < 0 && onSwipeUp) {
-            onSwipeUp();
-          }
-        }
-      }
-
-      touchStart.current = null;
-    },
-    [
-      onSwipeLeft,
-      onSwipeRight,
-      onSwipeUp,
-      onSwipeDown,
-      onTap,
-      onDoubleTap,
-      minSwipeDistance,
-      maxTapDuration,
-    ]
-  );
-
-  return {
-    onTouchStart: handleTouchStart,
-    onTouchEnd: handleTouchEnd,
-  };
-}
+export const useTouchGestures = useTouch;
