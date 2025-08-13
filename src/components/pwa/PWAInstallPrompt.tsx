@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { X, Download, Share, Plus, MoreVertical, Smartphone, Monitor, Tablet } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -22,6 +23,7 @@ export const PWAInstallPrompt = () => {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [platform, setPlatform] = useState<'ios' | 'android' | 'desktop' | 'unknown'>('unknown');
   const [isInstallable, setIsInstallable] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     console.log('🔧 PWA Install Prompt: Inicializando...');
@@ -61,11 +63,13 @@ export const PWAInstallPrompt = () => {
       return false;
     };
 
-    // Mostrar prompt após 2 segundos se não estiver instalado
+    // Mostrar prompt após 2 segundos se não estiver instalado e for mobile
     const showPromptTimer = setTimeout(() => {
-      if (!checkIfInstalled()) {
-        console.log('⏰ PWA Install Prompt: Mostrando prompt após 2 segundos');
+      if (!checkIfInstalled() && isMobile) {
+        console.log('⏰ PWA Install Prompt: Mostrando prompt após 2 segundos (mobile)');
         setIsVisible(true);
+      } else if (!isMobile) {
+        console.log('🖥️ PWA Install Prompt: Não exibindo para desktop');
       }
     }, 2000);
 
