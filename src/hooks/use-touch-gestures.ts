@@ -24,6 +24,7 @@ interface UseTouchProps {
   minSwipeDistance?: number;
   longPressThreshold?: number;
   doubleTapThreshold?: number;
+  maxTapDuration?: number;
   disabled?: boolean;
 }
 
