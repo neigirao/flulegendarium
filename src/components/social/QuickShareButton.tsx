@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { SocialShareModal } from './SocialShareModal';
+import { ShareSystem2 } from './ShareSystem2';
 import { Achievement } from "@/types/achievements";
 
 interface QuickShareButtonProps {
@@ -49,9 +49,8 @@ export const QuickShareButton = ({
         Compartilhar
       </Button>
 
-      <SocialShareModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+      <ShareSystem2
+        trigger={undefined}
         score={score}
         correctGuesses={correctGuesses}
         gameMode={gameMode}
