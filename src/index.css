@@ -250,6 +250,10 @@ img {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+.hover-scale {
+  @apply transition-transform duration-200 hover:scale-105;
+}
+
 .focus-ring {
   @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flu-grena focus-visible:ring-offset-2;
 }
@@ -258,9 +262,8 @@ img {
   @apply transition-all duration-200 hover:scale-105 active:scale-95 focus-ring;
 }
 
-/* Hover scale para performance */
-.hover-scale {
-  @apply transition-transform duration-200 hover:scale-105;
+.touch-target {
+  @apply min-h-[44px] min-w-[44px] touch-manipulation;
 }
 
 /* Gradientes temáticos usando design tokens */
@@ -272,38 +275,13 @@ img {
   background: var(--gradient-verde);
 }
 
-/* UX Enhancement Classes */
-.interactive-feedback {
-  @apply transition-all duration-200 hover:scale-105 active:scale-95 transform-gpu;
-}
-
-.touch-target {
-  @apply min-h-[44px] min-w-[44px] touch-manipulation;
-}
-
-.focus-ring-enhanced {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2;
-}
-
 /* Mobile optimizations */
 @media (max-width: 768px) {
   .container {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
   }
-}
-
-/* Prevent horizontal scrolling */
-html {
-  overflow-x: hidden;
-}
-
-body {
-  overflow-x: hidden;
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
+  
   /* Safe area support */
   .safe-area-top {
     padding-top: env(safe-area-inset-top);
@@ -375,9 +353,4 @@ body {
       transition-duration: 0.01ms !important;
     }
   }
-}
-
-/* Additional responsive utilities */
-.hover-scale {
-  @apply transition-transform duration-200 hover:scale-105;
 }

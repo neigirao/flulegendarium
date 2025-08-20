@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DecadeSelectionPage } from './DecadeSelectionPage';
 import { GameContainer } from '@/components/guess-game/GameContainer';
+import { BaseGameContainer } from '@/components/guess-game/BaseGameContainer';
 import { useDecadePlayerSelection } from '@/hooks/use-decade-player-selection';
 import { useSimpleGameLogic } from '@/hooks/use-simple-game-logic';
 import { useSimpleGameCallbacks } from '@/hooks/use-simple-game-callbacks';
@@ -12,12 +13,8 @@ import { useDecadeGameState } from '@/hooks/use-decade-game-state';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { useUX } from '@/components/ux/UXProvider';
-import { ResponsiveContainer } from '@/components/ux/ResponsiveContainer';
-import { LoadingState } from '@/components/ux/LoadingStates';
 
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
@@ -183,106 +180,61 @@ export const DecadeGameContainer = () => {
   const decadeInfo = getDecadeInfo(selectedDecade);
 
   return (
-    <ResponsiveContainer variant="game" maxWidth="xl">
-      {/* Header do Jogo - Compacto como no Adaptativo */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            onClick={handleBackToSelection}
-            className="flex items-center gap-2 text-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Décadas
-          </Button>
-          
-          <div className="flex items-center gap-2">
-            <div className={`w-6 h-6 rounded-full ${decadeInfo.color} flex items-center justify-center text-white text-xs`}>
-              {decadeInfo.icon}
-            </div>
-            <h1 className="text-lg font-bold text-flu-grena">
-              {decadeInfo.label}
-            </h1>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="bg-flu-verde/10 text-flu-verde text-xs">
-            {availablePlayers.length} jogadores
-          </Badge>
-          
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleResetGame}
-            className="flex items-center gap-1 text-xs"
-          >
-            <RotateCcw className="w-3 h-3" />
-            Reset
-          </Button>
-        </div>
-      </div>
-
-      {/* Container do Jogo - Layout igual ao Adaptativo */}
-      <div className="mt-6 space-y-6">
-        {playersLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <LoadingState 
-              type="general" 
-              message={`Carregando jogadores dos ${decadeInfo.label}...`} 
-            />
-          </div>
-        ) : availablePlayers.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-6xl mb-4">😕</div>
-            <h3 className="text-xl font-semibold text-flu-grena mb-2">
-              Nenhum jogador encontrado
-            </h3>
-            <p className="text-gray-600 mb-4">
-              Não há jogadores cadastrados para os {decadeInfo.label}.
-            </p>
-            <Button onClick={handleBackToSelection}>
-              Escolher outra década
-            </Button>
-          </div>
-        ) : (
-          <GameContainer
-            currentPlayer={currentPlayer}
-            gameKey={gameKey.toString()}
-            attempts={attempts}
-            score={score}
-            gameOver={gameOver}
-            timeRemaining={timeRemaining}
-            MAX_ATTEMPTS={MAX_ATTEMPTS}
-            handleGuess={handleGuess}
-            selectRandomPlayer={selectRandomPlayer}
-            handlePlayerImageFixed={handlePlayerImageFixed}
-            isProcessingGuess={isProcessingGuess}
-            hasLost={gameOver}
-            startGameForPlayer={() => {}}
-            isTimerRunning={isTimerRunning}
-            gamesPlayed={gamesPlayed}
-            currentStreak={currentStreak}
-            maxStreak={maxStreak}
-            forceRefresh={forceRefresh}
-            playerChangeCount={playerChangeCount}
-            gameProgress={{ 
-              currentRound: gamesPlayed + 1,
-              currentStreak: currentStreak,
-              allowedDifficulties: ['muito_facil', 'facil', 'medio', 'dificil', 'muito_dificil'],
-              nextDifficultyThreshold: difficultyProgress
-            }}
-            currentDifficulty={{ 
-              label: currentDifficulty.label, 
-              level: currentDifficulty.level,
-              color: 'bg-flu-grena',
-              icon: '🎯',
-              multiplier: currentDifficulty.multiplier
-            } as any}
-          />
-        )}
-      </div>
-    </ResponsiveContainer>
+    <BaseGameContainer
+      onBack={handleBackToSelection}
+      backLabel="Décadas"
+      title={decadeInfo.label}
+      subtitle={decadeInfo.description}
+      icon={decadeInfo.icon}
+      iconColor={decadeInfo.color}
+      isLoading={playersLoading}
+      loadingMessage={`Carregando jogadores dos ${decadeInfo.label}...`}
+      hasPlayers={availablePlayers.length > 0}
+      emptyStateMessage={`Não há jogadores cadastrados para os ${decadeInfo.label}.`}
+      emptyStateAction={
+        <Button onClick={handleBackToSelection}>
+          Escolher outra década
+        </Button>
+      }
+      playerCount={availablePlayers.length}
+      onReset={handleResetGame}
+      showReset={true}
+    >
+      <GameContainer
+        currentPlayer={currentPlayer}
+        gameKey={gameKey.toString()}
+        attempts={attempts}
+        score={score}
+        gameOver={gameOver}
+        timeRemaining={timeRemaining}
+        MAX_ATTEMPTS={MAX_ATTEMPTS}
+        handleGuess={handleGuess}
+        selectRandomPlayer={selectRandomPlayer}
+        handlePlayerImageFixed={handlePlayerImageFixed}
+        isProcessingGuess={isProcessingGuess}
+        hasLost={gameOver}
+        startGameForPlayer={() => {}}
+        isTimerRunning={isTimerRunning}
+        gamesPlayed={gamesPlayed}
+        currentStreak={currentStreak}
+        maxStreak={maxStreak}
+        forceRefresh={forceRefresh}
+        playerChangeCount={playerChangeCount}
+        gameProgress={{ 
+          currentRound: gamesPlayed + 1,
+          currentStreak: currentStreak,
+          allowedDifficulties: ['muito_facil', 'facil', 'medio', 'dificil', 'muito_dificil'],
+          nextDifficultyThreshold: difficultyProgress
+        }}
+        currentDifficulty={{ 
+          label: currentDifficulty.label, 
+          level: currentDifficulty.level,
+          color: 'bg-flu-grena',
+          icon: '🎯',
+          multiplier: currentDifficulty.multiplier
+        } as any}
+      />
+    </BaseGameContainer>
   );
 };
 

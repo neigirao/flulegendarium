@@ -3,8 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useAdaptiveGuessGame } from "@/hooks/use-adaptive-guess-game";
 import { usePlayersData } from "@/hooks/use-players-data";
 import { useAuth } from "@/hooks/useAuth";
+import { BaseGameContainer } from "./BaseGameContainer";
 import { GameHeader } from "./GameHeader";
-
 import { AdaptiveDifficultyIndicator } from "./AdaptiveDifficultyIndicator";
 import { AdaptivePlayerImage } from "./AdaptivePlayerImage";
 import { GuessForm } from "./GuessForm";
@@ -12,15 +12,13 @@ import { GameOverDialog } from "./GameOverDialog";
 import { AdaptiveTutorial } from "./AdaptiveTutorial";
 import { AdaptiveProgressionNotification } from "./AdaptiveProgressionNotification";
 import { DebugInfo } from "./DebugInfo";
-import { EmptyPlayersDisplay } from "./EmptyPlayersDisplay";
 import { ErrorDisplay } from "./ErrorDisplay";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { useUX } from "@/components/ux/UXProvider";
-import { ResponsiveContainer } from "@/components/ux/ResponsiveContainer";
-import { LoadingState } from "@/components/ux/LoadingStates";
+import { Button } from "@/components/ui/button";
 
 const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
@@ -78,24 +76,16 @@ const AdaptiveGameContainer = () => {
     analytics.trackUserEngagement('tutorial_completed', 'adaptive_game');
   };
 
-  if (isLoading) {
-    return (
-      <ResponsiveContainer variant="game" className="min-h-screen flex items-center justify-center">
-        <LoadingState 
-          type="general" 
-          message="Carregando jogadores..." 
-        />
-      </ResponsiveContainer>
-    );
-  }
-
   if (playersError) {
     return <ErrorDisplay error={playersError} />;
   }
 
-  if (!players || players.length === 0) {
-    return <EmptyPlayersDisplay />;
-  }
+  const debugContent = showDebug ? (
+    <DebugInfo
+      show={true}
+      imageUrl={currentPlayer?.image_url}
+    />
+  ) : null;
 
   return (
     <>
@@ -105,7 +95,18 @@ const AdaptiveGameContainer = () => {
         player={currentPlayer}
       />
       
-      <ResponsiveContainer variant="game" maxWidth="xl" className={viewportInfo.isMobile ? 'px-2' : ''}>
+      <BaseGameContainer
+        title="Quiz Adaptativo"
+        subtitle="Dificuldade automática baseada no seu desempenho"
+        icon="🎯"
+        isLoading={isLoading}
+        loadingMessage="Carregando jogadores..."
+        hasPlayers={!!(players && players.length > 0)}
+        emptyStateMessage="Nenhum jogador encontrado para o quiz"
+        playerCount={players?.length}
+        showDebug={showDebug}
+        debugContent={debugContent}
+      >
         <GameHeader 
           score={score} 
           onDebugClick={() => setShowDebug(!showDebug)}
@@ -136,45 +137,37 @@ const AdaptiveGameContainer = () => {
               />
             </div>
           )}
-
-          {showDebug && (
-            <DebugInfo
-              show={true}
-              imageUrl={currentPlayer?.image_url}
-            />
-          )}
         </div>
+      </BaseGameContainer>
 
-        <GameOverDialog
-          open={gameOver}
-          onClose={() => {}}
-          playerName={currentPlayer?.name || ''}
-          score={score}
-          onResetScore={resetScore}
-          isAuthenticated={!!user}
-          onSaveToRanking={saveToRanking}
-          gameMode="adaptive"
-          difficultyLevel={currentDifficulty.label}
+      <GameOverDialog
+        open={gameOver}
+        onClose={() => {}}
+        playerName={currentPlayer?.name || ''}
+        score={score}
+        onResetScore={resetScore}
+        isAuthenticated={!!user}
+        onSaveToRanking={saveToRanking}
+        gameMode="adaptive"
+        difficultyLevel={currentDifficulty.label}
+      />
+
+      <AdaptiveTutorial 
+        isOpen={showTutorial}
+        onComplete={handleTutorialComplete}
+      />
+
+      {difficultyChangeInfo && (
+        <AdaptiveProgressionNotification
+          changeInfo={{
+            direction: 'up',
+            newLevel: difficultyChangeInfo.newLevel as any,
+            oldLevel: difficultyChangeInfo.oldLevel as any,
+            reason: difficultyChangeInfo.reason
+          }}
+          onClose={clearDifficultyChange}
         />
-
-        <AdaptiveTutorial 
-          isOpen={showTutorial}
-          onComplete={handleTutorialComplete}
-        />
-
-        {difficultyChangeInfo && (
-          <AdaptiveProgressionNotification
-            changeInfo={{
-              direction: 'up',
-              newLevel: difficultyChangeInfo.newLevel as any,
-              oldLevel: difficultyChangeInfo.oldLevel as any,
-              reason: difficultyChangeInfo.reason
-            }}
-            onClose={clearDifficultyChange}
-          />
-        )}
-      </ResponsiveContainer>
-      
+      )}
     </>
   );
 };
