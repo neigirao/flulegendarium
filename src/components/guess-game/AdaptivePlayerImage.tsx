@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Player, DifficultyLevel } from "@/types/guess-game";
-import { SimplePlayerImage } from "./SimplePlayerImage";
+import { UnifiedPlayerImage } from "@/components/player-image/UnifiedPlayerImage";
 import { cn } from "@/lib/utils";
 
 interface AdaptivePlayerImageProps {
@@ -56,9 +56,11 @@ export const AdaptivePlayerImage = ({
           className="relative rounded-2xl overflow-hidden bg-white w-80 h-80 md:w-96 md:h-96"
           style={{ filter: effects.filter }}
         >
-          <SimplePlayerImage
+          <UnifiedPlayerImage
             player={player}
             onImageLoaded={onImageFixed}
+            difficulty={difficulty}
+            priority={true}
           />
         </div>
         

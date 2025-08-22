@@ -1,6 +1,6 @@
 
 import { GameStatus } from "./GameStatus";
-import { FastPlayerImage } from "./FastPlayerImage";
+import { UnifiedPlayerImage } from "@/components/player-image/UnifiedPlayerImage";
 import { GuessForm } from "./GuessForm";
 import { Player, GameProgressInfo, DifficultyLevelInfo } from "@/types/guess-game";
 import { DifficultyIndicator } from "./DifficultyIndicator";
@@ -54,12 +54,6 @@ export const GameContainer = ({
   gameProgress,
   currentDifficulty
 }: GameContainerProps) => {
-  console.log('🎮 GameContainer render:', {
-    hasCurrentPlayer: !!currentPlayer,
-    playerName: currentPlayer?.name || 'null',
-    gameKey,
-    changeCount: playerChangeCount
-  });
 
   if (!currentPlayer) {
     return (
@@ -115,10 +109,11 @@ export const GameContainer = ({
             <div className="relative mb-6">
               <div className="aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden border-4 border-flu-verde p-2">
                 <div className="w-full h-full rounded-xl overflow-hidden">
-                  <FastPlayerImage
+                  <UnifiedPlayerImage
                     key={`${currentPlayer.id}-${gameKey}`}
                     player={currentPlayer}
                     onImageLoaded={handlePlayerImageFixed}
+                    priority={true}
                   />
                 </div>
               </div>

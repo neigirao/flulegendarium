@@ -2,7 +2,7 @@ import React, { Component, ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
-import { Logger } from '@/utils/logger';
+import { logger } from '@/utils/logger';
 
 interface Props {
   children: ReactNode;
@@ -44,8 +44,9 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     const { onError, level = 'component' } = this.props;
     
-    Logger.error(`Error boundary caught error (${level})`, error, {
-      component: 'EnhancedErrorBoundary',
+    logger.error(`Error boundary caught error (${level})`, 'ERROR_BOUNDARY', { 
+      error: error.message,
+      stack: error.stack,
       errorInfo: errorInfo.componentStack,
       level
     });
@@ -67,7 +68,7 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
 
   handleRetry = () => {
     if (this.state.retryCount < this.maxRetries) {
-      Logger.info(`Retrying after error (attempt ${this.state.retryCount + 1}/${this.maxRetries})`);
+      logger.info(`Retrying after error (attempt ${this.state.retryCount + 1}/${this.maxRetries})`);
       
       this.setState(prevState => ({
         hasError: false,

@@ -2,7 +2,7 @@ import { useEffect, useCallback, useRef } from 'react';
 import { useCoreWebVitals } from './use-core-web-vitals';
 import { useCriticalResources } from './use-critical-resources';
 import { useBundleAnalyzer } from './use-bundle-analyzer';
-import { Logger } from '@/utils/logger';
+import { logger } from '@/utils/logger';
 import { unifiedCache } from '@/utils/cache/UnifiedCacheManager';
 
 interface PerformanceStats {
@@ -39,7 +39,7 @@ export const useOptimizedPerformance = () => {
         updateViaCache: 'imports'
       });
 
-      Logger.info('Service Worker registered', { scope: registration.scope });
+      logger.info('Service Worker registered', 'SW', { scope: registration.scope });
       statsRef.current.serviceWorkerReady = true;
 
       // Handle updates with debouncing
@@ -47,7 +47,7 @@ export const useOptimizedPerformance = () => {
       registration.addEventListener('updatefound', () => {
         clearTimeout(updateTimeout);
         updateTimeout = window.setTimeout(() => {
-          Logger.info('SW update available');
+          logger.info('SW update available');
           if ((window as any).showUpdateToast) {
             (window as any).showUpdateToast();
           }
@@ -56,13 +56,13 @@ export const useOptimizedPerformance = () => {
 
       return registration;
     } catch (error) {
-      Logger.error('SW registration failed', error as Error);
+      logger.error('SW registration failed', 'SW', error as Error);
     }
   }, []);
 
   // Optimized critical path with better sequencing
   const optimizeCriticalPath = useCallback(async () => {
-    Logger.debug('Starting critical path optimization');
+    logger.debug('Starting critical path optimization');
 
     try {
       // Preload critical images immediately
@@ -77,7 +77,7 @@ export const useOptimizedPerformance = () => {
       }, delay);
       
     } catch (error) {
-      Logger.error('Critical path optimization failed', error as Error);
+      logger.error('Critical path optimization failed', 'PERFORMANCE', error as Error);
     }
   }, [preloadCriticalImages, loadNonCriticalResources]);
 
@@ -98,7 +98,7 @@ export const useOptimizedPerformance = () => {
           const slowComponents = performanceQueue.filter(p => p.time > 100);
           
           if (slowComponents.length > 0) {
-            Logger.warn('Slow components detected', { count: slowComponents.length, components: slowComponents });
+            logger.warn('Slow components detected', 'PERFORMANCE', { count: slowComponents.length, components: slowComponents });
             
             // Report to analytics (batched)
             if (window.gtag) {
@@ -185,7 +185,7 @@ export const useOptimizedPerformance = () => {
         clearTimeout(reportTimeout);
         reportTimeout = window.setTimeout(() => {
           if (clsAccumulator > 0.1) {
-            Logger.warn('High CLS detected', { cls: clsAccumulator });
+            logger.warn('High CLS detected', 'PERFORMANCE', { cls: clsAccumulator });
             // Report to analytics instead of web vitals directly
             if (window.gtag) {
               window.gtag('event', 'high_cls', {
@@ -203,7 +203,7 @@ export const useOptimizedPerformance = () => {
         observersRef.current.layout = observer;
         statsRef.current.observersActive++;
       } catch (e) {
-        Logger.warn('Layout shift observation not supported');
+        logger.warn('Layout shift observation not supported');
       }
     }
   }, [reportMetric]);
@@ -213,7 +213,7 @@ export const useOptimizedPerformance = () => {
     if (!('fonts' in document)) return;
 
     document.fonts.ready.then(() => {
-      Logger.debug('All fonts loaded');
+      logger.debug('All fonts loaded');
       
       // Cache font status
       unifiedCache.set('fonts:ready', true, 60 * 60 * 1000); // 1 hour cache
@@ -248,7 +248,7 @@ export const useOptimizedPerformance = () => {
         optimizeImageLoading();
         
         const totalTime = performance.now() - startTime;
-        Logger.info('Performance optimization complete', { 
+        logger.info('Performance optimization complete', 'PERFORMANCE', { 
           duration: totalTime,
           stats: statsRef.current
         });
@@ -257,7 +257,7 @@ export const useOptimizedPerformance = () => {
         statsRef.current.cacheHitRate = unifiedCache.getStats().hitRate;
         
       } catch (error) {
-        Logger.error('Performance optimization failed', error as Error);
+        logger.error('Performance optimization failed', 'PERFORMANCE', error as Error);
       }
     };
 

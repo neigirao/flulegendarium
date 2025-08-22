@@ -1,67 +1,84 @@
-export interface LogContext {
-  component?: string;
-  action?: string;
+/**
+ * Centralized logging utility for conditional debug logging
+ */
+
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+interface LogEntry {
+  level: LogLevel;
+  message: string;
+  context?: string;
   data?: any;
-  userId?: string;
-  decade?: string;
-  [key: string]: any;
+  timestamp: Date;
 }
 
-export class Logger {
-  private static isDev = import.meta.env.DEV;
-  
-  static info(message: string, context?: LogContext) {
-    if (this.isDev) {
-      console.log(`ℹ️ ${message}`, context ? { context } : '');
+class Logger {
+  private isDevelopment = process.env.NODE_ENV === 'development';
+
+  private log(level: LogLevel, message: string, context?: string, data?: any) {
+    if (!this.isDevelopment && level === 'debug') {
+      return; // Skip debug logs in production
+    }
+
+    const entry: LogEntry = {
+      level,
+      message,
+      context,
+      data,
+      timestamp: new Date()
+    };
+
+    const prefix = context ? `[${context}]` : '';
+    const formattedMessage = `${prefix} ${message}`;
+
+    switch (level) {
+      case 'debug':
+        console.log(`🔍 ${formattedMessage}`, data || '');
+        break;
+      case 'info':
+        console.info(`ℹ️ ${formattedMessage}`, data || '');
+        break;
+      case 'warn':
+        console.warn(`⚠️ ${formattedMessage}`, data || '');
+        break;
+      case 'error':
+        console.error(`❌ ${formattedMessage}`, data || '');
+        break;
     }
   }
-  
-  static error(message: string, error?: Error, context?: LogContext) {
-    console.error(`❌ ${message}`, { error, context });
-    
-    // Em produção, enviar para serviço de monitoramento
-    if (!this.isDev && typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'error', {
-        error_message: message,
-        error_details: error?.message,
-        error_stack: error?.stack,
-        ...context
-      });
+
+  debug(message: string, context?: string, data?: any) {
+    this.log('debug', message, context, data);
+  }
+
+  info(message: string, context?: string, data?: any) {
+    this.log('info', message, context, data);
+  }
+
+  warn(message: string, context?: string, data?: any) {
+    this.log('warn', message, context, data);
+  }
+
+  error(message: string, context?: string, data?: any) {
+    this.log('error', message, context, data);
+  }
+
+  // Game-specific logging methods
+  gameAction(action: string, playerName?: string, data?: any) {
+    this.debug(`Game: ${action}`, 'GAME', { playerName, ...data });
+  }
+
+  imageLoad(playerName: string, success: boolean, url?: string) {
+    if (success) {
+      this.debug(`Image loaded: ${playerName}`, 'IMAGE', { url });
+    } else {
+      this.warn(`Image failed: ${playerName}`, 'IMAGE', { url });
     }
   }
-  
-  static warn(message: string, context?: LogContext) {
-    if (this.isDev) {
-      console.warn(`⚠️ ${message}`, context ? { context } : '');
-    }
-  }
-  
-  static debug(message: string, context?: LogContext) {
-    if (this.isDev) {
-      console.debug(`🐛 ${message}`, context ? { context } : '');
-    }
-  }
-  
-  static performance(label: string, startTime: number) {
-    if (this.isDev) {
-      const duration = performance.now() - startTime;
-      console.log(`⏱️ Performance [${label}]: ${duration.toFixed(2)}ms`);
-    }
+
+  timer(action: string, timeRemaining?: number) {
+    this.debug(`Timer: ${action}`, 'TIMER', { timeRemaining });
   }
 }
 
-// Helper para timing de operações
-export const measurePerformance = async <T>(
-  label: string,
-  operation: () => Promise<T>
-): Promise<T> => {
-  const startTime = performance.now();
-  try {
-    const result = await operation();
-    Logger.performance(label, startTime);
-    return result;
-  } catch (error) {
-    Logger.error(`Error in ${label}`, error as Error);
-    throw error;
-  }
-};
+export const logger = new Logger();

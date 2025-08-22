@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { Logger } from "@/utils/logger";
+import { logger } from "@/utils/logger";
 
 export const TIME_LIMIT_SECONDS: number = 60;
 
@@ -35,7 +35,7 @@ export const useCleanTimer = (
   const startTimer = useCallback((): void => {
     if (gameOver) return;
     
-    Logger.debug('Timer started', { timeRemaining: TIME_LIMIT_SECONDS });
+    logger.debug('Timer started', 'TIMER', { timeRemaining: TIME_LIMIT_SECONDS });
     
     clearGameTimer();
     
@@ -46,7 +46,7 @@ export const useCleanTimer = (
     timerRef.current = window.setInterval(() => {
       setTimeRemaining(prev => {
         if (prev <= 1) {
-          Logger.debug('Timer expired');
+          logger.debug('Timer expired');
           clearGameTimer();
           onTimeUp();
           return 0;
@@ -58,7 +58,7 @@ export const useCleanTimer = (
 
   const pauseTimer = useCallback((): void => {
     if (isRunning && !isPaused) {
-      Logger.debug('Timer paused', { timeRemaining });
+      logger.debug('Timer paused', 'TIMER', { timeRemaining });
       if (timerRef.current) {
         window.clearInterval(timerRef.current);
         timerRef.current = null;
@@ -70,14 +70,14 @@ export const useCleanTimer = (
 
   const resumeTimer = useCallback((): void => {
     if (isPaused && !gameOver) {
-      Logger.debug('Timer resumed', { timeRemaining });
+      logger.debug('Timer resumed', 'TIMER', { timeRemaining });
       setIsPaused(false);
       setIsRunning(true);
       
       timerRef.current = window.setInterval(() => {
         setTimeRemaining(prev => {
           if (prev <= 1) {
-            Logger.debug('Timer expired after resume');
+            logger.debug('Timer expired after resume');
             clearGameTimer();
             onTimeUp();
             return 0;
@@ -89,7 +89,7 @@ export const useCleanTimer = (
   }, [isPaused, gameOver, clearGameTimer, onTimeUp, timeRemaining]);
 
   const stopTimer = useCallback((): void => {
-    Logger.debug('Timer stopped');
+    logger.debug('Timer stopped');
     clearGameTimer();
     setTimeRemaining(TIME_LIMIT_SECONDS);
   }, [clearGameTimer]);

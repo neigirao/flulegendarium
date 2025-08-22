@@ -1,4 +1,4 @@
-import { Logger } from '@/utils/logger';
+import { logger } from '@/utils/logger';
 
 interface CacheEntry<T = any> {
   data: T;
@@ -52,7 +52,7 @@ export class UnifiedCacheManager {
     };
 
     this.cache.set(key, entry);
-    Logger.debug(`Cache SET: ${key}`, { size: this.cache.size });
+    logger.debug(`Cache SET: ${key}`, 'CACHE', { size: this.cache.size });
   }
 
   get<T>(key: string): T | null {
@@ -65,7 +65,7 @@ export class UnifiedCacheManager {
     // Check if expired
     if (entry.ttl && Date.now() - entry.timestamp > entry.ttl) {
       this.cache.delete(key);
-      Logger.debug(`Cache EXPIRED: ${key}`);
+      logger.debug(`Cache EXPIRED: ${key}`);
       return null;
     }
 
@@ -73,7 +73,7 @@ export class UnifiedCacheManager {
     entry.accessCount++;
     entry.lastAccessed = Date.now();
 
-    Logger.debug(`Cache HIT: ${key}`, { accessCount: entry.accessCount });
+    logger.debug(`Cache HIT: ${key}`, 'CACHE', { accessCount: entry.accessCount });
     return entry.data;
   }
 
@@ -93,14 +93,14 @@ export class UnifiedCacheManager {
   delete(key: string): boolean {
     const deleted = this.cache.delete(key);
     if (deleted) {
-      Logger.debug(`Cache DELETE: ${key}`);
+      logger.debug(`Cache DELETE: ${key}`);
     }
     return deleted;
   }
 
   clear(): void {
     this.cache.clear();
-    Logger.info('Cache cleared');
+    logger.info('Cache cleared');
   }
 
   // Preload data for expected usage
@@ -117,7 +117,7 @@ export class UnifiedCacheManager {
         this.set(key, data, ttl);
         resolve(data);
       } catch (error) {
-        Logger.error(`Cache preload failed: ${key}`, error as Error);
+        logger.error(`Cache preload failed: ${key}`, 'CACHE', error as Error);
         reject(error);
       }
     });
@@ -149,7 +149,7 @@ export class UnifiedCacheManager {
 
     if (oldestKey) {
       this.cache.delete(oldestKey);
-      Logger.debug(`Cache LRU evicted: ${oldestKey}`);
+      logger.debug(`Cache LRU evicted: ${oldestKey}`);
     }
   }
 
@@ -166,7 +166,7 @@ export class UnifiedCacheManager {
     }
 
     if (cleaned > 0) {
-      Logger.debug(`Cache cleanup: ${cleaned} entries removed`);
+      logger.debug(`Cache cleanup: ${cleaned} entries removed`);
     }
   }
 

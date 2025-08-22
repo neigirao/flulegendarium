@@ -1,11 +1,12 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAdaptivePlayerSelection } from "./use-adaptive-player-selection";
-import { useGameTimer } from "./use-game-timer";
+import { useCleanTimer } from "./use-clean-timer";
 import { useAdaptiveGameMetrics } from "./use-adaptive-game-metrics";
 import { useToast } from "@/components/ui/use-toast";
 import { useTabVisibility } from "./use-tab-visibility";
 import { processPlayerName } from "@/utils/name-processor";
+import { logger } from "@/utils/logger";
 import type { Player } from "@/types/guess-game";
 
 interface DifficultyLevel {
@@ -59,7 +60,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const handleTimeUp = useCallback(() => {
     if (!currentPlayer || gameOver) return;
 
-    console.log('⏰ Tempo esgotado no modo adaptativo');
+    logger.timer('Time up - adaptive mode');
     
     setGameOver(true);
     setHasLost(true);
@@ -92,12 +93,12 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     getCurrentStats
   } = useAdaptiveGameMetrics();
 
-  const { timeRemaining, startTimer, stopTimer, isRunning } = useGameTimer(gameOver, handleTimeUp);
+  const { timeRemaining, startTimer, stopTimer, isRunning } = useCleanTimer(gameOver, handleTimeUp);
 
   // Tab visibility handler
   useEffect(() => {
     if (!isTabVisible && isRunning && !gameOver) {
-      console.log('🚫 Tab não está visível, terminando jogo');
+      logger.warn('Tab not visible, ending game', 'TAB_VISIBILITY');
       handleTimeUp();
     }
   }, [isTabVisible, isRunning, gameOver, handleTimeUp]);
@@ -147,7 +148,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
         timestamp: Date.now()
       });
 
-      console.log(`🎯 Dificuldade alterada: ${oldDifficulty.label} → ${newDifficulty.label} (${changeReason})`);
+      logger.debug(`Difficulty changed: ${oldDifficulty.label} → ${newDifficulty.label} (${changeReason})`, 'DIFFICULTY');
       
       // Reset sequences after difficulty change
       setCorrectSequence(0);
@@ -164,16 +165,16 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const selectRandomPlayer = useCallback(() => {
     if (!players || players.length === 0) return;
 
-    console.log(`🎯 Selecionando jogador com dificuldade: ${currentDifficulty.label}`);
+    logger.debug(`Selecting player with difficulty: ${currentDifficulty.label}`, 'PLAYER_SELECTION');
     
     const selectedPlayer = selectPlayerByDifficulty(players, currentDifficulty.level as any);
     
     if (selectedPlayer) {
       setCurrentPlayer(selectedPlayer);
       setGameKey(prev => prev + 1);
-      console.log(`✅ Jogador selecionado: ${selectedPlayer.name} (Dificuldade: ${currentDifficulty.label})`);
+      logger.debug(`Player selected: ${selectedPlayer.name}`, 'PLAYER_SELECTION', { difficulty: currentDifficulty.label });
     } else {
-      console.warn(`⚠️ Nenhum jogador encontrado para dificuldade: ${currentDifficulty.label}`);
+      logger.warn(`No player found for difficulty: ${currentDifficulty.label}`, 'PLAYER_SELECTION');
       // Fallback to medium difficulty
       const fallbackPlayer = selectPlayerByDifficulty(players, 'medio');
       if (fallbackPlayer) {
@@ -186,7 +187,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const startGameForPlayer = useCallback(() => {
     if (!currentPlayer) return;
     
-    console.log('🎮 Iniciando jogo adaptativo para:', currentPlayer.name);
+    logger.gameAction('Starting adaptive game', currentPlayer.name);
     setAttempts(0);
     setGameOver(false);
     setHasLost(false);
@@ -205,7 +206,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     const guessTime = Date.now() - lastGuessTimeRef.current;
     
     try {
-      console.log(`🤔 Processando palpite adaptativo: "${guess}" para ${currentPlayer.name}`);
+      logger.debug(`Processing guess: "${guess}"`, 'GUESS', { playerName: currentPlayer.name });
       
       const result = await processPlayerName(guess, currentPlayer.name, currentPlayer.id);
       const isCorrect = result.processedName !== null && result.confidence > 0.7;
@@ -224,7 +225,10 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
         recordCorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
         adjustDifficulty(true);
         
-        console.log(`✅ Resposta correta! +${pointsEarned} pontos (Multiplicador: ${currentDifficulty.multiplier}x)`);
+        logger.debug(`Correct answer! +${pointsEarned} points`, 'GUESS', { 
+          multiplier: currentDifficulty.multiplier,
+          playerName: currentPlayer.name 
+        });
         
         toast({
           title: "Correto!",
@@ -238,7 +242,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
         }, 1500);
         
       } else {
-        console.log(`❌ Resposta incorreta. Era: ${currentPlayer.name}`);
+        logger.debug(`Incorrect answer`, 'GUESS', { correctAnswer: currentPlayer.name });
         
         setGameOver(true);
         setHasLost(true);
@@ -259,7 +263,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
         setIsProcessingGuess(false);
       }
     } catch (error) {
-      console.error('❌ Erro ao processar palpite adaptativo:', error);
+      logger.error('Error processing adaptive guess', 'GUESS', error);
       setIsProcessingGuess(false);
     }
   }, [
