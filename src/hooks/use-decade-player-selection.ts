@@ -86,7 +86,7 @@ export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
 
     console.log('✅ Jogador da década selecionado:', {
       name: selectedPlayer.name,
-      decade: selectedPlayer.decade,
+      decades: selectedPlayer.decades,
       id: selectedPlayer.id
     });
 

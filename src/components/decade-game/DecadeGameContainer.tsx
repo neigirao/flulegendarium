@@ -14,11 +14,13 @@ import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
 import { Button } from '@/components/ui/button';
-import { useUX } from '@/components/ux/UXProvider';
 
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
-  const { showContextualFeedback } = useUX();
+  
+  // Remover temporariamente o useUX que pode estar causando problemas
+  // const { showContextualFeedback } = useUX();
+  
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
   const [playerCounts, setPlayerCounts] = useState<Record<Decade, number>>({
     '1970s': 0,
@@ -141,12 +143,16 @@ export const DecadeGameContainer = () => {
   }, [currentPlayer, gameOver, startMetricsTracking, startTimer]);
 
   const handleDecadeSelect = (decade: Decade) => {
-    console.log(`🎮 Década selecionada: ${decade}`);
-    setSelectedDecade(decade);
-    resetGame();
-    resetMetrics();
-    resetTimer();
-    setGameKey(prev => prev + 1);
+    try {
+      console.log(`🎮 Década selecionada: ${decade}`);
+      setSelectedDecade(decade);
+      resetGame();
+      resetMetrics();
+      resetTimer();
+      setGameKey(prev => prev + 1);
+    } catch (error) {
+      console.error('❌ Erro ao selecionar década:', error);
+    }
   };
 
   const handleBackToSelection = () => {
