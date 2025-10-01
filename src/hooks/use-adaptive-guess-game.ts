@@ -46,8 +46,8 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const [maxStreak, setMaxStreak] = useState(0);
   const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
 
-  // Adaptive difficulty state - Start with "muito_facil" instead of "medio"
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS[0]); // Changed from index 2 to 0
+  // Adaptive difficulty state
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS[0]);
   const [difficultyProgress, setDifficultyProgress] = useState(0);
   const [correctSequence, setCorrectSequence] = useState(0);
   const [incorrectSequence, setIncorrectSequence] = useState(0);
@@ -55,6 +55,9 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const { toast } = useToast();
   const { isVisible: isTabVisible } = useTabVisibility();
   const lastGuessTimeRef = useRef<number>(0);
+  
+  // Rastrear jogadores já usados nesta partida
+  const usedPlayerIds = useRef<Set<string>>(new Set());
 
   // Define handleTimeUp before using it
   const handleTimeUp = useCallback(() => {
@@ -165,22 +168,32 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const selectRandomPlayer = useCallback(() => {
     if (!players || players.length === 0) return;
 
+    // Verificar se todos os jogadores já foram usados
+    if (usedPlayerIds.current.size >= players.length) {
+      logger.warn('All players used in this game - no more players available', 'PLAYER_SELECTION');
+      return;
+    }
+
     logger.debug(`Selecting player with difficulty: ${currentDifficulty.label}`, 'PLAYER_SELECTION');
     
-    const selectedPlayer = selectPlayerByDifficulty(players, currentDifficulty.level as any);
+    const selectedPlayer = selectPlayerByDifficulty(
+      players, 
+      currentDifficulty.level as any,
+      usedPlayerIds.current
+    );
     
     if (selectedPlayer) {
+      // Adicionar ao set de jogadores usados
+      usedPlayerIds.current.add(selectedPlayer.id);
       setCurrentPlayer(selectedPlayer);
       setGameKey(prev => prev + 1);
-      logger.debug(`Player selected: ${selectedPlayer.name}`, 'PLAYER_SELECTION', { difficulty: currentDifficulty.label });
+      logger.debug(`Player selected: ${selectedPlayer.name}`, 'PLAYER_SELECTION', { 
+        difficulty: currentDifficulty.label,
+        usedCount: usedPlayerIds.current.size,
+        totalPlayers: players.length
+      });
     } else {
-      logger.warn(`No player found for difficulty: ${currentDifficulty.label}`, 'PLAYER_SELECTION');
-      // Fallback to medium difficulty
-      const fallbackPlayer = selectPlayerByDifficulty(players, 'medio');
-      if (fallbackPlayer) {
-        setCurrentPlayer(fallbackPlayer);
-        setGameKey(prev => prev + 1);
-      }
+      logger.warn('No available player found', 'PLAYER_SELECTION');
     }
   }, [players, currentDifficulty, selectPlayerByDifficulty]);
 
@@ -301,11 +314,15 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     setGameOver(false);
     setHasLost(false);
     setAttempts(0);
-    setCurrentDifficulty(DIFFICULTY_LEVELS[0]); // Reset to "muito_facil" instead of "medio"
+    setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
     setDifficultyProgress(0);
     setCorrectSequence(0);
     setIncorrectSequence(0);
     setDifficultyChangeInfo(null);
+    
+    // Limpar histórico de jogadores usados ao resetar o jogo
+    usedPlayerIds.current.clear();
+    
     resetMetrics();
     selectRandomPlayer();
   }, [selectRandomPlayer, resetMetrics]);
