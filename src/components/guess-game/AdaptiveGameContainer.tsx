@@ -9,7 +9,7 @@ import { AdaptiveDifficultyIndicator } from "./AdaptiveDifficultyIndicator";
 import { AdaptivePlayerImage } from "./AdaptivePlayerImage";
 import { GuessForm } from "./GuessForm";
 import { GameOverDialog } from "./GameOverDialog";
-import { AdaptiveTutorial } from "./AdaptiveTutorial";
+import { GuestNameForm } from "./GuestNameForm";
 import { AdaptiveProgressionNotification } from "./AdaptiveProgressionNotification";
 import { DebugInfo } from "./DebugInfo";
 import { ErrorDisplay } from "./ErrorDisplay";
@@ -18,11 +18,11 @@ import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
 import { useUX } from "@/components/ux/UXProvider";
-import { Button } from "@/components/ui/button";
 
 const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
+  const [guestName, setGuestName] = useState<string>("");
+  const [showGuestNameForm, setShowGuestNameForm] = useState(false);
   
   const { user } = useAuth();
   const { players, isLoading, playersError } = usePlayersData();
@@ -60,20 +60,20 @@ const AdaptiveGameContainer = () => {
   } = useAdaptiveGuessGame(players);
 
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('adaptive-tutorial-seen');
-    if (!hasSeenTutorial) {
-      setShowTutorial(true);
+    // Se não estiver autenticado e não tiver nome de convidado, mostrar formulário
+    if (!user && !guestName && !showGuestNameForm && players && players.length > 0) {
+      setShowGuestNameForm(true);
     }
     
     // Track page view
     analytics.trackPageView('/quiz-adaptativo');
     analytics.trackUserEngagement('page_view', 'adaptive_game');
-  }, [analytics]);
+  }, [analytics, user, guestName, showGuestNameForm, players]);
 
-  const handleTutorialComplete = () => {
-    setShowTutorial(false);
-    localStorage.setItem('adaptive-tutorial-seen', 'true');
-    analytics.trackUserEngagement('tutorial_completed', 'adaptive_game');
+  const handleGuestNameSubmit = (name: string) => {
+    setGuestName(name);
+    setShowGuestNameForm(false);
+    // O timer só vai começar quando a imagem for carregada (handlePlayerImageFixed)
   };
 
   if (playersError) {
@@ -152,10 +152,12 @@ const AdaptiveGameContainer = () => {
         difficultyLevel={currentDifficulty.label}
       />
 
-      <AdaptiveTutorial 
-        isOpen={showTutorial}
-        onComplete={handleTutorialComplete}
-      />
+      {showGuestNameForm && (
+        <GuestNameForm
+          onNameSubmitted={handleGuestNameSubmit}
+          onCancel={() => window.history.back()}
+        />
+      )}
 
       {difficultyChangeInfo && (
         <AdaptiveProgressionNotification

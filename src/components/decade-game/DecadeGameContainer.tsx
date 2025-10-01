@@ -1,15 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DecadeSelectionPage } from './DecadeSelectionPage';
 import { GameContainer } from '@/components/guess-game/GameContainer';
 import { BaseGameContainer } from '@/components/guess-game/BaseGameContainer';
+import { GuestNameForm } from '@/components/guess-game/GuestNameForm';
 import { useDecadePlayerSelection } from '@/hooks/use-decade-player-selection';
 import { useSimpleGameLogic } from '@/hooks/use-simple-game-logic';
 import { useSimpleGameCallbacks } from '@/hooks/use-simple-game-callbacks';
 import { useSimpleGameMetrics } from '@/hooks/use-simple-game-metrics';
 import { useDecadeGameTimer } from '@/hooks/use-decade-game-timer';
 import { useDecadeGameState } from '@/hooks/use-decade-game-state';
+import { useAuth } from '@/hooks/useAuth';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
@@ -18,11 +20,11 @@ import { logger } from '@/utils/logger';
 
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
-  
-  // Remover temporariamente o useUX que pode estar causando problemas
-  // const { showContextualFeedback } = useUX();
+  const { user } = useAuth();
   
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
+  const [guestName, setGuestName] = useState<string>("");
+  const [showGuestNameForm, setShowGuestNameForm] = useState(false);
   const [playerCounts, setPlayerCounts] = useState<Record<Decade, number>>({
     '1970s': 0,
     '1980s': 0,
@@ -134,13 +136,20 @@ export const DecadeGameContainer = () => {
     loadPlayerCounts();
   }, []);
 
-  // Iniciar jogo quando jogador é selecionado
+  // Verificar se precisa mostrar formulário de nome
   useEffect(() => {
-    if (currentPlayer && !gameOver) {
-      startMetricsTracking();
-      startTimer();
+    if (selectedDecade && !user && !guestName && !showGuestNameForm && availablePlayers.length > 0) {
+      setShowGuestNameForm(true);
     }
-  }, [currentPlayer, gameOver, startMetricsTracking, startTimer]);
+  }, [selectedDecade, user, guestName, showGuestNameForm, availablePlayers]);
+
+  // Iniciar jogo quando jogador é selecionado e usuário está pronto
+  useEffect(() => {
+    if (currentPlayer && !gameOver && (user || guestName)) {
+      startMetricsTracking();
+      // O timer só vai começar quando a imagem for carregada (handlePlayerImageFixed)
+    }
+  }, [currentPlayer, gameOver, user, guestName, startMetricsTracking]);
 
   const handleDecadeSelect = (decade: Decade) => {
     setSelectedDecade(decade);
@@ -148,6 +157,13 @@ export const DecadeGameContainer = () => {
     resetMetrics();
     resetTimer();
     setGameKey(prev => prev + 1);
+    // Não iniciar timer aqui, esperar o nome do convidado ou estar autenticado
+  };
+
+  const handleGuestNameSubmit = (name: string) => {
+    setGuestName(name);
+    setShowGuestNameForm(false);
+    // O timer só vai começar quando a imagem for carregada (handlePlayerImageFixed)
   };
 
   const handleBackToSelection = () => {
@@ -168,6 +184,14 @@ export const DecadeGameContainer = () => {
     setGameKey(prev => prev + 1);
   };
 
+  const handleImageFixed = useCallback(() => {
+    handlePlayerImageFixed();
+    // Só iniciar timer se tiver usuário autenticado ou nome de convidado
+    if ((user || guestName) && currentPlayer && !gameOver && !isTimerRunning) {
+      startTimer();
+    }
+  }, [handlePlayerImageFixed, user, guestName, currentPlayer, gameOver, isTimerRunning, startTimer]);
+
   // Se nenhuma década foi selecionada, mostrar página de seleção
   if (!selectedDecade) {
     return (
@@ -181,7 +205,15 @@ export const DecadeGameContainer = () => {
   const decadeInfo = getDecadeInfo(selectedDecade);
 
   return (
-    <BaseGameContainer
+    <>
+      {showGuestNameForm && (
+        <GuestNameForm
+          onNameSubmitted={handleGuestNameSubmit}
+          onCancel={handleBackToSelection}
+        />
+      )}
+      
+      <BaseGameContainer
       onBack={handleBackToSelection}
       backLabel="Décadas"
       title={decadeInfo.label}
@@ -211,7 +243,7 @@ export const DecadeGameContainer = () => {
         MAX_ATTEMPTS={MAX_ATTEMPTS}
         handleGuess={handleGuess}
         selectRandomPlayer={selectRandomPlayer}
-        handlePlayerImageFixed={handlePlayerImageFixed}
+        handlePlayerImageFixed={handleImageFixed}
         isProcessingGuess={isProcessingGuess}
         hasLost={gameOver}
         startGameForPlayer={() => {}}
@@ -236,6 +268,7 @@ export const DecadeGameContainer = () => {
         } as any}
       />
     </BaseGameContainer>
+    </>
   );
 };
 
