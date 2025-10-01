@@ -100,11 +100,11 @@ export const useDecadeGameState = () => {
     setGameOver(false);
     setAttempts(0);
     setCurrentStreak(0);
-    setCurrentDifficulty(DIFFICULTY_LEVELS[0]); // Reset to muito_facil
+    setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
     setDifficultyProgress(0);
     setCorrectSequence(0);
     setIncorrectSequence(0);
-    // Don't reset maxStreak and gamesPlayed as they persist across games
+    // maxStreak e gamesPlayed persistem entre partidas
   }, []);
 
   const incrementAttempts = useCallback(() => {

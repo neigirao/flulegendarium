@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { DecadePlayer, Decade } from "@/types/decade-game";
 import { decadePlayerService } from "@/services/decadePlayerService";
+import { logger } from "@/utils/logger";
 
 export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
   const [availablePlayers, setAvailablePlayers] = useState<DecadePlayer[]>([]);
@@ -9,14 +10,6 @@ export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
   const [isLoading, setIsLoading] = useState(false);
   const [playerChangeCount, setPlayerChangeCount] = useState(0);
   const usedPlayerIds = useRef<Set<string>>(new Set());
-
-  console.log('🎯 useDecadePlayerSelection hook:', {
-    selectedDecade,
-    playersCount: availablePlayers.length,
-    currentPlayerName: currentPlayer?.name || 'null',
-    playerChangeCount,
-    usedPlayersCount: usedPlayerIds.current.size
-  });
 
   // Carregar jogadores quando a década mudar
   useEffect(() => {
@@ -29,10 +22,9 @@ export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
 
       setIsLoading(true);
       try {
-        console.log(`🔄 Carregando jogadores da década: ${selectedDecade}`);
         const players = await decadePlayerService.getPlayersByDecade(selectedDecade);
         setAvailablePlayers(players);
-        usedPlayerIds.current.clear(); // Limpar histórico ao mudar década
+        usedPlayerIds.current.clear(); // Limpar histórico apenas ao mudar década
         
         if (players.length > 0) {
           // Selecionar primeiro jogador automaticamente
@@ -42,7 +34,7 @@ export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
           setPlayerChangeCount(1);
         }
       } catch (error) {
-        console.error('❌ Erro ao carregar jogadores por década:', error);
+        logger.error(`Error loading decade players for ${selectedDecade}`);
         setAvailablePlayers([]);
         setCurrentPlayer(null);
       } finally {
@@ -55,40 +47,27 @@ export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
 
   const selectRandomPlayer = useCallback(() => {
     if (!availablePlayers || availablePlayers.length === 0) {
-      console.warn('⚠️ Nenhum jogador disponível para seleção');
       return;
     }
 
-    console.log('🎲 Selecionando jogador aleatório da década...', {
-      totalPlayers: availablePlayers.length,
-      usedPlayers: usedPlayerIds.current.size
-    });
-
-    // Se todos os jogadores já foram usados, reiniciar
+    // Se todos os jogadores já foram usados nesta partida, não reiniciar
+    // O jogo deve acabar quando todos os jogadores foram mostrados
     if (usedPlayerIds.current.size >= availablePlayers.length) {
-      console.log('🔄 Todos os jogadores da década foram usados, reiniciando...');
-      usedPlayerIds.current.clear();
+      return; // Não há mais jogadores disponíveis nesta partida
     }
 
-    // Filtrar jogadores não utilizados
+    // Filtrar jogadores não utilizados nesta partida
     const availableForSelection = availablePlayers.filter(player => 
       !usedPlayerIds.current.has(player.id)
     );
     
     if (availableForSelection.length === 0) {
-      console.warn('⚠️ Nenhum jogador disponível após filtro');
-      return;
+      return; // Não há mais jogadores disponíveis
     }
 
     // Selecionar jogador aleatório
     const randomIndex = Math.floor(Math.random() * availableForSelection.length);
     const selectedPlayer = availableForSelection[randomIndex];
-
-    console.log('✅ Jogador da década selecionado:', {
-      name: selectedPlayer.name,
-      decades: selectedPlayer.decades,
-      id: selectedPlayer.id
-    });
 
     // Marcar como usado e atualizar estado
     usedPlayerIds.current.add(selectedPlayer.id);
@@ -97,7 +76,7 @@ export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
   }, [availablePlayers]);
 
   const handlePlayerImageFixed = useCallback(() => {
-    console.log('🖼️ Imagem do jogador da década corrigida para:', currentPlayer?.name);
+    // Image loaded successfully
   }, [currentPlayer]);
 
   return {

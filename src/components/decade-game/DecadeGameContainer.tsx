@@ -14,6 +14,7 @@ import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
 import { Button } from '@/components/ui/button';
+import { logger } from '@/utils/logger';
 
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
@@ -69,7 +70,6 @@ export const DecadeGameContainer = () => {
   } = useDecadeGameTimer({
     initialTime: 60,
     onTimeUp: () => {
-      console.log('Tempo esgotado no jogo da década');
       endGame();
       resetStreak();
     }
@@ -127,7 +127,7 @@ export const DecadeGameContainer = () => {
         
         setPlayerCounts(counts);
       } catch (error) {
-        console.error('❌ Erro ao carregar contadores de jogadores:', error);
+        logger.error('Error loading player counts for decades');
       }
     };
 
@@ -143,16 +143,11 @@ export const DecadeGameContainer = () => {
   }, [currentPlayer, gameOver, startMetricsTracking, startTimer]);
 
   const handleDecadeSelect = (decade: Decade) => {
-    try {
-      console.log(`🎮 Década selecionada: ${decade}`);
-      setSelectedDecade(decade);
-      resetGame();
-      resetMetrics();
-      resetTimer();
-      setGameKey(prev => prev + 1);
-    } catch (error) {
-      console.error('❌ Erro ao selecionar década:', error);
-    }
+    setSelectedDecade(decade);
+    resetGame();
+    resetMetrics();
+    resetTimer();
+    setGameKey(prev => prev + 1);
   };
 
   const handleBackToSelection = () => {
