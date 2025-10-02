@@ -296,11 +296,10 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   ]);
 
   const handlePlayerImageFixed = useCallback(() => {
-    if (currentPlayer && !gameOver && !isRunning) {
-      lastGuessTimeRef.current = Date.now();
-      startTimer();
-    }
-  }, [currentPlayer, gameOver, isRunning, startTimer]);
+    // Apenas resetar timestamp - não iniciar timer aqui
+    // O container controlará quando iniciar através de startGameForPlayer
+    lastGuessTimeRef.current = Date.now();
+  }, []);
 
   const forceRefresh = useCallback(() => {
     selectRandomPlayer();
