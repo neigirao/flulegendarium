@@ -23,6 +23,8 @@ const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
   const [guestName, setGuestName] = useState<string>("");
   const [showGuestNameForm, setShowGuestNameForm] = useState(false);
+  const [canStartTimer, setCanStartTimer] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   
   const { user } = useAuth();
   const { players, isLoading, playersError } = usePlayersData();
@@ -73,8 +75,32 @@ const AdaptiveGameContainer = () => {
   const handleGuestNameSubmit = (name: string) => {
     setGuestName(name);
     setShowGuestNameForm(false);
-    // O timer só vai começar quando a imagem for carregada (handlePlayerImageFixed)
+    setCanStartTimer(true);
   };
+
+  const handleImageLoaded = () => {
+    setImageLoaded(true);
+    handlePlayerImageFixed();
+  };
+
+  // Iniciar timer somente quando nome foi salvo E imagem carregada
+  useEffect(() => {
+    if (canStartTimer && imageLoaded && currentPlayer && !gameOver && !isTimerRunning) {
+      startGameForPlayer();
+    }
+  }, [canStartTimer, imageLoaded, currentPlayer, gameOver, isTimerRunning, startGameForPlayer]);
+
+  // Resetar imageLoaded quando trocar de jogador
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [currentPlayer]);
+
+  // Setar canStartTimer para usuários autenticados
+  useEffect(() => {
+    if (user) {
+      setCanStartTimer(true);
+    }
+  }, [user]);
 
   if (playersError) {
     return <ErrorDisplay error={playersError} />;
@@ -126,7 +152,7 @@ const AdaptiveGameContainer = () => {
               <AdaptivePlayerImage
                 key={`${gameKey}-${currentPlayer.id}`}
                 player={currentPlayer}
-                onImageFixed={handlePlayerImageFixed}
+                onImageFixed={handleImageLoaded}
                 difficulty={currentDifficulty.level as any}
               />
               

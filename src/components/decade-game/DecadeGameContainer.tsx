@@ -25,6 +25,8 @@ export const DecadeGameContainer = () => {
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
   const [guestName, setGuestName] = useState<string>("");
   const [showGuestNameForm, setShowGuestNameForm] = useState(false);
+  const [canStartTimer, setCanStartTimer] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [playerCounts, setPlayerCounts] = useState<Record<Decade, number>>({
     '1970s': 0,
     '1980s': 0,
@@ -163,7 +165,7 @@ export const DecadeGameContainer = () => {
   const handleGuestNameSubmit = (name: string) => {
     setGuestName(name);
     setShowGuestNameForm(false);
-    // O timer só vai começar quando a imagem for carregada (handlePlayerImageFixed)
+    setCanStartTimer(true);
   };
 
   const handleBackToSelection = () => {
@@ -185,12 +187,28 @@ export const DecadeGameContainer = () => {
   };
 
   const handleImageFixed = useCallback(() => {
+    setImageLoaded(true);
     handlePlayerImageFixed();
-    // Só iniciar timer se tiver usuário autenticado ou nome de convidado
-    if ((user || guestName) && currentPlayer && !gameOver && !isTimerRunning) {
+  }, [handlePlayerImageFixed]);
+
+  // Iniciar timer somente quando nome foi salvo E imagem carregada
+  useEffect(() => {
+    if (canStartTimer && imageLoaded && currentPlayer && !gameOver && !isTimerRunning) {
       startTimer();
     }
-  }, [handlePlayerImageFixed, user, guestName, currentPlayer, gameOver, isTimerRunning, startTimer]);
+  }, [canStartTimer, imageLoaded, currentPlayer, gameOver, isTimerRunning, startTimer]);
+
+  // Resetar imageLoaded quando trocar de jogador
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [currentPlayer]);
+
+  // Setar canStartTimer para usuários autenticados
+  useEffect(() => {
+    if (user) {
+      setCanStartTimer(true);
+    }
+  }, [user]);
 
   // Se nenhuma década foi selecionada, mostrar página de seleção
   if (!selectedDecade) {
