@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
 import { Shield, HelpCircle, User, Menu, X, Newspaper, Heart } from "lucide-react";
@@ -86,14 +85,12 @@ export const TopNavigation = () => {
             ))}
             
             <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-flu-verde/20">
-              <NotificationCenter />
               <AuthButton />
             </div>
           </div>
 
           {/* Mobile Menu */}
           <div className="md:hidden flex items-center space-x-2">
-            <NotificationCenter />
             <AuthButton />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
