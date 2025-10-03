@@ -1,69 +1,100 @@
-# Welcome to your Lovable project
+# 🎮⚽️ Lendas do Flu - Quiz de Jogadores
 
-## Project info
+[![Lovable](https://img.shields.io/badge/Built%20with-Lovable-ff69b4)](https://lovable.dev)
+[![React](https://img.shields.io/badge/React-18.3-61dafb)](https://react.dev/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178c6)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-Backend-3ecf8e)](https://supabase.com/)
 
-**URL**: https://lovable.dev/projects/2d18f90c-a6cd-4fc2-913d-b76eb4df6c17
+> Quiz interativo sobre jogadores históricos do Fluminense Football Club. Teste seus conhecimentos, desbloqueie conquistas e compare-se no ranking global!
 
-## How can I edit this code?
+## 📝 Visão Geral
 
-There are several ways of editing your application.
+O **Lendas do Flu** é uma aplicação web moderna que desafia os torcedores a reconhecerem jogadores históricos do Fluminense através de suas fotos. Com sistema de dificuldade adaptativa, conquistas desbloqueáveis e ranking competitivo, o jogo oferece uma experiência envolvente para fãs de todas as idades.
 
-**Use Lovable**
+### ✨ Principais Funcionalidades
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/2d18f90c-a6cd-4fc2-913d-b76eb4df6c17) and start prompting.
+- 🎯 **Quiz Adaptativo**: Dificuldade ajusta automaticamente baseado no desempenho
+- 📅 **Quiz por Década**: Filtre jogadores por período histórico (1970s-2020s)
+- 🏆 **Sistema de Conquistas**: Desbloqueie achievements únicos
+- 📊 **Ranking Global**: Compare sua pontuação com outros torcedores
+- ⏱️ **Timer Dinâmico**: 60 segundos para cada jogador
+- 💾 **Progressive Web App**: Instale e jogue offline
+- 🌙 **Dark Mode**: Interface otimizada para dia e noite
+- 📱 **Totalmente Responsivo**: Experiência perfeita em qualquer dispositivo
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Como Usar
 
-**Use your preferred IDE**
+### Instalação
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+```bash
+# Clone o repositório
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Instale as dependências
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Configure as variáveis de ambiente
+cp .env.example .env.local
+
+# Inicie o servidor de desenvolvimento
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Build para Produção
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build
+npm run preview
+```
 
-**Use GitHub Codespaces**
+## 🏗️ Arquitetura
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Stack Tecnológica
 
-## What technologies are used for this project?
+**Frontend:**
+- ⚛️ React 18.3 + TypeScript
+- ⚡ Vite 5
+- 🎨 Tailwind CSS + shadcn/ui
+- 🔄 React Query
+- 🐻 Zustand
 
-This project is built with .
+**Backend:**
+- 🗄️ Supabase (PostgreSQL)
+- ⚡ Edge Functions
+- 🔐 Auth & Storage
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Estrutura do Projeto
 
-## How can I deploy this project?
+```
+src/
+├── components/     # Componentes React
+├── hooks/          # Hooks customizados
+├── services/       # Serviços de API
+├── stores/         # State management
+├── types/          # TypeScript types
+├── config/         # Configurações
+└── utils/          # Utilitários
+```
 
-Simply open [Lovable](https://lovable.dev/projects/2d18f90c-a6cd-4fc2-913d-b76eb4df6c17) and click on Share -> Publish.
+## 📚 Documentação
 
-## I want to use a custom domain - is that possible?
+- 📖 [Arquitetura Completa](./docs/ARCHITECTURE.md)
+- 🎮 [Fluxo do Jogo](./docs/GAME_FLOW.md)
+- 🤝 [Guia de Contribuição](./docs/CONTRIBUTING.md)
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## 🤝 Como Contribuir
+
+Contribuições são bem-vindas! Veja nosso [Guia de Contribuição](./docs/CONTRIBUTING.md).
+
+## 📝 Deploy
+
+Visite [Lovable](https://lovable.dev/projects/2d18f90c-a6cd-4fc2-913d-b76eb4df6c17) e clique em Share → Publish.
+
+---
+
+<div align="center">
+
+Feito com 💚💙 usando [Lovable](https://lovable.dev)
+
+</div>
