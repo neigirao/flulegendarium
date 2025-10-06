@@ -1,9 +1,62 @@
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { DecadePlayer, Decade } from "@/types/decade-game";
 import { decadePlayerService } from "@/services/decadePlayerService";
 import { logger } from "@/utils/logger";
 
+/**
+ * Hook para seleção de jogadores no modo Quiz por Década.
+ * 
+ * Gerencia a seleção de jogadores filtrados por década histórica:
+ * - Carrega jogadores quando a década é selecionada
+ * - Controla jogadores já utilizados na partida
+ * - Garante que não há repetição na mesma partida
+ * - Seleciona primeiro jogador automaticamente
+ * 
+ * ### Fluxo de Funcionamento
+ * 1. Usuário seleciona uma década (ex: 1990s)
+ * 2. Hook carrega jogadores daquela época
+ * 3. Seleciona primeiro jogador aleatoriamente
+ * 4. Marca jogador como usado
+ * 5. A cada acerto, seleciona próximo jogador não usado
+ * 
+ * ### Controle de Repetição
+ * - Mantém Set de IDs usados internamente
+ * - Limpa histórico apenas ao trocar de década
+ * - Jogo termina quando todos foram mostrados
+ * 
+ * @param {Decade | null} selectedDecade - Década selecionada (ex: '1990s')
+ * 
+ * @returns {Object} Estado de seleção de jogadores da década
+ * @returns {DecadePlayer[]} availablePlayers - Todos os jogadores da década
+ * @returns {DecadePlayer | null} currentPlayer - Jogador atual
+ * @returns {boolean} isLoading - Se está carregando jogadores
+ * @returns {number} playerChangeCount - Contador de trocas (para forçar re-render)
+ * @returns {Function} selectRandomPlayer - Seleciona próximo jogador aleatório
+ * @returns {Function} handlePlayerImageFixed - Callback de imagem carregada
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   availablePlayers,
+ *   currentPlayer,
+ *   isLoading,
+ *   selectRandomPlayer
+ * } = useDecadePlayerSelection('1990s');
+ * 
+ * // Após acerto, selecionar próximo
+ * if (isCorrect) {
+ *   selectRandomPlayer();
+ * }
+ * 
+ * // Verificar se acabaram os jogadores
+ * if (!currentPlayer && !isLoading) {
+ *   console.log('Todos os jogadores foram mostrados!');
+ * }
+ * ```
+ * 
+ * @see {@link DecadePlayer} Tipo do jogador da década
+ * @see {@link decadePlayerService} Serviço de busca de jogadores
+ */
 export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
   const [availablePlayers, setAvailablePlayers] = useState<DecadePlayer[]>([]);
   const [currentPlayer, setCurrentPlayer] = useState<DecadePlayer | null>(null);
@@ -45,6 +98,17 @@ export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
     loadPlayersByDecade();
   }, [selectedDecade]);
 
+  /**
+   * Seleciona um jogador aleatório dentre os não utilizados.
+   * 
+   * Se todos os jogadores já foram usados, não faz nada (fim de jogo).
+   * 
+   * @example
+   * ```typescript
+   * // Após acerto correto
+   * selectRandomPlayer();
+   * ```
+   */
   const selectRandomPlayer = useCallback(() => {
     if (!availablePlayers || availablePlayers.length === 0) {
       return;

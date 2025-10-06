@@ -1,22 +1,44 @@
-
 import { useState, useCallback } from "react";
+import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 
-interface DifficultyLevel {
-  level: string;
-  label: string;
-  multiplier: number;
-  description: string;
-  minPlayers: number;
-}
-
-const DIFFICULTY_LEVELS: DifficultyLevel[] = [
-  { level: 'muito_facil', label: 'Muito Fácil', multiplier: 0.5, description: 'Jogadores muito conhecidos', minPlayers: 3 },
-  { level: 'facil', label: 'Fácil', multiplier: 0.75, description: 'Jogadores conhecidos', minPlayers: 5 },
-  { level: 'medio', label: 'Médio', multiplier: 1.0, description: 'Jogadores moderadamente conhecidos', minPlayers: 8 },
-  { level: 'dificil', label: 'Difícil', multiplier: 1.5, description: 'Jogadores menos conhecidos', minPlayers: 5 },
-  { level: 'muito_dificil', label: 'Muito Difícil', multiplier: 2.0, description: 'Jogadores históricos/obscuros', minPlayers: 3 }
-];
-
+/**
+ * Hook de gerenciamento de estado do jogo por década.
+ * 
+ * Controla pontuação, tentativas, streaks e dificuldade adaptativa
+ * para o modo Quiz por Década.
+ * 
+ * ### Sistema de Dificuldade
+ * - Começa em "Muito Fácil"
+ * - Aumenta após 3 acertos consecutivos
+ * - Diminui após 2 erros consecutivos
+ * - Afeta multiplicador de pontos
+ * 
+ * ### Tentativas
+ * - Máximo de 1 tentativa por jogador (modo competitivo)
+ * - Game over ao errar
+ * 
+ * @returns {Object} Estado e ações do jogo
+ * @returns {number} score - Pontuação total
+ * @returns {boolean} gameOver - Se o jogo terminou
+ * @returns {number} currentStreak - Sequência de acertos
+ * @returns {DifficultyLevelConfig} currentDifficulty - Dificuldade atual
+ * @returns {Function} addScore - Adiciona pontos (com multiplicador)
+ * @returns {Function} resetGame - Reseta o jogo
+ * @returns {Function} incrementAttempts - Incrementa tentativas
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   score,
+ *   gameOver,
+ *   addScore,
+ *   currentDifficulty
+ * } = useDecadeGameState();
+ * 
+ * // Adicionar pontos com multiplicador de dificuldade
+ * addScore(5); // Se dificuldade for 1.5x, adiciona 7.5 (arredonda para 8)
+ * ```
+ */
 export const useDecadeGameState = () => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
@@ -26,7 +48,7 @@ export const useDecadeGameState = () => {
   const [gamesPlayed, setGamesPlayed] = useState(0);
   
   // Adaptive difficulty state - Start with "muito_facil"
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS[0]);
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
   const [difficultyProgress, setDifficultyProgress] = useState(0);
   const [correctSequence, setCorrectSequence] = useState(0);
   const [incorrectSequence, setIncorrectSequence] = useState(0);

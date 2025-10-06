@@ -7,31 +7,78 @@ import { useToast } from "@/components/ui/use-toast";
 import { useTabVisibility } from "./use-tab-visibility";
 import { processPlayerName } from "@/utils/name-processor";
 import { logger } from "@/utils/logger";
+import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 import type { Player } from "@/types/guess-game";
 
-interface DifficultyLevel {
-  level: string;
-  label: string;
-  multiplier: number;
-  description: string;
-  minPlayers: number;
-}
-
+/**
+ * Informações sobre uma mudança de dificuldade ocorrida.
+ */
 interface DifficultyChangeInfo {
+  /** Nível de dificuldade anterior */
   oldLevel: string;
+  /** Novo nível de dificuldade */
   newLevel: string;
+  /** Razão da mudança (ex: "3 acertos consecutivos") */
   reason: string;
+  /** Timestamp da mudança */
   timestamp: number;
 }
 
-const DIFFICULTY_LEVELS: DifficultyLevel[] = [
-  { level: 'muito_facil', label: 'Muito Fácil', multiplier: 0.5, description: 'Jogadores muito conhecidos', minPlayers: 3 },
-  { level: 'facil', label: 'Fácil', multiplier: 0.75, description: 'Jogadores conhecidos', minPlayers: 5 },
-  { level: 'medio', label: 'Médio', multiplier: 1.0, description: 'Jogadores moderadamente conhecidos', minPlayers: 8 },
-  { level: 'dificil', label: 'Difícil', multiplier: 1.5, description: 'Jogadores menos conhecidos', minPlayers: 5 },
-  { level: 'muito_dificil', label: 'Muito Difícil', multiplier: 2.0, description: 'Jogadores históricos/obscuros', minPlayers: 3 }
-];
-
+/**
+ * Hook principal do jogo adaptativo.
+ * 
+ * Gerencia todo o fluxo do jogo adaptativo, incluindo:
+ * - Seleção de jogadores baseada em dificuldade
+ * - Ajuste automático de dificuldade conforme desempenho
+ * - Controle de pontuação, streaks e timer
+ * - Validação de palpites com processamento de nomes
+ * - Métricas e análise de jogo
+ * 
+ * ### Sistema de Dificuldade Adaptativa
+ * - Aumenta após 3 acertos consecutivos
+ * - Diminui após 2 erros consecutivos
+ * - Afeta multiplicador de pontos
+ * - Influencia seleção de jogadores
+ * 
+ * ### Controle de Jogadores
+ * - Não repete jogadores na mesma partida
+ * - Seleciona baseado em dificuldade atual
+ * - Reinicia pool apenas ao resetar o jogo
+ * 
+ * @param {Player[]} players - Lista completa de jogadores disponíveis
+ * 
+ * @returns {Object} Estado e ações do jogo adaptativo
+ * @returns {Player | null} currentPlayer - Jogador atual a ser adivinhado
+ * @returns {number} gameKey - Chave para forçar re-render do componente
+ * @returns {number} score - Pontuação total acumulada
+ * @returns {boolean} gameOver - Se o jogo terminou
+ * @returns {number} timeRemaining - Segundos restantes no timer
+ * @returns {number} currentStreak - Sequência atual de acertos
+ * @returns {DifficultyLevelConfig} currentDifficulty - Configuração da dificuldade atual
+ * @returns {Function} handleGuess - Processa um palpite do usuário
+ * @returns {Function} startGameForPlayer - Inicia o jogo para o jogador atual
+ * @returns {Function} resetScore - Reseta todo o estado do jogo
+ * 
+ * @example
+ * ```tsx
+ * const {
+ *   currentPlayer,
+ *   score,
+ *   handleGuess,
+ *   currentDifficulty
+ * } = useAdaptiveGuessGame(players);
+ * 
+ * // Processar palpite do usuário
+ * await handleGuess("Fred");
+ * 
+ * // Verificar dificuldade atual
+ * console.log(currentDifficulty.label); // "Médio"
+ * ```
+ * 
+ * @see {@link useAdaptivePlayerSelection} Seleção de jogadores por dificuldade
+ * @see {@link useAdaptiveGameMetrics} Sistema de métricas do jogo
+ * @see {@link useCleanTimer} Gerenciamento do timer
+ */
 export const useAdaptiveGuessGame = (players: Player[]) => {
   // Game state
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
@@ -47,7 +94,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
 
   // Adaptive difficulty state
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevel>(DIFFICULTY_LEVELS[0]);
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
   const [difficultyProgress, setDifficultyProgress] = useState(0);
   const [correctSequence, setCorrectSequence] = useState(0);
   const [incorrectSequence, setIncorrectSequence] = useState(0);

@@ -1,12 +1,31 @@
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * Resultado do processamento e validação de um nome.
+ */
 export interface NameProcessingResult {
+  /** Nome processado do jogador (null se não houver match) */
   processedName: string | null;
+  /** Nível de confiança do match (0-1) */
   confidence: number;
+  /** Tipo de match encontrado ('name' | 'nickname') */
   matchType?: string;
 }
 
-// Função para normalizar nomes (remover acentos, converter para minúsculo, etc.)
+/**
+ * Normaliza texto para comparação.
+ * 
+ * Remove acentos, converte para minúsculo e limpa caracteres especiais.
+ * 
+ * @param {string} text - Texto a ser normalizado
+ * @returns {string} Texto normalizado
+ * 
+ * @example
+ * ```typescript
+ * normalizeText("José Ângelo"); // "jose angelo"
+ * normalizeText("Fred!"); // "fred"
+ * ```
+ */
 const normalizeText = (text: string): string => {
   return text
     .toLowerCase()
@@ -16,7 +35,25 @@ const normalizeText = (text: string): string => {
     .trim();
 };
 
-// Função para verificar se uma string está contida em outra (parcialmente)
+/**
+ * Verifica se há correspondência parcial entre palpite e nome alvo.
+ * 
+ * Aplica múltiplas estratégias de matching:
+ * - Match exato normalizado
+ * - Substring em qualquer direção
+ * - Match por palavras individuais (> 2 caracteres)
+ * 
+ * @param {string} guess - Palpite do usuário
+ * @param {string} target - Nome alvo para comparação
+ * @returns {boolean} True se houver correspondência
+ * 
+ * @example
+ * ```typescript
+ * isPartialMatch("fred", "Fred Chaves"); // true
+ * isPartialMatch("chaves", "Fred Chaves"); // true
+ * isPartialMatch("paulo", "Fred Chaves"); // false
+ * ```
+ */
 const isPartialMatch = (guess: string, target: string): boolean => {
   const normalizedGuess = normalizeText(guess);
   const normalizedTarget = normalizeText(target);
@@ -39,11 +76,66 @@ const isPartialMatch = (guess: string, target: string): boolean => {
   );
 };
 
-// Função simples para verificar se um palpite está correto (fallback local)
+/**
+ * Validação simples de palpite (fallback local sem banco de dados).
+ * 
+ * @param {string} guess - Palpite do usuário
+ * @param {string} playerName - Nome do jogador
+ * @returns {boolean} True se o palpite está correto
+ * 
+ * @example
+ * ```typescript
+ * isCorrectGuess("fred", "Fred"); // true
+ * ```
+ */
 export const isCorrectGuess = (guess: string, playerName: string): boolean => {
   return isPartialMatch(guess, playerName);
 };
 
+/**
+ * Processa e valida palpite do usuário contra dados do jogador.
+ * 
+ * Busca os dados completos do jogador no banco (nome + apelidos) e verifica
+ * se o palpite corresponde a algum deles. Retorna resultado com nível de
+ * confiança e tipo de match encontrado.
+ * 
+ * ### Estratégia de Validação
+ * 1. Busca nome e apelidos do jogador no banco
+ * 2. Verifica match com nome principal (confidence: 0.9)
+ * 3. Verifica match com apelidos (confidence: 0.85)
+ * 4. Retorna confiança 0 se não houver match
+ * 
+ * ### Normalização
+ * - Remove acentos de ambos os lados
+ * - Converte para minúsculas
+ * - Remove caracteres especiais
+ * - Suporta match parcial de palavras
+ * 
+ * @param {string} guess - Palpite digitado pelo usuário
+ * @param {string} targetPlayerName - Nome correto do jogador (referência)
+ * @param {string} targetPlayerId - ID do jogador no banco de dados
+ * 
+ * @returns {Promise<NameProcessingResult>} Resultado do processamento
+ * 
+ * @throws {Error} Não lança erro, retorna confidence 0 em caso de falha
+ * 
+ * @example
+ * ```typescript
+ * const result = await processPlayerName(
+ *   "fred",
+ *   "Fred Chaves Guedes",
+ *   "player-uuid-123"
+ * );
+ * 
+ * if (result.confidence > 0.7) {
+ *   console.log("Palpite correto!");
+ *   console.log("Match type:", result.matchType); // "name" ou "nickname"
+ * }
+ * ```
+ * 
+ * @see {@link isPartialMatch} Lógica de comparação de strings
+ * @see {@link NameProcessingResult} Estrutura do resultado
+ */
 export const processPlayerName = async (
   guess: string,
   targetPlayerName: string,
