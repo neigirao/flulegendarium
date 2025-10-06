@@ -494,6 +494,118 @@ function GameContainer() {
 
 ---
 
+---
+
+## 🎯 Serviços
+
+### PlayerSelectionService
+
+Serviço centralizado para toda lógica de seleção de jogadores.
+
+**Localização**: `src/services/playerSelectionService.ts`
+
+#### Métodos Estáticos
+
+##### `selectRandomPlayer<T>(players, options)`
+
+Seleciona um jogador aleatório com filtragem avançada.
+
+```typescript
+const result = PlayerSelectionService.selectRandomPlayer(players, {
+  usedPlayerIds: new Set(['player-1']),
+  difficultyLevel: 'medio',
+  decade: '1990s',
+  avoidLastPlayer: true
+});
+
+if (result.player) {
+  console.log('Selecionado:', result.player.name);
+  console.log('Disponíveis:', result.availablePlayers.length);
+  console.log('Reset:', result.didReset);
+}
+```
+
+**Parâmetros:**
+- `players: T[]` - Lista de jogadores
+- `options: PlayerSelectionOptions` - Opções de seleção
+  - `usedPlayerIds?: Set<string>` - IDs já usados
+  - `difficultyLevel?: DifficultyLevel` - Dificuldade
+  - `decade?: Decade` - Década específica
+  - `avoidLastPlayer?: boolean` - Evitar repetir último
+  - `lastPlayerId?: string` - ID do último jogador
+
+**Retorna:** `PlayerSelectionResult<T>`
+
+##### `filterByDifficulty<T>(players, difficulty)`
+
+Filtra jogadores por nível de dificuldade.
+
+```typescript
+const mediumPlayers = PlayerSelectionService.filterByDifficulty(
+  allPlayers,
+  'medio'
+);
+```
+
+##### `filterByDecade(players, decade)`
+
+Filtra jogadores por década.
+
+```typescript
+const players90s = PlayerSelectionService.filterByDecade(
+  allPlayers,
+  '1990s'
+);
+```
+
+##### `selectMultiplePlayers<T>(players, count, options)`
+
+Seleciona múltiplos jogadores únicos.
+
+```typescript
+const selectedPlayers = PlayerSelectionService.selectMultiplePlayers(
+  allPlayers,
+  5,
+  { difficultyLevel: 'medio' }
+);
+```
+
+##### `isPlayerAvailable<T>(player, options)`
+
+Verifica se jogador está disponível.
+
+```typescript
+const available = PlayerSelectionService.isPlayerAvailable(player, {
+  usedPlayerIds: usedIds,
+  difficultyLevel: 'medio'
+});
+```
+
+##### `getAvailabilityStats<T>(players, options)`
+
+Retorna estatísticas de disponibilidade.
+
+```typescript
+const stats = PlayerSelectionService.getAvailabilityStats(players, {
+  usedPlayerIds: usedIds
+});
+
+console.log(`Disponíveis: ${stats.available}/${stats.total}`);
+console.log('Por dificuldade:', stats.byDifficulty);
+```
+
+#### Wrappers de Conveniência
+
+```typescript
+import { selectRandomPlayer, filterByDifficulty } from '@/services/playerSelectionService';
+
+// Uso direto
+const result = selectRandomPlayer(players, options);
+const filtered = filterByDifficulty(players, 'medio');
+```
+
+---
+
 ## 🔗 Referências
 
 - [React Hooks](https://react.dev/reference/react)
