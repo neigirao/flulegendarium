@@ -764,8 +764,35 @@ const filtered = filterByDifficulty(players, 'medio');
 
 ---
 
+## Validation System
+
+Sistema de validação runtime com **Zod**.
+
+### Schemas Disponíveis
+
+`src/schemas/`: `PlayerSchema`, `GameStateSchema`, `GameSessionSchema`, `RankingEntrySchema`
+
+### Utils
+
+```typescript
+import { validate, validateSupabaseResponse } from '@/utils/validation';
+import { PlayerSchema } from '@/schemas';
+
+// Validar dados
+const result = validate(PlayerSchema, data);
+if (result.success) {
+  console.log(result.data); // Tipado
+}
+
+// Validar Supabase
+const validation = validateSupabaseResponse(PlayerListSchema, response);
+```
+
+---
+
 ## 🔗 Referências
 
 - [React Hooks](https://react.dev/reference/react)
 - [TypeScript](https://www.typescriptlang.org/docs/)
+- [Zod](https://zod.dev)
 - [Projeto no GitHub](link-do-projeto)
