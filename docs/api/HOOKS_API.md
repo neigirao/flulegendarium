@@ -6,6 +6,149 @@ Documentação completa dos hooks customizados do projeto "Lendas do Flu".
 
 ## 🎮 Hooks de Jogo
 
+### useBaseGameState
+
+**⭐ NOVO** - Hook base unificado para gerenciamento de estado do jogo.
+
+**Localização**: `src/hooks/game/use-base-game-state.ts`
+
+#### Parâmetros
+
+```typescript
+useBaseGameState(config?: Partial<BaseGameConfig>)
+```
+
+```typescript
+interface BaseGameConfig {
+  maxAttempts: number;                  // Número máximo de tentativas (default: 1)
+  useAdaptiveDifficulty: boolean;       // Se usa dificuldade adaptativa (default: true)
+  basePoints: number;                   // Pontos base por acerto (default: 5)
+  correctSequenceThreshold?: number;    // Sequência para aumentar dificuldade (default: 3)
+  incorrectSequenceThreshold?: number;  // Sequência para diminuir dificuldade (default: 2)
+}
+```
+
+#### Retorno
+
+```typescript
+interface BaseGameState {
+  // Score
+  score: number;
+  addScore: (points: number) => void;
+  
+  // Game Status
+  gameOver: boolean;
+  endGame: () => void;
+  resetGame: () => void;
+  
+  // Attempts
+  attempts: number;
+  incrementAttempts: () => void;
+  maxAttempts: number;
+  
+  // Streaks
+  currentStreak: number;
+  maxStreak: number;
+  resetStreak: () => void;
+  
+  // Statistics
+  gamesPlayed: number;
+  
+  // Adaptive Difficulty
+  currentDifficulty: DifficultyLevelConfig;
+  difficultyProgress: number;
+  adjustDifficulty: (wasCorrect: boolean) => void;
+}
+```
+
+#### Exemplo de Uso
+
+```typescript
+const gameState = useBaseGameState({
+  maxAttempts: 3,
+  useAdaptiveDifficulty: true,
+  basePoints: 5
+});
+
+// Adicionar pontos (com multiplicador de dificuldade)
+gameState.addScore(5);
+
+// Incrementar tentativas
+gameState.incrementAttempts();
+
+// Ajustar dificuldade baseado em acerto/erro
+gameState.adjustDifficulty(true);
+```
+
+---
+
+### useUIGameState
+
+**⭐ NOVO** - Hook para gerenciamento de estado de UI do jogo.
+
+**Localização**: `src/hooks/game/use-ui-game-state.ts`
+
+#### Parâmetros
+
+```typescript
+useUIGameState({ hasLost: boolean })
+```
+
+#### Retorno
+
+```typescript
+interface UIGameState {
+  // Game Over Dialog
+  showGameOverDialog: boolean;
+  setShowGameOverDialog: (show: boolean) => void;
+  handleGameOverClose: (selectRandomPlayer: () => void) => void;
+  
+  // Tutorial
+  showTutorial: boolean;
+  handleTutorialComplete: (user: any) => void;
+  handleSkipTutorial: (user: any) => void;
+  
+  // Game Status
+  gameStarted: boolean;
+  setGameStarted: (started: boolean) => void;
+  
+  // Auth Status
+  isAuthenticatedGame: boolean;
+  setIsAuthenticatedGame: (authenticated: boolean) => void;
+  
+  // Guest Name Form
+  showGuestNameForm: boolean;
+  guestPlayerName: string;
+  handleGuestNameSubmitted: (name: string) => void;
+  handleGuestNameCancel: () => void;
+}
+```
+
+#### Exemplo de Uso
+
+```typescript
+const uiState = useUIGameState({ hasLost: gameOver });
+
+if (uiState.showTutorial) {
+  return <Tutorial onComplete={uiState.handleTutorialComplete} />;
+}
+
+if (uiState.showGuestNameForm) {
+  return <GuestForm onSubmit={uiState.handleGuestNameSubmitted} />;
+}
+
+return (
+  <>
+    <Game />
+    {uiState.showGameOverDialog && (
+      <GameOverDialog onClose={uiState.handleGameOverClose} />
+    )}
+  </>
+);
+```
+
+---
+
 ### useAdaptiveGuessGame
 
 Hook principal do jogo adaptativo que gerencia todo o fluxo do quiz.
@@ -201,9 +344,24 @@ function DecadeGame() {
 
 ### useDecadeGameState
 
-Hook de gerenciamento de estado do jogo por década.
+**⚠️ DEPRECATED** - Use `useBaseGameState` para novos componentes.
+
+Hook de gerenciamento de estado do jogo por década. Agora é uma especialização do `useBaseGameState`.
 
 **Localização**: `src/hooks/use-decade-game-state.ts`
+
+**Migração recomendada:**
+
+```typescript
+// ❌ Código antigo
+const state = useDecadeGameState();
+
+// ✅ Código novo
+const state = useBaseGameState({
+  maxAttempts: 1,
+  useAdaptiveDifficulty: true,
+  basePoints: 5
+});
 
 #### Retorno
 
