@@ -8,6 +8,7 @@
 
 import { Player, DifficultyLevel } from "@/types/guess-game";
 import { DecadePlayer, Decade } from "@/types/decade-game";
+import { logger } from "@/utils/logger";
 
 /**
  * Opções para seleção de jogadores
@@ -108,7 +109,7 @@ export class PlayerSelectionService {
     // Se todos foram usados, resetar o pool
     let didReset = false;
     if (availablePlayers.length === 0) {
-      console.log('🔄 Todos os jogadores foram usados, resetando pool...');
+      logger.info('Todos os jogadores foram usados, resetando pool', 'PlayerSelection');
       availablePlayers = filteredPlayers;
       didReset = true;
     }

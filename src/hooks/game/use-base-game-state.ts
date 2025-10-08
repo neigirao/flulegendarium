@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+import { logger } from "@/utils/logger";
 
 /**
  * Configuração base para o hook de estado do jogo
@@ -144,7 +145,10 @@ export const useBaseGameState = (config: Partial<BaseGameConfig> = {}): BaseGame
       setCurrentDifficulty(newDifficulty);
       setDifficultyProgress(0);
       
-      console.log(`🎯 Dificuldade alterada: ${currentDifficulty.label} → ${newDifficulty.label}`);
+      logger.info(`Dificuldade alterada`, 'AdaptiveDifficulty', { 
+        from: currentDifficulty.label, 
+        to: newDifficulty.label 
+      });
       
       // Reset sequences after difficulty change
       setCorrectSequence(0);

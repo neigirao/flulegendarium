@@ -82,7 +82,7 @@ export const GameContainer = ({
   }
 
   return (
-    <div className="pt-6 pb-4 px-4">
+    <div className="pt-6 pb-4 px-4" data-testid="game-container">
       
       {/* Timer - igual ao adaptativo */}
       <div className="flex justify-center mb-6">

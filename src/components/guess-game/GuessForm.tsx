@@ -47,7 +47,7 @@ export const GuessForm = ({ disabled, onSubmitGuess, isProcessing }: GuessFormPr
   return (
     <>
       <div className="w-full">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4" data-testid="guess-form">
           <TouchOptimizedInput
             value={guess}
             onChange={setGuess}
@@ -55,6 +55,7 @@ export const GuessForm = ({ disabled, onSubmitGuess, isProcessing }: GuessFormPr
             disabled={disabled || isProcessing}
             className="text-center font-medium text-lg"
             autoComplete="off"
+            data-testid="guess-input"
           />
           
           <TouchOptimizedButton
@@ -63,6 +64,7 @@ export const GuessForm = ({ disabled, onSubmitGuess, isProcessing }: GuessFormPr
             variant="primary"
             size="lg"
             className="w-full"
+            data-testid="guess-submit-btn"
           >
             {isProcessing ? (
               <Loader2 className="w-6 h-6 animate-spin" />

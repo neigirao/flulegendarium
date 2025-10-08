@@ -59,6 +59,7 @@ const Index = () => {
                 onClick={handleStartGame}
                 size="lg"
                 className="text-xl px-12 py-6 shadow-xl hover:shadow-2xl bg-flu-grena hover:bg-flu-grena/90 text-white"
+                data-testid="play-button"
               >
                 <Rocket className="w-6 h-6 mr-2" />
                 COMEÇAR A JOGAR AGORA

@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { GameConfirmDialog } from "./GameConfirmDialog";
 import { useGameConfirmations } from "@/hooks/use-game-confirmations";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/utils/logger";
 
 interface GameStatusProps {
   attempts: number;
@@ -73,9 +74,7 @@ export const GameStatus = memo(({
   const { toast } = useToast();
   const { confirmation, hideConfirmation, confirmExitGame } = useGameConfirmations();
   
-  console.log('🎮 GameStatus - Score recebido e exibindo:', score);
-  console.log('🎮 GameStatus - Game Over:', gameOver);
-  console.log('🎮 GameStatus - Time Remaining:', timeRemaining);
+  logger.debug('GameStatus render', 'UI', { score, gameOver, timeRemaining });
   
   useEffect(() => {
     if (timeRemaining === 10 && prevTime > 10 && !gameOver) {
@@ -115,7 +114,7 @@ export const GameStatus = memo(({
 
   return (
     <>
-      <div className="space-y-6">
+      <div className="space-y-6" data-testid="game-status">
         {/* Container principal com melhor visual hierarchy */}
         <div className="bg-gradient-to-br from-flu-grena/5 via-white to-flu-verde/5 rounded-2xl border border-flu-grena/10 shadow-lg overflow-hidden">
           
@@ -142,12 +141,14 @@ export const GameStatus = memo(({
               <Zap className="w-5 h-5 text-flu-verde" />
               <h3 className="font-semibold text-gray-700 text-lg">Seu Progresso</h3>
             </div>
-            <GameProgress 
-              currentScore={score}
-              gamesPlayed={gamesPlayed}
-              currentStreak={currentStreak}
-              maxStreak={maxStreak}
-            />
+            <div data-testid="game-score">
+              <GameProgress 
+                currentScore={score}
+                gamesPlayed={gamesPlayed}
+                currentStreak={currentStreak}
+                maxStreak={maxStreak}
+              />
+            </div>
           </div>
 
           {/* Regras e informações */}

@@ -47,6 +47,7 @@ export const TopNavigation = () => {
           <div 
             className="flex items-center space-x-3 cursor-pointer group"
             onClick={() => navigate('/')}
+            data-testid="nav-home-link"
           >
             <div className="w-10 h-10 flex items-center justify-center">
               <img 
