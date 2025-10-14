@@ -98,6 +98,9 @@ export const useAdaptivePlayerSelection = () => {
       const randomIndex = Math.floor(Math.random() * playersAtDifficulty.length);
       const selectedPlayer = playersAtDifficulty[randomIndex];
       
+      // Log todos os jogadores disponíveis nesta dificuldade
+      const availableNames = playersAtDifficulty.map(p => p.name).join(', ');
+      
       logger.info(
         `✅ Jogador selecionado da dificuldade ${difficultyLevel}: ${selectedPlayer.name}`,
         'PLAYER_SELECTION',
@@ -106,7 +109,9 @@ export const useAdaptivePlayerSelection = () => {
           playerDifficulty: selectedPlayer.difficulty_level,
           difficultyScore: selectedPlayer.difficulty_score,
           availableCount: playersAtDifficulty.length,
-          totalAvailable: availablePlayers.length
+          totalAvailable: availablePlayers.length,
+          availablePlayers: availableNames,
+          selectedFromPool: `${randomIndex + 1}/${playersAtDifficulty.length}`
         }
       );
       
