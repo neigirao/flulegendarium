@@ -295,9 +295,14 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
           description: `+${pointsEarned} pontos! (${currentDifficulty.label})`,
         });
         
-        // Continue to next player
+        stopTimer();
+        
+        // Continue to next player and restart timer
         setTimeout(() => {
           selectRandomPlayer();
+          setTimeout(() => {
+            startTimer();
+          }, 100);
           setIsProcessingGuess(false);
         }, 1500);
         
