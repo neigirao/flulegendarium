@@ -89,7 +89,7 @@ export const useAdaptivePlayerSelection = () => {
       return null;
     }
     
-    // PRIORIDADE 1: Jogadores com difficulty_level exato do banco de dados
+    // SEMPRE RESPEITAR A DIFICULDADE DO BANCO - SEM FALLBACKS
     const playersAtDifficulty = availablePlayers.filter(player => 
       player.difficulty_level === difficultyLevel
     );
@@ -118,78 +118,18 @@ export const useAdaptivePlayerSelection = () => {
       return selectedPlayer;
     }
     
-    // FALLBACK 1: Jogadores com dificuldade próxima (±1 nível)
-    const difficultyOrder: DifficultyLevel[] = [
-      'muito_facil', 'facil', 'medio', 'dificil', 'muito_dificil'
-    ];
-    const currentIndex = difficultyOrder.indexOf(difficultyLevel);
-    const nearbyLevels = [
-      difficultyOrder[currentIndex - 1],
-      difficultyOrder[currentIndex + 1]
-    ].filter(Boolean) as DifficultyLevel[];
-    
-    const playersNearDifficulty = availablePlayers.filter(player =>
-      nearbyLevels.includes(player.difficulty_level as DifficultyLevel)
+    // Se não houver jogadores na dificuldade exata, retornar null
+    // O sistema deve respeitar SEMPRE a dificuldade do banco de dados
+    logger.error(
+      `❌ Nenhum jogador disponível na dificuldade ${difficultyLevel}`,
+      'PLAYER_SELECTION',
+      {
+        requestedDifficulty: difficultyLevel,
+        totalPlayers: players.length,
+        availablePlayers: availablePlayers.length,
+        usedPlayers: usedPlayerIds.size
+      }
     );
-    
-    if (playersNearDifficulty.length > 0) {
-      const randomIndex = Math.floor(Math.random() * playersNearDifficulty.length);
-      const selectedPlayer = playersNearDifficulty[randomIndex];
-      
-      logger.warn(
-        `⚠️ Nenhum jogador encontrado na dificuldade ${difficultyLevel}. Usando dificuldade próxima: ${selectedPlayer.name}`,
-        'PLAYER_SELECTION',
-        {
-          requestedDifficulty: difficultyLevel,
-          playerDifficulty: selectedPlayer.difficulty_level,
-          availableNearby: playersNearDifficulty.length
-        }
-      );
-      
-      return selectedPlayer;
-    }
-    
-    // FALLBACK 2: Qualquer jogador com dificuldade definida
-    const playersWithDifficulty = availablePlayers.filter(player => 
-      player.difficulty_level && 
-      player.difficulty_level !== null && 
-      player.difficulty_level !== undefined
-    );
-    
-    if (playersWithDifficulty.length > 0) {
-      const randomIndex = Math.floor(Math.random() * playersWithDifficulty.length);
-      const selectedPlayer = playersWithDifficulty[randomIndex];
-      
-      logger.warn(
-        `⚠️ Usando jogador com dificuldade genérica: ${selectedPlayer.name}`,
-        'PLAYER_SELECTION',
-        {
-          requestedDifficulty: difficultyLevel,
-          playerDifficulty: selectedPlayer.difficulty_level
-        }
-      );
-      
-      return selectedPlayer;
-    }
-    
-    // FALLBACK 3: Último recurso - jogadores sem dificuldade definida
-    if (availablePlayers.length > 0) {
-      const randomIndex = Math.floor(Math.random() * availablePlayers.length);
-      const selectedPlayer = availablePlayers[randomIndex];
-      
-      logger.error(
-        `❌ ATENÇÃO: Jogador sem dificuldade no banco! ${selectedPlayer.name}`,
-        'PLAYER_SELECTION',
-        {
-          playerId: selectedPlayer.id,
-          playerName: selectedPlayer.name,
-          difficultyLevel: selectedPlayer.difficulty_level,
-          difficultyScore: selectedPlayer.difficulty_score
-        }
-      );
-      
-      return selectedPlayer;
-    }
     
     return null;
   }, []);

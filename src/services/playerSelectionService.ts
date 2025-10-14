@@ -91,13 +91,23 @@ export class PlayerSelectionService {
       ? this.filterByDecade(players as DecadePlayer[], decade) as T[]
       : players;
 
-    // Filtragem por dificuldade (se especificada)
+    // Filtragem por dificuldade (SEMPRE RESPEITAR - SEM FALLBACKS)
     if (difficultyLevel) {
-      const playersByDifficulty = this.filterByDifficulty(filteredPlayers, difficultyLevel);
+      filteredPlayers = this.filterByDifficulty(filteredPlayers, difficultyLevel);
       
-      // Se encontrou jogadores da dificuldade, usa eles; senão, usa todos
-      if (playersByDifficulty.length > 0) {
-        filteredPlayers = playersByDifficulty;
+      // Se não houver jogadores da dificuldade, retornar vazio
+      if (filteredPlayers.length === 0) {
+        logger.error(
+          `❌ Nenhum jogador disponível na dificuldade ${difficultyLevel}`,
+          'PlayerSelection',
+          { requestedDifficulty: difficultyLevel }
+        );
+        return {
+          player: null,
+          availablePlayers: [],
+          didReset: false,
+          debugMessage: `❌ Nenhum jogador disponível na dificuldade ${difficultyLevel}`
+        };
       }
     }
 
