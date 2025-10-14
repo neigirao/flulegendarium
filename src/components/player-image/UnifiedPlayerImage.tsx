@@ -92,8 +92,17 @@ export const UnifiedPlayerImage = memo(({
   }, [player.id, onImageLoaded]);
 
   const handleImageError = useCallback(() => {
+    console.error(`❌ Erro ao carregar imagem do jogador ${player.name} (${player.id}):`, imageSrc);
     setImageStatus('error');
-  }, []);
+    
+    // Notificar sobre o erro para tracking
+    console.warn(`🔍 Detalhes do erro:`, {
+      playerId: player.id,
+      playerName: player.name,
+      imageUrl: player.image_url,
+      resolvedUrl: imageSrc
+    });
+  }, [player.id, player.name, player.image_url, imageSrc]);
 
   return (
     <div className={cn("w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto", className)}>

@@ -123,6 +123,7 @@ async function handleImageRequest(request) {
     
     const response = await fetch(request);
     
+    // ✅ CRÍTICO: Só cachear respostas OK (200-299)
     if (response.ok) {
       // Cache inteligente: apenas imagens pequenas/médias para quota
       const contentLength = response.headers.get('content-length');
@@ -137,6 +138,15 @@ async function handleImageRequest(request) {
           console.log('🎯 SW: LCP critical image cached');
         }
       }
+    } else if (response.status === 404) {
+      // 🚨 NÃO CACHEAR 404s - apenas logar o erro
+      console.error('🚨 SW: Imagem 404 detectada - NÃO será cacheada:', request.url);
+      
+      // Retornar SVG de fallback ao invés do 404
+      return new Response(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300"><rect width="300" height="300" fill="#7A0213"/><circle cx="150" cy="150" r="50" fill="#006140"/><text x="150" y="160" text-anchor="middle" fill="white" font-size="16">FLU</text></svg>',
+        { headers: { 'Content-Type': 'image/svg+xml' } }
+      );
     }
     
     return response;
