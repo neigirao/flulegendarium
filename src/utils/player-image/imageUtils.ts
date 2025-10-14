@@ -48,30 +48,36 @@ export const getReliableImageUrl = (player: Player): string => {
   
   let imageUrl = player.image_url;
   
-  // PRIORIDADE 1: Verificar se tem fallback configurado para este jogador
-  if (playerImagesFallbacks[player.name]) {
+  // PRIORIDADE 1: Verificar se a URL do banco é válida
+  if (player.image_url && isValidImageUrl(player.image_url)) {
+    imageUrl = player.image_url;
+    console.log(`✅ Usando URL do banco para ${player.name}:`, imageUrl);
+  }
+  // PRIORIDADE 2: URL do banco é inválida, usar fallback se disponível
+  else if (playerImagesFallbacks[player.name]) {
     imageUrl = playerImagesFallbacks[player.name];
-    console.log(`✅ Usando fallback para ${player.name}:`, imageUrl);
-  } 
-  // PRIORIDADE 2: Try to find partial match
-  else if (player.image_url) {
-    // Validar URL do banco antes de usar
-    if (!isValidImageUrl(player.image_url)) {
-      console.error(`❌ URL inválida para jogador ${player.name} (${player.id}):`, player.image_url);
-      imageUrl = defaultImage;
-    } else {
-      // Procurar match parcial nos fallbacks
-      for (const [key, url] of Object.entries(playerImagesFallbacks)) {
-        if (player.name.includes(key) || key.includes(player.name)) {
-          imageUrl = url;
-          console.log(`✅ Usando fallback parcial para ${player.name}:`, imageUrl);
-          break;
-        }
+    console.log(`⚠️ URL do banco inválida. Usando fallback para ${player.name}:`, imageUrl);
+  }
+  // PRIORIDADE 3: Tentar match parcial nos fallbacks
+  else {
+    let fallbackFound = false;
+    for (const [key, url] of Object.entries(playerImagesFallbacks)) {
+      if (player.name.includes(key) || key.includes(player.name)) {
+        imageUrl = url;
+        console.log(`⚠️ Usando fallback parcial para ${player.name}:`, imageUrl);
+        fallbackFound = true;
+        break;
       }
+    }
+    
+    // PRIORIDADE 4: Última opção - imagem padrão
+    if (!fallbackFound) {
+      console.error(`❌ Nenhuma URL válida encontrada para ${player.name}. Usando imagem padrão.`);
+      imageUrl = defaultImage;
     }
   }
   
-  // PRIORIDADE 3: Última validação antes de retornar
+  // Validação final de segurança
   if (!isValidImageUrl(imageUrl)) {
     console.error(`❌ Usando imagem padrão para ${player.name} - URL final inválida:`, imageUrl);
     imageUrl = defaultImage;
