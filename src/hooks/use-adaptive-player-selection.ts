@@ -75,7 +75,10 @@ export const useAdaptivePlayerSelection = () => {
     difficultyLevel: DifficultyLevel,
     usedPlayerIds: Set<string> = new Set()
   ) => {
-    if (!players || players.length === 0) return null;
+    if (!players || players.length === 0) {
+      logger.warn('No players available in the list', 'PLAYER_SELECTION');
+      return null;
+    }
     
     // Filtrar jogadores já usados nesta partida
     const availablePlayers = players.filter(player => !usedPlayerIds.has(player.id));
@@ -86,7 +89,7 @@ export const useAdaptivePlayerSelection = () => {
       return null;
     }
     
-    // Filtrar por dificuldade entre os jogadores disponíveis
+    // PRIORIDADE 1: Jogadores com difficulty_level exato do banco de dados
     const playersAtDifficulty = availablePlayers.filter(player => 
       player.difficulty_level === difficultyLevel
     );
@@ -94,30 +97,92 @@ export const useAdaptivePlayerSelection = () => {
     if (playersAtDifficulty.length > 0) {
       const randomIndex = Math.floor(Math.random() * playersAtDifficulty.length);
       const selectedPlayer = playersAtDifficulty[randomIndex];
-      logger.debug(`Selected player: ${selectedPlayer.name}`, 'PLAYER_SELECTION', { 
-        difficulty: difficultyLevel,
-        availableCount: playersAtDifficulty.length 
-      });
+      
+      logger.info(
+        `✅ Jogador selecionado da dificuldade ${difficultyLevel}: ${selectedPlayer.name}`,
+        'PLAYER_SELECTION',
+        { 
+          difficulty: difficultyLevel,
+          playerDifficulty: selectedPlayer.difficulty_level,
+          difficultyScore: selectedPlayer.difficulty_score,
+          availableCount: playersAtDifficulty.length,
+          totalAvailable: availablePlayers.length
+        }
+      );
+      
       return selectedPlayer;
     }
     
-    // Fallback: tentar jogadores disponíveis com qualquer dificuldade
+    // FALLBACK 1: Jogadores com dificuldade próxima (±1 nível)
+    const difficultyOrder: DifficultyLevel[] = [
+      'muito_facil', 'facil', 'medio', 'dificil', 'muito_dificil'
+    ];
+    const currentIndex = difficultyOrder.indexOf(difficultyLevel);
+    const nearbyLevels = [
+      difficultyOrder[currentIndex - 1],
+      difficultyOrder[currentIndex + 1]
+    ].filter(Boolean) as DifficultyLevel[];
+    
+    const playersNearDifficulty = availablePlayers.filter(player =>
+      nearbyLevels.includes(player.difficulty_level as DifficultyLevel)
+    );
+    
+    if (playersNearDifficulty.length > 0) {
+      const randomIndex = Math.floor(Math.random() * playersNearDifficulty.length);
+      const selectedPlayer = playersNearDifficulty[randomIndex];
+      
+      logger.warn(
+        `⚠️ Nenhum jogador encontrado na dificuldade ${difficultyLevel}. Usando dificuldade próxima: ${selectedPlayer.name}`,
+        'PLAYER_SELECTION',
+        {
+          requestedDifficulty: difficultyLevel,
+          playerDifficulty: selectedPlayer.difficulty_level,
+          availableNearby: playersNearDifficulty.length
+        }
+      );
+      
+      return selectedPlayer;
+    }
+    
+    // FALLBACK 2: Qualquer jogador com dificuldade definida
     const playersWithDifficulty = availablePlayers.filter(player => 
-      player.difficulty_level && player.difficulty_level !== null && player.difficulty_level !== undefined
+      player.difficulty_level && 
+      player.difficulty_level !== null && 
+      player.difficulty_level !== undefined
     );
     
     if (playersWithDifficulty.length > 0) {
       const randomIndex = Math.floor(Math.random() * playersWithDifficulty.length);
       const selectedPlayer = playersWithDifficulty[randomIndex];
-      logger.debug(`Fallback player selected: ${selectedPlayer.name}`, 'PLAYER_SELECTION');
+      
+      logger.warn(
+        `⚠️ Usando jogador com dificuldade genérica: ${selectedPlayer.name}`,
+        'PLAYER_SELECTION',
+        {
+          requestedDifficulty: difficultyLevel,
+          playerDifficulty: selectedPlayer.difficulty_level
+        }
+      );
+      
       return selectedPlayer;
     }
     
-    // Último fallback: qualquer jogador disponível
+    // FALLBACK 3: Último recurso - jogadores sem dificuldade definida
     if (availablePlayers.length > 0) {
       const randomIndex = Math.floor(Math.random() * availablePlayers.length);
       const selectedPlayer = availablePlayers[randomIndex];
-      logger.debug(`Last fallback player: ${selectedPlayer.name}`, 'PLAYER_SELECTION');
+      
+      logger.error(
+        `❌ ATENÇÃO: Jogador sem dificuldade no banco! ${selectedPlayer.name}`,
+        'PLAYER_SELECTION',
+        {
+          playerId: selectedPlayer.id,
+          playerName: selectedPlayer.name,
+          difficultyLevel: selectedPlayer.difficulty_level,
+          difficultyScore: selectedPlayer.difficulty_score
+        }
+      );
+      
       return selectedPlayer;
     }
     

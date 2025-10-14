@@ -221,8 +221,21 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
       return;
     }
 
-    logger.debug(`Selecting player with difficulty: ${currentDifficulty.label}`, 'PLAYER_SELECTION');
+    logger.info(
+      `🎯 Selecionando jogador com dificuldade: ${currentDifficulty.label} (${currentDifficulty.level})`,
+      'ADAPTIVE_GAME',
+      {
+        currentDifficultyLevel: currentDifficulty.level,
+        multiplier: currentDifficulty.multiplier,
+        usedPlayers: usedPlayerIds.current.size,
+        totalPlayers: players.length
+      }
+    );
     
+    // IMPORTANTE: Esta função usa selectPlayerByDifficulty que:
+    // 1. PRIORIZA jogadores com difficulty_level exato do banco de dados
+    // 2. Usa fallback para dificuldades próximas se necessário
+    // 3. Garante que a dificuldade do banco seja respeitada sempre que possível
     const selectedPlayer = selectPlayerByDifficulty(
       players, 
       currentDifficulty.level as any,
@@ -234,11 +247,19 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
       usedPlayerIds.current.add(selectedPlayer.id);
       setCurrentPlayer(selectedPlayer);
       setGameKey(prev => prev + 1);
-      logger.debug(`Player selected: ${selectedPlayer.name}`, 'PLAYER_SELECTION', { 
-        difficulty: currentDifficulty.label,
-        usedCount: usedPlayerIds.current.size,
-        totalPlayers: players.length
-      });
+      
+      logger.info(
+        `✅ Jogador selecionado: ${selectedPlayer.name}`,
+        'ADAPTIVE_GAME',
+        { 
+          playerName: selectedPlayer.name,
+          playerDifficulty: selectedPlayer.difficulty_level,
+          playerDifficultyScore: selectedPlayer.difficulty_score,
+          gameDifficulty: currentDifficulty.label,
+          usedCount: usedPlayerIds.current.size,
+          totalPlayers: players.length
+        }
+      );
     } else {
       logger.warn('No available player found', 'PLAYER_SELECTION');
     }
