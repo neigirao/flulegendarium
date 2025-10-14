@@ -80,10 +80,20 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch strategy
+// Fetch strategy with filters
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
+
+  // Skip chrome-extension and other unsupported schemes
+  if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Skip POST, PUT, DELETE requests (only cache GET)
+  if (request.method !== 'GET') {
+    return;
+  }
 
   // Handle different types of requests
   if (request.destination === 'image') {
@@ -119,7 +129,9 @@ async function handleImageRequest(request) {
       const size = contentLength ? parseInt(contentLength) : 0;
       
       if (size < 3 * 1024 * 1024) { // < 3MB
-        cache.put(request, response.clone());
+        cache.put(request, response.clone()).catch(err => {
+          console.warn('SW: Failed to cache image:', err);
+        });
         
         if (request.url.includes('0aa3609f-0584-4bf4-8303-e03f50f7e131')) {
           console.log('🎯 SW: LCP critical image cached');
@@ -145,7 +157,10 @@ async function handleAPIRequest(request) {
     
     if (networkResponse.ok && request.method === 'GET') {
       const cache = await caches.open(DYNAMIC_CACHE);
-      cache.put(request, networkResponse.clone());
+      // Only cache if valid response
+      cache.put(request, networkResponse.clone()).catch(err => {
+        console.warn('SW: Failed to cache API response:', err);
+      });
     }
     
     return networkResponse;
@@ -190,7 +205,9 @@ async function handleStaticRequest(request) {
   try {
     const networkResponse = await fetch(request);
     if (networkResponse.ok) {
-      cache.put(request, networkResponse.clone());
+      cache.put(request, networkResponse.clone()).catch(err => {
+        console.warn('SW: Failed to cache static resource:', err);
+      });
     }
     return networkResponse;
   } catch (error) {
