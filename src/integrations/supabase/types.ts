@@ -142,6 +142,69 @@ export type Database = {
           },
         ]
       }
+      card_game_rankings: {
+        Row: {
+          average_game_duration: number
+          created_at: string
+          current_streak: number
+          difficulty_level: string
+          favorite_element_type: string | null
+          games_lost: number
+          games_won: number
+          highest_score: number
+          id: string
+          last_played_at: string | null
+          longest_streak: number
+          player_name: string
+          total_cards_played: number
+          total_games: number
+          total_score: number
+          updated_at: string
+          user_id: string | null
+          win_rate: number
+        }
+        Insert: {
+          average_game_duration?: number
+          created_at?: string
+          current_streak?: number
+          difficulty_level?: string
+          favorite_element_type?: string | null
+          games_lost?: number
+          games_won?: number
+          highest_score?: number
+          id?: string
+          last_played_at?: string | null
+          longest_streak?: number
+          player_name: string
+          total_cards_played?: number
+          total_games?: number
+          total_score?: number
+          updated_at?: string
+          user_id?: string | null
+          win_rate?: number
+        }
+        Update: {
+          average_game_duration?: number
+          created_at?: string
+          current_streak?: number
+          difficulty_level?: string
+          favorite_element_type?: string | null
+          games_lost?: number
+          games_won?: number
+          highest_score?: number
+          id?: string
+          last_played_at?: string | null
+          longest_streak?: number
+          player_name?: string
+          total_cards_played?: number
+          total_games?: number
+          total_score?: number
+          updated_at?: string
+          user_id?: string | null
+          win_rate?: number
+        }
+        Relationships: []
+      }
       check_ins: {
         Row: {
           check_in_time: string
@@ -223,6 +286,81 @@ export type Database = {
           target_metric?: string
           target_value?: number
           title?: string
+        }
+        Relationships: []
+      }
+      element_cards: {
+        Row: {
+          atomic_mass: number
+          atomic_number: number
+          created_at: string | null
+          density: number | null
+          description: string | null
+          electronegativity: number | null
+          element_type: string
+          group_number: number | null
+          id: string
+          image_url: string | null
+          is_super_trump: boolean | null
+          knight_name: string
+          melting_point: number | null
+          name: string
+          period_number: number | null
+          radioactivity: number | null
+          rarity: string
+          reactivity: number | null
+          special_ability: string | null
+          symbol: string
+          trump_weakness: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          atomic_mass: number
+          atomic_number: number
+          created_at?: string | null
+          density?: number | null
+          description?: string | null
+          electronegativity?: number | null
+          element_type: string
+          group_number?: number | null
+          id?: string
+          image_url?: string | null
+          is_super_trump?: boolean | null
+          knight_name: string
+          melting_point?: number | null
+          name: string
+          period_number?: number | null
+          radioactivity?: number | null
+          rarity?: string
+          reactivity?: number | null
+          special_ability?: string | null
+          symbol: string
+          trump_weakness?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          atomic_mass?: number
+          atomic_number?: number
+          created_at?: string | null
+          density?: number | null
+          description?: string | null
+          electronegativity?: number | null
+          element_type?: string
+          group_number?: number | null
+          id?: string
+          image_url?: string | null
+          is_super_trump?: boolean | null
+          knight_name?: string
+          melting_point?: number | null
+          name?: string
+          period_number?: number | null
+          radioactivity?: number | null
+          rarity?: string
+          reactivity?: number | null
+          special_ability?: string | null
+          symbol?: string
+          trump_weakness?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -626,24 +764,33 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           email: string | null
+          experience: number | null
           full_name: string | null
           id: string
+          level: number | null
+          points: number | null
           role: string | null
         }
         Insert: {
           avatar_url?: string | null
           created_at?: string
           email?: string | null
+          experience?: number | null
           full_name?: string | null
           id: string
+          level?: number | null
+          points?: number | null
           role?: string | null
         }
         Update: {
           avatar_url?: string | null
           created_at?: string
           email?: string | null
+          experience?: number | null
           full_name?: string | null
           id?: string
+          level?: number | null
+          points?: number | null
           role?: string | null
         }
         Relationships: []
@@ -768,6 +915,45 @@ export type Database = {
           },
         ]
       }
+      tutorials: {
+        Row: {
+          content: Json
+          created_at: string
+          description: string | null
+          difficulty: string
+          duration_minutes: number | null
+          id: string
+          is_required: boolean | null
+          order_index: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          duration_minutes?: number | null
+          id?: string
+          is_required?: boolean | null
+          order_index?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          description?: string | null
+          difficulty?: string
+          duration_minutes?: number | null
+          id?: string
+          is_required?: boolean | null
+          order_index?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_achievements: {
         Row: {
           achievement_id: string
@@ -867,6 +1053,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_cards: {
+        Row: {
+          card_id: string
+          id: string
+          obtained_at: string | null
+          quantity: number | null
+          user_id: string
+        }
+        Insert: {
+          card_id: string
+          id?: string
+          obtained_at?: string | null
+          quantity?: number | null
+          user_id: string
+        }
+        Update: {
+          card_id?: string
+          id?: string
+          obtained_at?: string | null
+          quantity?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_cards_card_id_fkey"
+            columns: ["card_id"]
+            isOneToOne: false
+            referencedRelation: "element_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_cards_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_challenge_progress: {
         Row: {
           challenge_id: string
@@ -907,6 +1132,66 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_customization: {
+        Row: {
+          avatar_style: string | null
+          created_at: string
+          id: string
+          notification_preferences: Json | null
+          theme_preference: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_style?: string | null
+          created_at?: string
+          id?: string
+          notification_preferences?: Json | null
+          theme_preference?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_style?: string | null
+          created_at?: string
+          id?: string
+          notification_preferences?: Json | null
+          theme_preference?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_decks: {
+        Row: {
+          card_ids: string[]
+          created_at: string
+          id: string
+          is_favorite: boolean | null
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          card_ids?: string[]
+          created_at?: string
+          id?: string
+          is_favorite?: boolean | null
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          card_ids?: string[]
+          created_at?: string
+          id?: string
+          is_favorite?: boolean | null
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_feedback: {
         Row: {
@@ -1021,6 +1306,74 @@ export type Database = {
           },
         ]
       }
+      user_pack_openings: {
+        Row: {
+          cards_obtained: Json
+          created_at: string
+          id: string
+          opened_at: string
+          pack_type: string
+          user_id: string
+        }
+        Insert: {
+          cards_obtained?: Json
+          created_at?: string
+          id?: string
+          opened_at?: string
+          pack_type: string
+          user_id: string
+        }
+        Update: {
+          cards_obtained?: Json
+          created_at?: string
+          id?: string
+          opened_at?: string
+          pack_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_tutorial_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          current_step: number | null
+          id: string
+          is_completed: boolean | null
+          tutorial_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number | null
+          id?: string
+          is_completed?: boolean | null
+          tutorial_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          current_step?: number | null
+          id?: string
+          is_completed?: boolean | null
+          tutorial_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_tutorial_progress_tutorial_id_fkey"
+            columns: ["tutorial_id"]
+            isOneToOne: false
+            referencedRelation: "tutorials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           avatar_url: string | null
@@ -1050,12 +1403,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_user_open_pack: {
+        Args: { user_uuid: string }
+        Returns: boolean
+      }
       cleanup_expired_notifications: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
       get_current_user_role: {
         Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      get_next_pack_opening_date: {
+        Args: { user_uuid: string }
         Returns: string
       }
       is_admin: {

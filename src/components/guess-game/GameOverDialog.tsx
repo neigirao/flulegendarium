@@ -11,8 +11,6 @@ import { Trophy, RotateCcw, Home, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
-import { QuickActions } from "@/components/ux/QuickActions";
-import { GameInsights } from "@/components/ux/GameInsights";
 import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
 
 interface GameOverDialogProps {
