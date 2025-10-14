@@ -98,23 +98,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
 
           {!showRankingForm && !showShareOptions && (
             <div className="space-y-4">
-              {/* Game Insights */}
-              <GameInsights
-                score={score}
-                correctGuesses={Math.floor(score / 5)}
-                totalAttempts={Math.max(1, Math.floor(score / 3))}
-                streak={0}
-                gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
-                difficulty={difficultyLevel}
-              />
-
-              {/* Quick Actions */}
-              <div className="flex gap-2 justify-center">
-                <Button onClick={handleNewGame} variant="outline" size="sm">
-                  Jogar Novamente
-                </Button>
-              </div>
-
               {/* Primary Actions */}
               <div className="space-y-3">
                 {score > 0 && (
