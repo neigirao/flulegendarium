@@ -1403,26 +1403,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      can_user_open_pack: {
-        Args: { user_uuid: string }
-        Returns: boolean
-      }
-      cleanup_expired_notifications: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
+      can_user_open_pack: { Args: { user_uuid: string }; Returns: boolean }
+      cleanup_expired_notifications: { Args: never; Returns: undefined }
+      get_current_user_role: { Args: never; Returns: string }
       get_next_pack_opening_date: {
         Args: { user_uuid: string }
         Returns: string
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
