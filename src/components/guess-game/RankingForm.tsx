@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Trophy, User, X, Instagram } from "lucide-react";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -66,30 +65,13 @@ export const RankingForm = ({
         `${name.trim()} (@${instagram.trim().replace('@', '')})` : 
         name.trim();
 
-      console.log('💾 Salvando ranking no banco:', {
+      console.log('📝 Preparando salvamento do ranking:', {
         player_name: playerDisplayName,
         score: score,
         user_id: user?.id || null,
         game_mode: gameMode,
         difficulty_level: difficultyLevel
       });
-
-      const { error } = await supabase
-        .from('rankings')
-        .insert([
-          {
-            player_name: playerDisplayName,
-            score: score,
-            user_id: user?.id || null,
-            game_mode: gameMode,
-            difficulty_level: difficultyLevel,
-            created_at: new Date().toISOString()
-          }
-        ]);
-
-      if (error) throw error;
-
-      console.log('✅ Ranking salvo com sucesso!');
 
       // Invalidate all ranking queries to force refresh
       queryClient.invalidateQueries({ queryKey: ['rankings'] });
@@ -110,9 +92,10 @@ export const RankingForm = ({
         description: `Sua pontuação de ${score} pontos foi salva no ranking${modeText}!`,
       });
 
+      // Notifica componente pai para fazer o salvamento
       onSaved(playerDisplayName);
     } catch (error) {
-      console.error('❌ Erro ao salvar pontuação:', error);
+      console.error('❌ Erro ao preparar salvamento:', error);
       
       trackEvent({
         action: 'score_save_error',
