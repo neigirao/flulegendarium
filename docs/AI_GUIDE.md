@@ -171,13 +171,42 @@ export function useAdaptiveGuessGame(players: Player[])
 ### **Analytics Hooks** (Consolidados em `hooks/analytics/`)
 
 ```typescript
-// hooks/use-analytics.ts
+// hooks/analytics/use-analytics.ts
 export function useAnalytics()
 // Core analytics com Google Analytics
 
-// hooks/use-enhanced-analytics.ts
+// hooks/analytics/use-enhanced-analytics.ts
 export function useEnhancedAnalytics()
 // Analytics estendido com eventos específicos do jogo
+```
+
+### **Admin Statistics Hooks** (Consolidados em `hooks/admin-stats/`)
+
+```typescript
+// hooks/admin-stats/use-general-stats.ts
+export function useGeneralStats()
+// Estatísticas gerais do sistema
+
+// hooks/admin-stats/use-player-performance.ts
+export function usePlayerPerformance()
+// Análise de performance de jogadores
+
+// hooks/admin-stats/use-ranking-stats.ts  
+export function useRankingStats()
+// Estatísticas de ranking
+```
+
+### **Performance Hooks** (Consolidados em `hooks/performance/`)
+
+```typescript
+// hooks/performance/use-core-web-vitals.ts
+export function useCoreWebVitals()
+// Medição de Core Web Vitals
+
+// hooks/performance/use-critical-resources.ts
+export function useCriticalResources()
+// Preload de recursos críticos
+```
 ```
 
 ### **Performance Hooks** (Consolidados em `hooks/performance/`)

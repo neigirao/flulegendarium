@@ -4,7 +4,8 @@ import { BusinessKPIs } from "./BusinessKPIs";
 import { RFMAnalysis } from "./RFMAnalysis";
 import { PredictiveModels } from "./PredictiveModels";
 import { RealTimeMetrics } from "./RealTimeMetrics";
-import { useAdvancedAnalytics } from "@/hooks/use-advanced-analytics";
+// Hook temporariamente desabilitado - em refatoração
+// import { useAdvancedAnalytics } from "@/hooks/use-advanced-analytics";
 import { 
   BarChart3, 
   Users, 
@@ -17,18 +18,21 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const AdvancedAnalyticsDashboard = () => {
-  const {
-    businessKPIs,
-    rfmSegments,
-    churnPredictions,
-    engagementPredictions,
-    modelAccuracy,
-    isLoading,
-    isLoadingKPIs,
-    isLoadingRFM,
-    isLoadingChurn,
-    isLoadingEngagement
-  } = useAdvancedAnalytics();
+  // Dados mockados temporariamente durante refatoração
+  const businessKPIs = [];
+  const rfmSegments = [];
+  const churnPredictions = [];
+  const engagementPredictions = [];
+  const modelAccuracy = { 
+    churn_model: 0, 
+    engagement_model: 0,
+    last_updated: new Date().toISOString()
+  };
+  const isLoading = false;
+  const isLoadingKPIs = false;
+  const isLoadingRFM = false;
+  const isLoadingChurn = false;
+  const isLoadingEngagement = false;
 
   return (
     <div className="space-y-6">
