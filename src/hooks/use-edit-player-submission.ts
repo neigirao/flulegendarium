@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Player, DifficultyLevel } from "@/types/guess-game";
+import { logger } from "@/utils/logger";
 
 interface UseEditPlayerSubmissionProps {
   player: Player;
@@ -45,19 +46,20 @@ export const useEditPlayerSubmission = ({
 
     setIsLoading(true);
     
-    console.log('🚀 === INICIANDO EDIÇÃO DO JOGADOR ===');
-    console.log('  - Player ID:', player.id);
-    console.log('  - Nome atual:', player.name);
-    console.log('  - Nome novo:', formData.name);
-    console.log('  - Dificuldade atual:', player.difficulty_level);
-    console.log('  - Nova dificuldade:', formData.difficultyLevel);
+    logger.info('Iniciando edição do jogador', 'EditPlayer', {
+      playerId: player.id,
+      currentName: player.name,
+      newName: formData.name,
+      currentDifficulty: player.difficulty_level,
+      newDifficulty: formData.difficultyLevel
+    });
 
     try {
       let finalImageUrl = formData.imageUrl;
 
       // Upload de imagem se necessário
       if (formData.uploadMethod === 'file' && formData.image) {
-        console.log('📸 Fazendo upload da imagem...');
+        logger.debug('Fazendo upload da imagem', 'EditPlayer');
         const fileExt = formData.image.name.split('.').pop();
         const fileName = `${formData.name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.${fileExt}`;
         
@@ -66,7 +68,7 @@ export const useEditPlayerSubmission = ({
           .upload(fileName, formData.image);
 
         if (uploadError) {
-          console.error('❌ Erro no upload:', uploadError);
+          logger.error('Erro no upload da imagem', 'EditPlayer', uploadError);
           throw uploadError;
         }
 
@@ -75,7 +77,7 @@ export const useEditPlayerSubmission = ({
           .getPublicUrl(fileName);
 
         finalImageUrl = publicUrl;
-        console.log('✅ Upload concluído:', finalImageUrl);
+        logger.debug('Upload concluído', 'EditPlayer', { url: finalImageUrl });
       }
 
       // Processar arrays - garantindo que não sejam vazios
@@ -93,13 +95,11 @@ export const useEditPlayerSubmission = ({
         jogos: Number(formData.jogos) || 0
       };
 
-      console.log('📊 === PREPARANDO DADOS ===');
-      console.log('Statistics preparadas:', statisticsData);
-      console.log('Nicknames processados:', nicknamesArray);
-      console.log('Achievements processados:', achievementsArray);
-
-      // Fazer a atualização campo por campo para evitar conflitos
-      console.log('🔄 Executando UPDATE...');
+      logger.debug('Preparando dados para update', 'EditPlayer', {
+        statistics: statisticsData,
+        nicknames: nicknamesArray,
+        achievements: achievementsArray
+      });
       
       const { data: updatedPlayer, error: updateError } = await supabase
         .from('players')
@@ -119,15 +119,15 @@ export const useEditPlayerSubmission = ({
         .single();
 
       if (updateError) {
-        console.error('❌ ERRO NO UPDATE:', updateError);
-        console.error('Código:', updateError.code);
-        console.error('Mensagem:', updateError.message);
-        console.error('Detalhes:', updateError.details);
+        logger.error('Erro no update do jogador', 'EditPlayer', {
+          code: updateError.code,
+          message: updateError.message,
+          details: updateError.details
+        });
         throw updateError;
       }
 
-      console.log('✅ UPDATE REALIZADO COM SUCESSO!');
-      console.log('📊 Dados atualizados:', updatedPlayer);
+      logger.info('Jogador atualizado com sucesso', 'EditPlayer', { player: updatedPlayer });
 
       toast({
         title: "Sucesso!",
@@ -138,8 +138,7 @@ export const useEditPlayerSubmission = ({
       onPlayerUpdated();
 
     } catch (error) {
-      console.error('💥 === ERRO GERAL ===');
-      console.error('Erro completo:', error);
+      logger.error('Erro geral ao editar jogador', 'EditPlayer', error);
       
       let errorMessage = 'Erro ao atualizar jogador';
       

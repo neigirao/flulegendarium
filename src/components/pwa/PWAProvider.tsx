@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { logger } from '@/utils/logger';
 
 interface PWAContextType {
   isInstalled: boolean;
@@ -23,7 +24,7 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
 
   useEffect(() => {
-    console.log('🔧 PWA Provider: Inicializando...');
+    logger.debug('PWA Provider inicializando', 'PWA');
 
     // Verificar se está instalado
     const checkInstallStatus = () => {
@@ -32,19 +33,20 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
       setIsInstalled(isStandalone || isIOS);
       
       if (isStandalone || isIOS) {
-        console.log('📱 PWA Provider: App está instalado');
+        logger.info('App está instalado', 'PWA');
       }
     };
 
     // Listener para status online/offline
     const handleOnlineStatus = () => {
-      setIsOnline(navigator.onLine);
-      console.log(`🌐 PWA Provider: Status de conexão: ${navigator.onLine ? 'online' : 'offline'}`);
+      const online = navigator.onLine;
+      setIsOnline(online);
+      logger.info(`Status de conexão: ${online ? 'online' : 'offline'}`, 'PWA');
     };
 
     // Listener para beforeinstallprompt
     const handleBeforeInstallPrompt = (e: Event) => {
-      console.log('🚀 PWA Provider: beforeinstallprompt capturado');
+      logger.info('beforeinstallprompt capturado', 'PWA');
       e.preventDefault();
       setDeferredPrompt(e);
       setIsInstallable(true);
@@ -54,18 +56,18 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
     const handleServiceWorkerUpdate = () => {
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('🔄 PWA Provider: Service Worker atualizado');
+          logger.info('Service Worker atualizado', 'PWA');
           setUpdateAvailable(true);
         });
 
         navigator.serviceWorker.ready.then((registration) => {
           registration.addEventListener('updatefound', () => {
-            console.log('📥 PWA Provider: Atualização encontrada');
+            logger.info('Atualização encontrada', 'PWA');
             const newWorker = registration.installing;
             if (newWorker) {
               newWorker.addEventListener('statechange', () => {
                 if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  console.log('✅ PWA Provider: Nova versão instalada');
+                  logger.info('Nova versão instalada', 'PWA');
                   setUpdateAvailable(true);
                 }
               });
@@ -89,13 +91,13 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
   }, []);
 
   const installApp = async () => {
-    console.log('🔄 PWA Provider: Tentando instalar app...');
+    logger.info('Tentando instalar app', 'PWA');
     
     if (deferredPrompt) {
       try {
         await deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        console.log(`📊 PWA Provider: Resultado da instalação: ${outcome}`);
+        logger.info(`Resultado da instalação: ${outcome}`, 'PWA');
         
         if (outcome === 'accepted') {
           setIsInstallable(false);
@@ -103,17 +105,17 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
         }
         setDeferredPrompt(null);
       } catch (error) {
-        console.error('❌ PWA Provider: Erro na instalação:', error);
+        logger.error('Erro na instalação', 'PWA', error);
         throw error;
       }
     } else {
-      console.warn('⚠️ PWA Provider: Prompt de instalação não disponível');
+      logger.warn('Prompt de instalação não disponível', 'PWA');
       throw new Error('Instalação não disponível');
     }
   };
 
   const reloadApp = () => {
-    console.log('🔄 PWA Provider: Recarregando app...');
+    logger.info('Recarregando app', 'PWA');
     window.location.reload();
   };
 

@@ -2,11 +2,12 @@
 import { supabase } from "@/integrations/supabase/client";
 import { DecadePlayer, Decade } from "@/types/decade-game";
 import { convertStatistics } from "@/utils/statistics-converter";
+import { logger } from "@/utils/logger";
 
 export const decadePlayerService = {
   async getPlayersByDecade(decade: Decade): Promise<DecadePlayer[]> {
     try {
-      console.log(`🔍 Buscando jogadores da década: ${decade}`);
+      logger.info(`Buscando jogadores da década: ${decade}`, 'DecadePlayer');
       
       const { data, error } = await supabase
         .from('players')
@@ -31,16 +32,16 @@ export const decadePlayerService = {
         .contains('decades', [decade]);
       
       if (error) {
-        console.error(`❌ Erro ao buscar jogadores da década ${decade}:`, error);
+        logger.error(`Erro ao buscar jogadores da década ${decade}`, 'DecadePlayer', error);
         throw error;
       }
       
       if (!data || data.length === 0) {
-        console.warn(`⚠️ Nenhum jogador encontrado para a década ${decade}`);
+        logger.warn(`Nenhum jogador encontrado para a década ${decade}`, 'DecadePlayer');
         return [];
       }
 
-      console.log(`✅ Encontrados ${data.length} jogadores da década ${decade}`);
+      logger.info(`Encontrados ${data.length} jogadores da década ${decade}`, 'DecadePlayer');
       
       return data.map(player => ({
         id: player.id,
@@ -62,7 +63,7 @@ export const decadePlayerService = {
       }));
 
     } catch (error) {
-      console.error('💥 Exceção ao buscar jogadores por década:', error);
+      logger.error('Exceção ao buscar jogadores por década', 'DecadePlayer', error);
       throw error;
     }
   },
@@ -80,7 +81,7 @@ export const decadePlayerService = {
       const decades = [...new Set(allDecades)];
       return decades.sort() as Decade[];
     } catch (error) {
-      console.error('❌ Erro ao buscar décadas disponíveis:', error);
+      logger.error('Erro ao buscar décadas disponíveis', 'DecadePlayer', error);
       return [];
     }
   }

@@ -45,6 +45,9 @@ src/
 └── integrations/       # Integrações (Supabase)
 ```
 
+## 📦 Hooks Removidos (Dead Code - 2025-01-16)
+❌ `use-observability`, `use-debug`, `use-image-observer`, `use-resource-hints`, `use-iframe-cache`, `use-achievement-system`, `use-simple-game-session` - Não utilizados
+
 ---
 
 ## 🎮 Fluxos Principais do Sistema
