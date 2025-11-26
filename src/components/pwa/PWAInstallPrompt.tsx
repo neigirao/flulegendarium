@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { X, Download, Share, Plus, MoreVertical, Smartphone, Monitor, Tablet } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { logger } from '@/utils/logger';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -26,7 +27,7 @@ export const PWAInstallPrompt = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    console.log('🔧 PWA Install Prompt: Inicializando...');
+    logger.debug('PWA Install Prompt inicializando', 'PWAInstall');
     
     // Detectar plataforma
     const detectPlatform = () => {
@@ -44,7 +45,7 @@ export const PWAInstallPrompt = () => {
 
     // Listener para beforeinstallprompt
     const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
-      console.log('🚀 PWA Install Prompt: beforeinstallprompt evento capturado');
+      logger.info('beforeinstallprompt evento capturado', 'PWAInstall');
       e.preventDefault();
       setDeferredPrompt(e);
       setIsInstallable(true);
@@ -53,11 +54,11 @@ export const PWAInstallPrompt = () => {
     // Verificar se já está instalado
     const checkIfInstalled = () => {
       if (window.matchMedia('(display-mode: standalone)').matches) {
-        console.log('📱 PWA Install Prompt: App já está instalado');
+        logger.info('App já está instalado', 'PWAInstall');
         return true;
       }
       if ((window.navigator as any).standalone === true) {
-        console.log('📱 PWA Install Prompt: App já está instalado (iOS)');
+        logger.info('App já está instalado (iOS)', 'PWAInstall');
         return true;
       }
       return false;
@@ -66,10 +67,10 @@ export const PWAInstallPrompt = () => {
     // Mostrar prompt após 2 segundos se não estiver instalado e for mobile
     const showPromptTimer = setTimeout(() => {
       if (!checkIfInstalled() && isMobile) {
-        console.log('⏰ PWA Install Prompt: Mostrando prompt após 2 segundos (mobile)');
+        logger.debug('Mostrando prompt após 2 segundos (mobile)', 'PWAInstall');
         setIsVisible(true);
       } else if (!isMobile) {
-        console.log('🖥️ PWA Install Prompt: Não exibindo para desktop');
+        logger.debug('Não exibindo para desktop', 'PWAInstall');
       }
     }, 2000);
 
@@ -82,25 +83,25 @@ export const PWAInstallPrompt = () => {
   }, []);
 
   const handleInstall = async () => {
-    console.log('🔄 PWA Install Prompt: Tentando instalação...');
+    logger.info('Tentando instalação', 'PWAInstall');
     
     if (deferredPrompt) {
-      console.log('✅ PWA Install Prompt: Usando API nativa');
+      logger.info('Usando API nativa', 'PWAInstall');
       try {
         await deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        console.log(`📊 PWA Install Prompt: Resultado da instalação: ${outcome}`);
+        logger.info(`Resultado da instalação: ${outcome}`, 'PWAInstall');
         
         if (outcome === 'accepted') {
           setIsVisible(false);
         }
         setDeferredPrompt(null);
       } catch (error) {
-        console.error('❌ PWA Install Prompt: Erro na instalação:', error);
+        logger.error('Erro na instalação', 'PWAInstall', error);
         setShowInstructions(true);
       }
     } else {
-      console.log('📋 PWA Install Prompt: Mostrando instruções manuais');
+      logger.debug('Mostrando instruções manuais', 'PWAInstall');
       setShowInstructions(true);
     }
   };

@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Player, DifficultyLevel } from "@/types/guess-game";
+import { logger } from "@/utils/logger";
 
 export const useEditPlayerForm = (player: Player) => {
   const [name, setName] = useState(player.name);
@@ -17,23 +18,22 @@ export const useEditPlayerForm = (player: Player) => {
   const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('url');
 
   useEffect(() => {
-    console.log('📋 === FORMULÁRIO INICIALIZADO ===');
-    console.log('  - Player:', player.name);
-    console.log('  - Dificuldade do banco:', player.difficulty_level);
-    console.log('  - Dificuldade no state:', difficultyLevel);
-    console.log('  - Todos os dados do player:', player);
+    logger.debug('Formulário inicializado', 'EditPlayerForm', {
+      playerName: player.name,
+      difficultyFromDB: player.difficulty_level,
+      difficultyInState: difficultyLevel
+    });
   }, [player, difficultyLevel]);
 
   const handleDifficultyChange = (value: string) => {
-    console.log('🎯 === MUDANÇA DE DIFICULDADE ===');
-    console.log('  - Valor anterior:', difficultyLevel);
-    console.log('  - Novo valor:', value);
-    console.log('  - Tipo do novo valor:', typeof value);
+    logger.debug('Mudança de dificuldade', 'EditPlayerForm', {
+      previousValue: difficultyLevel,
+      newValue: value,
+      valueType: typeof value
+    });
     
     const newDifficulty = value as DifficultyLevel;
     setDifficultyLevel(newDifficulty);
-    
-    console.log('  - State atualizado para:', newDifficulty);
   };
 
   return {
