@@ -207,9 +207,66 @@ export function useCoreWebVitals()
 export function useCriticalResources()
 // Preload de recursos críticos
 ```
+
+### **Mobile Hooks** (Consolidados em `hooks/mobile/`)
+
+```typescript
+// hooks/mobile/use-mobile.tsx
+export function useIsMobile()
+// Detecção de dispositivo mobile
+
+// hooks/mobile/use-mobile-optimization.ts
+export function useMobileOptimization()
+// Otimizações específicas mobile
+
+// hooks/mobile/use-touch-gestures.ts
+export function useTouchGestures()
+// Gestos touch para interações mobile
 ```
 
-### **Performance Hooks** (Consolidados em `hooks/performance/`)
+### **Data Hooks** (Consolidados em `hooks/data/`)
+
+```typescript
+// hooks/data/use-players-data.ts
+export function usePlayersData()
+// Carregamento e cache de jogadores
+
+// hooks/data/use-safe-state.ts
+export function useSafeState()
+// Estado com cleanup seguro
+
+// hooks/data/use-virtualized-ranking.ts
+export function useVirtualizedRanking()
+// Renderização otimizada de rankings
+```
+
+### **Realtime Hooks** (Consolidados em `hooks/realtime/`)
+
+```typescript
+// hooks/realtime/use-realtime-stats.ts
+export function useRealtimeStats()
+// Estatísticas em tempo real
+
+// hooks/realtime/use-live-events.ts
+export function useLiveEvents()
+// Eventos ao vivo
+
+// hooks/realtime/use-daily-challenges.ts
+export function useDailyChallenges()
+// Desafios diários
+```
+
+### **Auth Hooks** (Consolidados em `hooks/auth/`)
+
+```typescript
+// hooks/auth/useAuth.tsx
+export function useAuth()
+// Autenticação de usuários
+
+// hooks/auth/useAdminAuth.ts
+export function useAdminAuth()
+// Autenticação de administradores
+```
 
 ```typescript
 // hooks/use-core-web-vitals.ts
