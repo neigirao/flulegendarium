@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Loader2, Send } from "lucide-react";
-import { useAnalytics } from "@/hooks/use-analytics";
+import { useAnalytics } from "@/hooks/analytics";
 import { GuessConfirmDialog } from "./GuessConfirmDialog";
 import { TouchOptimizedButton, TouchOptimizedInput } from "@/components/ux/TouchOptimized";
 

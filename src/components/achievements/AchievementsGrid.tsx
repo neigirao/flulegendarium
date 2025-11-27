@@ -1,7 +1,7 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { getUserAchievements } from "@/services/achievementsService";
+import { supabase } from "@/integrations/supabase/client";
 import { ACHIEVEMENTS } from "@/types/achievements";
 import { AchievementProgressCard } from "./AchievementProgressCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +17,75 @@ export const AchievementsGrid = () => {
     queryFn: () => getUserAchievements(user!.id),
     enabled: !!user,
   });
+
+  // Query para estatísticas do jogo para calcular progresso real
+  const { data: gameStats } = useQuery({
+    queryKey: ['user-game-stats', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      
+      const { data } = await supabase
+        .from('user_game_history')
+        .select('*')
+        .eq('user_id', user.id);
+      
+      if (!data) return null;
+
+      // Calcular estatísticas agregadas
+      const totalGames = data.length;
+      const totalCorrect = data.reduce((sum, game) => sum + game.correct_guesses, 0);
+      const totalAttempts = data.reduce((sum, game) => sum + game.total_attempts, 0);
+      const accuracy = totalAttempts > 0 ? (totalCorrect / totalAttempts) * 100 : 0;
+      const bestStreak = Math.max(...data.map(g => g.max_streak || 0), 0);
+      const avgTime = data.reduce((sum, g) => sum + (g.time_taken || 0), 0) / totalGames;
+
+      return {
+        totalGames,
+        totalCorrect,
+        totalAttempts,
+        accuracy,
+        bestStreak,
+        avgTime,
+        gamesPlayed: totalGames
+      };
+    },
+    enabled: !!user,
+  });
+
+  // Função para calcular progresso real baseado nas estatísticas
+  const calculateRealProgress = (achievementId: string) => {
+    if (!gameStats) return 0;
+
+    switch (achievementId) {
+      case 'first_game':
+        return gameStats.gamesPlayed > 0 ? 1 : 0;
+      
+      case 'streak_5':
+        return Math.min(gameStats.bestStreak, 5);
+      
+      case 'streak_10':
+        return Math.min(gameStats.bestStreak, 10);
+      
+      case 'accuracy_master':
+        return gameStats.accuracy >= 80 ? 10 : Math.floor((gameStats.accuracy / 80) * 10);
+      
+      case 'speed_demon':
+        const fastGames = gameStats.avgTime < 5000 ? 10 : 0;
+        return fastGames;
+      
+      case 'games_10':
+        return Math.min(gameStats.gamesPlayed, 10);
+      
+      case 'games_50':
+        return Math.min(gameStats.gamesPlayed, 50);
+      
+      case 'games_100':
+        return Math.min(gameStats.gamesPlayed, 100);
+      
+      default:
+        return 0;
+    }
+  };
 
   const unlockedIds = userAchievements.map(ua => ua.achievement_id);
   const unlockedCount = unlockedIds.length;
@@ -121,12 +190,14 @@ export const AchievementsGrid = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {ACHIEVEMENTS.map(achievement => {
                 const userAchievement = userAchievements.find(ua => ua.achievement_id === achievement.id);
+                const progress = userAchievement?.progress || calculateRealProgress(achievement.id);
+                
                 return (
                   <AchievementProgressCard
                     key={achievement.id}
                     achievement={achievement}
                     userAchievement={userAchievement}
-                    progress={userAchievement?.progress || 0}
+                    progress={progress}
                   />
                 );
               })}
@@ -159,13 +230,17 @@ export const AchievementsGrid = () => {
 
           <TabsContent value="progress" className="mt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {ACHIEVEMENTS.filter(a => !unlockedIds.includes(a.id) && !a.hidden).map(achievement => (
-                <AchievementProgressCard
-                  key={achievement.id}
-                  achievement={achievement}
-                  progress={0} // TODO: Calculate actual progress from game stats
-                />
-              ))}
+              {ACHIEVEMENTS.filter(a => !unlockedIds.includes(a.id) && !a.hidden).map(achievement => {
+                const progress = calculateRealProgress(achievement.id);
+                
+                return (
+                  <AchievementProgressCard
+                    key={achievement.id}
+                    achievement={achievement}
+                    progress={progress}
+                  />
+                );
+              })}
             </div>
           </TabsContent>
 
@@ -182,12 +257,14 @@ export const AchievementsGrid = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {achievements.map(achievement => {
                     const userAchievement = userAchievements.find(ua => ua.achievement_id === achievement.id);
+                    const progress = userAchievement?.progress || calculateRealProgress(achievement.id);
+                    
                     return (
                       <AchievementProgressCard
                         key={achievement.id}
                         achievement={achievement}
                         userAchievement={userAchievement}
-                        progress={userAchievement?.progress || 0}
+                        progress={progress}
                       />
                     );
                   })}

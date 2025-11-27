@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useMobileOptimization } from '@/hooks/use-mobile-optimization';
+import { useMobileOptimization } from '@/hooks/mobile';
 
 interface MobileKeyboardHandlerProps {
   children: React.ReactNode;

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useCacheManager } from "./use-cache-manager";
 import { useOptimizedQueries } from "./use-optimized-queries";
+import { logger } from "@/utils/logger";
 
 interface ProgressStat {
   step: number;
@@ -18,10 +19,10 @@ export const useProgressStats = () => {
     queryFn: async () => {
       try {
         const data = await getProgressData();
-        console.log('✅ Sessões carregadas:', data?.length || 0);
+        logger.info('Sessões carregadas', 'PROGRESS_STATS', { count: data?.length || 0 });
         return data || [];
       } catch (error) {
-        console.error('❌ Erro nas estatísticas de progresso:', error);
+        logger.error('Erro nas estatísticas de progresso', 'PROGRESS_STATS', error);
         return [];
       }
     },

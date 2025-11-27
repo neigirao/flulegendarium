@@ -1,8 +1,6 @@
 
 import { ReactNode } from 'react';
-import { useResponsive } from '@/hooks/use-responsive';
-import { useOrientation } from '@/hooks/use-orientation';
-import { useDeviceDetection } from '@/hooks/use-device-detection';
+import { useResponsive, useOrientation, useDeviceDetection } from '@/hooks/mobile';
 import { cn } from '@/lib/utils';
 
 interface ResponsiveContainerProps {

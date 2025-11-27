@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
-import { useCoreWebVitals } from '@/hooks/use-core-web-vitals';
+import { useCoreWebVitals } from '@/hooks/performance';
 
 interface CoreWebVitalsOptimizerProps {
   children: React.ReactNode;

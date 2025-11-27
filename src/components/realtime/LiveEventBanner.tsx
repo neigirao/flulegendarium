@@ -1,7 +1,7 @@
 import { X, Sparkles, Trophy, Calendar, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useLiveEvents } from '@/hooks/use-live-events';
+import { useLiveEvents } from '@/hooks/realtime';
 
 export const LiveEventBanner = () => {
   const { activeEvent } = useLiveEvents();

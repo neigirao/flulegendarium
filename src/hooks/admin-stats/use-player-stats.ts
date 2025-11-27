@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useCacheManager } from "./use-cache-manager";
 import { useOptimizedQueries } from "./use-optimized-queries";
+import { logger } from "@/utils/logger";
 
 interface PlayerStats {
   player_name: string;
@@ -26,7 +27,7 @@ export const usePlayerStats = () => {
       try {
         return await getPlayerAttempts();
       } catch (error) {
-        console.error('❌ Erro nas estatísticas de jogadores:', error);
+        logger.error('Erro nas estatísticas de jogadores', 'PLAYER_STATS', error);
         return { mostCorrectData: [], allAttemptsData: [], successRate: '0' };
       }
     },

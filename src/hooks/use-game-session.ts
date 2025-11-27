@@ -2,6 +2,7 @@
 import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { logger } from "@/utils/logger";
 
 export const useGameSession = () => {
   const { user } = useAuth();
@@ -24,12 +25,12 @@ export const useGameSession = () => {
         ]);
 
       if (error) {
-        console.error('Erro ao registrar início da partida:', error);
+        logger.error('Erro ao registrar início da partida', 'GAME_SESSION', error);
       } else {
-        console.log('✅ Início da partida registrado com sucesso');
+        logger.info('Início da partida registrado com sucesso', 'GAME_SESSION');
       }
     } catch (error) {
-      console.error('Erro ao registrar início da partida:', error);
+      logger.error('Erro ao registrar início da partida', 'GAME_SESSION', error);
     }
   }, [user]);
 

@@ -1,5 +1,6 @@
 
 import { useEffect } from 'react';
+import { logger } from '@/utils/logger';
 
 interface BundleMetrics {
   chunkSize: number;
@@ -28,7 +29,7 @@ export const useBundleAnalyzer = () => {
         return total + resource.duration;
       }, 0) / jsResources.length;
       
-      console.log('Bundle Metrics:', {
+      logger.debug('Bundle Metrics', 'BUNDLE_ANALYZER', {
         totalJSSize: `${(totalJSSize / 1024).toFixed(2)}KB`,
         avgLoadTime: `${avgLoadTime.toFixed(2)}ms`,
         chunkCount: jsResources.length
@@ -75,7 +76,7 @@ export const useBundleAnalyzer = () => {
             entries.forEach(entry => {
               if (entry.name.includes('.js') && entry.name.includes('assets/')) {
                 const loadTime = entry.duration;
-                console.log(`Dynamic chunk loaded in ${loadTime.toFixed(2)}ms:`, entry.name);
+                logger.debug(`Dynamic chunk loaded in ${loadTime.toFixed(2)}ms`, 'BUNDLE_ANALYZER', { name: entry.name });
                 
                 if (window.gtag) {
                   window.gtag('event', 'dynamic_import', {
@@ -90,7 +91,7 @@ export const useBundleAnalyzer = () => {
           
           observer.observe({ entryTypes: ['resource'] });
         } catch (error) {
-          console.warn('Dynamic import tracking not supported:', error);
+          logger.warn('Dynamic import tracking not supported', 'BUNDLE_ANALYZER', error);
         }
       }
     };
@@ -99,7 +100,7 @@ export const useBundleAnalyzer = () => {
   }, []);
   
   const trackChunkLoad = (chunkName: string, size: number, loadTime: number) => {
-    console.log(`Chunk ${chunkName} loaded: ${size}KB in ${loadTime}ms`);
+    logger.debug(`Chunk ${chunkName} loaded`, 'BUNDLE_ANALYZER', { size: `${size}KB`, loadTime: `${loadTime}ms` });
     
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'chunk_loaded', {
