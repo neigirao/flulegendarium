@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from "react";
-import { useAdaptiveGuessGame } from "@/hooks/use-adaptive-guess-game";
-import { usePlayersData } from "@/hooks/use-players-data";
-import { useAuth } from "@/hooks/useAuth";
+import { useAdaptiveGuessGame } from "@/hooks/game";
+import { usePlayersData } from "@/hooks/data";
+import { useAuth } from "@/hooks/auth";
 import { BaseGameContainer } from "./BaseGameContainer";
 import { GameHeader } from "./GameHeader";
 import { AdaptiveDifficultyIndicator } from "./AdaptiveDifficultyIndicator";
@@ -14,9 +14,9 @@ import { AdaptiveProgressionNotification } from "./AdaptiveProgressionNotificati
 import { DebugInfo } from "./DebugInfo";
 import { ErrorDisplay } from "./ErrorDisplay";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
-import { useEnhancedAnalytics } from "@/hooks/use-enhanced-analytics";
+import { useEnhancedAnalytics } from "@/hooks/analytics";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
-import { useMobileOptimization } from "@/hooks/use-mobile-optimization";
+import { useMobileOptimization } from "@/hooks/mobile";
 import { useUX } from "@/components/ux/UXProvider";
 
 const AdaptiveGameContainer = () => {

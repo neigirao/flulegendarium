@@ -5,13 +5,15 @@ import { DecadeSelectionPage } from './DecadeSelectionPage';
 import { GameContainer } from '@/components/guess-game/GameContainer';
 import { BaseGameContainer } from '@/components/guess-game/BaseGameContainer';
 import { GuestNameForm } from '@/components/guess-game/GuestNameForm';
-import { useDecadePlayerSelection } from '@/hooks/use-decade-player-selection';
-import { useSimpleGameLogic } from '@/hooks/use-simple-game-logic';
-import { useSimpleGameCallbacks } from '@/hooks/use-simple-game-callbacks';
-import { useSimpleGameMetrics } from '@/hooks/use-simple-game-metrics';
-import { useDecadeGameTimer } from '@/hooks/use-decade-game-timer';
-import { useDecadeGameState } from '@/hooks/use-decade-game-state';
-import { useAuth } from '@/hooks/useAuth';
+import { 
+  useDecadePlayerSelection, 
+  useSimpleGameLogic, 
+  useSimpleGameCallbacks, 
+  useSimpleGameMetrics,
+  useDecadeGameTimer,
+  useDecadeGameState 
+} from '@/hooks/game';
+import { useAuth } from '@/hooks/auth';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';

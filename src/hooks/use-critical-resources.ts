@@ -1,5 +1,6 @@
 
 import { useEffect, useCallback } from 'react';
+import { logger } from '@/utils/logger';
 
 interface CriticalResource {
   href: string;
@@ -29,7 +30,7 @@ export const useCriticalResources = () => {
       const existing = document.querySelector(`link[href="${src}"]`);
       if (!existing) {
         document.head.appendChild(link);
-        console.log(`🚀 Preloading critical image: ${src}`);
+        logger.debug(`Preloading critical image: ${src}`, 'CRITICAL_RESOURCES');
       }
     });
   }, []);
@@ -54,7 +55,7 @@ export const useCriticalResources = () => {
       const existing = document.querySelector(`link[href="${font.href}"][rel="preload"]`);
       if (!existing) {
         document.head.appendChild(link);
-        console.log(`🔤 Preloading critical font: ${font.href}`);
+        logger.debug(`Preloading critical font: ${font.href}`, 'CRITICAL_RESOURCES');
       }
     });
   }, []);
@@ -75,7 +76,7 @@ export const useCriticalResources = () => {
         link.href = domain.href;
         link.crossOrigin = 'anonymous';
         document.head.appendChild(link);
-        console.log(`🔗 Adding resource hint: ${domain.rel} -> ${domain.href}`);
+        logger.debug(`Adding resource hint: ${domain.rel} -> ${domain.href}`, 'CRITICAL_RESOURCES');
       }
     });
   }, []);
@@ -96,7 +97,7 @@ export const useCriticalResources = () => {
           const img = new Image();
           img.fetchPriority = 'low';
           img.src = src;
-          console.log(`📸 Background preloading: ${src}`);
+          logger.debug(`Background preloading: ${src}`, 'CRITICAL_RESOURCES');
         }, index * 500);
       });
     });

@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { Trophy, User, X, Instagram } from "lucide-react";
-import { useAnalytics } from "@/hooks/use-analytics";
+import { useAnalytics } from "@/hooks/analytics";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface RankingFormProps {

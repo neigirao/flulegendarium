@@ -6,7 +6,7 @@ import { GameProgress } from "./GameProgress";
 import { Timer, Trophy, Home, Info, Zap } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { GameConfirmDialog } from "./GameConfirmDialog";
-import { useGameConfirmations } from "@/hooks/use-game-confirmations";
+import { useGameConfirmations } from "@/hooks/game";
 import { Button } from "@/components/ui/button";
 import { logger } from "@/utils/logger";
 

@@ -13,3 +13,4 @@ export { useMobileKeyboard } from '../use-mobile-keyboard';
 export { useDeviceDetection } from '../use-device-detection';
 export { useOrientation } from '../use-orientation';
 export { useTouchGestures } from '../use-touch-gestures';
+export { useResponsive } from '../use-responsive';

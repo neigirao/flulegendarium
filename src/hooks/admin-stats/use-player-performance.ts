@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useMemo } from "react";
 import { useCacheManager } from "./use-cache-manager";
+import { logger } from "@/utils/logger";
 
 interface PlayerPerformance {
   player_name: string;
@@ -20,7 +21,7 @@ export const usePlayerPerformance = () => {
   const { data: attemptsData = [], isLoading } = useQuery({
     queryKey: ['admin-player-performance'],
     queryFn: async () => {
-      console.log('📊 Buscando dados de performance dos jogadores...');
+      logger.info('Buscando dados de performance dos jogadores', 'PLAYER_PERFORMANCE');
       
       const { data, error } = await supabase
         .from('game_attempts')
@@ -28,11 +29,11 @@ export const usePlayerPerformance = () => {
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error('❌ Erro ao buscar tentativas:', error);
+        logger.error('Erro ao buscar tentativas', 'PLAYER_PERFORMANCE', error);
         throw error;
       }
       
-      console.log('✅ Dados de tentativas carregados:', data?.length || 0);
+      logger.info('Dados de tentativas carregados', 'PLAYER_PERFORMANCE', { count: data?.length || 0 });
       return data || [];
     },
     ...getCacheConfig('medium')

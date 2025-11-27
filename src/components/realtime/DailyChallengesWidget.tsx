@@ -2,7 +2,7 @@ import { Target, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FluCard } from '@/components/ui/flu-card';
 import { DailyChallengeCard } from './DailyChallengeCard';
-import { useDailyChallenges } from '@/hooks/use-daily-challenges';
+import { useDailyChallenges } from '@/hooks/realtime';
 
 export const DailyChallengesWidget = () => {
   const { challenges, isLoading } = useDailyChallenges();

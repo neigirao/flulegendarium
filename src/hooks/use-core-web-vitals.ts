@@ -1,5 +1,6 @@
 
 import { useEffect, useCallback } from 'react';
+import { logger } from '@/utils/logger';
 
 interface WebVitalsMetric {
   name: string;
@@ -10,7 +11,7 @@ interface WebVitalsMetric {
 
 export const useCoreWebVitals = () => {
   const reportMetric = useCallback((metric: WebVitalsMetric) => {
-    console.log(`📊 ${metric.name}:`, metric.value);
+    logger.info(`${metric.name}: ${metric.value}`, 'WEB_VITALS');
     
     // Send to analytics if available
     if (typeof window !== 'undefined' && (window as any).gtag) {
@@ -47,7 +48,7 @@ export const useCoreWebVitals = () => {
           try {
             lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
           } catch (e) {
-            console.warn('LCP not supported');
+            logger.warn('LCP not supported', 'WEB_VITALS');
           }
 
           // FID - First Input Delay
@@ -67,7 +68,7 @@ export const useCoreWebVitals = () => {
           try {
             fidObserver.observe({ entryTypes: ['first-input'] });
           } catch (e) {
-            console.warn('FID not supported');
+            logger.warn('FID not supported', 'WEB_VITALS');
           }
 
           // CLS - Cumulative Layout Shift
@@ -90,7 +91,7 @@ export const useCoreWebVitals = () => {
           try {
             clsObserver.observe({ entryTypes: ['layout-shift'] });
           } catch (e) {
-            console.warn('CLS not supported');
+            logger.warn('CLS not supported', 'WEB_VITALS');
           }
 
           // FCP - First Contentful Paint
@@ -110,7 +111,7 @@ export const useCoreWebVitals = () => {
           try {
             fcpObserver.observe({ entryTypes: ['paint'] });
           } catch (e) {
-            console.warn('FCP not supported');
+            logger.warn('FCP not supported', 'WEB_VITALS');
           }
 
           // TTFB - Time to First Byte
@@ -134,7 +135,7 @@ export const useCoreWebVitals = () => {
           }
         }
       } catch (error) {
-        console.warn('Web Vitals measurement failed:', error);
+        logger.warn('Web Vitals measurement failed', 'WEB_VITALS', error);
       }
     };
 

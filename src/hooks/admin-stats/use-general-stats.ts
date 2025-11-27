@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useCacheManager } from "./use-cache-manager";
 import { useOptimizedQueries } from "./use-optimized-queries";
+import { logger } from "@/utils/logger";
 
 interface GeneralStats {
   totalAttempts: number;
@@ -19,10 +20,10 @@ export const useGeneralStats = () => {
     queryFn: async (): Promise<GeneralStats> => {
       try {
         const stats = await getGeneralCounts();
-        console.log('✅ Estatísticas gerais carregadas:', stats);
+        logger.info('Estatísticas gerais carregadas', 'ADMIN_STATS', stats);
         return stats;
       } catch (error) {
-        console.error('❌ Erro nas estatísticas gerais:', error);
+        logger.error('Erro nas estatísticas gerais', 'ADMIN_STATS', error);
         return {
           totalAttempts: 0,
           totalSessions: 0,

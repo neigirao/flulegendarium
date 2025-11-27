@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useCoreWebVitals } from '@/hooks/use-core-web-vitals';
+import { useCoreWebVitals } from '@/hooks/performance';
 
 interface PerformanceMetric {
   name: string;

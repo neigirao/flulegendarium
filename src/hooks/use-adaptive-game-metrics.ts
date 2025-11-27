@@ -4,6 +4,7 @@ import { useAuth } from "./useAuth";
 import { saveGameHistory } from "@/services/gameHistoryService";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from "@/utils/logger";
 
 export const useAdaptiveGameMetrics = () => {
   const { user } = useAuth();
@@ -28,7 +29,7 @@ export const useAdaptiveGameMetrics = () => {
 
   const registerGameStart = useCallback(async () => {
     try {
-      console.log('📊 Registrando início de partida adaptativa');
+      logger.info('Registrando início de partida adaptativa', 'GAME_METRICS');
       
       const { error } = await supabase
         .from('game_starts')
@@ -40,12 +41,12 @@ export const useAdaptiveGameMetrics = () => {
         });
 
       if (error) {
-        console.error('❌ Erro ao registrar início da partida adaptativa:', error);
+        logger.error('Erro ao registrar início da partida adaptativa', 'GAME_METRICS', error);
       } else {
-        console.log('✅ Início da partida adaptativa registrado');
+        logger.info('Início da partida adaptativa registrado', 'GAME_METRICS');
       }
     } catch (error) {
-      console.error('❌ Erro ao registrar início da partida adaptativa:', error);
+      logger.error('Erro ao registrar início da partida adaptativa', 'GAME_METRICS', error);
     }
   }, [user]);
 
@@ -82,7 +83,7 @@ export const useAdaptiveGameMetrics = () => {
     isCorrect: boolean
   ) => {
     try {
-      console.log('📊 Salvando estatística de dificuldade:', {
+      logger.debug('Salvando estatística de dificuldade', 'GAME_METRICS', {
         playerId,
         playerName,
         difficultyLevel,
@@ -102,10 +103,10 @@ export const useAdaptiveGameMetrics = () => {
         });
 
       if (error) {
-        console.error('❌ Erro ao salvar estatística de dificuldade:', error);
+        logger.error('Erro ao salvar estatística de dificuldade', 'GAME_METRICS', error);
       }
     } catch (error) {
-      console.error('❌ Erro ao salvar estatística de dificuldade:', error);
+      logger.error('Erro ao salvar estatística de dificuldade', 'GAME_METRICS', error);
     }
   }, [user]);
 
@@ -115,14 +116,14 @@ export const useAdaptiveGameMetrics = () => {
     difficultyMultiplier: number = 1.0
   ) => {
     if (!user?.id || !gameStartTimeRef.current) {
-      console.log('⚠️ Modo adaptativo: Cannot save game data - missing user or start time');
+      logger.warn('Modo adaptativo: Cannot save game data - missing user or start time', 'GAME_METRICS');
       return;
     }
 
     try {
       const gameDuration = Math.floor((Date.now() - gameStartTimeRef.current) / 1000);
 
-      console.log('💾 Salvando dados da partida adaptativa:', {
+      logger.info('Salvando dados da partida adaptativa', 'GAME_METRICS', {
         userId: user.id,
         score: finalScore,
         correct_guesses: correctGuessesRef.current,
@@ -147,7 +148,7 @@ export const useAdaptiveGameMetrics = () => {
       });
 
     } catch (error) {
-      console.error('❌ Erro ao salvar dados da partida adaptativa:', error);
+      logger.error('Erro ao salvar dados da partida adaptativa', 'GAME_METRICS', error);
     }
   }, [user]);
 
@@ -157,7 +158,7 @@ export const useAdaptiveGameMetrics = () => {
     currentDifficultyLevel: string
   ) => {
     try {
-      console.log('🏆 Salvando pontuação adaptativa no ranking:', {
+      logger.info('Salvando pontuação adaptativa no ranking', 'GAME_METRICS', {
         playerName,
         score: finalScore,
         difficulty_level: currentDifficultyLevel
@@ -175,13 +176,13 @@ export const useAdaptiveGameMetrics = () => {
         });
 
       if (error) {
-        console.error('❌ Erro ao salvar no ranking adaptativo:', error);
+        logger.error('Erro ao salvar no ranking adaptativo', 'GAME_METRICS', error);
         throw error;
       }
 
-      console.log('✅ Pontuação adaptativa salva no ranking');
+      logger.info('Pontuação adaptativa salva no ranking', 'GAME_METRICS');
     } catch (error) {
-      console.error('❌ Erro ao salvar no ranking adaptativo:', error);
+      logger.error('Erro ao salvar no ranking adaptativo', 'GAME_METRICS', error);
       throw error;
     }
   }, [user]);

@@ -1,6 +1,6 @@
 import { Users, Trophy, Target } from 'lucide-react';
 import { FluCard } from '@/components/ui/flu-card';
-import { useRealtimeStats } from '@/hooks/use-realtime-stats';
+import { useRealtimeStats } from '@/hooks/realtime';
 
 export const LiveStatsWidget = () => {
   const { stats, isLoading } = useRealtimeStats();
