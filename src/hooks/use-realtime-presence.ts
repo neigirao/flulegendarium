@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { logger } from '@/utils/logger';
 
 export const useRealtimePresence = () => {
   const { user } = useAuth();
@@ -27,7 +28,7 @@ export const useRealtimePresence = () => {
           .update({ stat_value: onlineCount, updated_at: new Date().toISOString() })
           .eq('stat_key', 'online_users')
           .then(({ error }) => {
-            if (error) console.error('Erro ao atualizar contagem online:', error);
+            if (error) logger.error('Erro ao atualizar contagem online', 'REALTIME_PRESENCE', error);
           });
       })
       .subscribe(async (status) => {

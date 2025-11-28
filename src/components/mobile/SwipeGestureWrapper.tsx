@@ -1,6 +1,6 @@
 
 import { ReactNode } from 'react';
-import { useTouchGestures } from '@/hooks/use-touch-gestures';
+import { useTouchGestures } from '@/hooks/mobile';
 import { cn } from '@/lib/utils';
 
 interface SwipeGestureWrapperProps {

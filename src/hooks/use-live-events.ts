@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
 
 interface LiveEvent {
   id: string;
@@ -35,7 +36,7 @@ export const useLiveEvents = () => {
         setEvents((data || []) as LiveEvent[]);
         setActiveEvent((data?.[0] || null) as LiveEvent | null);
       } catch (error) {
-        console.error('Erro ao buscar eventos:', error);
+        logger.error('Erro ao buscar eventos', 'LIVE_EVENTS', error);
       } finally {
         setIsLoading(false);
       }

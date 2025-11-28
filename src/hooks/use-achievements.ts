@@ -1,9 +1,9 @@
-
 import { useState, useCallback } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { checkAchievements } from "@/services/achievementsService";
 import { ACHIEVEMENTS } from "@/types/achievements";
 import { useToast } from "@/components/ui/use-toast";
+import { logger } from "@/utils/logger";
 
 export const useAchievements = () => {
   const { user } = useAuth();
@@ -37,7 +37,7 @@ export const useAchievements = () => {
 
       return newAchievements;
     } catch (error) {
-      console.error('Error checking achievements:', error);
+      logger.error('Error checking achievements', 'ACHIEVEMENTS', error);
       return [];
     } finally {
       setIsChecking(false);

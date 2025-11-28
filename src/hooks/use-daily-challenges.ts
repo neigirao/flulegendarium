@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
+import { logger } from '@/utils/logger';
 
 interface DailyChallenge {
   id: string;
@@ -60,7 +61,7 @@ export const useDailyChallenges = () => {
 
         setChallenges(challengesWithProgress as DailyChallenge[]);
       } catch (error) {
-        console.error('Erro ao buscar desafios:', error);
+        logger.error('Erro ao buscar desafios', 'DAILY_CHALLENGES', error);
       } finally {
         setIsLoading(false);
       }
@@ -126,7 +127,7 @@ export const useDailyChallenges = () => {
 
       if (error) throw error;
     } catch (error) {
-      console.error('Erro ao atualizar progresso do desafio:', error);
+      logger.error('Erro ao atualizar progresso do desafio', 'DAILY_CHALLENGES', error);
     }
   };
 

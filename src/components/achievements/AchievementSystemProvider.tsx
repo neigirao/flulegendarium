@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
-import { useAchievements } from '@/hooks/use-achievements';
+import { useAchievements } from '@/hooks/game';
 import { AchievementNotification } from './AchievementNotification';
 import { useUX } from '@/components/ux/UXProvider';
 

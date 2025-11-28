@@ -1,5 +1,5 @@
-
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { logger } from '@/utils/logger';
 
 // Hook que previne updates de estado em componentes desmontados
 export const useSafeState = <T>(initialState: T) => {
@@ -16,7 +16,7 @@ export const useSafeState = <T>(initialState: T) => {
     if (isMountedRef.current) {
       setState(newState);
     } else {
-      console.warn('⚠️ Tentativa de atualizar estado em componente desmontado prevenida');
+      logger.warn('Tentativa de atualizar estado em componente desmontado prevenida', 'SAFE_STATE');
     }
   }, []);
 
@@ -50,7 +50,7 @@ export const useSafeAsync = () => {
       if (isMountedRef.current && onError) {
         onError(error as Error);
       } else if (isMountedRef.current) {
-        console.error('❌ Erro em operação assíncrona:', error);
+        logger.error('Erro em operação assíncrona', 'SAFE_ASYNC', error);
       }
       throw error;
     }

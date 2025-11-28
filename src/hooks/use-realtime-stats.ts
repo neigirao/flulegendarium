@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/utils/logger';
 
 interface LiveStats {
   online_users: number;
@@ -32,7 +33,7 @@ export const useRealtimeStats = () => {
         
         setStats(prev => ({ ...prev, ...statsMap }));
       } catch (error) {
-        console.error('Erro ao buscar estatísticas:', error);
+        logger.error('Erro ao buscar estatísticas', 'REALTIME_STATS', error);
       } finally {
         setIsLoading(false);
       }
@@ -84,7 +85,7 @@ export const useRealtimeStats = () => {
       
       if (error) throw error;
     } catch (error) {
-      console.error(`Erro ao incrementar ${statKey}:`, error);
+      logger.error(`Erro ao incrementar ${statKey}`, 'REALTIME_STATS', error);
     }
   };
 

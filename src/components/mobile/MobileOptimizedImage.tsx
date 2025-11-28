@@ -1,7 +1,8 @@
 
 import { useState, useCallback, memo } from 'react';
-import { useLayoutShiftPrevention } from '@/hooks/use-layout-shift-prevention';
+import { useLayoutShiftPrevention } from '@/hooks/performance';
 import { cn } from '@/lib/utils';
+import { logger } from '@/utils/logger';
 
 interface MobileOptimizedImageProps {
   src: string;
@@ -35,21 +36,21 @@ export const MobileOptimizedImage = memo(({
   });
 
   const handleImageLoad = useCallback(() => {
-    console.log('📸 MobileOptimizedImage loaded:', currentSrc);
+    logger.debug(`MobileOptimizedImage loaded: ${currentSrc}`, 'MOBILE_IMAGE');
     setImageLoaded(true);
     setImageError(false);
     onLoad?.();
   }, [currentSrc, onLoad]);
 
   const handleImageError = useCallback(() => {
-    console.error('❌ MobileOptimizedImage error:', currentSrc);
+    logger.error(`MobileOptimizedImage error: ${currentSrc}`, 'MOBILE_IMAGE');
     
     if (currentSrc !== fallbackSrc) {
-      console.log('🔄 Trying fallback:', fallbackSrc);
+      logger.debug(`Trying fallback: ${fallbackSrc}`, 'MOBILE_IMAGE');
       setCurrentSrc(fallbackSrc);
       setImageError(false);
     } else {
-      console.log('💥 Fallback also failed');
+      logger.error('Fallback also failed', 'MOBILE_IMAGE');
       setImageError(true);
     }
     onError?.();
