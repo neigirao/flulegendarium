@@ -1,9 +1,9 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Player } from "@/types/guess-game";
 import { convertStatistics } from "@/utils/statistics-converter";
 import { useMemo } from "react";
+import { logger } from "@/utils/logger";
 
 interface DatabasePlayer {
   id: string;
@@ -28,7 +28,7 @@ export const usePlayersData = () => {
     queryKey: ['players'],
     queryFn: async (): Promise<DatabasePlayer[]> => {
       try {
-        console.log("🔍 === CARREGANDO DADOS DOS JOGADORES ===");
+        logger.info('Carregando dados dos jogadores', 'PLAYERS_DATA');
         
         const { data, error } = await supabase
           .from('players')
@@ -51,24 +51,25 @@ export const usePlayersData = () => {
           `);
         
         if (error) {
-          console.error("❌ Erro ao buscar jogadores:", error);
+          logger.error('Erro ao buscar jogadores', 'PLAYERS_DATA', error);
           throw error;
         }
         
         if (!data || data.length === 0) {
-          console.warn("⚠️ Nenhum jogador encontrado no banco");
+          logger.warn('Nenhum jogador encontrado no banco', 'PLAYERS_DATA');
           return [];
         }
 
-        console.log(`✅ Jogadores carregados do banco: ${data.length}`);
+        logger.info(`Jogadores carregados do banco: ${data.length}`, 'PLAYERS_DATA');
         
         // Log detalhado dos dados brutos do banco
-        console.log("📊 === DADOS BRUTOS DO BANCO ===");
-        data.forEach((player, index) => {
-          console.log(`${index + 1}. ID: ${player.id}`);
-          console.log(`   Nome: ${player.name}`);
-          console.log(`   Dificuldade RAW: "${player.difficulty_level}" (tipo: ${typeof player.difficulty_level})`);
-          console.log(`   ---`);
+        logger.debug('Dados brutos do banco', 'PLAYERS_DATA', { 
+          total: data.length,
+          sample: data.slice(0, 3).map(p => ({ 
+            id: p.id, 
+            name: p.name, 
+            difficulty: p.difficulty_level 
+          }))
         });
         
         // Log da distribuição de dificuldades
@@ -77,11 +78,11 @@ export const usePlayersData = () => {
           const difficulty = player.difficulty_level || 'sem_dificuldade';
           difficultyCount[difficulty] = (difficultyCount[difficulty] || 0) + 1;
         });
-        console.log("📈 Distribuição de dificuldades (dados brutos):", difficultyCount);
+        logger.info('Distribuição de dificuldades (dados brutos)', 'PLAYERS_DATA', difficultyCount);
         
         return data;
       } catch (err) {
-        console.error("💥 Exceção ao buscar jogadores:", err);
+        logger.error('Exceção ao buscar jogadores', 'PLAYERS_DATA', err);
         throw err;
       }
     },
@@ -100,7 +101,7 @@ export const usePlayersData = () => {
   const players = useMemo((): Player[] => {
     if (!rawPlayers || rawPlayers.length === 0) return [];
 
-    console.log("🔄 === PROCESSANDO JOGADORES ===");
+    logger.debug('Processando jogadores', 'PLAYERS_DATA');
     
     const processedPlayers = rawPlayers.map((player: DatabasePlayer) => {
       const enhancedPlayer: Player = {
@@ -121,10 +122,10 @@ export const usePlayersData = () => {
         average_guess_time: player.average_guess_time || 30000
       };
       
-      console.log(`🎯 Jogador processado: "${enhancedPlayer.name}"`);
-      console.log(`   Dificuldade original: "${player.difficulty_level}"`);
-      console.log(`   Dificuldade processada: "${enhancedPlayer.difficulty_level}"`);
-      console.log(`   ---`);
+      logger.debug(`Jogador processado: ${enhancedPlayer.name}`, 'PLAYERS_DATA', {
+        original_difficulty: player.difficulty_level,
+        processed_difficulty: enhancedPlayer.difficulty_level
+      });
       
       return enhancedPlayer;
     });
@@ -135,12 +136,16 @@ export const usePlayersData = () => {
       const difficulty = player.difficulty_level || 'sem_dificuldade';
       finalDifficultyCount[difficulty] = (finalDifficultyCount[difficulty] || 0) + 1;
     });
-    console.log("📈 Distribuição final de dificuldades (após processamento):", finalDifficultyCount);
+    logger.info('Distribuição final de dificuldades (após processamento)', 'PLAYERS_DATA', finalDifficultyCount);
 
     return processedPlayers;
   }, [rawPlayers]);
 
-  console.log("🔄 Hook usePlayersData - Players:", players?.length || 0, "Loading:", isLoading, "Error:", !!playersError);
+  logger.debug('Hook usePlayersData', 'PLAYERS_DATA', { 
+    players: players?.length || 0, 
+    isLoading, 
+    hasError: !!playersError 
+  });
 
   return {
     players,

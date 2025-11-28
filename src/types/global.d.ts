@@ -35,12 +35,30 @@ declare global {
     fetchStart: number;
     responseStart: number;
     responseEnd: number;
+    requestStart: number;
   }
 
   // Layout shift entry type
   interface LayoutShiftEntry extends PerformanceEntry {
     value: number;
     hadRecentInput: boolean;
+  }
+
+  // First Input Delay entry type
+  interface PerformanceEventTiming extends PerformanceEntry {
+    processingStart: number;
+    startTime: number;
+  }
+
+  // Touch event extensions
+  interface Touch {
+    clientX: number;
+    clientY: number;
+  }
+
+  interface TouchEvent extends UIEvent {
+    touches: TouchList;
+    changedTouches: TouchList;
   }
 }
 

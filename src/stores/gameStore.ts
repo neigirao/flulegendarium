@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
+import { Player } from '@/types/guess-game';
 
 interface GameStats {
   totalGames: number;
@@ -13,7 +14,7 @@ interface GameStats {
 
 interface GameSession {
   isActive: boolean;
-  currentPlayer?: any;
+  currentPlayer?: Player;
   score: number;
   attempts: number;
   correctGuesses: number;

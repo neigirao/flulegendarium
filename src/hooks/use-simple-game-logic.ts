@@ -1,8 +1,8 @@
-
 import { useState, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player } from "@/types/guess-game";
 import { isCorrectGuess } from "@/utils/name-processor";
+import { logger } from "@/utils/logger";
 
 interface UseSimpleGameLogicProps {
   currentPlayer: Player | null;
@@ -28,18 +28,18 @@ export const useSimpleGameLogic = ({
 
   const handleGuess = useCallback(async (guess: string) => {
     if (!currentPlayer || !guess.trim() || isProcessingGuess) {
-      console.log('🚫 Condições não atendidas para processar palpite');
+      logger.debug('Condições não atendidas para processar palpite', 'GAME_LOGIC');
       return;
     }
     
-    console.log('🎮 Processando palpite:', guess, 'para:', currentPlayer.name);
+    logger.debug(`Processando palpite: ${guess} para: ${currentPlayer.name}`, 'GAME_LOGIC');
     setIsProcessingGuess(true);
     
     try {
       const isCorrect = isCorrectGuess(guess, currentPlayer.name);
       
       if (isCorrect) {
-        console.log('🎯 ACERTOU!', currentPlayer.name);
+        logger.info(`ACERTOU! ${currentPlayer.name}`, 'GAME_LOGIC');
         
         const points = 5;
         onCorrectGuess(points);
@@ -53,7 +53,7 @@ export const useSimpleGameLogic = ({
         
         // Aguarda um momento e vai para o próximo jogador COM TIMER REINICIADO
         setTimeout(() => {
-          console.log('🔄 Indo para próximo jogador e reiniciando timer...');
+          logger.debug('Indo para próximo jogador e reiniciando timer', 'GAME_LOGIC');
           selectRandomPlayer();
           // Reiniciar o timer do zero para o próximo jogador
           setTimeout(() => {
@@ -63,7 +63,7 @@ export const useSimpleGameLogic = ({
         }, 1500);
         
       } else {
-        console.log('❌ ERROU! Resposta:', guess, 'Correto:', currentPlayer.name);
+        logger.info(`ERROU! Resposta: ${guess}, Correto: ${currentPlayer.name}`, 'GAME_LOGIC');
         
         onIncorrectGuess(guess);
         onGameEnd();
@@ -78,7 +78,7 @@ export const useSimpleGameLogic = ({
         setIsProcessingGuess(false);
       }
     } catch (error) {
-      console.error("Erro ao processar palpite:", error);
+      logger.error('Erro ao processar palpite', 'GAME_LOGIC', error);
       setIsProcessingGuess(false);
     }
   }, [currentPlayer, isProcessingGuess, onCorrectGuess, onIncorrectGuess, onGameEnd, selectRandomPlayer, stopTimer, startTimer, toast]);

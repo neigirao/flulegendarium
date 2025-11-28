@@ -1,10 +1,10 @@
-
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 export const useOptimizedQueries = () => {
   // Query otimizada para contagens gerais
   const getGeneralCounts = async () => {
-    console.log('📊 Executando queries otimizadas para contagens gerais...');
+    logger.info('Executando queries otimizadas para contagens gerais', 'OPTIMIZED_QUERIES');
     
     const [attemptsResult, sessionsResult, playersResult, correctResult] = await Promise.all([
       supabase.from('game_starts').select('*', { count: 'exact', head: true }),
@@ -23,7 +23,7 @@ export const useOptimizedQueries = () => {
 
   // Query otimizada para estatísticas de jogadores
   const getPlayerAttempts = async () => {
-    console.log('🎯 Executando query otimizada para tentativas de jogadores...');
+    logger.info('Executando query otimizada para tentativas de jogadores', 'OPTIMIZED_QUERIES');
     
     const [correctData, allAttemptsData] = await Promise.all([
       supabase
@@ -52,7 +52,7 @@ export const useOptimizedQueries = () => {
 
   // Query otimizada para rankings
   const getRankings = async (limit: number = 50) => {
-    console.log('🏆 Executando query otimizada para rankings...');
+    logger.info(`Executando query otimizada para rankings (limit: ${limit})`, 'OPTIMIZED_QUERIES');
     
     const { data, error } = await supabase
       .from('rankings')
@@ -66,7 +66,7 @@ export const useOptimizedQueries = () => {
 
   // Query otimizada para progresso
   const getProgressData = async () => {
-    console.log('📈 Executando query otimizada para progresso...');
+    logger.info('Executando query otimizada para progresso', 'OPTIMIZED_QUERIES');
     
     const { data, error } = await supabase
       .from('game_sessions')
