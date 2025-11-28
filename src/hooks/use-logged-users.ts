@@ -1,6 +1,6 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 interface LoggedUser {
   id: string;
@@ -21,7 +21,7 @@ export const useLoggedUsers = () => {
     queryKey: ['logged-users'],
     queryFn: async (): Promise<LoggedUser[]> => {
       try {
-        console.log('🔍 Iniciando busca de usuários logados...');
+        logger.info('Iniciando busca de usuários logados', 'LOGGED_USERS');
         
         // Primeiro, vamos buscar todos os perfis
         const { data: profiles, error: profilesError } = await supabase
@@ -29,15 +29,14 @@ export const useLoggedUsers = () => {
           .select('*');
         
         if (profilesError) {
-          console.error('❌ Erro ao buscar perfis:', profilesError);
+          logger.error('Erro ao buscar perfis', 'LOGGED_USERS', profilesError);
           throw profilesError;
         }
 
-        console.log('👥 Total de perfis encontrados:', profiles?.length || 0);
-        console.log('👥 Perfis encontrados:', profiles);
+        logger.info(`Total de perfis encontrados: ${profiles?.length || 0}`, 'LOGGED_USERS');
 
         if (!profiles || profiles.length === 0) {
-          console.log('⚠️ Nenhum perfil encontrado na tabela profiles');
+          logger.warn('Nenhum perfil encontrado na tabela profiles', 'LOGGED_USERS');
           return [];
         }
 
@@ -45,9 +44,9 @@ export const useLoggedUsers = () => {
         const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
         
         if (authError) {
-          console.error('❌ Erro ao buscar usuários auth:', authError);
+          logger.error('Erro ao buscar usuários auth', 'LOGGED_USERS', authError);
         } else {
-          console.log('🔐 Total de usuários auth encontrados:', authUsers?.users?.length || 0);
+          logger.info(`Total de usuários auth encontrados: ${authUsers?.users?.length || 0}`, 'LOGGED_USERS');
         }
 
         // Buscar rankings para ver quem tem pontuação
@@ -57,9 +56,9 @@ export const useLoggedUsers = () => {
           .not('user_id', 'is', null);
         
         if (rankingsError) {
-          console.error('❌ Erro ao buscar rankings:', rankingsError);
+          logger.error('Erro ao buscar rankings', 'LOGGED_USERS', rankingsError);
         } else {
-          console.log('🏆 Rankings de usuários logados encontrados:', rankings?.length || 0);
+          logger.info(`Rankings de usuários logados encontrados: ${rankings?.length || 0}`, 'LOGGED_USERS');
         }
 
         // Buscar histórico de jogos
@@ -68,22 +67,25 @@ export const useLoggedUsers = () => {
           .select('*');
         
         if (gameHistoryError) {
-          console.error('❌ Erro ao buscar histórico de jogos:', gameHistoryError);
+          logger.error('Erro ao buscar histórico de jogos', 'LOGGED_USERS', gameHistoryError);
         } else {
-          console.log('🎮 Histórico de jogos encontrado:', gameHistory?.length || 0);
+          logger.info(`Histórico de jogos encontrado: ${gameHistory?.length || 0}`, 'LOGGED_USERS');
         }
 
         // Processar dados dos usuários logados
         const loggedUsersData: LoggedUser[] = [];
         
         for (const profile of profiles) {
-          console.log(`👤 Processando perfil:`, profile.id, profile.email);
+          logger.debug(`Processando perfil: ${profile.email}`, 'LOGGED_USERS', { id: profile.id });
           
           // Verificar se tem rankings
           const userRankings = rankings?.filter(r => r.user_id === profile.id) || [];
           const userGameHistory = gameHistory?.filter(gh => gh.user_id === profile.id) || [];
           
-          console.log(`📊 Usuário ${profile.email}: ${userRankings.length} rankings, ${userGameHistory.length} jogos`);
+          logger.debug(`Usuário ${profile.email}`, 'LOGGED_USERS', { 
+            rankings: userRankings.length, 
+            games: userGameHistory.length 
+          });
           
           // Se tem rankings ou histórico, é um usuário ativo
           if (userRankings.length > 0 || userGameHistory.length > 0) {
@@ -140,19 +142,19 @@ export const useLoggedUsers = () => {
             };
 
             loggedUsersData.push(userData);
-            console.log(`✅ Usuário ativo adicionado:`, userData.email, userData);
+            logger.debug(`Usuário ativo adicionado: ${userData.email}`, 'LOGGED_USERS', userData);
           } else {
-            console.log(`⚠️ Usuário sem atividade:`, profile.email);
+            logger.debug(`Usuário sem atividade: ${profile.email}`, 'LOGGED_USERS');
           }
         }
 
-        console.log('✅ Total de usuários logados ativos processados:', loggedUsersData.length);
+        logger.info(`Total de usuários logados ativos processados: ${loggedUsersData.length}`, 'LOGGED_USERS');
         
         // Ordenar por última jogada (mais recente primeiro)
         return loggedUsersData.sort((a, b) => new Date(b.last_played).getTime() - new Date(a.last_played).getTime());
         
       } catch (error) {
-        console.error('❌ Erro geral na consulta de usuários logados:', error);
+        logger.error('Erro geral na consulta de usuários logados', 'LOGGED_USERS', error);
         return [];
       }
     },

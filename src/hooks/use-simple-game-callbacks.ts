@@ -1,7 +1,7 @@
-
 import { useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Player, GameProgressInfo } from "@/types/guess-game";
+import { logger } from "@/utils/logger";
 
 interface UseSimpleGameCallbacksProps {
   currentPlayer: Player | null;
@@ -34,7 +34,7 @@ export const useSimpleGameCallbacks = ({
 
   const handleTimeUp = useCallback(() => {
     if (!gameOver && currentPlayer && gameActive) {
-      console.log('⏰ Tempo esgotado para:', currentPlayer.name);
+      logger.info(`Tempo esgotado para: ${currentPlayer.name}`, 'GAME_CALLBACKS');
       endGame(true);
       resetStreak();
       
@@ -57,7 +57,7 @@ export const useSimpleGameCallbacks = ({
   }, [gameActive, gameOver, endGame, resetStreak, saveGameData, score]);
 
   const handleCorrectGuess = useCallback((points: number) => {
-    console.log('✅ Resposta correta! Adicionando pontos:', points);
+    logger.info(`Resposta correta! Adicionando pontos: ${points}`, 'GAME_CALLBACKS');
     incrementCorrectGuesses();
     addScore(points);
     
@@ -72,7 +72,7 @@ export const useSimpleGameCallbacks = ({
   }, [incrementCorrectGuesses, addScore, setGameProgress, saveGameData, score]);
 
   const handleIncorrectGuess = useCallback((guess: string) => {
-    console.log('❌ Resposta incorreta');
+    logger.info('Resposta incorreta', 'GAME_CALLBACKS');
     incrementAttempts();
     resetStreak();
     
