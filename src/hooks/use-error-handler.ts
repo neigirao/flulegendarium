@@ -1,6 +1,6 @@
-
 import { useCallback } from 'react';
 import { useToast } from '@/components/ui/use-toast';
+import { logger } from '@/utils/logger';
 
 interface ErrorHandlerOptions {
   showToast?: boolean;
@@ -17,9 +17,9 @@ export const useErrorHandler = (options: ErrorHandlerOptions = {}) => {
   } = options;
 
   const handleError = useCallback((error: Error, context?: string) => {
-    // Log to console
+    // Log error
     if (logToConsole) {
-      console.error(`Error in ${context || 'application'}:`, error);
+      logger.error(`Error in ${context || 'application'}`, context || 'ERROR_HANDLER', error);
     }
 
     // Show toast notification

@@ -1,7 +1,7 @@
-
 import { useRef, useCallback } from "react";
 import { useAuth } from "./useAuth";
 import { saveGameHistory } from "@/services/gameHistoryService";
+import { logger } from "@/utils/logger";
 
 export const useSimpleGameMetrics = () => {
   const { user } = useAuth();
@@ -26,7 +26,7 @@ export const useSimpleGameMetrics = () => {
 
   const saveGameData = useCallback(async (finalScore: number, isCorrect: boolean = false) => {
     if (!user?.id || !gameStartTimeRef.current) {
-      console.log('⚠️ Cannot save game data - missing user or start time');
+      logger.warn('Cannot save game data - missing user or start time', 'GAME_METRICS');
       return;
     }
 
@@ -35,7 +35,7 @@ export const useSimpleGameMetrics = () => {
       const attempts = totalAttemptsRef.current + (isCorrect ? 1 : 0);
       const correct = correctGuessesRef.current + (isCorrect ? 1 : 0);
 
-      console.log('💾 Saving game history:', {
+      logger.info('Saving game history', 'GAME_METRICS', {
         userId: user.id,
         score: finalScore,
         correct_guesses: correct,
@@ -52,7 +52,7 @@ export const useSimpleGameMetrics = () => {
       });
 
     } catch (error) {
-      console.error('❌ Error saving game history:', error);
+      logger.error('Error saving game history', 'GAME_METRICS', error);
     }
   }, [user]);
 

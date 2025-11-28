@@ -1,5 +1,5 @@
-
 import { useEffect, useCallback } from 'react';
+import { logger } from '@/utils/logger';
 
 export const useLCPOptimization = () => {
   const measureLCP = useCallback(() => {
@@ -9,7 +9,7 @@ export const useLCPOptimization = () => {
           list.getEntries().forEach((entry) => {
             if (entry.entryType === 'largest-contentful-paint') {
               const lcp = entry.startTime;
-              console.log(`📊 LCP: ${lcp.toFixed(2)}ms`);
+              logger.info(`LCP: ${lcp.toFixed(2)}ms`, 'LCP_OPTIMIZATION');
               
               // Enhanced LCP tracking
               if (window.gtag) {
@@ -24,7 +24,7 @@ export const useLCPOptimization = () => {
               
               // Detailed LCP analysis
               if (lcp > 2500) {
-                console.warn('🚨 Poor LCP detected:', lcp, 'ms - Needs optimization');
+                logger.warn(`Poor LCP detected: ${lcp}ms - Needs optimization`, 'LCP_OPTIMIZATION');
                 
                 if (window.gtag) {
                   window.gtag('event', 'poor_lcp', {
@@ -34,7 +34,7 @@ export const useLCPOptimization = () => {
                   });
                 }
               } else if (lcp <= 1200) {
-                console.log('🏆 Excellent LCP:', lcp, 'ms');
+                logger.info(`Excellent LCP: ${lcp}ms`, 'LCP_OPTIMIZATION');
                 
                 if (window.gtag) {
                   window.gtag('event', 'excellent_lcp', {
@@ -43,7 +43,7 @@ export const useLCPOptimization = () => {
                   });
                 }
               } else if (lcp <= 2500) {
-                console.log('✅ Good LCP:', lcp, 'ms');
+                logger.info(`Good LCP: ${lcp}ms`, 'LCP_OPTIMIZATION');
                 
                 if (window.gtag) {
                   window.gtag('event', 'good_lcp', {
@@ -60,7 +60,7 @@ export const useLCPOptimization = () => {
         
         return () => observer.disconnect();
       } catch (error) {
-        console.warn('LCP observer not supported:', error);
+        logger.warn('LCP observer not supported', 'LCP_OPTIMIZATION', error);
       }
     }
   }, []);
@@ -80,7 +80,7 @@ export const useLCPOptimization = () => {
       criticalCSS.setAttribute('data-optimized', 'true');
     }
 
-    console.log('🎯 LCP optimizations applied to', criticalImages.length, 'critical images');
+    logger.info(`LCP optimizations applied to ${criticalImages.length} critical images`, 'LCP_OPTIMIZATION');
   }, []);
 
   const preloadLCPElements = useCallback(() => {
@@ -99,7 +99,7 @@ export const useLCPOptimization = () => {
       link.type = 'image/png';
       
       document.head.appendChild(link);
-      console.log(`🚀 Preloading logo image:`, logoSrc);
+      logger.info(`Preloading logo image: ${logoSrc}`, 'LCP_OPTIMIZATION');
     }
   }, []);
 
@@ -112,10 +112,12 @@ export const useLCPOptimization = () => {
           const lastEntry = entries[entries.length - 1] as any;
           
           if (lastEntry && lastEntry.element) {
-            console.log('🔍 LCP Element identified:', lastEntry.element);
-            console.log('🔍 LCP Element tag:', lastEntry.element.tagName);
-            console.log('🔍 LCP Element src:', lastEntry.element.src || 'N/A');
-            console.log('🔍 LCP Element class:', lastEntry.element.className || 'N/A');
+            logger.debug('LCP Element identified', 'LCP_OPTIMIZATION', {
+              element: lastEntry.element,
+              tag: lastEntry.element.tagName,
+              src: lastEntry.element.src || 'N/A',
+              class: lastEntry.element.className || 'N/A'
+            });
           }
         });
         
@@ -124,7 +126,7 @@ export const useLCPOptimization = () => {
         // Disconnect after 10 seconds
         setTimeout(() => observer.disconnect(), 10000);
       } catch (error) {
-        console.warn('LCP element identification failed:', error);
+        logger.warn('LCP element identification failed', 'LCP_OPTIMIZATION', error);
       }
     }
   }, []);

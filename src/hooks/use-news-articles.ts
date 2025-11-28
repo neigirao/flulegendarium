@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsArticle, NewsCategory, NewsFilters } from "@/types/news";
+import { logger } from "@/utils/logger";
 
 export const useNewsArticles = (filters: NewsFilters = {}) => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
@@ -20,7 +21,7 @@ export const useNewsArticles = (filters: NewsFilters = {}) => {
       if (error) throw error;
       setCategories(data || []);
     } catch (err) {
-      console.error('Error fetching categories:', err);
+      logger.error('Error fetching categories', 'NEWS_ARTICLES', err);
       setError('Erro ao carregar categorias');
     }
   };
@@ -60,7 +61,7 @@ export const useNewsArticles = (filters: NewsFilters = {}) => {
       if (error) throw error;
       setArticles(data || []);
     } catch (err) {
-      console.error('Error fetching articles:', err);
+      logger.error('Error fetching articles', 'NEWS_ARTICLES', err);
       setError('Erro ao carregar notícias');
     } finally {
       setIsLoading(false);
@@ -84,7 +85,7 @@ export const useNewsArticles = (filters: NewsFilters = {}) => {
       if (error && error.code !== 'PGRST116') throw error;
       setFeaturedArticle(data || null);
     } catch (err) {
-      console.error('Error fetching featured article:', err);
+      logger.error('Error fetching featured article', 'NEWS_ARTICLES', err);
     }
   };
 
@@ -103,7 +104,7 @@ export const useNewsArticles = (filters: NewsFilters = {}) => {
       if (error) throw error;
       setPopularArticles(data || []);
     } catch (err) {
-      console.error('Error fetching popular articles:', err);
+      logger.error('Error fetching popular articles', 'NEWS_ARTICLES', err);
     }
   };
 

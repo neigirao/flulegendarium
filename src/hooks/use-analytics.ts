@@ -1,5 +1,5 @@
-
 import { useEffect } from 'react';
+import { logger } from '@/utils/logger';
 
 interface AnalyticsEvent {
   action: string;
@@ -40,10 +40,8 @@ export const useAnalytics = () => {
     if (batchTimer) clearTimeout(batchTimer);
     batchTimer = setTimeout(flushEvents, 2000);
     
-    // Console log for development
-    if (process.env.NODE_ENV === 'development') {
-      console.log('Analytics Event Queued:', { action, category, label, value });
-    }
+    // Log for development
+    logger.debug('Analytics Event Queued', 'ANALYTICS', { action, category, label, value });
   };
   
   // Flush events on page unload

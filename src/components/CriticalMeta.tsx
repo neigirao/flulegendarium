@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { useLCPOptimization } from '@/hooks/use-lcp-optimization';
+import { useLCPOptimization } from '@/hooks/performance';
 
 export const CriticalMeta = () => {
   const { optimizeForLCP } = useLCPOptimization();

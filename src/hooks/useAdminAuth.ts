@@ -1,8 +1,8 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { logger } from '@/utils/logger';
 
 interface AdminAuth {
   user: User;
@@ -43,7 +43,7 @@ export const useAdminAuth = () => {
           setAdminData(null);
         }
       } catch (error) {
-        console.error('Erro ao verificar autenticação:', error);
+        logger.error('Erro ao verificar autenticação', 'ADMIN_AUTH', error);
         setIsAuthenticated(false);
         setAdminData(null);
         setError('Erro ao verificar permissões de administrador');
@@ -104,7 +104,7 @@ export const useAdminAuth = () => {
 
       navigate('/admin');
     } catch (error) {
-      console.error('Erro no login:', error);
+      logger.error('Erro no login', 'ADMIN_AUTH', error);
       setError('Erro interno do servidor');
     } finally {
       setIsLoading(false);

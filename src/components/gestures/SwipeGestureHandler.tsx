@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { useTouch } from '@/hooks/use-touch-gestures';
+import { useTouch } from '@/hooks/mobile';
 
 interface SwipeGestureHandlerProps {
   children: React.ReactNode;
