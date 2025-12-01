@@ -38,8 +38,21 @@ export const ImageGuard = memo(({
     onLoad?.();
   }, [imageSrc, onLoad]);
 
-  const handleError = useCallback(() => {
+  const handleError = useCallback((event?: React.SyntheticEvent<HTMLImageElement>) => {
+    // Detect 429 (Too Many Requests) or other external URL failures
+    const img = event?.currentTarget;
+    const isExternalUrl = imageSrc.startsWith('http://') || imageSrc.startsWith('https://');
+    
     console.error('❌ Erro ao carregar imagem:', imageSrc);
+    
+    if (isExternalUrl && imageSrc !== fallbackSrc) {
+      console.warn('⚠️ URL externa falhou (possível 429 ou rate limit). Usando fallback local.');
+      setIsLoading(false);
+      setHasError(true);
+      onError?.();
+      return;
+    }
+    
     setIsLoading(false);
     
     if (retryCount < maxRetries && imageSrc !== fallbackSrc) {
