@@ -9,9 +9,10 @@ import { LoggedUsersView } from "@/components/admin/LoggedUsersView";
 import { ReportsOverview } from "@/components/admin/reports/ReportsOverview";
 import { BusinessIntelligenceDashboard } from "@/components/admin/bi/BusinessIntelligenceDashboard";
 import { AdvancedAnalyticsDashboard } from "@/components/admin/analytics/AdvancedAnalyticsDashboard";
+import { ImageAuditDashboard } from "@/components/admin/images/ImageAuditDashboard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, BarChart3, UserPlus, Users, FileText, Eye, UserCheck, Brain, TrendingUp } from "lucide-react";
+import { LogOut, BarChart3, UserPlus, Users, FileText, Eye, UserCheck, Brain, TrendingUp, Image } from "lucide-react";
 
 export default function Admin() {
   const { isAuthenticated, isLoading, adminData, logout } = useAdminAuth();
@@ -50,7 +51,7 @@ export default function Admin() {
       {/* Conteúdo Principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8 max-w-6xl">
+          <TabsList className="grid w-full grid-cols-9 max-w-7xl">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 size={16} />
               Dashboard
@@ -66,6 +67,10 @@ export default function Admin() {
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <FileText size={16} />
               Relatórios
+            </TabsTrigger>
+            <TabsTrigger value="image-audit" className="flex items-center gap-2">
+              <Image size={16} />
+              Imagens
             </TabsTrigger>
             <TabsTrigger value="logged-users" className="flex items-center gap-2">
               <UserCheck size={16} />
@@ -99,6 +104,12 @@ export default function Admin() {
 
           <TabsContent value="reports">
             <ReportsOverview />
+          </TabsContent>
+
+          <TabsContent value="image-audit">
+            <div className="bg-white rounded-lg shadow p-6">
+              <ImageAuditDashboard />
+            </div>
           </TabsContent>
 
           <TabsContent value="logged-users">
