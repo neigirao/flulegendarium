@@ -27,30 +27,38 @@ Implementamos um sistema completo de auditoria e migração em 3 fases:
 - Priorização automática de fallbacks para URLs conhecidas como problemáticas
 - Implementado em `src/utils/player-image/problematicUrls.ts`
 
-### Fase 3: Auditoria e Migração Automática (ATUAL)
-Sistema completo de migração para Supabase Storage:
+### Fase 3: Auditoria e Migração Automática via Edge Function (ATUAL)
+Sistema completo de migração robusta usando Edge Function:
 
 1. **Auditoria do Banco**
    - Query SQL identifica todas as URLs externas
    - Classifica por domínio e nível de problema
    - Dashboard visual com estatísticas
 
-2. **Migração Automática**
-   - Download de imagens externas
-   - Upload para bucket `players` no Supabase Storage
-   - Atualização automática da tabela `players`
+2. **Edge Function de Migração**
+   - `migrate-player-image`: Edge Function dedicada para migração
+   - Download server-side (sem CORS ou rate limiting)
+   - Upload otimizado para bucket `players` no Supabase Storage
+   - Atualização atômica da tabela `players`
    - Logs detalhados de cada operação
 
-3. **Interface Admin**
+3. **Interface Admin com Processamento em Lotes**
    - Componente `ImageAuditDashboard` em painel admin
-   - Seleção manual ou automática de jogadores problemáticos
-   - Migração em lote com feedback em tempo real
-   - Estatísticas: total, externas, problemáticas, locais
+   - Processamento em lotes de 5 jogadores por vez
+   - Delay de 2 segundos entre lotes para evitar sobrecarga
+   - Barra de progresso em tempo real (processados/total)
+   - Estatísticas detalhadas: sucessos, erros, progresso atual
+   
+4. **Tratamento de Erros e Retry**
+   - Status individual por jogador (pending/processing/success/error)
+   - Botão "Tentar Novamente" para migrações que falharam
+   - Mensagens de erro específicas por jogador
+   - Logs completos no console do Edge Function
 
 ## Arquitetura da Solução
 
 ```typescript
-// Fluxo de Migração
+// Fluxo de Migração com Edge Function
 1. Admin acessa tab "Auditoria de Imagens"
 2. Clica em "Iniciar Auditoria"
    → Query: SELECT id, name, image_url FROM players
@@ -58,20 +66,37 @@ Sistema completo de migração para Supabase Storage:
    → Resultado: Lista classificada por risco
 3. Seleciona jogadores para migrar
 4. Clica em "Migrar Selecionadas"
-   → Para cada jogador:
-     a) fetch(external_url) → Download
-     b) supabase.storage.upload() → Upload para "players"
-     c) supabase.from('players').update() → Atualiza URL
-     d) logger.info() → Log detalhado
+   → Para cada lote de 5 jogadores:
+     a) supabase.functions.invoke('migrate-player-image', {...})
+        → Edge Function executa:
+          1. fetch(external_url) no servidor (sem CORS)
+          2. supabase.storage.upload() → Upload para "players"
+          3. supabase.from('players').update() → Atualiza URL
+          4. console.log() → Log detalhado
+     b) Aguarda 2 segundos antes do próximo lote
+     c) Atualiza barra de progresso em tempo real
+     d) Marca status: success ou error com mensagem
+5. Exibe botão "Tentar Novamente" para falhas
 ```
 
 ### Componentes Criados
+
+**`supabase/functions/migrate-player-image/index.ts`**
+- Edge Function dedicada para migração robusta
+- Download server-side de imagens externas (sem CORS)
+- Upload otimizado para Supabase Storage
+- Atualização atômica da tabela players
+- Retorno estruturado: { success, newUrl, error }
+- Logs detalhados para debugging
 
 **`src/components/admin/images/ImageAuditDashboard.tsx`**
 - Interface completa de auditoria
 - Estatísticas visuais (cards com métricas)
 - Seleção múltipla de jogadores
-- Migração em lote com progress
+- **Processamento em lotes** (5 jogadores por vez, 2s delay)
+- **Barra de progresso** em tempo real com contador
+- **Status individual** por jogador (pending/processing/success/error)
+- **Botão de retry** para migrações que falharam
 - Integração com sistema de cache e logs
 
 **`src/utils/player-image/problematicUrls.ts`** (Fase 2)
@@ -104,6 +129,11 @@ Sistema completo de migração para Supabase Storage:
 - ✅ Migração não-destrutiva (URLs antigas preservadas em logs)
 - ✅ Sistema escalável para futuros jogadores
 - ✅ Fallbacks automáticos durante transição
+- ✅ **Edge Function elimina problemas de CORS**
+- ✅ **Processamento em lotes previne sobrecarga**
+- ✅ **Barra de progresso e feedback em tempo real**
+- ✅ **Sistema de retry para falhas individuais**
+- ✅ **Logs detalhados para debugging**
 
 ### Negativas
 - ⚠️ Requer intervenção admin para migrar
