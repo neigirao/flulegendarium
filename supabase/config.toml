@@ -8,3 +8,9 @@ schemas = ["public", "storage"]
 
 [functions.collect-players-data]
 verify_jwt = false
+
+[functions.migrate-player-image]
+verify_jwt = false
+
+[functions.weekly-image-audit]
+verify_jwt = false
