@@ -1,7 +1,14 @@
 
-import { useState, useCallback, memo } from 'react';
+import { useState, useCallback, memo, useEffect } from 'react';
 import { validateImageUrl } from '@/utils/validation/dataValidators';
 import { Loader, AlertTriangle } from 'lucide-react';
+import { 
+  isProblematicDomain, 
+  isUrlProblematic, 
+  markUrlAsProblematic,
+  getRetryDelay 
+} from '@/utils/player-image/problematicUrls';
+import { logger } from '@/utils/logger';
 
 interface ImageGuardProps {
   src: string | null | undefined;
@@ -29,24 +36,34 @@ export const ImageGuard = memo(({
 
   // Validate and sanitize image URL
   const validation = validateImageUrl(src);
-  const imageSrc = validation.isValid ? validation.sanitizedData : fallbackSrc;
+  let imageSrc = validation.isValid ? validation.sanitizedData : fallbackSrc;
+  
+  // Se a URL é de domínio problemático ou está no cache, usar fallback imediatamente
+  const isExternalUrl = imageSrc.startsWith('http://') || imageSrc.startsWith('https://');
+  if (isExternalUrl && imageSrc !== fallbackSrc) {
+    if (isProblematicDomain(imageSrc) || isUrlProblematic(imageSrc)) {
+      logger.warn(`⚠️ URL externa problemática detectada. Usando fallback: ${imageSrc}`);
+      imageSrc = fallbackSrc;
+    }
+  }
 
   const handleLoad = useCallback(() => {
-    console.log('✅ Imagem carregada com sucesso:', imageSrc);
+    logger.info('✅ Imagem carregada com sucesso:', imageSrc);
     setIsLoading(false);
     setHasError(false);
+    setRetryCount(0); // Reset retry count on success
     onLoad?.();
   }, [imageSrc, onLoad]);
 
   const handleError = useCallback((event?: React.SyntheticEvent<HTMLImageElement>) => {
-    // Detect 429 (Too Many Requests) or other external URL failures
-    const img = event?.currentTarget;
     const isExternalUrl = imageSrc.startsWith('http://') || imageSrc.startsWith('https://');
     
-    console.error('❌ Erro ao carregar imagem:', imageSrc);
+    logger.error('❌ Erro ao carregar imagem:', imageSrc);
     
+    // Se é URL externa, marcar como problemática e usar fallback
     if (isExternalUrl && imageSrc !== fallbackSrc) {
-      console.warn('⚠️ URL externa falhou (possível 429 ou rate limit). Usando fallback local.');
+      markUrlAsProblematic(imageSrc);
+      logger.warn('⚠️ URL externa falhou. Usando fallback local.');
       setIsLoading(false);
       setHasError(true);
       onError?.();
@@ -55,11 +72,15 @@ export const ImageGuard = memo(({
     
     setIsLoading(false);
     
+    // Retry com exponential backoff
     if (retryCount < maxRetries && imageSrc !== fallbackSrc) {
-      console.log(`🔄 Tentativa ${retryCount + 1}/${maxRetries} para carregar imagem`);
-      setRetryCount(prev => prev + 1);
-      // Force retry by updating key
-      setTimeout(() => setIsLoading(true), 1000);
+      const delay = getRetryDelay(retryCount);
+      logger.info(`🔄 Tentativa ${retryCount + 1}/${maxRetries} em ${delay}ms`);
+      
+      setTimeout(() => {
+        setRetryCount(prev => prev + 1);
+        setIsLoading(true);
+      }, delay);
     } else {
       setHasError(true);
       onError?.();
