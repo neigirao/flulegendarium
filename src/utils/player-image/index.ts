@@ -26,3 +26,13 @@ export {
   preloadNextPlayer,
   prepareNextBatch
 } from './preloadUtils';
+
+// Export problematic URLs utilities
+export {
+  isProblematicDomain,
+  isUrlProblematic,
+  markUrlAsProblematic,
+  clearProblematicUrlsCache,
+  getProblematicUrlsStats,
+  getRetryDelay
+} from './problematicUrls';
