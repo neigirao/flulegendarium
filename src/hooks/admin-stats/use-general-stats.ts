@@ -1,5 +1,5 @@
-
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { useCacheManager } from "./use-cache-manager";
 import { useOptimizedQueries } from "./use-optimized-queries";
 import { logger } from "@/utils/logger";
@@ -35,5 +35,10 @@ export const useGeneralStats = () => {
     ...getCacheConfig('slow')
   });
 
-  return { generalStats, isLoading };
+  const successRate = useMemo(() => {
+    if (!generalStats || generalStats.totalAttempts === 0) return '0';
+    return ((generalStats.correctAttempts / generalStats.totalAttempts) * 100).toFixed(1);
+  }, [generalStats]);
+
+  return { generalStats, isLoading, successRate };
 };
