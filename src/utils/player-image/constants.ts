@@ -4,7 +4,7 @@ export const defaultImage = "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e1
 
 // Fallback images for specific players to improve loading reliability
 export const playerImagesFallbacks: Record<string, string> = {
-  "Fred": "/lovable-uploads/16398385-eef5-4e38-b90a-39630732acba.png",
+  // Fred removed - fallback image was incorrect, using database URL instead
   "Castilho": "/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png",
   "Rivelino": "/lovable-uploads/20457a11-5436-48c6-906d-82b9451bc16d.png",
   "Deco": "/lovable-uploads/16f7afff-6bba-4b39-a454-daa6c2373151.png",
