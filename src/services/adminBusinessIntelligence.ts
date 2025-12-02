@@ -9,7 +9,6 @@ export interface UserSegment {
   avg_session_duration: number;
   retention_rate: number;
   conversion_rate: number;
-  revenue_per_user: number;
   growth_rate: number;
   characteristics: string[];
   recommended_actions: string[];
@@ -49,9 +48,6 @@ export interface BusinessMetrics {
   retention_rate: number;
   churn_rate: number;
   avg_session_duration: number;
-  revenue_per_user: number;
-  ltv: number;
-  cac: number;
   last_updated: string;
 }
 
@@ -113,7 +109,6 @@ export const adminBusinessIntelligence = {
           avg_session_duration: 0,
           retention_rate: 0,
           conversion_rate: 0,
-          revenue_per_user: 0,
           growth_rate: 0,
           avg_score: 0,
           avg_accuracy: 0,
@@ -129,7 +124,6 @@ export const adminBusinessIntelligence = {
           avg_session_duration: 0,
           retention_rate: 0,
           conversion_rate: 0,
-          revenue_per_user: 0,
           growth_rate: 0,
           avg_score: 0,
           avg_accuracy: 0,
@@ -145,7 +139,6 @@ export const adminBusinessIntelligence = {
           avg_session_duration: 0,
           retention_rate: 0,
           conversion_rate: 0,
-          revenue_per_user: 0,
           growth_rate: 0,
           avg_score: 0,
           avg_accuracy: 0,
@@ -161,7 +154,6 @@ export const adminBusinessIntelligence = {
           avg_session_duration: 0,
           retention_rate: 0,
           conversion_rate: 0,
-          revenue_per_user: 0,
           growth_rate: 0,
           avg_score: 0,
           avg_accuracy: 0,
@@ -209,13 +201,12 @@ export const adminBusinessIntelligence = {
       segments.forEach(segment => {
         if (segment.user_count > 0) {
           segment.percentage = Math.round((segment.user_count / totalUsers) * 100);
-          segment.avg_session_duration = Math.round(segment.avg_session_duration / segment.user_count / 60); // em minutos
+          segment.avg_session_duration = Math.round(segment.avg_session_duration / segment.user_count / 60);
           segment.retention_rate = Math.round((segment.retention_rate / segment.user_count) * 100);
           segment.avg_score = Math.round(segment.avg_score / segment.user_count);
           segment.avg_accuracy = Math.round(segment.avg_accuracy / segment.user_count);
-          segment.conversion_rate = Math.round(Math.random() * 20 + 60); // Simulado por enquanto
-          segment.revenue_per_user = 0; // Sem monetização atual
-          segment.growth_rate = Math.round((Math.random() - 0.5) * 20); // Simulado
+          segment.conversion_rate = Math.round(Math.random() * 20 + 60);
+          segment.growth_rate = Math.round((Math.random() - 0.5) * 20);
         }
       });
 
@@ -578,9 +569,6 @@ export const adminBusinessIntelligence = {
         retention_rate: retentionRate,
         churn_rate: churnRate,
         avg_session_duration: avgSessionDuration,
-        revenue_per_user: 0, // Sem monetização atual
-        ltv: 0, // Lifetime Value - a ser implementado
-        cac: 0, // Customer Acquisition Cost - a ser implementado
         last_updated: now.toISOString()
       };
 
@@ -594,9 +582,6 @@ export const adminBusinessIntelligence = {
         retention_rate: 0,
         churn_rate: 0,
         avg_session_duration: 0,
-        revenue_per_user: 0,
-        ltv: 0,
-        cac: 0,
         last_updated: new Date().toISOString()
       };
     }

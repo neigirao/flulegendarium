@@ -1,13 +1,11 @@
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { NPSReport } from "./NPSReport";
 import { FeedbackReport } from "./FeedbackReport";
 import { SupportTicketsReport } from "./SupportTicketsReport";
 import { ErrorMetricsReport } from "./ErrorMetricsReport";
-import { PerformanceMetricsReport } from "./PerformanceMetricsReport";
 import { UserEngagementReport } from "./UserEngagementReport";
-import { MessageSquare, LifeBuoy, Star, AlertTriangle, Zap, Users } from "lucide-react";
+import { MessageSquare, LifeBuoy, Star, AlertTriangle, Users } from "lucide-react";
 
 export const ReportsOverview = () => {
   return (
@@ -15,12 +13,12 @@ export const ReportsOverview = () => {
       <div>
         <h2 className="text-2xl font-bold text-flu-grena mb-2">Relatórios & Análises</h2>
         <p className="text-gray-600">
-          Monitore a satisfação dos usuários, performance e questões operacionais
+          Monitore a satisfação dos usuários e questões operacionais
         </p>
       </div>
 
       <Tabs defaultValue="nps" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-6 max-w-4xl">
+        <TabsList className="grid w-full grid-cols-5 max-w-3xl">
           <TabsTrigger value="nps" className="flex items-center gap-2">
             <Star size={16} />
             NPS
@@ -36,10 +34,6 @@ export const ReportsOverview = () => {
           <TabsTrigger value="errors" className="flex items-center gap-2">
             <AlertTriangle size={16} />
             Erros
-          </TabsTrigger>
-          <TabsTrigger value="performance" className="flex items-center gap-2">
-            <Zap size={16} />
-            Performance
           </TabsTrigger>
           <TabsTrigger value="engagement" className="flex items-center gap-2">
             <Users size={16} />
@@ -61,10 +55,6 @@ export const ReportsOverview = () => {
 
         <TabsContent value="errors" className="space-y-6">
           <ErrorMetricsReport />
-        </TabsContent>
-
-        <TabsContent value="performance" className="space-y-6">
-          <PerformanceMetricsReport />
         </TabsContent>
 
         <TabsContent value="engagement" className="space-y-6">
