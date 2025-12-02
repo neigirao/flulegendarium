@@ -11,17 +11,6 @@ export interface UserEngagementData {
   engagement_score: number;
 }
 
-export interface PerformanceMetrics {
-  date: string;
-  avg_response_time: number;
-  error_rate: number;
-  throughput: number;
-  cpu_usage: number;
-  memory_usage: number;
-  db_connections: number;
-  cache_hit_rate: number;
-}
-
 export interface NPSData {
   date: string;
   promoters: number;
@@ -173,48 +162,6 @@ export const reportsService = {
 
     } catch (error) {
       console.error('Erro ao buscar relatório de engajamento:', error);
-      return [];
-    }
-  },
-
-  async getPerformanceMetricsReport(days: number = 7): Promise<PerformanceMetrics[]> {
-    try {
-      const metrics: PerformanceMetrics[] = [];
-      const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-
-      // Buscar dados de queries para estimar performance
-      const { data: recentQueries } = await supabase
-        .from('user_game_history')
-        .select('created_at')
-        .gte('created_at', startDate.toISOString())
-        .limit(1000);
-
-      for (let i = 0; i < days; i++) {
-        const date = new Date(startDate);
-        date.setDate(date.getDate() + i);
-        const dateStr = date.toISOString().split('T')[0];
-
-        // Simular métricas baseadas em dados reais + estimativas
-        const dailyQueries = recentQueries?.filter(q => 
-          new Date(q.created_at).toISOString().split('T')[0] === dateStr
-        ).length || 0;
-
-        metrics.push({
-          date: dateStr,
-          avg_response_time: Math.round(120 + Math.random() * 80 + (dailyQueries > 100 ? 50 : 0)),
-          error_rate: Math.round((Math.random() * 2) * 100) / 100,
-          throughput: dailyQueries,
-          cpu_usage: Math.round(30 + Math.random() * 40 + (dailyQueries > 100 ? 20 : 0)),
-          memory_usage: Math.round(40 + Math.random() * 30),
-          db_connections: Math.min(100, Math.round(dailyQueries / 10 + Math.random() * 20)),
-          cache_hit_rate: Math.round(85 + Math.random() * 10)
-        });
-      }
-
-      return metrics;
-
-    } catch (error) {
-      console.error('Erro ao buscar métricas de performance:', error);
       return [];
     }
   },
