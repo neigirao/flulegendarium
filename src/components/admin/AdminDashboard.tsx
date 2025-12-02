@@ -1,4 +1,3 @@
-
 import { PlayerPerformanceAnalysis } from "./PlayerPerformanceAnalysis";
 import { GeneralStatsCards } from "./stats/GeneralStatsCards";
 import { MostCorrectPlayersCard } from "./stats/MostCorrectPlayersCard";
@@ -6,10 +5,12 @@ import { MostMissedPlayersCard } from "./stats/MostMissedPlayersCard";
 import { PlayerRankingCard } from "./stats/PlayerRankingCard";
 import { ProgressStatsCard } from "./stats/ProgressStatsCard";
 import { NewsManagement } from "./news/NewsManagement";
+import { ImageAuditDashboard } from "./images/ImageAuditDashboard";
+import { ProblematicPlayersManagement } from "./images/ProblematicPlayersManagement";
 import { useAdminStats } from "@/hooks/use-admin-stats";
-import { memo, useState } from "react";
+import { memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Newspaper } from "lucide-react";
+import { BarChart3, Newspaper, ImageIcon } from "lucide-react";
 
 export const AdminDashboard = memo(() => {
   const {
@@ -44,7 +45,7 @@ export const AdminDashboard = memo(() => {
 
   return (
     <Tabs defaultValue="stats" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-2 max-w-md">
+      <TabsList className="grid w-full grid-cols-3 max-w-lg">
         <TabsTrigger value="stats" className="flex items-center gap-2">
           <BarChart3 size={16} />
           Estatísticas
@@ -52,6 +53,10 @@ export const AdminDashboard = memo(() => {
         <TabsTrigger value="news" className="flex items-center gap-2">
           <Newspaper size={16} />
           Notícias
+        </TabsTrigger>
+        <TabsTrigger value="images" className="flex items-center gap-2">
+          <ImageIcon size={16} />
+          Imagens
         </TabsTrigger>
       </TabsList>
 
@@ -77,6 +82,11 @@ export const AdminDashboard = memo(() => {
 
       <TabsContent value="news">
         <NewsManagement />
+      </TabsContent>
+
+      <TabsContent value="images" className="space-y-6">
+        <ImageAuditDashboard />
+        <ProblematicPlayersManagement />
       </TabsContent>
     </Tabs>
   );
