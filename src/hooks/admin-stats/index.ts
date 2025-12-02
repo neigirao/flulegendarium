@@ -8,7 +8,6 @@
 
 export { useGeneralStats } from './use-general-stats';
 export { usePlayerPerformance } from './use-player-performance';
-export { usePlayerStats } from './use-player-stats';
 export { useProgressStats } from './use-progress-stats';
 export { useRankingStats } from './use-ranking-stats';
 export { useCacheManager } from './use-cache-manager';

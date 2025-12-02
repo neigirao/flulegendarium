@@ -1,21 +1,15 @@
 import { PlayerPerformanceAnalysis } from "./PlayerPerformanceAnalysis";
 import { GeneralStatsCards } from "./stats/GeneralStatsCards";
-import { MostCorrectPlayersCard } from "./stats/MostCorrectPlayersCard";
-import { MostMissedPlayersCard } from "./stats/MostMissedPlayersCard";
 import { PlayerRankingCard } from "./stats/PlayerRankingCard";
 import { ProgressStatsCard } from "./stats/ProgressStatsCard";
 import { NewsManagement } from "./news/NewsManagement";
-import { ImageAuditDashboard } from "./images/ImageAuditDashboard";
-import { ProblematicPlayersManagement } from "./images/ProblematicPlayersManagement";
 import { useAdminStats } from "@/hooks/use-admin-stats";
 import { memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Newspaper, ImageIcon } from "lucide-react";
+import { BarChart3, Newspaper } from "lucide-react";
 
 export const AdminDashboard = memo(() => {
   const {
-    mostCorrectPlayers,
-    mostMissedPlayers,
     playerRanking,
     progressStats,
     generalStats,
@@ -34,7 +28,7 @@ export const AdminDashboard = memo(() => {
           </div>
           <div className="h-64 bg-gray-200 rounded-lg" />
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(2)].map((_, i) => (
               <div key={i} className="h-48 bg-gray-200 rounded-lg" />
             ))}
           </div>
@@ -45,7 +39,7 @@ export const AdminDashboard = memo(() => {
 
   return (
     <Tabs defaultValue="stats" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-3 max-w-lg">
+      <TabsList className="grid w-full grid-cols-2 max-w-md">
         <TabsTrigger value="stats" className="flex items-center gap-2">
           <BarChart3 size={16} />
           Estatísticas
@@ -53,10 +47,6 @@ export const AdminDashboard = memo(() => {
         <TabsTrigger value="news" className="flex items-center gap-2">
           <Newspaper size={16} />
           Notícias
-        </TabsTrigger>
-        <TabsTrigger value="images" className="flex items-center gap-2">
-          <ImageIcon size={16} />
-          Imagens
         </TabsTrigger>
       </TabsList>
 
@@ -69,12 +59,10 @@ export const AdminDashboard = memo(() => {
           successRate={successRate}
         />
 
-        {/* Análise de Performance por Jogador - Componente principal */}
+        {/* Análise de Performance por Jogador - Componente principal consolidado */}
         <PlayerPerformanceAnalysis />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <MostCorrectPlayersCard players={mostCorrectPlayers} />
-          <MostMissedPlayersCard players={mostMissedPlayers} />
           <PlayerRankingCard players={playerRanking} />
           <ProgressStatsCard stats={progressStats} />
         </div>
@@ -82,11 +70,6 @@ export const AdminDashboard = memo(() => {
 
       <TabsContent value="news">
         <NewsManagement />
-      </TabsContent>
-
-      <TabsContent value="images" className="space-y-6">
-        <ImageAuditDashboard />
-        <ProblematicPlayersManagement />
       </TabsContent>
     </Tabs>
   );
