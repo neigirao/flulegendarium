@@ -466,8 +466,42 @@ export const ImageAuditDashboard = () => {
                         </div>
                       )}
                       {player.migration_error && (
-                        <div className="text-xs text-red-600 mt-1">
-                          Erro: {player.migration_error}
+                        <div className="text-xs text-red-600 mt-1 flex items-center gap-2">
+                          <span>Erro: {player.migration_error}</span>
+                          <label className="cursor-pointer inline-flex items-center gap-1 text-primary hover:underline">
+                            <Upload className="w-3 h-3" />
+                            <span>Upload manual</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={async (e) => {
+                                const file = e.target.files?.[0];
+                                if (!file) return;
+                                try {
+                                  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
+                                  const fileName = `${player.id}.${ext}`;
+                                  const { error: uploadError } = await supabase.storage
+                                    .from('players')
+                                    .upload(fileName, file, { contentType: file.type, upsert: true });
+                                  if (uploadError) throw uploadError;
+                                  const { data: { publicUrl } } = supabase.storage
+                                    .from('players')
+                                    .getPublicUrl(fileName);
+                                  await supabase.from('players').update({ image_url: publicUrl }).eq('id', player.id);
+                                  setAuditResults(prev => prev.map(p => 
+                                    p.id === player.id 
+                                      ? { ...p, image_url: publicUrl, is_external: false, needs_migration: false, migration_status: 'success', migration_error: undefined }
+                                      : p
+                                  ));
+                                  setFailedMigrations(prev => { const n = new Set(prev); n.delete(player.id); return n; });
+                                  toast.success(`${player.name} atualizado com sucesso!`);
+                                } catch (err) {
+                                  toast.error(err instanceof Error ? err.message : 'Erro no upload');
+                                }
+                              }}
+                            />
+                          </label>
                         </div>
                       )}
                     </div>
