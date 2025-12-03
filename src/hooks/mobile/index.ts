@@ -8,8 +8,6 @@
 
 export { useIsMobile } from '../use-mobile';
 export { useMobileOptimization } from '../use-mobile-optimization';
-export { useMobilePerformance } from '../use-mobile-performance';
-export { useMobileKeyboard } from '../use-mobile-keyboard';
 export { useDeviceDetection } from '../use-device-detection';
 export { useOrientation } from '../use-orientation';
 export { useTouchGestures, useTouch } from '../use-touch-gestures';
