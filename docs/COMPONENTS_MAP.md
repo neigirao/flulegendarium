@@ -321,13 +321,6 @@ interface PlayerRankingProps {
 
 ---
 
-### **RankingDisplay**
-**Responsabilidade**: Display do ranking no final do jogo
-
-**Diferença do PlayerRanking**: Mostra posição do jogador atual
-
----
-
 ## 🎓 Componentes de Tutorial
 
 ### **GameTutorial / AdaptiveTutorial**
@@ -354,9 +347,8 @@ interface TutorialProps {
 **Responsabilidade**: Sistema completo de conquistas
 
 **Subcomponentes**:
-- `AchievementBadge` - Badge individual
 - `AchievementNotification` - Notificação de conquista
-- `AchievementsGrid` - Grid de todas conquistas
+- `AchievementsGrid` - Grid de todas conquistas (para integração futura)
 - `AchievementProgressCard` - Card de progresso
 
 ---
@@ -454,16 +446,6 @@ interface NewsGridProps {
 ---
 
 ## ⚡ Componentes de Performance
-
-### **PerformanceMonitor**
-**Responsabilidade**: Monitor de performance em tempo real
-
-**Exibe**:
-- FPS
-- Memória
-- Core Web Vitals
-
----
 
 ### **LazyLoad**
 **Responsabilidade**: Wrapper para lazy loading de componentes
@@ -586,4 +568,4 @@ src/components/
 
 ---
 
-**Última atualização**: 2025-01-16
+**Última atualização**: 2025-12-03
