@@ -3,11 +3,14 @@ import { RootLayout } from "@/components/RootLayout";
 import { SEOHead } from "@/components/SEOHead";
 import { GameModeCard } from "@/components/GameModeCard";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ArrowLeft, LogIn, Trophy, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const GameModeSelection = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   return (
     <>
@@ -37,6 +40,45 @@ const GameModeSelection = () => {
                 Voltar ao Início
               </Button>
             </div>
+
+            {/* Login Banner */}
+            {!user && (
+              <Card className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-sm border-yellow-400/30 mb-8">
+                <CardContent className="p-4">
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-12 h-12 bg-yellow-400/20 rounded-full flex items-center justify-center">
+                        <Trophy className="w-6 h-6 text-yellow-400" />
+                      </div>
+                      <div className="text-center sm:text-left">
+                        <p className="text-white font-bold">Crie sua conta e desbloqueie conquistas!</p>
+                        <p className="text-white/70 text-sm">Salve sua pontuação automaticamente no ranking</p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => navigate('/auth')}
+                      className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold whitespace-nowrap"
+                    >
+                      <LogIn className="w-4 h-4 mr-2" />
+                      Criar Conta Grátis
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {/* Welcome Message for Logged Users */}
+            {user && (
+              <div className="text-center mb-6">
+                <p className="text-white/90 text-lg">
+                  👋 Olá, <span className="font-bold text-yellow-400">{user.user_metadata?.full_name || 'Tricolor'}</span>!
+                </p>
+                <p className="text-white/70 text-sm flex items-center justify-center gap-2">
+                  <Star className="w-4 h-4 text-yellow-400" />
+                  Sua pontuação será salva automaticamente no ranking
+                </p>
+              </div>
+            )}
 
             {/* Shield Logo */}
             <div className="text-center mb-8">

@@ -3,11 +3,16 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trophy, Rocket, Instagram } from "lucide-react";
+import { Trophy, Rocket, Instagram, User, LogIn } from "lucide-react";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Index = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  
   const handleStartGame = () => {
     window.location.href = '/selecionar-modo-jogo';
   };
@@ -66,8 +71,41 @@ const Index = () => {
               </Button>
             </div>
 
+            {/* Login Prompt */}
+            {!user ? (
+              <div className="mb-8 max-w-md mx-auto">
+                <Card className="bg-white/10 backdrop-blur-sm border-white/20">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <User className="w-8 h-8 text-yellow-400" />
+                        <div className="text-left">
+                          <p className="text-white font-semibold text-sm">Quer salvar seu progresso?</p>
+                          <p className="text-white/70 text-xs">Conquistas • Ranking • Histórico</p>
+                        </div>
+                      </div>
+                      <Button
+                        onClick={() => navigate('/auth')}
+                        size="sm"
+                        variant="secondary"
+                        className="bg-white/20 hover:bg-white/30 text-white border-0"
+                      >
+                        <LogIn className="w-4 h-4 mr-1" />
+                        Entrar
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : (
+              <p className="text-white/80 text-sm mb-8">
+                👋 Olá, <span className="font-semibold">{user.user_metadata?.full_name || 'Tricolor'}</span>! 
+                Bom te ver por aqui.
+              </p>
+            )}
+
             <p className="text-white/70 text-sm mb-16">
-              Gratuito • Sem cadastro necessário • 188+ jogadores
+              Gratuito • Jogue sem cadastro • 188+ jogadores
             </p>
 
             {/* Hall da Fama Section */}
