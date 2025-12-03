@@ -60,3 +60,9 @@ export const LazyConquistas = createLazyComponent(
   () => import('@/pages/Conquistas'),
   React.createElement(PerformanceSkeleton, { height: 600 })
 );
+
+// Reset Password Module
+export const LazyResetPassword = createLazyComponent(
+  () => import('@/pages/ResetPassword'),
+  React.createElement(PerformanceSkeleton, { height: 400 })
+);

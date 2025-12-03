@@ -31,7 +31,8 @@ import {
   LazyNewsPortal,
   LazyNewsArticle,
   LazyDonations,
-  LazyConquistas
+  LazyConquistas,
+  LazyResetPassword
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
@@ -67,6 +68,7 @@ function App() {
                         <Routes>
                           <Route path="/" element={<Index />} />
                           <Route path="/auth" element={<LazyAuth />} />
+                          <Route path="/reset-password" element={<LazyResetPassword />} />
                           <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
                           <Route 
                             path="/quiz-adaptativo" 
