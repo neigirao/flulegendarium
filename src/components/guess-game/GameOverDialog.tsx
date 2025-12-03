@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
 import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
+import { useAuth } from "@/hooks/useAuth";
+import { toast } from "sonner";
 
 interface GameOverDialogProps {
   open: boolean;
@@ -36,8 +38,42 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   gameMode = 'classic',
   difficultyLevel
 }) => {
+  const { user } = useAuth();
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
+  const [autoSaved, setAutoSaved] = useState(false);
+
+  // Auto-save for logged-in users with a name
+  useEffect(() => {
+    const autoSaveForLoggedUser = async () => {
+      if (open && score > 0 && !autoSaved && user && onSaveToRanking) {
+        const userName = user.user_metadata?.full_name;
+        if (userName) {
+          try {
+            await onSaveToRanking(userName, score, difficultyLevel);
+            setAutoSaved(true);
+            setShowShareOptions(true);
+            toast.success('Pontuação salva automaticamente no ranking!');
+          } catch (error) {
+            console.error('Error auto-saving to ranking:', error);
+            // Fall back to manual save
+            setShowRankingForm(true);
+          }
+        }
+      }
+    };
+
+    autoSaveForLoggedUser();
+  }, [open, score, user, onSaveToRanking, difficultyLevel, autoSaved]);
+
+  // Reset state when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setAutoSaved(false);
+      setShowRankingForm(false);
+      setShowShareOptions(false);
+    }
+  }, [open]);
 
   const handleSaveToRanking = async (name: string) => {
     if (onSaveToRanking) {
@@ -50,6 +86,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   const handleNewGame = () => {
     setShowRankingForm(false);
     setShowShareOptions(false);
+    setAutoSaved(false);
     onResetScore();
     onClose();
   };
@@ -65,6 +102,9 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     }
     return `Você conseguiu ${score} pontos!`;
   };
+
+  // Determine if we should show the initial state (not auto-saved, not showing form, not showing share)
+  const showInitialState = !showRankingForm && !showShareOptions && !autoSaved;
 
   return (
     <Dialog open={open} onOpenChange={() => {}}>
@@ -94,7 +134,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
             )}
           </div>
 
-          {!showRankingForm && !showShareOptions && (
+          {showInitialState && (
             <div className="space-y-4">
               {/* Primary Actions */}
               <div className="space-y-3">

@@ -54,3 +54,9 @@ export const LazyDonations = createLazyComponent(
   () => import('@/pages/Donations'),
   React.createElement(PerformanceSkeleton, { height: 600 })
 );
+
+// Conquistas Module
+export const LazyConquistas = createLazyComponent(
+  () => import('@/pages/Conquistas'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);
