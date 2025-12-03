@@ -1,4 +1,3 @@
-
 import { CachedImage } from './types';
 import { CACHE_EXPIRATION } from './constants';
 
@@ -11,6 +10,14 @@ export const cleanExpiredCache = () => {
       imageCache.delete(key);
     }
   }
+};
+
+/**
+ * Limpa todo o cache de imagens.
+ * Usado ao iniciar um novo jogo para garantir que imagens sejam recarregadas.
+ */
+export const clearAllImageCache = () => {
+  imageCache.clear();
 };
 
 export const markImageAsLoaded = (playerId: string) => {

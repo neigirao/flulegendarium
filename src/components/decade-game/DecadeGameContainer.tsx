@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DecadeSelectionPage } from './DecadeSelectionPage';
@@ -21,11 +20,15 @@ import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
 import { Button } from '@/components/ui/button';
 import { logger } from '@/utils/logger';
+import { useDevToolsDetection } from '@/hooks/use-devtools-detection';
+import { useToast } from '@/hooks/use-toast';
+import { clearAllImageCache } from '@/utils/player-image/cache';
 
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { getPlayerAchievements } = useAchievementSystem();
+  const { toast } = useToast();
   
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
   const [guestName, setGuestName] = useState<string>("");
@@ -115,6 +118,33 @@ export const DecadeGameContainer = () => {
     stopTimer,
     startTimer
   });
+
+  // Detecção de DevTools - encerra o jogo se detectado
+  const handleDevToolsDetected = useCallback(() => {
+    if (!gameOver && selectedDecade) {
+      toast({
+        variant: "destructive",
+        title: "Jogo Encerrado",
+        description: "Uso de ferramentas de inspeção detectado. O jogo foi finalizado.",
+      });
+      endGame();
+      resetStreak();
+    }
+  }, [gameOver, selectedDecade, toast, endGame, resetStreak]);
+
+  useDevToolsDetection(handleDevToolsDetected, !gameOver && !!selectedDecade);
+
+  // Reset completo de estados ao montar o componente
+  useEffect(() => {
+    setImageLoaded(false);
+    setCanStartTimer(false);
+    clearAllImageCache();
+    
+    return () => {
+      setImageLoaded(false);
+      setCanStartTimer(false);
+    };
+  }, []);
 
   // Carregar contadores de jogadores por década
   useEffect(() => {
