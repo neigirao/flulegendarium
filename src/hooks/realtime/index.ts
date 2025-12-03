@@ -6,7 +6,6 @@
  * @module hooks/realtime
  */
 
-export { useRealtimePresence } from '../use-realtime-presence';
 export { useRealtimeStats } from '../use-realtime-stats';
 export { useDailyChallenges } from '../use-daily-challenges';
 export { useLiveEvents } from '../use-live-events';
