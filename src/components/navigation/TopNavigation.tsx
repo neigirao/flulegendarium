@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
-import { Shield, HelpCircle, User, Menu, X, Newspaper, Heart } from "lucide-react";
+import { Shield, HelpCircle, User, Menu, X, Newspaper, Heart, Trophy } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export const TopNavigation = () => {
@@ -17,6 +17,11 @@ export const TopNavigation = () => {
       onClick: () => navigate('/noticias'),
       icon: Newspaper,
     },
+    ...(user ? [{
+      label: "Conquistas",
+      onClick: () => navigate('/conquistas'),
+      icon: Trophy,
+    }] : []),
     {
       label: "Doações",
       onClick: () => navigate('/doacoes'),

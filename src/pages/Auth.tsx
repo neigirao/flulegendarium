@@ -7,21 +7,26 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { RootLayout } from '@/components/RootLayout';
 import { SEOHead } from '@/components/SEOHead';
 import { ArrowLeft, Mail, Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 const Auth = () => {
-  const { user, signIn, signUp, loading } = useAuth();
+  const { user, signIn, signUp, resetPassword, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showResetDialog, setShowResetDialog] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetLoading, setResetLoading] = useState(false);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -58,6 +63,11 @@ const Auth = () => {
     e.preventDefault();
     setError('');
 
+    if (!fullName.trim() || fullName.trim().length < 2) {
+      setError('O nome deve ter pelo menos 2 caracteres');
+      return;
+    }
+
     if (password !== confirmPassword) {
       setError('As senhas não coincidem');
       return;
@@ -71,8 +81,7 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/`;
-      const { error } = await signUp(email, password);
+      const { error } = await signUp(email, password, fullName.trim());
       
       if (error) {
         if (error.message.includes('User already registered')) {
@@ -90,6 +99,29 @@ const Auth = () => {
     }
   };
 
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!resetEmail.trim()) {
+      toast.error('Digite seu email');
+      return;
+    }
+
+    setResetLoading(true);
+    try {
+      const { error } = await resetPassword(resetEmail.trim());
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Email de recuperação enviado! Verifique sua caixa de entrada.');
+        setShowResetDialog(false);
+        setResetEmail('');
+      }
+    } catch (err) {
+      toast.error('Erro ao enviar email. Tente novamente.');
+    } finally {
+      setResetLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -194,11 +226,37 @@ const Auth = () => {
                       >
                         {isLoading ? 'Entrando...' : 'Entrar'}
                       </Button>
+
+                      <Button
+                        type="button"
+                        variant="link"
+                        className="w-full text-flu-verde hover:text-flu-verde/80"
+                        onClick={() => setShowResetDialog(true)}
+                      >
+                        Esqueci minha senha
+                      </Button>
                     </form>
                   </TabsContent>
 
                   <TabsContent value="signup">
                     <form onSubmit={handleSignUp} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="fullName">Nome *</Label>
+                        <div className="relative">
+                          <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Input
+                            id="fullName"
+                            type="text"
+                            value={fullName}
+                            onChange={(e) => setFullName(e.target.value)}
+                            className="pl-10"
+                            placeholder="Seu nome completo"
+                            required
+                            minLength={2}
+                          />
+                        </div>
+                      </div>
+
                       <div className="space-y-2">
                         <Label htmlFor="signup-email">Email</Label>
                         <div className="relative">
@@ -273,6 +331,52 @@ const Auth = () => {
             </Card>
           </div>
         </div>
+
+        {/* Reset Password Dialog */}
+        <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Recuperar Senha</DialogTitle>
+              <DialogDescription>
+                Digite seu email e enviaremos um link para redefinir sua senha.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="reset-email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="reset-email"
+                    type="email"
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    className="pl-10"
+                    placeholder="seu@email.com"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowResetDialog(false)}
+                  className="flex-1"
+                >
+                  Cancelar
+                </Button>
+                <Button
+                  type="submit"
+                  className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+                  disabled={resetLoading}
+                >
+                  {resetLoading ? 'Enviando...' : 'Enviar'}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
       </RootLayout>
     </>
   );

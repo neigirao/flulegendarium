@@ -30,7 +30,8 @@ import {
   LazySocialPage,
   LazyNewsPortal,
   LazyNewsArticle,
-  LazyDonations
+  LazyDonations,
+  LazyConquistas
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
@@ -89,6 +90,7 @@ function App() {
                           <Route path="/noticias" element={<LazyNewsPortal />} />
                           <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
                           <Route path="/doacoes" element={<LazyDonations />} />
+                          <Route path="/conquistas" element={<LazyConquistas />} />
                           <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
                           <Route 
                             path="/admin" 
