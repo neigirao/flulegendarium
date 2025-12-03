@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Trophy, RotateCcw, Home, Star } from "lucide-react";
-import { Link } from "react-router-dom";
 import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
 import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
@@ -89,6 +88,15 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     setAutoSaved(false);
     onResetScore();
     onClose();
+    window.location.href = '/jogar';
+  };
+
+  const handleGoHome = () => {
+    setShowRankingForm(false);
+    setShowShareOptions(false);
+    setAutoSaved(false);
+    onClose();
+    window.location.href = '/';
   };
 
   const handleSkipRanking = () => {
@@ -107,8 +115,8 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   const showInitialState = !showRankingForm && !showShareOptions && !autoSaved;
 
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
+    <Dialog open={open} onOpenChange={handleGoHome}>
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-center justify-center">
             <Trophy className="w-6 h-6 text-flu-grena" />
@@ -160,12 +168,10 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                 <Button
                   variant="ghost"
                   className="w-full"
-                  asChild
+                  onClick={handleGoHome}
                 >
-                  <Link to="/">
-                    <Home className="w-4 h-4 mr-2" />
-                    Voltar ao Início
-                  </Link>
+                  <Home className="w-4 h-4 mr-2" />
+                  Voltar ao Início
                 </Button>
 
                 {/* Feedback Button */}
@@ -214,12 +220,10 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                 <Button
                   variant="ghost"
                   className="w-full"
-                  asChild
+                  onClick={handleGoHome}
                 >
-                  <Link to="/">
-                    <Home className="w-4 h-4 mr-2" />
-                    Voltar ao Início
-                  </Link>
+                  <Home className="w-4 h-4 mr-2" />
+                  Voltar ao Início
                 </Button>
               </div>
             </div>
