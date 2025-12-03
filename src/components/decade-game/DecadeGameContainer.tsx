@@ -5,6 +5,7 @@ import { DecadeSelectionPage } from './DecadeSelectionPage';
 import { GameContainer } from '@/components/guess-game/GameContainer';
 import { BaseGameContainer } from '@/components/guess-game/BaseGameContainer';
 import { GuestNameForm } from '@/components/guess-game/GuestNameForm';
+import { GameOverDialog } from '@/components/guess-game/GameOverDialog';
 import { 
   useDecadePlayerSelection, 
   useSimpleGameLogic, 
@@ -14,6 +15,7 @@ import {
   useDecadeGameState 
 } from '@/hooks/game';
 import { useAuth } from '@/hooks/auth';
+import { useAchievementSystem } from '@/components/achievements/AchievementSystemProvider';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
@@ -23,6 +25,7 @@ import { logger } from '@/utils/logger';
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { getPlayerAchievements } = useAchievementSystem();
   
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
   const [guestName, setGuestName] = useState<string>("");
@@ -85,6 +88,7 @@ export const DecadeGameContainer = () => {
     startMetricsTracking,
     incrementCorrectGuesses,
     saveGameData,
+    saveToRanking,
     resetMetrics
   } = useSimpleGameMetrics();
 
@@ -288,6 +292,19 @@ export const DecadeGameContainer = () => {
         } as any}
       />
     </BaseGameContainer>
+    
+    <GameOverDialog
+      open={gameOver}
+      onClose={() => {}}
+      playerName={currentPlayer?.name || ''}
+      score={score}
+      onResetScore={handleResetGame}
+      isAuthenticated={!!user}
+      onSaveToRanking={saveToRanking}
+      gameMode="classic"
+      difficultyLevel={currentDifficulty.label}
+      unlockedAchievementIds={getPlayerAchievements().map(a => a.id)}
+    />
     </>
   );
 };

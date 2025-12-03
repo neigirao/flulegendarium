@@ -30,7 +30,7 @@ const AdaptiveGameContainer = () => {
   const { players, isLoading, playersError } = usePlayersData();
   
   // Achievement hooks
-  const { checkProgressAchievements } = useAchievementSystem();
+  const { checkProgressAchievements, getPlayerAchievements } = useAchievementSystem();
   const analytics = useEnhancedAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
   const { showContextualFeedback } = useUX();
@@ -176,6 +176,7 @@ const AdaptiveGameContainer = () => {
         onSaveToRanking={saveToRanking}
         gameMode="adaptive"
         difficultyLevel={currentDifficulty.label}
+        unlockedAchievementIds={getPlayerAchievements().map(a => a.id)}
       />
 
       {showGuestNameForm && (
