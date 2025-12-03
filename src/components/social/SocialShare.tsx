@@ -1,4 +1,4 @@
-import { Share2, Twitter, Instagram, Facebook, Copy } from 'lucide-react';
+import { Share2, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { QuickShareButton } from './QuickShareButton';
@@ -107,11 +107,11 @@ Teste seus conhecimentos sobre os ídolos tricolores:`;
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex flex-col gap-3">
         {navigator.share && (
           <Button
             onClick={nativeShare}
-            className="bg-flu-grena hover:bg-flu-grena/90 text-white flex items-center gap-2"
+            className="bg-flu-grena hover:bg-flu-grena/90 text-white flex items-center gap-2 w-full"
           >
             <Share2 size={16} />
             Compartilhar
@@ -121,34 +121,10 @@ Teste seus conhecimentos sobre os ídolos tricolores:`;
         <Button
           onClick={copyToClipboard}
           variant="outline"
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 w-full"
         >
           <Copy size={16} />
-          Copiar
-        </Button>
-        
-        <Button
-          onClick={shareOnTwitter}
-          className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-2"
-        >
-          <Twitter size={16} />
-          Twitter
-        </Button>
-        
-        <Button
-          onClick={shareOnFacebook}
-          className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
-        >
-          <Facebook size={16} />
-          Facebook
-        </Button>
-        
-        <Button
-          onClick={shareOnInstagram}
-          className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white flex items-center gap-2 col-span-2"
-        >
-          <Instagram size={16} />
-          Instagram Story
+          Copiar Texto
         </Button>
       </div>
     </div>
