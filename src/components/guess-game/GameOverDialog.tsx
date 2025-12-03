@@ -1,5 +1,5 @@
-
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,7 @@ import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Achievement, ACHIEVEMENTS } from "@/types/achievements";
+import { clearAllImageCache } from "@/utils/player-image/cache";
 
 interface GameOverDialogProps {
   open: boolean;
@@ -41,6 +42,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   unlockedAchievementIds = []
 }) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
@@ -94,17 +96,19 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     setShowRankingForm(false);
     setShowShareOptions(false);
     setAutoSaved(false);
+    clearAllImageCache();
     onResetScore();
     onClose();
-    window.location.href = '/selecionar-modo-jogo';
+    navigate('/selecionar-modo-jogo', { replace: true });
   };
 
   const handleGoHome = () => {
     setShowRankingForm(false);
     setShowShareOptions(false);
     setAutoSaved(false);
+    clearAllImageCache();
     onClose();
-    window.location.href = '/';
+    navigate('/', { replace: true });
   };
 
   const handleSkipRanking = () => {

@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useAdaptiveGuessGame } from "@/hooks/game";
 import { usePlayersData } from "@/hooks/data";
 import { useAuth } from "@/hooks/auth";
@@ -18,6 +17,9 @@ import { useEnhancedAnalytics } from "@/hooks/analytics";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/mobile";
 import { useUX } from "@/components/ux/UXProvider";
+import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
+import { useToast } from "@/hooks/use-toast";
+import { clearAllImageCache } from "@/utils/player-image/cache";
 
 const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
@@ -25,6 +27,7 @@ const AdaptiveGameContainer = () => {
   const [showGuestNameForm, setShowGuestNameForm] = useState(false);
   const [canStartTimer, setCanStartTimer] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { toast } = useToast();
   
   const { user } = useAuth();
   const { players, isLoading, playersError } = usePlayersData();
@@ -60,6 +63,33 @@ const AdaptiveGameContainer = () => {
     clearDifficultyChange,
     saveToRanking
   } = useAdaptiveGuessGame(players);
+
+  // Detecção de DevTools - encerra o jogo se detectado
+  const handleDevToolsDetected = useCallback(() => {
+    if (!gameOver) {
+      toast({
+        variant: "destructive",
+        title: "Jogo Encerrado",
+        description: "Uso de ferramentas de inspeção detectado. O jogo foi finalizado.",
+      });
+      // O jogo será encerrado através do resetScore que força gameOver
+      resetScore();
+    }
+  }, [gameOver, toast, resetScore]);
+
+  useDevToolsDetection(handleDevToolsDetected, !gameOver);
+
+  // Reset completo de estados ao montar o componente
+  useEffect(() => {
+    setImageLoaded(false);
+    setCanStartTimer(false);
+    clearAllImageCache();
+    
+    return () => {
+      setImageLoaded(false);
+      setCanStartTimer(false);
+    };
+  }, []);
 
   useEffect(() => {
     // Se não estiver autenticado e não tiver nome de convidado, mostrar formulário

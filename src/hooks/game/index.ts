@@ -19,3 +19,4 @@ export { useSimpleGameMetrics } from '../use-simple-game-metrics';
 export { useDecadeGameTimer } from '../use-decade-game-timer';
 export { useGameConfirmations } from '../use-game-confirmations';
 export { useAchievements } from '../use-achievements';
+export { useDevToolsDetection } from '../use-devtools-detection';

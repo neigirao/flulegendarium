@@ -391,12 +391,20 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     setCorrectSequence(0);
     setIncorrectSequence(0);
     setDifficultyChangeInfo(null);
+    setCurrentPlayer(null);
     
     // Limpar histórico de jogadores usados ao resetar o jogo
     usedPlayerIds.current.clear();
     
+    // Forçar nova chave para re-render completo
+    setGameKey(Date.now());
+    
     resetMetrics();
-    selectRandomPlayer();
+    
+    // Selecionar novo jogador após um pequeno delay para garantir reset completo
+    setTimeout(() => {
+      selectRandomPlayer();
+    }, 100);
   }, [selectRandomPlayer, resetMetrics]);
 
   const clearDifficultyChange = useCallback(() => {

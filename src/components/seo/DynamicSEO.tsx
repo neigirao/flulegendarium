@@ -31,9 +31,8 @@ export const DynamicSEO = ({
   const generateTitle = () => {
     if (customTitle) return customTitle;
     
-    if (player) {
-      return `${player.name} - Lenda do Fluminense | Lendas do Flu`;
-    }
+    // NUNCA revelar nome do jogador no título durante o jogo - isso é trapaça!
+    // Removido: if (player) { return `${player.name} - ...` }
     
     if (gameMode === 'decade') {
       return `Jogo por Década${difficulty ? ` - ${difficulty}` : ''} | Lendas do Flu`;
@@ -49,9 +48,8 @@ export const DynamicSEO = ({
   const generateDescription = () => {
     if (customDescription) return customDescription;
     
-    if (player) {
-      return `Descubra tudo sobre ${player.name}, ${player.position} do Fluminense. ${player.fun_fact || 'Uma verdadeira lenda tricolor!'} Teste seus conhecimentos no Lendas do Flu.`;
-    }
+    // NUNCA revelar informações do jogador durante o jogo
+    // Removido: if (player) { return `Descubra tudo sobre ${player.name}...` }
     
     if (gameMode === 'decade') {
       return `Teste seus conhecimentos sobre as lendas do Fluminense por década${difficulty ? ` em modo ${difficulty}` : ''}. Adivinhe o jogador pela foto e prove que é um verdadeiro tricolor!`;
@@ -67,9 +65,7 @@ export const DynamicSEO = ({
   const generateKeywords = () => {
     const baseKeywords = "quiz fluminense, teste fluminense, jogo fluminense, tricolor, futebol";
     
-    if (player) {
-      return `${baseKeywords}, ${player.name}, ${player.position}, lenda fluminense`;
-    }
+    // NUNCA incluir dados do jogador nas keywords durante o jogo
     
     if (gameMode === 'decade') {
       return `${baseKeywords}, jogo por década, história fluminense, décadas fluminense`;
