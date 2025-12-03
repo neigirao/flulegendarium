@@ -96,7 +96,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     setAutoSaved(false);
     onResetScore();
     onClose();
-    window.location.href = '/jogar';
+    window.location.href = '/selecionar-modo-jogo';
   };
 
   const handleGoHome = () => {

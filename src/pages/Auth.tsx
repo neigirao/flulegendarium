@@ -81,7 +81,7 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
-      const { error } = await signUp(email, password, fullName.trim());
+      const { data, error } = await signUp(email, password, fullName.trim());
       
       if (error) {
         if (error.message.includes('User already registered')) {
@@ -89,6 +89,9 @@ const Auth = () => {
         } else {
           setError(error.message);
         }
+      } else if (data?.user?.identities?.length === 0) {
+        // User already exists (repeated signup with unconfirmed email)
+        setError('Este email já está cadastrado. Tente fazer login ou verifique seu email.');
       } else {
         toast.success('Conta criada! Verifique seu email para confirmar.');
       }
