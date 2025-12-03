@@ -7,12 +7,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trophy, RotateCcw, Home, Star } from "lucide-react";
+import { Trophy, RotateCcw, Home, Star, Award } from "lucide-react";
 import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
 import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { Achievement, ACHIEVEMENTS } from "@/types/achievements";
 
 interface GameOverDialogProps {
   open: boolean;
@@ -24,6 +25,7 @@ interface GameOverDialogProps {
   onSaveToRanking?: (playerName: string, score: number, difficultyLevel?: string) => Promise<void>;
   gameMode?: 'classic' | 'adaptive';
   difficultyLevel?: string;
+  unlockedAchievementIds?: string[];
 }
 
 export const GameOverDialog: React.FC<GameOverDialogProps> = ({
@@ -35,12 +37,18 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   isAuthenticated = false,
   onSaveToRanking,
   gameMode = 'classic',
-  difficultyLevel
+  difficultyLevel,
+  unlockedAchievementIds = []
 }) => {
   const { user } = useAuth();
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
+
+  // Get full achievement data for unlocked achievements
+  const unlockedAchievements = ACHIEVEMENTS.filter(a => 
+    unlockedAchievementIds.includes(a.id)
+  );
 
   // Auto-save for logged-in users with a name
   useEffect(() => {
@@ -141,6 +149,37 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
               </div>
             )}
           </div>
+
+          {/* Unlocked Achievements Section */}
+          {unlockedAchievements.length > 0 && (
+            <div className="bg-gradient-to-r from-flu-grena/10 to-flu-verde/10 rounded-lg p-4 border border-flu-grena/20">
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <Award className="w-5 h-5 text-flu-grena" />
+                <h4 className="font-semibold text-flu-grena">
+                  {unlockedAchievements.length === 1 
+                    ? 'Conquista Desbloqueada!' 
+                    : `${unlockedAchievements.length} Conquistas Desbloqueadas!`}
+                </h4>
+              </div>
+              <div className="space-y-2">
+                {unlockedAchievements.map((achievement) => (
+                  <div
+                    key={achievement.id}
+                    className="flex items-center gap-3 bg-white/80 rounded-lg p-3 border border-flu-grena/10"
+                  >
+                    <span className="text-2xl">{achievement.icon}</span>
+                    <div className="text-left flex-1">
+                      <p className="font-medium text-flu-grena text-sm">{achievement.name}</p>
+                      <p className="text-xs text-gray-600">{achievement.description}</p>
+                    </div>
+                    <span className="text-xs bg-flu-grena/20 text-flu-grena px-2 py-1 rounded-full">
+                      +{achievement.points} pts
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {showInitialState && (
             <div className="space-y-4">

@@ -1,6 +1,7 @@
 import { useRef, useCallback } from "react";
 import { useAuth } from "./useAuth";
 import { saveGameHistory } from "@/services/gameHistoryService";
+import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
 
 export const useSimpleGameMetrics = () => {
@@ -56,6 +57,35 @@ export const useSimpleGameMetrics = () => {
     }
   }, [user]);
 
+  const saveToRanking = useCallback(async (
+    playerName: string, 
+    finalScore: number, 
+    difficultyLevel?: string
+  ) => {
+    try {
+      logger.info('Salvando pontuação no ranking', 'GAME_METRICS', {
+        playerName,
+        score: finalScore,
+        difficulty_level: difficultyLevel
+      });
+
+      const { error } = await supabase.from('rankings').insert({
+        player_name: playerName,
+        score: finalScore,
+        user_id: user?.id || null,
+        game_mode: 'decade',
+        difficulty_level: difficultyLevel || 'medio'
+      });
+
+      if (error) throw error;
+
+      logger.info('Ranking salvo com sucesso', 'GAME_METRICS');
+    } catch (error) {
+      logger.error('Erro ao salvar ranking', 'GAME_METRICS', error);
+      throw error;
+    }
+  }, [user]);
+
   const resetMetrics = useCallback(() => {
     gameStartTimeRef.current = null;
     totalAttemptsRef.current = 0;
@@ -67,6 +97,7 @@ export const useSimpleGameMetrics = () => {
     incrementAttempts,
     incrementCorrectGuesses,
     saveGameData,
+    saveToRanking,
     resetMetrics
   };
 };
