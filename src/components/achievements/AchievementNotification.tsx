@@ -29,27 +29,27 @@ export const AchievementNotification = ({ achievement, onClose }: AchievementNot
     switch (rarity) {
       case 'common': 
         return {
-          bgColor: 'from-gray-500 to-gray-600',
-          sparkleColor: 'text-gray-300',
-          borderColor: 'border-gray-400'
+          bgColor: 'from-neutral-500 to-neutral-600',
+          sparkleColor: 'text-neutral-300',
+          borderColor: 'border-neutral-400'
         };
       case 'rare': 
         return {
-          bgColor: 'from-blue-500 to-blue-600',
-          sparkleColor: 'text-blue-200',
-          borderColor: 'border-blue-400'
+          bgColor: 'from-info to-info/80',
+          sparkleColor: 'text-info-light',
+          borderColor: 'border-info'
         };
       case 'epic': 
         return {
-          bgColor: 'from-purple-500 to-purple-600',
-          sparkleColor: 'text-purple-200',
-          borderColor: 'border-purple-400'
+          bgColor: 'from-accent to-accent/80',
+          sparkleColor: 'text-accent/50',
+          borderColor: 'border-accent'
         };
       case 'legendary': 
         return {
-          bgColor: 'from-yellow-400 via-yellow-500 to-orange-500',
-          sparkleColor: 'text-yellow-200',
-          borderColor: 'border-yellow-400'
+          bgColor: 'from-warning via-warning to-warning/80',
+          sparkleColor: 'text-warning-light',
+          borderColor: 'border-warning'
         };
     }
   };
