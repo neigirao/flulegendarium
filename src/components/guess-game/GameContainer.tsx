@@ -59,20 +59,20 @@ export const GameContainer = ({
     return (
       <div className="text-center py-8">
         <div className="mb-4">
-          <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin mx-auto"></div>
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
         </div>
-        <p className="text-gray-600 mb-4">Carregando jogador...</p>
+        <p className="text-muted-foreground mb-4">Carregando jogador...</p>
         
         {/* Debug button for development */}
         {process.env.NODE_ENV === 'development' && (
           <div className="mt-4">
             <button
               onClick={forceRefresh}
-              className="px-4 py-2 bg-flu-grena text-white rounded hover:bg-red-700"
+              className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
             >
               Force Refresh
             </button>
-            <p className="text-xs text-gray-500 mt-2">
+            <p className="text-xs text-muted-foreground/70 mt-2">
               Player changes: {playerChangeCount}
             </p>
           </div>
@@ -86,10 +86,10 @@ export const GameContainer = ({
       
       {/* Timer - igual ao adaptativo */}
       <div className="flex justify-center mb-6">
-        <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-lg">
+        <div className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-lg">
           <div className="flex items-center gap-2 mb-2">
-            <Clock className="w-4 h-4 text-flu-grena" />
-            <span className="text-sm font-medium text-gray-600">Tempo</span>
+            <Clock className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium text-muted-foreground">Tempo</span>
           </div>
           <GameTimer 
             timeRemaining={timeRemaining} 
@@ -103,11 +103,11 @@ export const GameContainer = ({
       <div className="relative w-full max-w-sm mx-auto">
           
           {/* Card do Jogador */}
-          <div className="bg-white rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+          <div className="bg-card rounded-3xl p-6 shadow-2xl relative overflow-hidden">
             
             {/* Imagem do Jogador com Borda Verde */}
             <div className="relative mb-6">
-              <div className="aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden border-4 border-flu-verde p-2">
+              <div className="aspect-[4/3] bg-muted rounded-2xl overflow-hidden border-4 border-secondary p-2">
                 <div className="w-full h-full rounded-xl overflow-hidden">
                   <UnifiedPlayerImage
                     key={`${currentPlayer.id}-${gameKey}`}
@@ -121,7 +121,7 @@ export const GameContainer = ({
 
           {/* Título da Dificuldade */}
           <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">
+            <h1 className="text-3xl font-bold text-foreground mb-4">
               {currentDifficulty?.label || 'Muito Fácil'}
             </h1>
             
@@ -132,17 +132,17 @@ export const GameContainer = ({
                   key={star}
                   className={`w-10 h-10 rounded-lg flex items-center justify-center ${
                     star <= (currentStreak || 0) 
-                      ? 'bg-yellow-400' 
-                      : 'bg-gray-200'
+                      ? 'bg-warning' 
+                      : 'bg-muted'
                   }`}
                 >
-                  <span className="text-white text-lg font-bold">★</span>
+                  <span className="text-warning-foreground text-lg font-bold">★</span>
                 </div>
               ))}
             </div>
             
             {/* Próximo Nível */}
-            <p className="text-gray-600 text-base font-medium">
+            <p className="text-muted-foreground text-base font-medium">
               Próximo nível: {currentStreak || 0}/3
             </p>
           </div>
@@ -160,18 +160,18 @@ export const GameContainer = ({
 
       {/* Controles de Debug */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="fixed bottom-4 right-4 p-4 bg-black/80 backdrop-blur-sm rounded-lg text-white text-xs">
+        <div className="fixed bottom-4 right-4 p-4 bg-foreground/80 backdrop-blur-sm rounded-lg text-background text-xs">
           <h4 className="font-semibold mb-2">Debug</h4>
           <div className="flex gap-2 mb-2">
             <button
               onClick={selectRandomPlayer}
-              className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
+              className="px-2 py-1 bg-info text-info-foreground rounded text-xs"
             >
               Next
             </button>
             <button
               onClick={forceRefresh}
-              className="px-2 py-1 bg-green-500 text-white rounded text-xs"
+              className="px-2 py-1 bg-success text-success-foreground rounded text-xs"
             >
               Refresh
             </button>
