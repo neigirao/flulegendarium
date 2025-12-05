@@ -97,12 +97,12 @@ Teste seus conhecimentos sobre os ídolos tricolores:`;
   };
 
   return (
-    <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 space-y-4">
+    <div className="bg-card/90 backdrop-blur-sm rounded-lg p-4 space-y-4">
       <div className="text-center">
-        <h3 className="text-lg font-semibold text-flu-grena mb-2">
+        <h3 className="text-lg font-semibold text-primary mb-2">
           🎉 Compartilhe seu resultado!
         </h3>
-        <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+        <div className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">
           {shareText}
         </div>
       </div>
@@ -111,7 +111,7 @@ Teste seus conhecimentos sobre os ídolos tricolores:`;
         {navigator.share && (
           <Button
             onClick={nativeShare}
-            className="bg-flu-grena hover:bg-flu-grena/90 text-white flex items-center gap-2 w-full"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 w-full"
           >
             <Share2 size={16} />
             Compartilhar
