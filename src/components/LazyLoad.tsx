@@ -10,16 +10,16 @@ interface LazyLoadProps {
 
 const DefaultErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) => (
   <div className="flex flex-col items-center justify-center p-8 text-center">
-    <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
-      <h3 className="text-lg font-semibold text-red-800 mb-2">
+    <div className="bg-error-light border border-error/30 rounded-lg p-6 max-w-md">
+      <h3 className="text-lg font-semibold text-error mb-2">
         Erro ao carregar componente
       </h3>
-      <p className="text-red-600 mb-4">
+      <p className="text-error/80 mb-4">
         {error.message || 'Falha ao carregar o módulo'}
       </p>
       <button
         onClick={resetErrorBoundary}
-        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
+        className="bg-error text-error-foreground px-4 py-2 rounded hover:bg-error/90 transition-colors"
       >
         Tentar Novamente
       </button>

@@ -19,25 +19,25 @@ const RankingItem = memo(({ rank, index }: { rank: RankingEntry; index: number }
   const getRankIcon = (index: number) => {
     switch (index) {
       case 0:
-        return <div className="w-10 h-10 bg-yellow-500 rounded-full flex items-center justify-center text-white font-bold text-lg">1</div>;
+        return <div className="w-10 h-10 bg-warning rounded-full flex items-center justify-center text-warning-foreground font-bold text-lg">1</div>;
       case 1:
-        return <div className="w-10 h-10 bg-gray-400 rounded-full flex items-center justify-center text-white font-bold text-lg">2</div>;
+        return <div className="w-10 h-10 bg-neutral-400 rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg">2</div>;
       case 2:
-        return <div className="w-10 h-10 bg-yellow-600 rounded-full flex items-center justify-center text-white font-bold text-lg">3</div>;
+        return <div className="w-10 h-10 bg-warning/80 rounded-full flex items-center justify-center text-warning-foreground font-bold text-lg">3</div>;
       default:
-        return <div className="w-10 h-10 bg-flu-grena rounded-full flex items-center justify-center text-white font-bold">{index + 1}</div>;
+        return <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold">{index + 1}</div>;
     }
   };
 
   const isGuest = !rank.user_id;
 
   return (
-    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-100 hover:shadow-xl transition-shadow">
+    <div className="bg-card rounded-xl p-6 shadow-lg border border-border hover:shadow-xl transition-shadow">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {getRankIcon(index)}
           <div>
-            <div className="font-bold text-xl text-flu-grena flex items-center gap-2">
+            <div className="font-bold text-xl text-primary flex items-center gap-2">
               <InstagramProfile 
                 playerName={rank.player_name}
                 avatarSize="md"
@@ -45,17 +45,17 @@ const RankingItem = memo(({ rank, index }: { rank: RankingEntry; index: number }
                 className="text-xl"
               />
               {isGuest && (
-                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-full">
                   Convidado
                 </span>
               )}
             </div>
-            <div className="text-sm text-gray-600 font-medium">{rank.score} pontos</div>
+            <div className="text-sm text-muted-foreground font-medium">{rank.score} pontos</div>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-3xl font-black text-flu-grena">{rank.score}</div>
-          <div className="text-sm text-gray-500 font-medium">pts</div>
+          <div className="text-3xl font-black text-primary">{rank.score}</div>
+          <div className="text-sm text-muted-foreground font-medium">pts</div>
         </div>
       </div>
     </div>
@@ -124,17 +124,17 @@ const RankingList = ({ decade }: { decade?: string }) => {
 
   if (error) {
     return (
-      <div className="text-center text-gray-500 py-8">
+      <div className="text-center text-muted-foreground py-8">
         <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
         <p className="text-lg">Erro ao carregar ranking</p>
-        <p className="text-sm mt-2 text-gray-400">Tente novamente em alguns instantes</p>
+        <p className="text-sm mt-2 text-muted-foreground/70">Tente novamente em alguns instantes</p>
       </div>
     );
   }
 
   if (rankings.length === 0) {
     return (
-      <div className="text-center text-gray-500 py-8">
+      <div className="text-center text-muted-foreground py-8">
         <Trophy className="w-12 h-12 mx-auto mb-4 opacity-50" />
         <p className="text-lg">
           {decade && decade !== 'all' 
