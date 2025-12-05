@@ -27,8 +27,8 @@ export const AdaptiveProgressionNotification = ({
   const isLevelUp = changeInfo.direction === 'up';
   const Icon = isLevelUp ? TrendingUp : TrendingDown;
   
-  const bgColor = isLevelUp ? 'bg-green-500' : 'bg-orange-500';
-  const textColor = 'text-white';
+  const bgColor = isLevelUp ? 'bg-success' : 'bg-warning';
+  const textColor = isLevelUp ? 'text-success-foreground' : 'text-warning-foreground';
 
   const getMessage = () => {
     if (isLevelUp) {

@@ -143,13 +143,13 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
             </p>
           )}
           
-          <div className="bg-gray-50 rounded-lg p-4">
-            <p className="text-2xl font-bold text-flu-grena mb-2">{score} pontos</p>
-            <p className="text-gray-600">{getScoreMessage()}</p>
+          <div className="bg-muted rounded-lg p-4">
+            <p className="text-2xl font-bold text-primary mb-2">{score} pontos</p>
+            <p className="text-muted-foreground">{getScoreMessage()}</p>
             {gameMode === 'adaptive' && (
               <div className="flex items-center justify-center gap-1 mt-2">
-                <Star className="w-4 h-4 text-yellow-500" />
-                <span className="text-sm text-gray-600">Modo Adaptativo</span>
+                <Star className="w-4 h-4 text-warning" />
+                <span className="text-sm text-muted-foreground">Modo Adaptativo</span>
               </div>
             )}
           </div>
@@ -174,7 +174,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                     <span className="text-2xl">{achievement.icon}</span>
                     <div className="text-left flex-1">
                       <p className="font-medium text-flu-grena text-sm">{achievement.name}</p>
-                      <p className="text-xs text-gray-600">{achievement.description}</p>
+                      <p className="text-xs text-muted-foreground">{achievement.description}</p>
                     </div>
                     <span className="text-xs bg-flu-grena/20 text-flu-grena px-2 py-1 rounded-full">
                       +{achievement.points} pts

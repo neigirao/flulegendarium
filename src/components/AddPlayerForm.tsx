@@ -190,7 +190,7 @@ export const AddPlayerForm = () => {
           disabled={isLoading}
           rows={3}
         />
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Separe múltiplos apelidos por vírgula. Estes apelidos serão aceitos no jogo.
         </p>
       </div>
@@ -234,7 +234,7 @@ export const AddPlayerForm = () => {
             </div>
           ))}
         </div>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-muted-foreground">
           Selecione as décadas em que o jogador atuou.
         </p>
       </div>

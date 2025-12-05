@@ -29,15 +29,15 @@ export const GameModeCard = ({
   return (
     <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105">
       <CardHeader className="text-center">
-        <div className="w-16 h-16 rounded-full bg-flu-grena flex items-center justify-center text-white text-3xl mx-auto mb-4 group-hover:scale-110 transition-transform">
+        <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-3xl mx-auto mb-4 group-hover:scale-110 transition-transform">
           {icon}
         </div>
         <div className="flex items-center justify-center gap-2 mb-2">
-          <CardTitle className="text-xl font-bold text-flu-grena">
+          <CardTitle className="text-xl font-bold text-primary">
             {title}
           </CardTitle>
           {isNew && (
-            <Badge variant="secondary" className="bg-flu-verde/10 text-flu-verde text-xs">
+            <Badge variant="secondary" className="bg-secondary/10 text-secondary text-xs">
               NOVO
             </Badge>
           )}
@@ -50,16 +50,16 @@ export const GameModeCard = ({
       </CardHeader>
       
       <CardContent className="text-center">
-        <p className="text-gray-700 mb-4 text-sm">
+        <p className="text-muted-foreground mb-4 text-sm">
           {description}
         </p>
         
         {features.length > 0 && (
           <div className="mb-4">
-            <ul className="text-xs text-gray-600 space-y-1">
+            <ul className="text-xs text-muted-foreground space-y-1">
               {features.map((feature, index) => (
                 <li key={index} className="flex items-center justify-center gap-1">
-                  <span className="text-flu-verde">•</span>
+                  <span className="text-secondary">•</span>
                   {feature}
                 </li>
               ))}
@@ -68,7 +68,7 @@ export const GameModeCard = ({
         )}
         
         <Button 
-          className="w-full bg-flu-grena hover:bg-flu-grena/90 text-white"
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
           onClick={() => navigate(route)}
         >
           Jogar Agora

@@ -12,46 +12,46 @@ interface AdaptiveDifficultyIndicatorProps {
 const difficultyConfig = {
   muito_facil: {
     label: "Muito Fácil",
-    color: "bg-green-500",
-    textColor: "text-green-700",
-    bgColor: "bg-green-50",
-    borderColor: "border-green-200",
+    color: "bg-difficulty-very-easy",
+    textColor: "text-difficulty-very-easy",
+    bgColor: "bg-difficulty-very-easy/10",
+    borderColor: "border-difficulty-very-easy/30",
     icon: Star,
     description: "Jogadores mais conhecidos"
   },
   facil: {
     label: "Fácil",
-    color: "bg-blue-500",
-    textColor: "text-blue-700",
-    bgColor: "bg-blue-50",
-    borderColor: "border-blue-200",
+    color: "bg-difficulty-easy",
+    textColor: "text-difficulty-easy",
+    bgColor: "bg-difficulty-easy/10",
+    borderColor: "border-difficulty-easy/30",
     icon: TrendingUp,
     description: "Ídolos populares"
   },
   medio: {
     label: "Médio",
-    color: "bg-yellow-500",
-    textColor: "text-yellow-700",
-    bgColor: "bg-yellow-50",
-    borderColor: "border-yellow-200",
+    color: "bg-difficulty-medium",
+    textColor: "text-difficulty-medium",
+    bgColor: "bg-difficulty-medium/10",
+    borderColor: "border-difficulty-medium/30",
     icon: Zap,
     description: "Jogadores históricos"
   },
   dificil: {
     label: "Difícil",
-    color: "bg-orange-500",
-    textColor: "text-orange-700",
-    bgColor: "bg-orange-50",
-    borderColor: "border-orange-200",
+    color: "bg-difficulty-hard",
+    textColor: "text-difficulty-hard",
+    bgColor: "bg-difficulty-hard/10",
+    borderColor: "border-difficulty-hard/30",
     icon: Award,
     description: "Lendas menos conhecidas"
   },
   muito_dificil: {
     label: "Muito Difícil",
-    color: "bg-red-500",
-    textColor: "text-red-700",
-    bgColor: "bg-red-50",
-    borderColor: "border-red-200",
+    color: "bg-difficulty-very-hard",
+    textColor: "text-difficulty-very-hard",
+    bgColor: "bg-difficulty-very-hard/10",
+    borderColor: "border-difficulty-very-hard/30",
     icon: Crown,
     description: "Apenas para experts"
   }
@@ -79,7 +79,7 @@ export const AdaptiveDifficultyIndicator = ({
             <h3 className={cn("text-sm font-bold", config.textColor)}>
               Nível: {config.label}
             </h3>
-            <p className="text-xs text-gray-600">{config.description}</p>
+            <p className="text-xs text-muted-foreground">{config.description}</p>
           </div>
         </div>
         
