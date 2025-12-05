@@ -89,7 +89,7 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-flu-grena">
+          <DialogTitle className="flex items-center gap-2 text-primary">
             <MessageSquare className="w-5 h-5" />
             Seu Feedback é Importante
           </DialogTitle>
@@ -98,7 +98,7 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
         <div className="space-y-6">
           {/* Rating */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-3 block">
+            <label className="text-sm font-medium text-foreground mb-3 block">
               Como você avalia sua experiência?
             </label>
             <div className="flex gap-2 justify-center">
@@ -111,8 +111,8 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
                   <Star
                     className={`w-8 h-8 ${
                       star <= rating
-                        ? 'text-yellow-400 fill-yellow-400'
-                        : 'text-gray-300'
+                        ? 'text-warning fill-warning'
+                        : 'text-muted-foreground/50'
                     }`}
                   />
                 </button>
@@ -122,7 +122,7 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
 
           {/* Category */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-3 block">
+            <label className="text-sm font-medium text-foreground mb-3 block">
               Categoria do feedback
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -132,8 +132,8 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
                   onClick={() => setCategory(cat.id)}
                   className={`p-3 rounded-lg border text-sm font-medium transition-all ${
                     category === cat.id
-                      ? 'border-flu-verde bg-flu-verde/10 text-flu-verde'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-secondary bg-secondary/10 text-secondary'
+                      : 'border-border hover:border-border/80'
                   }`}
                 >
                   <span className="mr-2">{cat.emoji}</span>
@@ -145,7 +145,7 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
 
           {/* Comment */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">
+            <label className="text-sm font-medium text-foreground mb-2 block">
               Comentário (opcional)
             </label>
             <Textarea
@@ -159,7 +159,7 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
 
           {/* Email */}
           <div>
-            <label className="text-sm font-medium text-gray-700 mb-2 block">
+            <label className="text-sm font-medium text-foreground mb-2 block">
               Email para resposta (opcional)
             </label>
             <input
@@ -167,7 +167,7 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
               value={userEmail}
               onChange={(e) => setUserEmail(e.target.value)}
               placeholder="seu@email.com"
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-flu-verde/20 focus:border-flu-verde"
+              className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary/20 focus:border-secondary"
             />
           </div>
 
@@ -175,11 +175,11 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
           <Button
             onClick={handleSubmit}
             disabled={isSubmitting || rating === 0 || !category}
-            className="w-full bg-flu-verde hover:bg-flu-verde/90 text-white"
+            className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
           >
             {isSubmitting ? (
               <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-secondary-foreground/30 border-t-secondary-foreground rounded-full animate-spin" />
                 Enviando...
               </div>
             ) : (
