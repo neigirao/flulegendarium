@@ -13,28 +13,28 @@ interface AdaptivePlayerImageProps {
 const difficultyEffects = {
   muito_facil: {
     filter: "brightness(1) contrast(1) saturate(1)",
-    borderColor: "border-green-400",
-    glowColor: "shadow-green-400/20"
+    borderColor: "border-difficulty-very-easy",
+    glowColor: "shadow-difficulty-very-easy/20"
   },
   facil: {
     filter: "brightness(0.95) contrast(1.05) saturate(0.95)",
-    borderColor: "border-blue-400",
-    glowColor: "shadow-blue-400/20"
+    borderColor: "border-difficulty-easy",
+    glowColor: "shadow-difficulty-easy/20"
   },
   medio: {
     filter: "brightness(0.9) contrast(1.1) saturate(0.9)",
-    borderColor: "border-yellow-400",
-    glowColor: "shadow-yellow-400/20"
+    borderColor: "border-difficulty-medium",
+    glowColor: "shadow-difficulty-medium/20"
   },
   dificil: {
     filter: "brightness(0.85) contrast(1.15) saturate(0.85)",
-    borderColor: "border-orange-400",
-    glowColor: "shadow-orange-400/20"
+    borderColor: "border-difficulty-hard",
+    glowColor: "shadow-difficulty-hard/20"
   },
   muito_dificil: {
     filter: "brightness(0.8) contrast(1.2) saturate(0.8)",
-    borderColor: "border-red-400",
-    glowColor: "shadow-red-400/20"
+    borderColor: "border-difficulty-very-hard",
+    glowColor: "shadow-difficulty-very-hard/20"
   }
 };
 
@@ -53,7 +53,7 @@ export const AdaptivePlayerImage = ({
         effects.glowColor
       )}>
         <div 
-          className="relative rounded-2xl overflow-hidden bg-white w-80 h-80 md:w-96 md:h-96"
+          className="relative rounded-2xl overflow-hidden bg-card w-80 h-80 md:w-96 md:h-96"
           style={{ filter: effects.filter }}
         >
           <UnifiedPlayerImage
@@ -65,18 +65,18 @@ export const AdaptivePlayerImage = ({
         </div>
         
         {/* Difficulty indicator overlay */}
-        <div className="absolute -top-2 -right-2 px-3 py-1 bg-white rounded-full shadow-lg border-2 border-gray-100">
-          <span className="text-sm font-bold text-gray-700">
+        <div className="absolute -top-2 -right-2 px-3 py-1 bg-card rounded-full shadow-lg border-2 border-border">
+          <span className="text-sm font-bold text-foreground">
             {difficulty.replace('_', ' ').toUpperCase()}
           </span>
         </div>
       </div>
 
       <div className="text-center">
-        <p className="text-lg text-gray-600">
+        <p className="text-lg text-muted-foreground">
           Quem é este jogador?
         </p>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-muted-foreground/80 mt-1">
           Dificuldade ajustada ao seu nível
         </p>
       </div>
