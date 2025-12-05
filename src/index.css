@@ -47,6 +47,42 @@
     --shadow-elegante: 0 4px 20px hsl(351 98% 24% / 0.15);
     --shadow-success: 0 4px 20px hsl(159 100% 19% / 0.25);
     
+    /* Semantic Status Colors */
+    --success: 159 100% 19%; /* Verde Fluminense */
+    --success-foreground: 0 0% 100%;
+    --success-light: 159 80% 90%;
+    
+    --warning: 45 93% 47%;
+    --warning-foreground: 0 0% 100%;
+    --warning-light: 45 93% 90%;
+    
+    --info: 210 100% 50%;
+    --info-foreground: 0 0% 100%;
+    --info-light: 210 100% 95%;
+    
+    --error: 0 84% 60%;
+    --error-foreground: 0 0% 100%;
+    --error-light: 0 84% 95%;
+    
+    /* Neutral Scale */
+    --neutral-50: 210 40% 98%;
+    --neutral-100: 210 40% 96%;
+    --neutral-200: 214 32% 91%;
+    --neutral-300: 213 27% 84%;
+    --neutral-400: 215 20% 65%;
+    --neutral-500: 215 16% 47%;
+    --neutral-600: 215 19% 35%;
+    --neutral-700: 215 25% 27%;
+    --neutral-800: 217 33% 17%;
+    --neutral-900: 222 47% 11%;
+    
+    /* Difficulty Level Colors */
+    --difficulty-very-easy: 142 76% 36%;
+    --difficulty-easy: 199 89% 48%;
+    --difficulty-medium: 45 93% 47%;
+    --difficulty-hard: 27 96% 61%;
+    --difficulty-very-hard: 0 84% 60%;
+    
     --radius: 0.75rem;
   }
  

@@ -3,6 +3,7 @@ import { Player, DifficultyLevel } from '@/types/guess-game';
 import { getReliableImageUrl } from '@/utils/player-image/imageUtils';
 import { markImageAsLoaded } from '@/utils/player-image/cache';
 import { cn } from '@/lib/utils';
+import { PlayerImageSkeleton } from '@/components/ui/shimmer-skeleton';
 
 interface UnifiedPlayerImageProps {
   player: Player;
@@ -16,28 +17,28 @@ interface UnifiedPlayerImageProps {
 const difficultyEffects = {
   muito_facil: {
     filter: "brightness(1) contrast(1) saturate(1)",
-    borderColor: "border-green-400",
-    glowColor: "shadow-green-400/20"
+    borderColor: "border-difficulty-very-easy",
+    glowColor: "shadow-difficulty-very-easy/20"
   },
   facil: {
     filter: "brightness(0.95) contrast(1.05) saturate(0.95)",
-    borderColor: "border-blue-400", 
-    glowColor: "shadow-blue-400/20"
+    borderColor: "border-difficulty-easy", 
+    glowColor: "shadow-difficulty-easy/20"
   },
   medio: {
     filter: "brightness(0.9) contrast(1.1) saturate(0.9)",
-    borderColor: "border-yellow-400",
-    glowColor: "shadow-yellow-400/20"
+    borderColor: "border-difficulty-medium",
+    glowColor: "shadow-difficulty-medium/20"
   },
   dificil: {
     filter: "brightness(0.85) contrast(1.15) saturate(0.85)",
-    borderColor: "border-orange-400",
-    glowColor: "shadow-orange-400/20"
+    borderColor: "border-difficulty-hard",
+    glowColor: "shadow-difficulty-hard/20"
   },
   muito_dificil: {
     filter: "brightness(0.8) contrast(1.2) saturate(0.8)",
-    borderColor: "border-red-400",
-    glowColor: "shadow-red-400/20"
+    borderColor: "border-difficulty-very-hard",
+    glowColor: "shadow-difficulty-very-hard/20"
   }
 };
 
@@ -112,11 +113,30 @@ export const UnifiedPlayerImage = memo(({
         effects?.glowColor && `shadow-2xl ${effects.glowColor}`,
         difficulty && "p-1 rounded-3xl transition-all duration-500"
       )}>
-        {/* Loading skeleton */}
+        {/* Loading skeleton with shimmer */}
         {imageStatus === 'loading' && (
-          <div className="absolute inset-0 bg-gradient-to-r from-muted/30 via-muted/20 to-muted/30 animate-pulse rounded-lg">
-            <div className="flex items-center justify-center h-full">
-              <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+          <div className="absolute inset-0 overflow-hidden rounded-lg bg-neutral-200 dark:bg-neutral-800">
+            {/* Shimmer effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 dark:via-white/10 to-transparent animate-shimmer" />
+            
+            {/* Center placeholder */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-neutral-300 dark:bg-neutral-700 flex items-center justify-center mb-3">
+                <svg
+                  className="w-8 h-8 text-neutral-400 dark:text-neutral-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <div className="h-3 w-24 rounded bg-neutral-300 dark:bg-neutral-700" />
             </div>
           </div>
         )}
