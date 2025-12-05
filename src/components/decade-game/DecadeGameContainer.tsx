@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DecadeSelectionPage } from './DecadeSelectionPage';
 import { GameContainer } from '@/components/guess-game/GameContainer';
@@ -15,6 +15,7 @@ import {
 } from '@/hooks/game';
 import { useAuth } from '@/hooks/auth';
 import { useAchievementSystem } from '@/components/achievements/AchievementSystemProvider';
+import { useFunnelAnalytics } from '@/hooks/use-funnel-analytics';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
@@ -29,6 +30,13 @@ export const DecadeGameContainer = () => {
   const { user } = useAuth();
   const { getPlayerAchievements } = useAchievementSystem();
   const { toast } = useToast();
+  const funnel = useFunnelAnalytics();
+  
+  // Tracking refs
+  const hasTrackedFirstGuess = useRef(false);
+  const hasTrackedGameStart = useRef(false);
+  const prevGameOverRef = useRef(false);
+  const prevStreakRef = useRef(0);
   
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
   const [guestName, setGuestName] = useState<string>("");
@@ -109,7 +117,7 @@ export const DecadeGameContainer = () => {
     incrementAttempts
   });
 
-  const { handleGuess, isProcessingGuess } = useSimpleGameLogic({
+  const { handleGuess: originalHandleGuess, isProcessingGuess } = useSimpleGameLogic({
     currentPlayer,
     onCorrectGuess: gameCallbacks.handleCorrectGuess,
     onIncorrectGuess: gameCallbacks.handleIncorrectGuess,
@@ -118,6 +126,47 @@ export const DecadeGameContainer = () => {
     stopTimer,
     startTimer
   });
+
+  // Wrapped handleGuess with funnel tracking
+  const handleGuess = useCallback((guess: string) => {
+    if (!hasTrackedFirstGuess.current && selectedDecade) {
+      funnel.trackFirstGuess(`decade_${selectedDecade}`);
+      hasTrackedFirstGuess.current = true;
+    }
+    originalHandleGuess(guess);
+  }, [originalHandleGuess, funnel, selectedDecade]);
+
+  // Track game start when timer starts
+  useEffect(() => {
+    if (isTimerRunning && !hasTrackedGameStart.current && selectedDecade) {
+      funnel.trackGameStart(`decade_${selectedDecade}`, currentDifficulty.level);
+      hasTrackedGameStart.current = true;
+    }
+  }, [isTimerRunning, selectedDecade, funnel, currentDifficulty.level]);
+
+  // Track game completion when gameOver changes
+  useEffect(() => {
+    if (gameOver && !prevGameOverRef.current && selectedDecade) {
+      funnel.trackGameCompleted(score, gamesPlayed, `decade_${selectedDecade}`);
+    }
+    prevGameOverRef.current = gameOver;
+  }, [gameOver, score, gamesPlayed, selectedDecade, funnel]);
+
+  // Track correct guesses based on streak changes
+  useEffect(() => {
+    if (currentStreak > prevStreakRef.current) {
+      funnel.trackGuessResult(true, gamesPlayed);
+    }
+    prevStreakRef.current = currentStreak;
+  }, [currentStreak, gamesPlayed, funnel]);
+
+  // Reset tracking refs when game resets
+  useEffect(() => {
+    if (!gameOver && gamesPlayed === 0) {
+      hasTrackedFirstGuess.current = false;
+      hasTrackedGameStart.current = false;
+    }
+  }, [gameOver, gamesPlayed]);
 
   // Detecção de DevTools - encerra o jogo se detectado
   const handleDevToolsDetected = useCallback(() => {
