@@ -108,14 +108,14 @@ export const AchievementsGrid = () => {
 
   const getCategoryInfo = (category: string) => {
     switch (category) {
-      case 'skill': return { name: 'Habilidade', icon: Trophy, color: 'text-flu-grena' };
-      case 'streak': return { name: 'Sequência', icon: Target, color: 'text-flu-verde' };
-      case 'time': return { name: 'Velocidade', icon: Timer, color: 'text-orange-600' };
-      case 'knowledge': return { name: 'Conhecimento', icon: BookOpen, color: 'text-blue-600' };
-      case 'special': return { name: 'Especiais', icon: Star, color: 'text-purple-600' };
-      case 'position': return { name: 'Posições', icon: User, color: 'text-indigo-600' };
-      case 'behavioral': return { name: 'Comportamental', icon: Brain, color: 'text-teal-600' };
-      default: return { name: category, icon: Star, color: 'text-gray-600' };
+      case 'skill': return { name: 'Habilidade', icon: Trophy, color: 'text-primary' };
+      case 'streak': return { name: 'Sequência', icon: Target, color: 'text-secondary' };
+      case 'time': return { name: 'Velocidade', icon: Timer, color: 'text-difficulty-hard' };
+      case 'knowledge': return { name: 'Conhecimento', icon: BookOpen, color: 'text-info' };
+      case 'special': return { name: 'Especiais', icon: Star, color: 'text-accent' };
+      case 'position': return { name: 'Posições', icon: User, color: 'text-info' };
+      case 'behavioral': return { name: 'Comportamental', icon: Brain, color: 'text-secondary' };
+      default: return { name: category, icon: Star, color: 'text-muted-foreground' };
     }
   };
 
@@ -152,21 +152,21 @@ export const AchievementsGrid = () => {
       <CardContent>
         {/* Stats rápidas */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            <div className="text-2xl font-bold text-gray-600">{rarityStats.common}</div>
-            <div className="text-xs text-gray-500">Comuns</div>
+          <div className="text-center p-3 bg-muted rounded-lg">
+            <div className="text-2xl font-bold text-muted-foreground">{rarityStats.common}</div>
+            <div className="text-xs text-muted-foreground/70">Comuns</div>
           </div>
-          <div className="text-center p-3 bg-blue-50 rounded-lg">
-            <div className="text-2xl font-bold text-blue-600">{rarityStats.rare}</div>
-            <div className="text-xs text-blue-500">Raras</div>
+          <div className="text-center p-3 bg-info-light rounded-lg">
+            <div className="text-2xl font-bold text-info">{rarityStats.rare}</div>
+            <div className="text-xs text-info/80">Raras</div>
           </div>
-          <div className="text-center p-3 bg-purple-50 rounded-lg">
-            <div className="text-2xl font-bold text-purple-600">{rarityStats.epic}</div>
-            <div className="text-xs text-purple-500">Épicas</div>
+          <div className="text-center p-3 bg-accent/10 rounded-lg">
+            <div className="text-2xl font-bold text-accent">{rarityStats.epic}</div>
+            <div className="text-xs text-accent/80">Épicas</div>
           </div>
-          <div className="text-center p-3 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg">
-            <div className="text-2xl font-bold text-yellow-600">{rarityStats.legendary}</div>
-            <div className="text-xs text-yellow-600">Lendárias</div>
+          <div className="text-center p-3 bg-gradient-to-r from-warning-light to-warning/20 rounded-lg">
+            <div className="text-2xl font-bold text-warning">{rarityStats.legendary}</div>
+            <div className="text-xs text-warning">Lendárias</div>
           </div>
         </div>
 
@@ -220,7 +220,7 @@ export const AchievementsGrid = () => {
               })}
             </div>
             {unlockedCount === 0 && (
-              <div className="text-center text-gray-500 py-8">
+              <div className="text-center text-muted-foreground py-8">
                 <Trophy className="w-16 h-16 mx-auto mb-4 opacity-30" />
                 <p className="text-lg font-medium">Você ainda não desbloqueou nenhuma conquista.</p>
                 <p className="text-sm mt-2">Continue jogando para ganhar seus primeiros badges!</p>

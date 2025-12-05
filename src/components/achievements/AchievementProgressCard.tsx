@@ -27,31 +27,31 @@ export const AchievementProgressCard = ({
     switch (rarity) {
       case 'common': 
         return {
-          bgColor: 'bg-gray-100',
-          borderColor: 'border-gray-300',
-          badgeColor: 'bg-gray-500',
-          iconColor: 'text-gray-600'
+          bgColor: 'bg-muted',
+          borderColor: 'border-neutral-300',
+          badgeColor: 'bg-neutral-500',
+          iconColor: 'text-muted-foreground'
         };
       case 'rare': 
         return {
-          bgColor: 'bg-blue-50',
-          borderColor: 'border-blue-300',
-          badgeColor: 'bg-blue-500',
-          iconColor: 'text-blue-600'
+          bgColor: 'bg-info-light',
+          borderColor: 'border-info/50',
+          badgeColor: 'bg-info',
+          iconColor: 'text-info'
         };
       case 'epic': 
         return {
-          bgColor: 'bg-purple-50',
-          borderColor: 'border-purple-300',
-          badgeColor: 'bg-purple-500',
-          iconColor: 'text-purple-600'
+          bgColor: 'bg-accent/10',
+          borderColor: 'border-accent/50',
+          badgeColor: 'bg-accent',
+          iconColor: 'text-accent'
         };
       case 'legendary': 
         return {
-          bgColor: 'bg-gradient-to-br from-yellow-50 to-orange-50',
-          borderColor: 'border-yellow-400',
-          badgeColor: 'bg-gradient-to-r from-yellow-500 to-orange-500',
-          iconColor: 'text-yellow-600'
+          bgColor: 'bg-gradient-to-br from-warning-light to-warning/20',
+          borderColor: 'border-warning',
+          badgeColor: 'bg-gradient-to-r from-warning to-warning/80',
+          iconColor: 'text-warning'
         };
     }
   };
@@ -60,13 +60,13 @@ export const AchievementProgressCard = ({
 
   if (isHidden) {
     return (
-      <div className="p-4 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 opacity-50">
-        <div className="flex items-center justify-center h-20 text-gray-400">
+      <div className="p-4 rounded-lg border-2 border-dashed border-border bg-muted/50 opacity-50">
+        <div className="flex items-center justify-center h-20 text-muted-foreground">
           <Lock className="w-8 h-8" />
         </div>
         <div className="text-center mt-2">
-          <p className="text-sm text-gray-500">Conquista Secreta</p>
-          <p className="text-xs text-gray-400">Continue jogando para descobrir...</p>
+          <p className="text-sm text-muted-foreground">Conquista Secreta</p>
+          <p className="text-xs text-muted-foreground/70">Continue jogando para descobrir...</p>
         </div>
       </div>
     );
@@ -80,11 +80,11 @@ export const AchievementProgressCard = ({
       isUnlocked 
         ? "shadow-md hover:shadow-lg transform hover:scale-105" 
         : "opacity-75 hover:opacity-90",
-      isNearCompletion && "animate-pulse ring-2 ring-flu-verde/50"
+      isNearCompletion && "animate-pulse ring-2 ring-secondary/50"
     )}>
       {/* Efeito de brilho para lendárias */}
       {achievement.rarity === 'legendary' && isUnlocked && (
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-200/20 to-transparent 
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-warning/20 to-transparent 
                         animate-shimmer rounded-lg pointer-events-none" />
       )}
 
@@ -95,14 +95,14 @@ export const AchievementProgressCard = ({
           <Badge 
             variant="outline" 
             className={cn(
-              "text-xs text-white border-none",
+              "text-xs text-primary-foreground border-none",
               rarityConfig.badgeColor
             )}
           >
             {achievement.rarity}
           </Badge>
           {achievement.points > 0 && (
-            <div className="flex items-center gap-1 text-xs text-flu-grena">
+            <div className="flex items-center gap-1 text-xs text-primary">
               <Star className="w-3 h-3" />
               <span>{achievement.points}pts</span>
             </div>
@@ -114,14 +114,14 @@ export const AchievementProgressCard = ({
       <div className="space-y-2">
         <h4 className={cn(
           "font-semibold text-sm",
-          isUnlocked ? "text-gray-900" : "text-gray-600"
+          isUnlocked ? "text-foreground" : "text-muted-foreground"
         )}>
           {achievement.name}
         </h4>
         
         <p className={cn(
           "text-xs leading-relaxed",
-          isUnlocked ? "text-gray-700" : "text-gray-500"
+          isUnlocked ? "text-foreground/80" : "text-muted-foreground"
         )}>
           {achievement.description}
         </p>
@@ -133,7 +133,7 @@ export const AchievementProgressCard = ({
               value={progressPercentage} 
               className="h-2"
             />
-            <div className="flex justify-between text-xs text-gray-500">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>{progress}/{achievement.condition.value}</span>
               <span>{Math.round(progressPercentage)}%</span>
             </div>
@@ -142,10 +142,10 @@ export const AchievementProgressCard = ({
 
         {/* Selo de desbloqueado */}
         {isUnlocked && (
-          <div className="flex items-center justify-center mt-3 p-2 bg-green-100 rounded-md">
-            <div className="flex items-center gap-2 text-green-700">
-              <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                <span className="text-white text-xs">✓</span>
+          <div className="flex items-center justify-center mt-3 p-2 bg-success-light rounded-md">
+            <div className="flex items-center gap-2 text-success">
+              <div className="w-4 h-4 bg-success rounded-full flex items-center justify-center">
+                <span className="text-success-foreground text-xs">✓</span>
               </div>
               <span className="text-xs font-medium">Desbloqueada!</span>
             </div>
@@ -154,8 +154,8 @@ export const AchievementProgressCard = ({
 
         {/* Próximo nível */}
         {!isUnlocked && isNearCompletion && (
-          <div className="bg-flu-verde/10 border border-flu-verde/20 rounded p-2 mt-2">
-            <p className="text-xs text-flu-verde font-medium text-center">
+          <div className="bg-secondary/10 border border-secondary/20 rounded p-2 mt-2">
+            <p className="text-xs text-secondary font-medium text-center">
               🔥 Quase lá! Faltam apenas {achievement.condition.value - progress}
             </p>
           </div>
