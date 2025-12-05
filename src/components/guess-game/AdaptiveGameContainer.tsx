@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAdaptiveGuessGame } from "@/hooks/game";
 import { usePlayersData } from "@/hooks/data";
 import { useAuth } from "@/hooks/auth";
@@ -14,6 +14,7 @@ import { DebugInfo } from "./DebugInfo";
 import { ErrorDisplay } from "./ErrorDisplay";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { useEnhancedAnalytics } from "@/hooks/analytics";
+import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/mobile";
 import { useUX } from "@/components/ux/UXProvider";
@@ -29,12 +30,18 @@ const AdaptiveGameContainer = () => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const { toast } = useToast();
   
+  // Tracking state
+  const hasTrackedFirstGuess = useRef(false);
+  const hasTrackedGameStart = useRef(false);
+  const prevGameOverRef = useRef(false);
+  
   const { user } = useAuth();
   const { players, isLoading, playersError } = usePlayersData();
   
   // Achievement hooks
   const { checkProgressAchievements, getPlayerAchievements } = useAchievementSystem();
   const analytics = useEnhancedAnalytics();
+  const funnel = useFunnelAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
   const { showContextualFeedback } = useUX();
   
@@ -47,13 +54,13 @@ const AdaptiveGameContainer = () => {
     score,
     gameOver,
     timeRemaining,
-    handleGuess,
+    handleGuess: originalHandleGuess,
     selectRandomPlayer,
     forceRefresh,
     handlePlayerImageFixed,
     isProcessingGuess,
     hasLost,
-    startGameForPlayer,
+    startGameForPlayer: originalStartGame,
     isTimerRunning,
     resetScore,
     gamesPlayed,
@@ -63,6 +70,52 @@ const AdaptiveGameContainer = () => {
     clearDifficultyChange,
     saveToRanking
   } = useAdaptiveGuessGame(players);
+
+  // Wrapped startGameForPlayer with funnel tracking
+  const startGameForPlayer = useCallback(() => {
+    if (!hasTrackedGameStart.current) {
+      funnel.trackGameStart('adaptive', currentDifficulty.level);
+      hasTrackedGameStart.current = true;
+    }
+    originalStartGame();
+  }, [originalStartGame, funnel, currentDifficulty.level]);
+
+  // Wrapped handleGuess with funnel tracking
+  const handleGuess = useCallback((guess: string) => {
+    // Track first guess
+    if (!hasTrackedFirstGuess.current) {
+      funnel.trackFirstGuess('adaptive');
+      hasTrackedFirstGuess.current = true;
+    }
+    
+    // Track guess (result will be determined by game state change)
+    originalHandleGuess(guess);
+  }, [originalHandleGuess, funnel]);
+
+  // Track game completion when gameOver changes
+  useEffect(() => {
+    if (gameOver && !prevGameOverRef.current) {
+      funnel.trackGameCompleted(score, gamesPlayed, 'adaptive');
+    }
+    prevGameOverRef.current = gameOver;
+  }, [gameOver, score, gamesPlayed, funnel]);
+
+  // Track correct/incorrect guesses based on streak changes
+  const prevStreakRef = useRef(currentStreak);
+  useEffect(() => {
+    if (currentStreak > prevStreakRef.current) {
+      funnel.trackGuessResult(true, gamesPlayed);
+    }
+    prevStreakRef.current = currentStreak;
+  }, [currentStreak, gamesPlayed, funnel]);
+
+  // Reset tracking refs when game resets
+  useEffect(() => {
+    if (!gameOver && gamesPlayed === 0) {
+      hasTrackedFirstGuess.current = false;
+      hasTrackedGameStart.current = false;
+    }
+  }, [gameOver, gamesPlayed]);
 
   // Detecção de DevTools - encerra o jogo se detectado
   const handleDevToolsDetected = useCallback(() => {
