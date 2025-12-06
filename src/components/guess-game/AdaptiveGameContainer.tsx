@@ -21,6 +21,7 @@ import { useUX } from "@/components/ux/UXProvider";
 import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
 import { useToast } from "@/hooks/use-toast";
 import { clearAllImageCache } from "@/utils/player-image/cache";
+import { preloadNextPlayer, prepareNextBatch } from "@/utils/player-image/preloadUtils";
 
 const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
@@ -161,10 +162,15 @@ const AdaptiveGameContainer = () => {
     setCanStartTimer(true);
   };
 
-  const handleImageLoaded = () => {
+  const handleImageLoaded = useCallback(() => {
     setImageLoaded(true);
     handlePlayerImageFixed();
-  };
+    
+    // Pré-carregar próximo lote de jogadores em background
+    if (players && currentPlayer) {
+      prepareNextBatch(players, currentPlayer, 2);
+    }
+  }, [handlePlayerImageFixed, players, currentPlayer]);
 
   // Iniciar timer somente quando nome foi salvo E imagem carregada
   useEffect(() => {
