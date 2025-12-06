@@ -7,14 +7,25 @@
     <title>Lendas do Flu - Quiz Oficial do Fluminense | Teste seu Conhecimento Tricolor</title>
     <meta name="description" content="🏆 Descubra se você realmente conhece as lendas do Fluminense! Quiz interativo para adivinhar jogadores históricos pelas fotos. Jogue grátis, compete no ranking e prove que é um verdadeiro tricolor das Laranjeiras!" />
     
-    <!-- Preload favicon/logo -->
+    <!-- LCP OPTIMIZATION: Preload critical hero image -->
+    <link rel="preload" href="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png" as="image" fetchpriority="high" type="image/png">
+    
+    <!-- Preload logo/favicon with lower priority -->
     <link rel="preload" href="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" as="image" fetchpriority="low" type="image/png">
     
-    <!-- Critical resource preconnects -->
+    <!-- Critical resource preconnects for external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
-    <!-- Font loading optimized -->
+    <!-- Preconnect to Supabase for faster API calls -->
+    <link rel="preconnect" href="https://uodxnuimxhmlqxoqxqaz.supabase.co" crossorigin>
+    <link rel="dns-prefetch" href="https://uodxnuimxhmlqxoqxqaz.supabase.co">
+    
+    <!-- Preconnect to analytics -->
+    <link rel="preconnect" href="https://www.googletagmanager.com">
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com">
+    
+    <!-- Font loading optimized with display swap -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
     
@@ -186,8 +197,8 @@
       .bg-flu-grena{background-color:var(--flu-grena)}
       .bg-flu-verde{background-color:var(--flu-verde)}
       
-      /* LCP CRITICAL: Image optimization for hero */
-      img[data-lcp-critical="true"]{content-visibility:visible!important;contain-intrinsic-size:400px 300px;will-change:transform;transform:translateZ(0);image-rendering:crisp-edges}
+      /* LCP CRITICAL: Image optimization for hero and game images */
+      img[data-lcp-critical="true"]{content-visibility:visible!important;contain-intrinsic-size:400px 300px;will-change:transform;transform:translateZ(0);image-rendering:-webkit-optimize-contrast;image-rendering:crisp-edges}
       .lcp-banner-container{contain:layout style paint;will-change:transform}
       
       /* Performance-optimized animations */
@@ -196,13 +207,20 @@
       
       /* Critical performance optimizations */
       *{box-sizing:border-box}
-      img{max-width:100%;height:auto;image-rendering:crisp-edges}
+      img{max-width:100%;height:auto;image-rendering:-webkit-optimize-contrast}
       button{touch-action:manipulation;cursor:pointer;contain:layout style}
       
-      /* CLS prevention - loading states */
+      /* Image loading optimization */
+      img[loading="lazy"]{content-visibility:auto;contain-intrinsic-size:300px 200px}
+      img:not([src]){visibility:hidden}
+      
+      /* CLS prevention - loading states with proper aspect ratios */
       .loader{display:flex;justify-content:center;align-items:center;min-height:100vh;contain:strict}
       .skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:loading 1.5s infinite}
       @keyframes loading{0%{background-position:200% 0}100%{background-position:-200% 0}}
+      
+      /* Player image container - CLS prevention */
+      .player-image-container{aspect-ratio:4/3;contain:layout style paint;background:#f5f5f5}
       
       /* Text performance optimizations */
       h1,h2,h3{font-weight:700;letter-spacing:-0.025em;text-rendering:optimizeLegibility}
