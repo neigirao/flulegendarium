@@ -2,6 +2,9 @@
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 
+// Re-export testing-library utilities for test files
+export * from '@testing-library/react';
+
 // Mock do Supabase
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
