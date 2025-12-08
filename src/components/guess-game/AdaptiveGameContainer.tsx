@@ -22,6 +22,7 @@ import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
 import { useToast } from "@/hooks/use-toast";
 import { clearAllImageCache } from "@/utils/player-image/cache";
 import { preloadNextPlayer, prepareNextBatch } from "@/utils/player-image/preloadUtils";
+import { CoachMark, useOnboarding } from "@/components/onboarding";
 
 const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
@@ -45,6 +46,7 @@ const AdaptiveGameContainer = () => {
   const funnel = useFunnelAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
   const { showContextualFeedback } = useUX();
+  const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
   
   const {
     currentPlayer,
@@ -81,7 +83,7 @@ const AdaptiveGameContainer = () => {
     originalStartGame();
   }, [originalStartGame, funnel, currentDifficulty.level]);
 
-  // Wrapped handleGuess with funnel tracking
+  // Wrapped handleGuess with funnel tracking and onboarding
   const handleGuess = useCallback((guess: string) => {
     // Track first guess
     if (!hasTrackedFirstGuess.current) {
@@ -89,9 +91,14 @@ const AdaptiveGameContainer = () => {
       hasTrackedFirstGuess.current = true;
     }
     
+    // Avançar onboarding após primeiro palpite
+    if (isStepActive('first-guess')) {
+      nextStep();
+    }
+    
     // Track guess (result will be determined by game state change)
     originalHandleGuess(guess);
-  }, [originalHandleGuess, funnel]);
+  }, [originalHandleGuess, funnel, isStepActive, nextStep]);
 
   // Track game completion when gameOver changes
   useEffect(() => {
@@ -117,6 +124,13 @@ const AdaptiveGameContainer = () => {
       hasTrackedGameStart.current = false;
     }
   }, [gameOver, gamesPlayed]);
+
+  // Ativar step de primeiro palpite quando imagem carregar
+  useEffect(() => {
+    if (isOnboardingActive && imageLoaded && isTimerRunning && !isStepActive('first-guess') && !isStepActive('timer-explanation')) {
+      goToStep('first-guess');
+    }
+  }, [isOnboardingActive, imageLoaded, isTimerRunning, goToStep, isStepActive]);
 
   // Detecção de DevTools - encerra o jogo se detectado
   const handleDevToolsDetected = useCallback(() => {
@@ -149,17 +163,26 @@ const AdaptiveGameContainer = () => {
     // Se não estiver autenticado e não tiver nome de convidado, mostrar formulário
     if (!user && !guestName && !showGuestNameForm && players && players.length > 0) {
       setShowGuestNameForm(true);
+      // Ativar step de input de nome no onboarding
+      if (isOnboardingActive) {
+        goToStep('name-input');
+      }
     }
     
     // Track page view
     analytics.trackPageView('/quiz-adaptativo');
     analytics.trackUserEngagement('page_view', 'adaptive_game');
-  }, [analytics, user, guestName, showGuestNameForm, players]);
+  }, [analytics, user, guestName, showGuestNameForm, players, isOnboardingActive, goToStep]);
 
   const handleGuestNameSubmit = (name: string) => {
     setGuestName(name);
     setShowGuestNameForm(false);
     setCanStartTimer(true);
+    
+    // Avançar para próximo step do onboarding
+    if (isStepActive('name-input')) {
+      nextStep();
+    }
   };
 
   const handleImageLoaded = useCallback(() => {
@@ -222,13 +245,21 @@ const AdaptiveGameContainer = () => {
         showDebug={showDebug}
         debugContent={debugContent}
       >
-        <GameHeader 
-          score={score} 
-          onDebugClick={() => setShowDebug(!showDebug)}
-          isAdaptiveMode={true}
-          timeRemaining={timeRemaining}
-          gameActive={!gameOver && isTimerRunning}
-        />
+        {/* Timer com CoachMark */}
+        <CoachMark
+          step="timer-explanation"
+          title="Fique de Olho no Tempo!"
+          description="Você tem 15 segundos para adivinhar. Respostas rápidas valem mais pontos!"
+          position="bottom"
+        >
+          <GameHeader 
+            score={score} 
+            onDebugClick={() => setShowDebug(!showDebug)}
+            isAdaptiveMode={true}
+            timeRemaining={timeRemaining}
+            gameActive={!gameOver && isTimerRunning}
+          />
+        </CoachMark>
         
         <div className="mt-6 space-y-6">
           <AdaptiveDifficultyIndicator 
@@ -245,11 +276,19 @@ const AdaptiveGameContainer = () => {
                 difficulty={currentDifficulty.level as any}
               />
               
-              <GuessForm
-                onSubmitGuess={handleGuess}
-                disabled={gameOver || isProcessingGuess}
-                isProcessing={isProcessingGuess}
-              />
+              {/* GuessForm com CoachMark */}
+              <CoachMark
+                step="first-guess"
+                title="Faça seu Palpite!"
+                description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!"
+                position="top"
+              >
+                <GuessForm
+                  onSubmitGuess={handleGuess}
+                  disabled={gameOver || isProcessingGuess}
+                  isProcessing={isProcessingGuess}
+                />
+              </CoachMark>
             </div>
           )}
         </div>
@@ -268,11 +307,19 @@ const AdaptiveGameContainer = () => {
         unlockedAchievementIds={getPlayerAchievements().map(a => a.id)}
       />
 
+      {/* GuestNameForm com CoachMark */}
       {showGuestNameForm && (
-        <GuestNameForm
-          onNameSubmitted={handleGuestNameSubmit}
-          onCancel={() => window.history.back()}
-        />
+        <CoachMark
+          step="name-input"
+          title="Qual seu Nome?"
+          description="Informe seu nome para começar. Ele aparecerá no ranking se você pontuar!"
+          position="bottom"
+        >
+          <GuestNameForm
+            onNameSubmitted={handleGuestNameSubmit}
+            onCancel={() => window.history.back()}
+          />
+        </CoachMark>
       )}
 
       {difficultyChangeInfo && (
