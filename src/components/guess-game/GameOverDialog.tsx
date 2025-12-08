@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Trophy, RotateCcw, Home, Star, Award } from "lucide-react";
 import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
+import { ChallengeResult } from "@/components/social/ChallengeResult";
 import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -46,11 +47,36 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
+  const [showChallengeResult, setShowChallengeResult] = useState(false);
+  const [hasActiveChallenge, setHasActiveChallenge] = useState(false);
+
+  // Check for active challenge
+  useEffect(() => {
+    if (open) {
+      const activeChallenge = sessionStorage.getItem('active_challenge');
+      if (activeChallenge) {
+        setHasActiveChallenge(true);
+        setShowChallengeResult(true);
+      }
+    }
+  }, [open]);
 
   // Get full achievement data for unlocked achievements
   const unlockedAchievements = ACHIEVEMENTS.filter(a => 
     unlockedAchievementIds.includes(a.id)
   );
+
+  // Save game result for challenge system
+  useEffect(() => {
+    if (open && score > 0) {
+      sessionStorage.setItem('last_game_result', JSON.stringify({
+        score,
+        gameMode: gameMode === 'adaptive' ? 'adaptive' : 'decade',
+        difficulty: difficultyLevel,
+        timestamp: Date.now(),
+      }));
+    }
+  }, [open, score, gameMode, difficultyLevel]);
 
   // Auto-save for logged-in users with a name
   useEffect(() => {
@@ -81,8 +107,15 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
       setAutoSaved(false);
       setShowRankingForm(false);
       setShowShareOptions(false);
+      setShowChallengeResult(false);
+      setHasActiveChallenge(false);
     }
   }, [open]);
+
+  const handleDismissChallengeResult = () => {
+    setShowChallengeResult(false);
+    sessionStorage.removeItem('active_challenge');
+  };
 
   const handleSaveToRanking = async (name: string) => {
     if (onSaveToRanking) {
@@ -153,6 +186,16 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
               </div>
             )}
           </div>
+
+          {/* Challenge Result */}
+          {showChallengeResult && hasActiveChallenge && (
+            <ChallengeResult
+              yourScore={score}
+              gameMode={gameMode === 'adaptive' ? 'adaptive' : 'decade'}
+              difficulty={difficultyLevel}
+              onDismiss={handleDismissChallengeResult}
+            />
+          )}
 
           {/* Unlocked Achievements Section */}
           {unlockedAchievements.length > 0 && (
