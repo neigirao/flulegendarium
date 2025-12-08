@@ -18,6 +18,11 @@ export const TopNavigation = () => {
       icon: Newspaper,
     },
     ...(user ? [{
+      label: "Meu Perfil",
+      onClick: () => navigate('/perfil'),
+      icon: User,
+    }] : []),
+    ...(user ? [{
       label: "Conquistas",
       onClick: () => navigate('/conquistas'),
       icon: Trophy,
