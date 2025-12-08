@@ -302,12 +302,14 @@ export const DecadeGameContainer = () => {
     handlePlayerImageFixed();
   }, [handlePlayerImageFixed]);
 
-  // Iniciar timer somente quando nome foi salvo E imagem carregada
+  // Iniciar timer somente quando nome foi salvo E imagem carregada E tutorial fechado
+  const tutorialCompleted = !isOnboardingActive;
+  
   useEffect(() => {
-    if (canStartTimer && imageLoaded && currentPlayer && !gameOver && !isTimerRunning) {
+    if (canStartTimer && imageLoaded && currentPlayer && !gameOver && !isTimerRunning && tutorialCompleted) {
       startTimer();
     }
-  }, [canStartTimer, imageLoaded, currentPlayer, gameOver, isTimerRunning, startTimer]);
+  }, [canStartTimer, imageLoaded, currentPlayer, gameOver, isTimerRunning, startTimer, tutorialCompleted]);
 
   // Resetar imageLoaded quando trocar de jogador
   useEffect(() => {

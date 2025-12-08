@@ -202,12 +202,14 @@ const AdaptiveGameContainer = () => {
     }
   }, [handlePlayerImageFixed, players, currentPlayer]);
 
-  // Iniciar timer somente quando nome foi salvo E imagem carregada
+  // Iniciar timer somente quando nome foi salvo E imagem carregada E tutorial fechado
+  const tutorialCompleted = !isOnboardingActive;
+  
   useEffect(() => {
-    if (canStartTimer && imageLoaded && currentPlayer && !gameOver && !isTimerRunning) {
+    if (canStartTimer && imageLoaded && currentPlayer && !gameOver && !isTimerRunning && tutorialCompleted) {
       startGameForPlayer();
     }
-  }, [canStartTimer, imageLoaded, currentPlayer, gameOver, isTimerRunning, startGameForPlayer]);
+  }, [canStartTimer, imageLoaded, currentPlayer, gameOver, isTimerRunning, startGameForPlayer, tutorialCompleted]);
 
   // Resetar imageLoaded quando trocar de jogador
   useEffect(() => {
