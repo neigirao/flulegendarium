@@ -8,16 +8,25 @@ import { ArrowLeft, LogIn, Trophy, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
+import { CoachMark, useOnboarding } from "@/components/onboarding";
 
 const GameModeSelection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { trackPageView, trackGameModeClick, trackAuthPromptShown } = useFunnelAnalytics();
+  const { isOnboardingActive, goToStep } = useOnboarding();
 
   // Track page view on mount
   useEffect(() => {
     trackPageView('game_selection');
   }, [trackPageView]);
+
+  // Ativar step de seleção de modo quando entrar na página
+  useEffect(() => {
+    if (isOnboardingActive) {
+      goToStep('game-mode-selection');
+    }
+  }, [isOnboardingActive, goToStep]);
 
   const handleGameModeClick = (mode: string, path: string) => {
     trackGameModeClick(mode);
@@ -113,46 +122,53 @@ const GameModeSelection = () => {
             {/* Game Modes Grid */}
             <div className="max-w-4xl mx-auto mb-12">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {/* Quiz Adaptativo */}
-                <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-8 shadow-xl relative">
-                  <div className="text-center mb-6">
-                    <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-4">
-                      <div className="w-8 h-8 border-4 border-primary-foreground rounded-full relative">
-                        <div className="absolute top-1 right-1 w-2 h-2 bg-primary-foreground rounded-full"></div>
+                {/* Quiz Adaptativo com CoachMark */}
+                <CoachMark
+                  step="game-mode-selection"
+                  title="Escolha um Modo de Jogo"
+                  description="O Quiz Adaptativo ajusta a dificuldade conforme você joga. Recomendamos começar por aqui!"
+                  position="top"
+                >
+                  <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-8 shadow-xl relative">
+                    <div className="text-center mb-6">
+                      <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-4">
+                        <div className="w-8 h-8 border-4 border-primary-foreground rounded-full relative">
+                          <div className="absolute top-1 right-1 w-2 h-2 bg-primary-foreground rounded-full"></div>
+                        </div>
                       </div>
+                      <h2 className="text-2xl font-bold text-primary mb-2">Quiz Adaptativo</h2>
+                      <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                        Adaptável
+                      </span>
                     </div>
-                    <h2 className="text-2xl font-bold text-primary mb-2">Quiz Adaptativo</h2>
-                    <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
-                      Adaptável
-                    </span>
+                    
+                    <p className="text-muted-foreground text-center mb-6">
+                      Sistema inteligente que se adapta ao seu nível de conhecimento sobre o Fluminense
+                    </p>
+                    
+                    <ul className="space-y-2 mb-8">
+                      <li className="flex items-center text-muted-foreground">
+                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        Dificuldade ajusta automaticamente
+                      </li>
+                      <li className="flex items-center text-muted-foreground">
+                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        Sistema de pontuação inteligente
+                      </li>
+                      <li className="flex items-center text-muted-foreground">
+                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        Desafios personalizados
+                      </li>
+                    </ul>
+                    
+                    <Button 
+                      onClick={() => handleGameModeClick('adaptive', '/quiz-adaptativo')}
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 text-lg"
+                    >
+                      JOGAR AGORA
+                    </Button>
                   </div>
-                  
-                  <p className="text-muted-foreground text-center mb-6">
-                    Sistema inteligente que se adapta ao seu nível de conhecimento sobre o Fluminense
-                  </p>
-                  
-                  <ul className="space-y-2 mb-8">
-                    <li className="flex items-center text-muted-foreground">
-                      <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                      Dificuldade ajusta automaticamente
-                    </li>
-                    <li className="flex items-center text-muted-foreground">
-                      <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                      Sistema de pontuação inteligente
-                    </li>
-                    <li className="flex items-center text-muted-foreground">
-                      <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
-                      Desafios personalizados
-                    </li>
-                  </ul>
-                  
-                  <Button 
-                    onClick={() => handleGameModeClick('adaptive', '/quiz-adaptativo')}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 text-lg"
-                  >
-                    JOGAR AGORA
-                  </Button>
-                </div>
+                </CoachMark>
 
                 {/* Quiz por Década */}
                 <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-8 shadow-xl relative">
