@@ -15,6 +15,7 @@ import { ErrorDisplay } from "./ErrorDisplay";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { useEnhancedAnalytics } from "@/hooks/analytics";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
+import { useChallengeProgress } from "@/hooks/use-challenge-progress";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/mobile";
 import { useUX } from "@/components/ux/UXProvider";
@@ -47,7 +48,7 @@ const AdaptiveGameContainer = () => {
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
   const { showContextualFeedback } = useUX();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
-  
+  const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
   const {
     currentPlayer,
     gameKey,
@@ -104,18 +105,24 @@ const AdaptiveGameContainer = () => {
   useEffect(() => {
     if (gameOver && !prevGameOverRef.current) {
       funnel.trackGameCompleted(score, gamesPlayed, 'adaptive');
+      // Update daily challenge progress
+      onGameCompleted(score);
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, funnel]);
+  }, [gameOver, score, gamesPlayed, funnel, onGameCompleted]);
 
   // Track correct/incorrect guesses based on streak changes
   const prevStreakRef = useRef(currentStreak);
   useEffect(() => {
     if (currentStreak > prevStreakRef.current) {
       funnel.trackGuessResult(true, gamesPlayed);
+      // Update daily challenge progress for correct guess
+      onCorrectGuess();
+      // Update streak challenges
+      onStreakAchieved(currentStreak);
     }
     prevStreakRef.current = currentStreak;
-  }, [currentStreak, gamesPlayed, funnel]);
+  }, [currentStreak, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved]);
 
   // Reset tracking refs when game resets
   useEffect(() => {
