@@ -72,3 +72,9 @@ export const LazyProfilePage = createLazyComponent(
   () => import('@/pages/ProfilePage'),
   React.createElement(PerformanceSkeleton, { height: 600 })
 );
+
+// Daily Challenges Module
+export const LazyDailyChallengesPage = createLazyComponent(
+  () => import('@/pages/DailyChallengesPage'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);

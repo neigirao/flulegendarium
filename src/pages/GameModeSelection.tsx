@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { CoachMark, useOnboarding } from "@/components/onboarding";
+import { DailyChallengeWidget } from "@/components/challenges";
 
 const GameModeSelection = () => {
   const navigate = useNavigate();
@@ -106,6 +107,12 @@ const GameModeSelection = () => {
               </div>
             )}
 
+            {/* Daily Challenges Widget */}
+            {user && (
+              <div className="max-w-md mx-auto mb-8">
+                <DailyChallengeWidget compact maxChallenges={2} />
+              </div>
+            )}
             {/* Shield Logo */}
             <div className="text-center mb-8">
               <div className="w-24 h-24 mx-auto bg-card/90 backdrop-blur-sm rounded-full flex items-center justify-center mb-6">

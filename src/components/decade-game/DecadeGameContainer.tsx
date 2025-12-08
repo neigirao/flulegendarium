@@ -16,6 +16,7 @@ import {
 import { useAuth } from '@/hooks/auth';
 import { useAchievementSystem } from '@/components/achievements/AchievementSystemProvider';
 import { useFunnelAnalytics } from '@/hooks/use-funnel-analytics';
+import { useChallengeProgress } from '@/hooks/use-challenge-progress';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
@@ -33,6 +34,7 @@ export const DecadeGameContainer = () => {
   const { toast } = useToast();
   const funnel = useFunnelAnalytics();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
+  const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
   
   // Tracking refs
   const hasTrackedFirstGuess = useRef(false);
