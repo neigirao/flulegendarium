@@ -1133,6 +1133,57 @@ export type Database = {
           },
         ]
       }
+      user_challenges: {
+        Row: {
+          challenge_link: string
+          challenged_id: string | null
+          challenged_name: string | null
+          challenged_score: number | null
+          challenger_id: string | null
+          challenger_name: string
+          challenger_score: number
+          completed_at: string | null
+          created_at: string
+          difficulty_level: string | null
+          expires_at: string | null
+          game_mode: string
+          id: string
+          status: string
+        }
+        Insert: {
+          challenge_link: string
+          challenged_id?: string | null
+          challenged_name?: string | null
+          challenged_score?: number | null
+          challenger_id?: string | null
+          challenger_name: string
+          challenger_score: number
+          completed_at?: string | null
+          created_at?: string
+          difficulty_level?: string | null
+          expires_at?: string | null
+          game_mode?: string
+          id?: string
+          status?: string
+        }
+        Update: {
+          challenge_link?: string
+          challenged_id?: string | null
+          challenged_name?: string | null
+          challenged_score?: number | null
+          challenger_id?: string | null
+          challenger_name?: string
+          challenger_score?: number
+          completed_at?: string | null
+          created_at?: string
+          difficulty_level?: string | null
+          expires_at?: string | null
+          game_mode?: string
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       user_customization: {
         Row: {
           avatar_style: string | null

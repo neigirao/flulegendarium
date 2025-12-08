@@ -66,3 +66,9 @@ export const LazyResetPassword = createLazyComponent(
   () => import('@/pages/ResetPassword'),
   React.createElement(PerformanceSkeleton, { height: 400 })
 );
+
+// Profile Module
+export const LazyProfilePage = createLazyComponent(
+  () => import('@/pages/ProfilePage'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);
