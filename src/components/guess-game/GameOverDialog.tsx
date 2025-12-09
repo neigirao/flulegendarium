@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Dialog,
   DialogContent,
@@ -30,6 +31,36 @@ interface GameOverDialogProps {
   difficultyLevel?: string;
   unlockedAchievementIds?: string[];
 }
+
+// Animation variants
+const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.3,
+      staggerChildren: 0.1
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    y: -20,
+    transition: { duration: 0.2 }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -10 }
+};
+
+const buttonVariants = {
+  rest: { scale: 1 },
+  hover: { scale: 1.02 },
+  tap: { scale: 0.98 }
+};
 
 export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   open,
@@ -111,7 +142,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
             toast.success('Pontuação salva automaticamente no ranking!');
           } catch (error) {
             console.error('Error auto-saving to ranking:', error);
-            // Fall back to manual save
             setShowRankingForm(true);
           }
         }
@@ -193,158 +223,244 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
       <Dialog open={open} onOpenChange={handleGoHome}>
         <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-center justify-center">
-              <Trophy className="w-6 h-6 text-primary" />
-              {isPersonalRecord ? '🎉 Novo Recorde!' : 'Game Over'}
-            </DialogTitle>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", damping: 15, stiffness: 300 }}
+            >
+              <DialogTitle className="flex items-center gap-2 text-center justify-center">
+                <Trophy className="w-6 h-6 text-primary" />
+                {isPersonalRecord ? '🎉 Novo Recorde!' : 'Game Over'}
+              </DialogTitle>
+            </motion.div>
           </DialogHeader>
 
-        <div className="text-center space-y-4">
-          {playerName && (
-            <p className="text-lg">
-              Era <span className="font-bold text-flu-grena">{playerName}</span>!
-            </p>
-          )}
-          
-          <div className="bg-muted rounded-lg p-4">
-            <p className="text-2xl font-bold text-primary mb-2">{score} pontos</p>
-            <p className="text-muted-foreground">{getScoreMessage()}</p>
-            {gameMode === 'adaptive' && (
-              <div className="flex items-center justify-center gap-1 mt-2">
-                <Star className="w-4 h-4 text-warning" />
-                <span className="text-sm text-muted-foreground">Modo Adaptativo</span>
-              </div>
+          <div className="text-center space-y-4">
+            {playerName && (
+              <motion.p 
+                className="text-lg"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+              >
+                Era <span className="font-bold text-primary">{playerName}</span>!
+              </motion.p>
             )}
-          </div>
+            
+            <motion.div 
+              className="bg-muted rounded-lg p-4"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <p className="text-2xl font-bold text-primary mb-2">{score} pontos</p>
+              <p className="text-muted-foreground">{getScoreMessage()}</p>
+              {gameMode === 'adaptive' && (
+                <div className="flex items-center justify-center gap-1 mt-2">
+                  <Star className="w-4 h-4 text-warning" />
+                  <span className="text-sm text-muted-foreground">Modo Adaptativo</span>
+                </div>
+              )}
+            </motion.div>
 
-          {/* Challenge Result */}
-          {showChallengeResult && hasActiveChallenge && (
-            <ChallengeResult
-              yourScore={score}
-              gameMode={gameMode === 'adaptive' ? 'adaptive' : 'decade'}
-              difficulty={difficultyLevel}
-              onDismiss={handleDismissChallengeResult}
-            />
-          )}
-
-          {/* Unlocked Achievements Section */}
-          {unlockedAchievements.length > 0 && (
-            <div className="bg-gradient-to-r from-flu-grena/10 to-flu-verde/10 rounded-lg p-4 border border-flu-grena/20">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <Award className="w-5 h-5 text-flu-grena" />
-                <h4 className="font-semibold text-flu-grena">
-                  {unlockedAchievements.length === 1 
-                    ? 'Conquista Desbloqueada!' 
-                    : `${unlockedAchievements.length} Conquistas Desbloqueadas!`}
-                </h4>
-              </div>
-              <div className="space-y-2">
-                {unlockedAchievements.map((achievement) => (
-                  <div
-                    key={achievement.id}
-                    className="flex items-center gap-3 bg-white/80 rounded-lg p-3 border border-flu-grena/10"
-                  >
-                    <span className="text-2xl">{achievement.icon}</span>
-                    <div className="text-left flex-1">
-                      <p className="font-medium text-flu-grena text-sm">{achievement.name}</p>
-                      <p className="text-xs text-muted-foreground">{achievement.description}</p>
-                    </div>
-                    <span className="text-xs bg-flu-grena/20 text-flu-grena px-2 py-1 rounded-full">
-                      +{achievement.points} pts
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {showInitialState && (
-            <div className="space-y-4">
-              {/* Primary Actions */}
-              <div className="space-y-3">
-                {score > 0 && (
-                  <Button
-                    onClick={() => setShowRankingForm(true)}
-                    className="w-full bg-flu-grena hover:bg-flu-grena/90"
-                  >
-                    <Trophy className="w-4 h-4 mr-2" />
-                    Salvar no Ranking
-                  </Button>
-                )}
-                
-                <Button
-                  onClick={handleNewGame}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Jogar Novamente
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={handleGoHome}
-                >
-                  <Home className="w-4 h-4 mr-2" />
-                  Voltar ao Início
-                </Button>
-
-                {/* Feedback Button */}
-                <QuickFeedbackButton
-                  gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
-                  playerName={playerName}
-                  variant="ghost"
-                  size="sm"
-                  className="w-full"
-                />
-              </div>
-            </div>
-          )}
-
-          {showRankingForm && (
-            <RankingForm
-              score={score}
-              onSaved={handleSaveToRanking}
-              onCancel={handleSkipRanking}
-              isAuthenticated={isAuthenticated}
-              gameMode={gameMode}
-              difficultyLevel={difficultyLevel}
-            />
-          )}
-
-          {showShareOptions && (
-            <div className="space-y-4">
-              <SocialShare
-                score={score}
-                correctGuesses={Math.floor(score / 5)}
-                gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
-                streak={0}
-                achievements={[]}
+            {/* Challenge Result */}
+            {showChallengeResult && hasActiveChallenge && (
+              <ChallengeResult
+                yourScore={score}
+                gameMode={gameMode === 'adaptive' ? 'adaptive' : 'decade'}
+                difficulty={difficultyLevel}
+                onDismiss={handleDismissChallengeResult}
               />
-              
-              <div className="space-y-2">
-                <Button
-                  onClick={handleNewGame}
-                  variant="outline"
-                  className="w-full"
+            )}
+
+            {/* Unlocked Achievements Section */}
+            <AnimatePresence>
+              {unlockedAchievements.length > 0 && (
+                <motion.div 
+                  className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg p-4 border border-primary/20"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ delay: 0.3 }}
                 >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Jogar Novamente
-                </Button>
-                
-                <Button
-                  variant="ghost"
-                  className="w-full"
-                  onClick={handleGoHome}
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Award className="w-5 h-5 text-primary" />
+                    <h4 className="font-semibold text-primary">
+                      {unlockedAchievements.length === 1 
+                        ? 'Conquista Desbloqueada!' 
+                        : `${unlockedAchievements.length} Conquistas Desbloqueadas!`}
+                    </h4>
+                  </div>
+                  <div className="space-y-2">
+                    {unlockedAchievements.map((achievement, index) => (
+                      <motion.div
+                        key={achievement.id}
+                        className="flex items-center gap-3 bg-background/80 rounded-lg p-3 border border-primary/10"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.4 + index * 0.1 }}
+                      >
+                        <span className="text-2xl">{achievement.icon}</span>
+                        <div className="text-left flex-1">
+                          <p className="font-medium text-primary text-sm">{achievement.name}</p>
+                          <p className="text-xs text-muted-foreground">{achievement.description}</p>
+                        </div>
+                        <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">
+                          +{achievement.points} pts
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              {showInitialState && (
+                <motion.div 
+                  key="initial"
+                  className="space-y-4"
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
                 >
-                  <Home className="w-4 h-4 mr-2" />
-                  Voltar ao Início
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
+                  {/* Primary Actions */}
+                  <motion.div className="space-y-3" variants={itemVariants}>
+                    {score > 0 && (
+                      <motion.div
+                        variants={buttonVariants}
+                        initial="rest"
+                        whileHover="hover"
+                        whileTap="tap"
+                      >
+                        <Button
+                          onClick={() => setShowRankingForm(true)}
+                          className="w-full bg-primary hover:bg-primary/90"
+                        >
+                          <Trophy className="w-4 h-4 mr-2" />
+                          Salvar no Ranking
+                        </Button>
+                      </motion.div>
+                    )}
+                    
+                    <motion.div
+                      variants={buttonVariants}
+                      initial="rest"
+                      whileHover="hover"
+                      whileTap="tap"
+                    >
+                      <Button
+                        onClick={handleNewGame}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Jogar Novamente
+                      </Button>
+                    </motion.div>
+                    
+                    <motion.div
+                      variants={buttonVariants}
+                      initial="rest"
+                      whileHover="hover"
+                      whileTap="tap"
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={handleGoHome}
+                      >
+                        <Home className="w-4 h-4 mr-2" />
+                        Voltar ao Início
+                      </Button>
+                    </motion.div>
+
+                    {/* Feedback Button */}
+                    <QuickFeedbackButton
+                      gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
+                      playerName={playerName}
+                      variant="ghost"
+                      size="sm"
+                      className="w-full"
+                    />
+                  </motion.div>
+                </motion.div>
+              )}
+
+              {showRankingForm && (
+                <motion.div
+                  key="ranking"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <RankingForm
+                    score={score}
+                    onSaved={handleSaveToRanking}
+                    onCancel={handleSkipRanking}
+                    isAuthenticated={isAuthenticated}
+                    gameMode={gameMode}
+                    difficultyLevel={difficultyLevel}
+                  />
+                </motion.div>
+              )}
+
+              {showShareOptions && (
+                <motion.div 
+                  key="share"
+                  className="space-y-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <SocialShare
+                    score={score}
+                    correctGuesses={Math.floor(score / 5)}
+                    gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
+                    streak={0}
+                    achievements={[]}
+                  />
+                  
+                  <div className="space-y-2">
+                    <motion.div
+                      variants={buttonVariants}
+                      initial="rest"
+                      whileHover="hover"
+                      whileTap="tap"
+                    >
+                      <Button
+                        onClick={handleNewGame}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        <RotateCcw className="w-4 h-4 mr-2" />
+                        Jogar Novamente
+                      </Button>
+                    </motion.div>
+                    
+                    <motion.div
+                      variants={buttonVariants}
+                      initial="rest"
+                      whileHover="hover"
+                      whileTap="tap"
+                    >
+                      <Button
+                        variant="ghost"
+                        className="w-full"
+                        onClick={handleGoHome}
+                      >
+                        <Home className="w-4 h-4 mr-2" />
+                        Voltar ao Início
+                      </Button>
+                    </motion.div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </DialogContent>
       </Dialog>
     </>

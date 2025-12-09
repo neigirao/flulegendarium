@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,10 +116,10 @@ export const RankingForm = ({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Trophy className="w-5 h-5 text-flu-grena" />
-          <h3 className="text-lg font-bold text-flu-grena">Salvar no Ranking</h3>
+          <Trophy className="w-5 h-5 text-primary" />
+          <h3 className="text-lg font-bold text-primary">Salvar no Ranking</h3>
           {gameMode === 'adaptive' && (
-            <span className="text-xs bg-orange-100 text-orange-600 px-2 py-1 rounded-full">
+            <span className="text-xs bg-warning/10 text-warning px-2 py-1 rounded-full">
               Adaptativo
             </span>
           )}
@@ -129,18 +128,18 @@ export const RankingForm = ({
           variant="ghost"
           size="sm"
           onClick={onCancel}
-          className="text-gray-500 hover:text-gray-700"
+          className="text-muted-foreground hover:text-foreground"
         >
           <X className="w-4 h-4" />
         </Button>
       </div>
       
       <div className="text-center">
-        <p className="text-gray-600">
-          Sua pontuação: <span className="font-bold text-flu-grena">{score} pontos</span>
+        <p className="text-muted-foreground">
+          Sua pontuação: <span className="font-bold text-primary">{score} pontos</span>
         </p>
         {gameMode === 'adaptive' && difficultyLevel && (
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-muted-foreground">
             Nível final: {difficultyLevel}
           </p>
         )}
@@ -148,11 +147,11 @@ export const RankingForm = ({
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-2">
-          <label htmlFor="playerName" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="playerName" className="block text-sm font-medium text-foreground">
             Seu nome
           </label>
           <div className="relative">
-            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               id="playerName"
               type="text"
@@ -165,18 +164,18 @@ export const RankingForm = ({
             />
           </div>
           {user && (
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-muted-foreground">
               Nome preenchido automaticamente do seu perfil
             </p>
           )}
         </div>
 
         <div className="space-y-2">
-          <label htmlFor="instagram" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="instagram" className="block text-sm font-medium text-foreground">
             Instagram (opcional)
           </label>
           <div className="relative">
-            <Instagram className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Instagram className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input
               id="instagram"
               type="text"
@@ -187,7 +186,7 @@ export const RankingForm = ({
               disabled={isLoading}
             />
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             Seu @ do Instagram aparecerá no ranking junto com seu nome
           </p>
         </div>
@@ -196,7 +195,7 @@ export const RankingForm = ({
           <Button
             type="submit"
             disabled={isLoading || !name.trim()}
-            className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+            className="flex-1 bg-primary hover:bg-primary/90"
           >
             {isLoading ? "Salvando..." : "Salvar no Ranking"}
           </Button>
@@ -205,7 +204,7 @@ export const RankingForm = ({
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="border-gray-300 text-gray-600 hover:bg-gray-50"
+            className="border-border text-muted-foreground hover:bg-muted"
           >
             Pular
           </Button>
