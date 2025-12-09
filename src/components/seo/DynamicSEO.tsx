@@ -26,8 +26,7 @@ export const DynamicSEO = ({
   customDescription 
 }: DynamicSEOProps) => {
   const location = useLocation();
-  const baseUrl = "https://flulegendarium.lovable.app";
-
+  const baseUrl = "https://lendasdoflu.com";
   const generateTitle = () => {
     if (customTitle) return customTitle;
     
