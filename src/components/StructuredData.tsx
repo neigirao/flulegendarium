@@ -1,5 +1,6 @@
-
 import { useEffect } from 'react';
+
+const CANONICAL_DOMAIN = "https://lendasdoflu.com";
 
 interface StructuredDataProps {
   type: 'Game' | 'WebSite' | 'Organization';
@@ -17,10 +18,10 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
           "@type": "WebSite",
           "name": "Lendas do Flu",
           "description": "Teste seus conhecimentos sobre os ídolos tricolores do Fluminense",
-          "url": "https://flulegendarium.lovable.app/",
+          "url": `${CANONICAL_DOMAIN}/`,
           "potentialAction": {
             "@type": "SearchAction",
-            "target": "https://flulegendarium.lovable.app/search?q={search_term_string}",
+            "target": `${CANONICAL_DOMAIN}/search?q={search_term_string}`,
             "query-input": "required name=search_term_string"
           },
           "publisher": {
@@ -28,7 +29,7 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
             "name": "Lendas do Flu",
             "logo": {
               "@type": "ImageObject",
-              "url": "https://flulegendarium.lovable.app/og-image.png"
+              "url": `${CANONICAL_DOMAIN}/og-image.png`
             }
           }
         };
@@ -40,7 +41,7 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
           "@type": "Game",
           "name": "Lendas do Flu - Quiz dos Ídolos Tricolores",
           "description": "Jogo interativo onde você precisa adivinhar jogadores lendários do Fluminense através de suas fotos",
-          "url": "https://flulegendarium.lovable.app/game",
+          "url": `${CANONICAL_DOMAIN}/jogar`,
           "genre": ["Quiz", "Sports", "Educational"],
           "gameItem": "Conhecimento sobre Fluminense",
           "numberOfPlayers": "1",
@@ -50,7 +51,7 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
           },
           "applicationCategory": "Game",
           "operatingSystem": "Web Browser",
-          "screenshot": "https://flulegendarium.lovable.app/og-image.png",
+          "screenshot": `${CANONICAL_DOMAIN}/og-image.png`,
           "offers": {
             "@type": "Offer",
             "price": "0",
@@ -65,8 +66,8 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
           "@type": "Organization",
           "name": "Lendas do Flu",
           "description": "Plataforma interativa para testar conhecimentos sobre a história do Fluminense",
-          "url": "https://flulegendarium.lovable.app/",
-          "logo": "https://flulegendarium.lovable.app/og-image.png",
+          "url": `${CANONICAL_DOMAIN}/`,
+          "logo": `${CANONICAL_DOMAIN}/og-image.png`,
           "sameAs": [
             "https://twitter.com/lendasdoflu",
             "https://instagram.com/lendasdoflu"
