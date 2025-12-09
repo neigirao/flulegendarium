@@ -13,6 +13,8 @@ import { AdaptiveProgressionNotification } from "./AdaptiveProgressionNotificati
 import { DebugInfo } from "./DebugInfo";
 import { ErrorDisplay } from "./ErrorDisplay";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
+import { AchievementNotification } from "@/components/achievements/AchievementNotification";
+import { useAchievementNotifications } from "@/hooks/use-achievement-notifications";
 import { useEnhancedAnalytics } from "@/hooks/analytics";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { useChallengeProgress } from "@/hooks/use-challenge-progress";
@@ -24,6 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { clearAllImageCache } from "@/utils/player-image/cache";
 import { preloadNextPlayer, prepareNextBatch } from "@/utils/player-image/preloadUtils";
 import { CoachMark, useOnboarding } from "@/components/onboarding";
+import { ACHIEVEMENTS } from "@/types/achievements";
 
 const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
@@ -43,6 +46,10 @@ const AdaptiveGameContainer = () => {
   
   // Achievement hooks
   const { checkProgressAchievements, getPlayerAchievements } = useAchievementSystem();
+  const { currentNotification, queueNotification, dismissNotification } = useAchievementNotifications();
+  
+  // Track previously unlocked achievements to detect new ones
+  const previousAchievementsRef = useRef<string[]>([]);
   const analytics = useEnhancedAnalytics();
   const funnel = useFunnelAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
@@ -120,9 +127,25 @@ const AdaptiveGameContainer = () => {
       onCorrectGuess();
       // Update streak challenges
       onStreakAchieved(currentStreak);
+      
+      // Check for newly unlocked achievements and queue notifications
+      const currentAchievements = getPlayerAchievements();
+      const currentIds = currentAchievements.map(a => a.id);
+      const newlyUnlocked = currentIds.filter(id => !previousAchievementsRef.current.includes(id));
+      
+      if (newlyUnlocked.length > 0) {
+        newlyUnlocked.forEach(achievementId => {
+          const achievement = ACHIEVEMENTS.find(a => a.id === achievementId);
+          if (achievement) {
+            queueNotification(achievement);
+          }
+        });
+      }
+      
+      previousAchievementsRef.current = currentIds;
     }
     prevStreakRef.current = currentStreak;
-  }, [currentStreak, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved]);
+  }, [currentStreak, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification]);
 
   // Reset tracking refs when game resets
   useEffect(() => {
@@ -330,7 +353,6 @@ const AdaptiveGameContainer = () => {
           />
         </CoachMark>
       )}
-
       {difficultyChangeInfo && (
         <AdaptiveProgressionNotification
           changeInfo={{
@@ -342,6 +364,12 @@ const AdaptiveGameContainer = () => {
           onClose={clearDifficultyChange}
         />
       )}
+
+      {/* Achievement Notification - shows during gameplay */}
+      <AchievementNotification
+        achievement={currentNotification}
+        onClose={dismissNotification}
+      />
     </>
   );
 };

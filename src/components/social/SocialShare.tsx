@@ -45,7 +45,7 @@ export const SocialShare = ({
 
 Teste seus conhecimentos sobre os ídolos tricolores:`;
   
-  const shareUrl = "https://flulegendarium.lovable.app/";
+  const shareUrl = "https://lendasdoflu.com/";
 
   const copyToClipboard = async () => {
     try {

@@ -15,6 +15,8 @@ import {
 } from '@/hooks/game';
 import { useAuth } from '@/hooks/auth';
 import { useAchievementSystem } from '@/components/achievements/AchievementSystemProvider';
+import { AchievementNotification } from '@/components/achievements/AchievementNotification';
+import { useAchievementNotifications } from '@/hooks/use-achievement-notifications';
 import { useFunnelAnalytics } from '@/hooks/use-funnel-analytics';
 import { useChallengeProgress } from '@/hooks/use-challenge-progress';
 import { Decade } from '@/types/decade-game';
@@ -26,11 +28,13 @@ import { useDevToolsDetection } from '@/hooks/use-devtools-detection';
 import { useToast } from '@/hooks/use-toast';
 import { clearAllImageCache } from '@/utils/player-image/cache';
 import { CoachMark, useOnboarding } from '@/components/onboarding';
+import { ACHIEVEMENTS } from '@/types/achievements';
 
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { getPlayerAchievements } = useAchievementSystem();
+  const { currentNotification, queueNotification, dismissNotification } = useAchievementNotifications();
   const { toast } = useToast();
   const funnel = useFunnelAnalytics();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
@@ -41,6 +45,7 @@ export const DecadeGameContainer = () => {
   const hasTrackedGameStart = useRef(false);
   const prevGameOverRef = useRef(false);
   const prevStreakRef = useRef(0);
+  const previousAchievementsRef = useRef<string[]>([]);
   
   const [selectedDecade, setSelectedDecade] = useState<Decade | null>(null);
   const [guestName, setGuestName] = useState<string>("");
@@ -166,9 +171,25 @@ export const DecadeGameContainer = () => {
   useEffect(() => {
     if (currentStreak > prevStreakRef.current) {
       funnel.trackGuessResult(true, gamesPlayed);
+      
+      // Check for newly unlocked achievements
+      const currentAchievements = getPlayerAchievements();
+      const currentIds = currentAchievements.map(a => a.id);
+      const newlyUnlocked = currentIds.filter(id => !previousAchievementsRef.current.includes(id));
+      
+      if (newlyUnlocked.length > 0) {
+        newlyUnlocked.forEach(achievementId => {
+          const achievement = ACHIEVEMENTS.find(a => a.id === achievementId);
+          if (achievement) {
+            queueNotification(achievement);
+          }
+        });
+      }
+      
+      previousAchievementsRef.current = currentIds;
     }
     prevStreakRef.current = currentStreak;
-  }, [currentStreak, gamesPlayed, funnel]);
+  }, [currentStreak, gamesPlayed, funnel, getPlayerAchievements, queueNotification]);
 
   // Reset tracking refs when game resets
   useEffect(() => {
@@ -439,6 +460,12 @@ export const DecadeGameContainer = () => {
         gameMode="classic"
         difficultyLevel={currentDifficulty.label}
         unlockedAchievementIds={getPlayerAchievements().map(a => a.id)}
+      />
+
+      {/* Achievement Notification */}
+      <AchievementNotification
+        achievement={currentNotification}
+        onClose={dismissNotification}
       />
     </>
   );
