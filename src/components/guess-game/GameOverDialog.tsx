@@ -12,6 +12,7 @@ import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
 import { ChallengeResult } from "@/components/social/ChallengeResult";
 import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
+import { PersonalRecordConfetti } from "@/components/rewards/PersonalRecordConfetti";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Achievement, ACHIEVEMENTS } from "@/types/achievements";
@@ -49,6 +50,25 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   const [autoSaved, setAutoSaved] = useState(false);
   const [showChallengeResult, setShowChallengeResult] = useState(false);
   const [hasActiveChallenge, setHasActiveChallenge] = useState(false);
+  const [isPersonalRecord, setIsPersonalRecord] = useState(false);
+  const [previousRecord, setPreviousRecord] = useState(0);
+
+  // Check for personal record
+  useEffect(() => {
+    if (open && score > 0) {
+      const storageKey = `personal_record_${gameMode}_${difficultyLevel || 'default'}`;
+      const storedRecord = localStorage.getItem(storageKey);
+      const previousBest = storedRecord ? parseInt(storedRecord, 10) : 0;
+      
+      if (score > previousBest) {
+        setPreviousRecord(previousBest);
+        setIsPersonalRecord(true);
+        localStorage.setItem(storageKey, score.toString());
+      } else {
+        setIsPersonalRecord(false);
+      }
+    }
+  }, [open, score, gameMode, difficultyLevel]);
 
   // Check for active challenge
   useEffect(() => {
@@ -109,6 +129,8 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
       setShowShareOptions(false);
       setShowChallengeResult(false);
       setHasActiveChallenge(false);
+      setIsPersonalRecord(false);
+      setPreviousRecord(0);
     }
   }, [open]);
 
@@ -160,14 +182,22 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   const showInitialState = !showRankingForm && !showShareOptions && !autoSaved;
 
   return (
-    <Dialog open={open} onOpenChange={handleGoHome}>
-      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-center justify-center">
-            <Trophy className="w-6 h-6 text-flu-grena" />
-            Game Over
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      {/* Confetti para recorde pessoal */}
+      <PersonalRecordConfetti
+        show={isPersonalRecord && open}
+        previousRecord={previousRecord}
+        newRecord={score}
+      />
+      
+      <Dialog open={open} onOpenChange={handleGoHome}>
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-center justify-center">
+              <Trophy className="w-6 h-6 text-primary" />
+              {isPersonalRecord ? '🎉 Novo Recorde!' : 'Game Over'}
+            </DialogTitle>
+          </DialogHeader>
 
         <div className="text-center space-y-4">
           {playerName && (
@@ -315,7 +345,8 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
             </div>
           )}
         </div>
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
