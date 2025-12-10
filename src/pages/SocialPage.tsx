@@ -10,6 +10,8 @@ import { WeeklyLeaderboard } from '@/components/social/WeeklyLeaderboard';
 import { ChallengeSystem, decodeChallengeLink } from '@/components/social/ChallengeSystem';
 import { ChallengeAcceptCard } from '@/components/social/ChallengeAcceptCard';
 import { AnimatePresence } from 'framer-motion';
+import { useLastRankingScore } from '@/hooks/use-last-ranking-score';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ChallengeData {
   challengerId: string;
@@ -24,10 +26,20 @@ const SocialPage = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [challenge, setChallenge] = useState<ChallengeData | null>(null);
+  const [challengeLink, setChallengeLink] = useState<string>('');
+  const { user } = useAuth();
   
-  // Get last game score from session storage
+  // Get last ranking score from database for logged-in users
+  const { data: lastRankingScore, isLoading: isLoadingRankingScore } = useLastRankingScore();
+  
+  // Get last game score from session storage as fallback
   const lastGameData = sessionStorage.getItem('last_game_result');
   const parsedGameData = lastGameData ? JSON.parse(lastGameData) : null;
+
+  // Determine which score to use (prefer sessionStorage for freshness, fallback to ranking)
+  const effectiveScore = parsedGameData?.score ?? lastRankingScore?.score;
+  const effectiveGameMode = parsedGameData?.gameMode ?? lastRankingScore?.gameMode ?? 'adaptive';
+  const effectiveDifficulty = parsedGameData?.difficulty ?? lastRankingScore?.difficulty;
 
   useEffect(() => {
     const challengeParam = searchParams.get('challenge');
@@ -35,12 +47,14 @@ const SocialPage = () => {
       const decoded = decodeChallengeLink(challengeParam);
       if (decoded) {
         setChallenge(decoded);
+        setChallengeLink(`${window.location.origin}/social?challenge=${challengeParam}`);
       }
     }
   }, [searchParams]);
 
   const handleDismissChallenge = () => {
     setChallenge(null);
+    setChallengeLink('');
     setSearchParams({});
   };
 
@@ -81,6 +95,7 @@ const SocialPage = () => {
                 <div className="max-w-md mx-auto mb-8">
                   <ChallengeAcceptCard 
                     challenge={challenge} 
+                    challengeLink={challengeLink}
                     onDismiss={handleDismissChallenge} 
                   />
                 </div>
@@ -94,9 +109,10 @@ const SocialPage = () => {
               
               {/* Challenge System */}
               <ChallengeSystem 
-                lastScore={parsedGameData?.score}
-                gameMode={parsedGameData?.gameMode || 'adaptive'}
-                difficulty={parsedGameData?.difficulty}
+                lastScore={effectiveScore}
+                gameMode={effectiveGameMode}
+                difficulty={effectiveDifficulty}
+                isLoadingScore={!user ? false : isLoadingRankingScore}
               />
             </div>
 
@@ -118,13 +134,15 @@ const SocialPage = () => {
                     >
                       Começar a Jogar
                     </Button>
-                    <Button 
-                      onClick={() => navigate('/auth')}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      Fazer Login
-                    </Button>
+                    {!user && (
+                      <Button 
+                        onClick={() => navigate('/auth')}
+                        variant="outline"
+                        className="w-full"
+                      >
+                        Fazer Login
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>
