@@ -1,11 +1,12 @@
-import { useState, memo } from 'react';
+import { useState, memo, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Swords, Link2, Copy, Check, Share2, Trophy } from 'lucide-react';
+import { Swords, Link2, Copy, Check, Share2, Trophy, Loader2 } from 'lucide-react';
+import { challengeService } from '@/services/challengeService';
 
 interface ChallengeData {
   challengerId: string;
@@ -38,16 +39,29 @@ interface ChallengeSystemProps {
   lastScore?: number;
   gameMode?: 'adaptive' | 'decade';
   difficulty?: string;
+  isLoadingScore?: boolean;
 }
 
-export const ChallengeSystem = memo(({ lastScore, gameMode = 'adaptive', difficulty }: ChallengeSystemProps) => {
+export const ChallengeSystem = memo(({ 
+  lastScore, 
+  gameMode = 'adaptive', 
+  difficulty,
+  isLoadingScore = false 
+}: ChallengeSystemProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [copied, setCopied] = useState(false);
   const [challengeLink, setChallengeLink] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const handleGenerateChallenge = () => {
-    if (!lastScore && lastScore !== 0) {
+  // Reset link when score changes
+  useEffect(() => {
+    setChallengeLink(null);
+    setCopied(false);
+  }, [lastScore]);
+
+  const handleGenerateChallenge = async () => {
+    if (lastScore === undefined || lastScore === null) {
       toast({
         title: "Jogue primeiro!",
         description: "Complete um jogo para desafiar seus amigos.",
@@ -56,15 +70,36 @@ export const ChallengeSystem = memo(({ lastScore, gameMode = 'adaptive', difficu
       return;
     }
 
+    setIsGenerating(true);
+
+    const challengerName = user?.user_metadata?.full_name || 'Tricolor Anônimo';
     const link = generateChallengeLink({
       challengerId: user?.id || 'guest',
-      challengerName: user?.user_metadata?.full_name || 'Tricolor Anônimo',
+      challengerName,
       score: lastScore,
       gameMode,
       difficulty,
     });
 
+    // Save to database if user is logged in
+    if (user?.id) {
+      await challengeService.createChallenge({
+        challengerId: user.id,
+        challengerName,
+        challengerScore: lastScore,
+        gameMode,
+        difficultyLevel: difficulty,
+        challengeLink: link,
+      });
+    }
+
     setChallengeLink(link);
+    setIsGenerating(false);
+
+    toast({
+      title: "Desafio criado!",
+      description: user ? "Seu desafio foi salvo e está pronto para compartilhar." : "Compartilhe o link com seus amigos!",
+    });
   };
 
   const handleCopyLink = async () => {
@@ -110,6 +145,9 @@ export const ChallengeSystem = memo(({ lastScore, gameMode = 'adaptive', difficu
     }
   };
 
+  const hasScore = lastScore !== undefined && lastScore !== null;
+  const buttonDisabled = !hasScore || isLoadingScore || isGenerating;
+
   return (
     <Card>
       <CardHeader>
@@ -124,11 +162,23 @@ export const ChallengeSystem = memo(({ lastScore, gameMode = 'adaptive', difficu
           Desafie seus amigos a superar sua pontuação! Gere um link único e compartilhe.
         </p>
         
-        {lastScore !== undefined && (
+        {isLoadingScore ? (
+          <div className="flex items-center justify-center gap-2 p-4 bg-muted/50 rounded-lg">
+            <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">Carregando pontuação...</span>
+          </div>
+        ) : hasScore ? (
           <div className="flex items-center justify-center gap-2 p-4 bg-primary/10 rounded-lg">
             <Trophy className="w-6 h-6 text-primary" />
             <span className="text-lg font-bold text-primary">{lastScore} pontos</span>
             <Badge variant="outline">{gameMode === 'adaptive' ? 'Adaptativo' : 'Por Década'}</Badge>
+          </div>
+        ) : (
+          <div className="flex items-center justify-center gap-2 p-4 bg-muted/50 rounded-lg border-2 border-dashed border-muted">
+            <Trophy className="w-5 h-5 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
+              {user ? 'Jogue uma partida para gerar desafios!' : 'Faça login para ver sua última pontuação'}
+            </span>
           </div>
         )}
         
@@ -136,10 +186,19 @@ export const ChallengeSystem = memo(({ lastScore, gameMode = 'adaptive', difficu
           <Button 
             onClick={handleGenerateChallenge} 
             className="w-full"
-            disabled={lastScore === undefined}
+            disabled={buttonDisabled}
           >
-            <Link2 className="w-4 h-4 mr-2" />
-            Gerar Link de Desafio
+            {isGenerating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Gerando...
+              </>
+            ) : (
+              <>
+                <Link2 className="w-4 h-4 mr-2" />
+                Gerar Link de Desafio
+              </>
+            )}
           </Button>
         ) : (
           <div className="space-y-3">

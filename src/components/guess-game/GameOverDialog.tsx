@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { Achievement, ACHIEVEMENTS } from "@/types/achievements";
 import { clearAllImageCache } from "@/utils/player-image/cache";
+import { challengeService } from "@/services/challengeService";
 
 interface GameOverDialogProps {
   open: boolean;
@@ -101,16 +102,38 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     }
   }, [open, score, gameMode, difficultyLevel]);
 
-  // Check for active challenge
+  // Check for active challenge and complete it
   useEffect(() => {
-    if (open) {
-      const activeChallenge = sessionStorage.getItem('active_challenge');
-      if (activeChallenge) {
-        setHasActiveChallenge(true);
-        setShowChallengeResult(true);
+    const completeActiveChallenge = async () => {
+      if (open && score >= 0) {
+        const activeChallenge = sessionStorage.getItem('active_challenge');
+        if (activeChallenge) {
+          setHasActiveChallenge(true);
+          setShowChallengeResult(true);
+          
+          try {
+            const challengeData = JSON.parse(activeChallenge);
+            const challengeLink = challengeData.challengeLink;
+            
+            // Complete challenge in database
+            if (challengeLink) {
+              await challengeService.completeChallenge({
+                challengeLink,
+                challengedId: user?.id,
+                challengedName: user?.user_metadata?.full_name || 'Tricolor Anônimo',
+                challengedScore: score,
+              });
+            }
+          } catch (error) {
+            // Failed to complete challenge, but still show result
+            console.error('Error completing challenge:', error);
+          }
+        }
       }
-    }
-  }, [open]);
+    };
+
+    completeActiveChallenge();
+  }, [open, score, user]);
 
   // Get full achievement data for unlocked achievements
   const unlockedAchievements = ACHIEVEMENTS.filter(a => 

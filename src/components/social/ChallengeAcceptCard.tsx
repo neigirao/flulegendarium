@@ -1,10 +1,13 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Swords, Trophy, Target, ArrowRight } from 'lucide-react';
+import { Swords, Trophy, Target, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/hooks/useAuth';
+import { challengeService } from '@/services/challengeService';
+import { useToast } from '@/hooks/use-toast';
 
 interface ChallengeData {
   challengerId: string;
@@ -17,15 +20,41 @@ interface ChallengeData {
 
 interface ChallengeAcceptCardProps {
   challenge: ChallengeData;
+  challengeLink: string;
   onDismiss: () => void;
 }
 
-export const ChallengeAcceptCard = memo(({ challenge, onDismiss }: ChallengeAcceptCardProps) => {
+export const ChallengeAcceptCard = memo(({ challenge, challengeLink, onDismiss }: ChallengeAcceptCardProps) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isAccepting, setIsAccepting] = useState(false);
 
-  const handleAcceptChallenge = () => {
+  const handleAcceptChallenge = async () => {
+    setIsAccepting(true);
+
     // Store challenge in session to show comparison after game
-    sessionStorage.setItem('active_challenge', JSON.stringify(challenge));
+    sessionStorage.setItem('active_challenge', JSON.stringify({
+      ...challenge,
+      challengeLink,
+    }));
+
+    // Register acceptance in database if user is logged in
+    if (user?.id) {
+      const challengeId = await challengeService.findChallengeByLink(challengeLink);
+      if (challengeId) {
+        await challengeService.acceptChallenge({
+          challengeId,
+          challengedId: user.id,
+          challengedName: user.user_metadata?.full_name || 'Tricolor',
+        });
+      }
+    }
+
+    toast({
+      title: "Desafio aceito!",
+      description: `Supere os ${challenge.score} pontos de ${challenge.challengerName}!`,
+    });
     
     const route = challenge.gameMode === 'adaptive' 
       ? '/quiz-adaptativo' 
@@ -78,15 +107,26 @@ export const ChallengeAcceptCard = memo(({ challenge, onDismiss }: ChallengeAcce
               variant="outline" 
               onClick={onDismiss}
               className="flex-1"
+              disabled={isAccepting}
             >
               Depois
             </Button>
             <Button 
               onClick={handleAcceptChallenge}
               className="flex-1"
+              disabled={isAccepting}
             >
-              Aceitar Desafio
-              <ArrowRight className="w-4 h-4 ml-2" />
+              {isAccepting ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Aceitando...
+                </>
+              ) : (
+                <>
+                  Aceitar Desafio
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </>
+              )}
             </Button>
           </div>
         </CardContent>
