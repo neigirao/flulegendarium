@@ -223,25 +223,22 @@ Estimativa: 20h
 Impacto: Muito Alto (retenção D7)
 ```
 
-### 3.2 Produto - Sistema Social
+### 3.2 Produto - Sistema Social ✅
 **Problema:** Sem interação entre jogadores  
-**Solução:** Leaderboards semanais + comparação
+**Solução:** Leaderboards semanais + desafios
 
 ```
-Features:
-1. Weekly Leaderboard com reset domingo
-2. "Desafiar amigo" via link compartilhável
-3. Comparação de stats entre jogadores
-4. Notificações quando ultrapassado no ranking
+Features implementadas:
+1. Weekly Leaderboard com reset domingo ✅
+2. "Desafiar amigo" via link compartilhável ✅
 
-Arquivos a criar:
-- src/components/social/WeeklyLeaderboard.tsx
-- src/components/social/ChallengeLink.tsx
-- src/components/social/PlayerComparison.tsx
-- src/hooks/use-social-features.ts
+Arquivos criados:
+- src/components/social/WeeklyLeaderboard.tsx ✅
+- src/components/social/ChallengeSystem.tsx ✅
+- src/components/social/ChallengeAcceptCard.tsx ✅
+- src/hooks/use-weekly-rankings.ts ✅
 
-Estimativa: 24h
-Impacto: Alto (viralidade)
+Status: Implementado
 ```
 
 ### 3.3 Analytics - Dashboard Completo
