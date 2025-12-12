@@ -1,8 +1,8 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserSegmentationCard } from "./UserSegmentationCard";
 import { CohortAnalysisCard } from "./CohortAnalysisCard";
 import { OperationalDashboard } from "./OperationalDashboard";
+import { ExecutiveAnalyticsDashboard } from "../analytics/ExecutiveAnalyticsDashboard";
 import { useBusinessIntelligence } from "@/hooks/use-business-intelligence";
 import { 
   Users, 
@@ -12,7 +12,8 @@ import {
   BarChart3,
   Target,
   Zap,
-  Brain
+  Brain,
+  LineChart
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -32,8 +33,8 @@ export const BusinessIntelligenceDashboard = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-flu-grena mb-2">Business Intelligence</h2>
-        <p className="text-gray-600">
+        <h2 className="text-2xl font-bold text-primary mb-2">Business Intelligence</h2>
+        <p className="text-muted-foreground">
           Analytics avançados, segmentação de usuários e métricas operacionais em tempo real
         </p>
       </div>
@@ -43,7 +44,7 @@ export const BusinessIntelligenceDashboard = () => {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Brain className="w-5 h-5 text-flu-grena" />
+              <Brain className="w-5 h-5 text-primary" />
               Resumo Executivo
             </CardTitle>
           </CardHeader>
@@ -52,45 +53,49 @@ export const BusinessIntelligenceDashboard = () => {
               <div className="text-center p-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Users className="w-5 h-5 text-blue-500" />
-                  <span className="text-sm font-medium text-gray-600">Base Ativa</span>
+                  <span className="text-sm font-medium text-muted-foreground">Base Ativa</span>
                 </div>
                 <p className="text-2xl font-bold text-blue-600">{businessMetrics.monthly_active_users}</p>
-                <p className="text-xs text-gray-500">MAU</p>
+                <p className="text-xs text-muted-foreground">MAU</p>
               </div>
               
               <div className="text-center p-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Zap className="w-5 h-5 text-green-500" />
-                  <span className="text-sm font-medium text-gray-600">Engagement</span>
+                  <span className="text-sm font-medium text-muted-foreground">Engagement</span>
                 </div>
                 <p className="text-2xl font-bold text-green-600">{businessMetrics.engagement_score}%</p>
-                <p className="text-xs text-gray-500">DAU/MAU</p>
+                <p className="text-xs text-muted-foreground">DAU/MAU</p>
               </div>
               
               <div className="text-center p-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Target className="w-5 h-5 text-purple-500" />
-                  <span className="text-sm font-medium text-gray-600">Retenção</span>
+                  <span className="text-sm font-medium text-muted-foreground">Retenção</span>
                 </div>
                 <p className="text-2xl font-bold text-purple-600">{businessMetrics.retention_rate}%</p>
-                <p className="text-xs text-gray-500">Taxa geral</p>
+                <p className="text-xs text-muted-foreground">Taxa geral</p>
               </div>
               
               <div className="text-center p-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <TrendingUp className="w-5 h-5 text-orange-500" />
-                  <span className="text-sm font-medium text-gray-600">Churn</span>
+                  <span className="text-sm font-medium text-muted-foreground">Churn</span>
                 </div>
                 <p className="text-2xl font-bold text-orange-600">{businessMetrics.churn_rate}%</p>
-                <p className="text-xs text-gray-500">Taxa mensal</p>
+                <p className="text-xs text-muted-foreground">Taxa mensal</p>
               </div>
             </div>
           </CardContent>
         </Card>
       )}
 
-      <Tabs defaultValue="operational" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-2xl">
+      <Tabs defaultValue="executive" className="space-y-6">
+        <TabsList className="grid w-full grid-cols-5 max-w-3xl">
+          <TabsTrigger value="executive" className="flex items-center gap-2">
+            <LineChart size={16} />
+            Executivo
+          </TabsTrigger>
           <TabsTrigger value="operational" className="flex items-center gap-2">
             <Activity size={16} />
             Operacional
@@ -108,6 +113,10 @@ export const BusinessIntelligenceDashboard = () => {
             Avançado
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="executive" className="space-y-6">
+          <ExecutiveAnalyticsDashboard />
+        </TabsContent>
 
         <TabsContent value="operational" className="space-y-6">
           <OperationalDashboard 
@@ -138,7 +147,7 @@ export const BusinessIntelligenceDashboard = () => {
                 <CardTitle>Analytics Preditivos</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center text-gray-500">
+                <div className="h-64 flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
                     <Brain className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <p>Machine Learning em desenvolvimento</p>
@@ -153,7 +162,7 @@ export const BusinessIntelligenceDashboard = () => {
                 <CardTitle>A/B Testing</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-64 flex items-center justify-center text-gray-500">
+                <div className="h-64 flex items-center justify-center text-muted-foreground">
                   <div className="text-center">
                     <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <p>Framework de testes em desenvolvimento</p>
