@@ -4,12 +4,13 @@ import { SEOHead } from "@/components/SEOHead";
 import { GameModeCard } from "@/components/GameModeCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, LogIn, Trophy, Star } from "lucide-react";
+import { ArrowLeft, LogIn, Trophy, Star, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { CoachMark, useOnboarding } from "@/components/onboarding";
 import { DailyChallengeWidget } from "@/components/challenges";
+import { TimerSelector } from "@/components/game-settings/TimerSelector";
 
 const GameModeSelection = () => {
   const navigate = useNavigate();
@@ -56,8 +57,8 @@ const GameModeSelection = () => {
           </div>
           
           <div className="relative z-10 container mx-auto px-4 pt-8 pb-8 safe-area-top">
-            {/* Back Button */}
-            <div className="mb-8">
+            {/* Header with Back Button and Timer Settings */}
+            <div className="flex items-center justify-between mb-8">
               <Button
                 variant="outline"
                 onClick={() => navigate('/')}
@@ -66,6 +67,12 @@ const GameModeSelection = () => {
                 <ArrowLeft className="w-4 h-4" />
                 Voltar ao Início
               </Button>
+              
+              {/* Timer Settings */}
+              <div className="flex items-center gap-2">
+                <Settings className="w-4 h-4 text-primary-foreground/70" />
+                <TimerSelector compact className="bg-background/20 border-border/30 text-primary-foreground hover:bg-background/30" />
+              </div>
             </div>
 
             {/* Login Banner */}

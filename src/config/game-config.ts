@@ -9,16 +9,20 @@
 
 /**
  * Configurações do timer do jogo.
+ * Nota: O timer agora é customizável pelo usuário (20s, 30s, 45s).
+ * Estes valores são usados como referência para cálculo de bônus.
  */
 export const TIMER_CONFIG = {
-  /** Duração padrão do timer em segundos */
-  DURATION: 60,
+  /** Duração padrão do timer em segundos (padrão: 30s) */
+  DURATION: 30,
+  /** Opções de duração disponíveis */
+  DURATION_OPTIONS: [20, 30, 45] as const,
   /** Intervalo de atualização em milissegundos */
   UPDATE_INTERVAL: 1000,
-  /** Tempo considerado "rápido" para bônus (segundos) */
-  FAST_ANSWER_THRESHOLD: 40,
-  /** Tempo considerado "médio" para bônus (segundos) */
-  MEDIUM_ANSWER_THRESHOLD: 20
+  /** Percentual do tempo considerado "rápido" para bônus (>66% restante) */
+  FAST_ANSWER_PERCENTAGE: 0.66,
+  /** Percentual do tempo considerado "médio" para bônus (>33% restante) */
+  MEDIUM_ANSWER_PERCENTAGE: 0.33
 } as const;
 
 /**
@@ -168,27 +172,32 @@ export type AvailableDecade = typeof AVAILABLE_DECADES[number];
 
 /**
  * Calcula pontos com base na dificuldade e tempo restante.
+ * Agora usa percentuais em vez de valores absolutos para suportar timer customizável.
  * 
  * @param difficultyMultiplier - Multiplicador da dificuldade
  * @param timeLeft - Tempo restante em segundos
+ * @param timerDuration - Duração total do timer (padrão: 30s)
  * @returns Pontos calculados
  * 
  * @example
  * ```typescript
- * const points = calculatePoints(1.5, 45);
- * // Retorna: 5 * 1.5 + 2 = 9.5 (arredondado para 10)
+ * const points = calculatePoints(1.5, 25, 30);
+ * // Com 25/30 (83%) restante -> bônus rápido
+ * // Retorna: 5 * 1.5 + 2 = 9.5 (arredondado para 9)
  * ```
  */
 export const calculatePoints = (
   difficultyMultiplier: number,
-  timeLeft: number
+  timeLeft: number,
+  timerDuration: number = TIMER_CONFIG.DURATION
 ): number => {
   const basePoints = SCORING_CONFIG.BASE_POINTS;
+  const timePercentage = timeLeft / timerDuration;
   
   let timeBonus = 0;
-  if (timeLeft > TIMER_CONFIG.FAST_ANSWER_THRESHOLD) {
+  if (timePercentage > TIMER_CONFIG.FAST_ANSWER_PERCENTAGE) {
     timeBonus = SCORING_CONFIG.FAST_BONUS;
-  } else if (timeLeft > TIMER_CONFIG.MEDIUM_ANSWER_THRESHOLD) {
+  } else if (timePercentage > TIMER_CONFIG.MEDIUM_ANSWER_PERCENTAGE) {
     timeBonus = SCORING_CONFIG.MEDIUM_BONUS;
   }
   
