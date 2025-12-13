@@ -31,9 +31,9 @@ const StatCard = ({ icon: Icon, label, value, subValue }: {
           <Icon className="w-5 h-5 text-primary" />
         </div>
         <div>
-          <p className="text-2xl font-bold text-primary">{value}</p>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          {subValue && <p className="text-xs text-muted-foreground/70">{subValue}</p>}
+          <p className="text-2xl font-display font-bold text-primary">{value}</p>
+          <p className="text-sm text-muted-foreground font-body">{label}</p>
+          {subValue && <p className="text-xs text-muted-foreground/70 font-body">{subValue}</p>}
         </div>
       </div>
     </CardContent>
@@ -54,7 +54,7 @@ const ProfilePage = () => {
   if (authLoading || !user) {
     return (
       <RootLayout>
-        <div className="min-h-screen flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center bg-tricolor-vertical-border safe-area-top safe-area-bottom">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
         </div>
       </RootLayout>
@@ -76,14 +76,14 @@ const ProfilePage = () => {
       />
       <RootLayout>
         <TopNavigation />
-        <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 pt-16">
+        <div className="min-h-screen bg-tricolor-vertical-border pt-16 safe-area-top safe-area-bottom">
           <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">
               <Button
                 variant="outline"
                 onClick={() => navigate(-1)}
-                className="mb-4 flex items-center gap-2"
+                className="mb-4 flex items-center gap-2 touch-target"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Voltar
@@ -94,17 +94,17 @@ const ProfilePage = () => {
                   <User className="w-12 h-12 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-primary">
+                  <h1 className="text-display-title text-primary">
                     {user.user_metadata?.full_name || 'Tricolor'}
                   </h1>
-                  <p className="text-muted-foreground">{user.email}</p>
+                  <p className="text-muted-foreground font-body">{user.email}</p>
                 </div>
               </div>
             </div>
 
             {/* Stats Grid */}
             <div className="mb-8">
-              <h2 className="text-xl font-semibold text-foreground mb-4 flex items-center gap-2">
+              <h2 className="text-display-sm text-foreground mb-4 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5" />
                 Estatísticas Gerais
               </h2>
@@ -146,11 +146,11 @@ const ProfilePage = () => {
             {/* Tabs for Weekly Ranking and Challenges */}
             <Tabs defaultValue="ranking" className="space-y-4">
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="ranking" className="flex items-center gap-2">
+                <TabsTrigger value="ranking" className="flex items-center gap-2 font-display">
                   <TrendingUp className="w-4 h-4" />
                   Evolução Semanal
                 </TabsTrigger>
-                <TabsTrigger value="challenges" className="flex items-center gap-2">
+                <TabsTrigger value="challenges" className="flex items-center gap-2 font-display">
                   <Swords className="w-4 h-4" />
                   Desafios
                 </TabsTrigger>
@@ -160,7 +160,7 @@ const ProfilePage = () => {
               <TabsContent value="ranking">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 font-display">
                       <TrendingUp className="w-5 h-5 text-primary" />
                       Evolução no Ranking Semanal
                     </CardTitle>
@@ -183,11 +183,11 @@ const ProfilePage = () => {
                             className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
                           >
                             <div className="flex items-center gap-3">
-                              <span className="text-sm font-medium text-muted-foreground w-16">
+                              <span className="text-sm font-display text-muted-foreground w-16">
                                 {week.week}
                               </span>
                               {week.rank ? (
-                                <Badge variant="outline">
+                                <Badge variant="outline" className="font-display">
                                   #{week.rank}
                                 </Badge>
                               ) : (
@@ -195,10 +195,10 @@ const ProfilePage = () => {
                               )}
                             </div>
                             <div className="flex items-center gap-4">
-                              <span className="text-sm text-muted-foreground">
+                              <span className="text-sm text-muted-foreground font-body">
                                 {week.gamesPlayed} {week.gamesPlayed === 1 ? 'jogo' : 'jogos'}
                               </span>
-                              <span className="font-bold text-primary">
+                              <span className="font-display font-bold text-primary">
                                 {week.score} pts
                               </span>
                             </div>
@@ -206,12 +206,12 @@ const ProfilePage = () => {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8 text-muted-foreground">
+                      <div className="text-center py-8 text-muted-foreground font-body">
                         <TrendingUp className="w-12 h-12 mx-auto mb-3 opacity-30" />
                         <p>Nenhum dado de ranking ainda.</p>
                         <Button 
                           onClick={() => navigate('/selecionar-modo-jogo')} 
-                          className="mt-4"
+                          className="mt-4 touch-target font-display"
                         >
                           Começar a Jogar
                         </Button>
@@ -227,7 +227,7 @@ const ProfilePage = () => {
                   {/* Sent Challenges */}
                   <Card>
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg">
+                      <CardTitle className="flex items-center gap-2 text-lg font-display">
                         <Send className="w-5 h-5 text-primary" />
                         Desafios Enviados
                       </CardTitle>
@@ -247,7 +247,7 @@ const ProfilePage = () => {
                               className="p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
                             >
                               <div className="flex items-center justify-between mb-2">
-                                <span className="font-medium truncate">
+                                <span className="font-display truncate">
                                   {challenge.challenged_name || 'Aguardando...'}
                                 </span>
                                 <Badge 
@@ -266,7 +266,7 @@ const ProfilePage = () => {
                                     : 'Pendente'}
                                 </Badge>
                               </div>
-                              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                              <div className="flex items-center justify-between text-sm text-muted-foreground font-body">
                                 <span>Seu score: {challenge.challenger_score}</span>
                                 {challenge.challenged_score && (
                                   <span>Score deles: {challenge.challenged_score}</span>
@@ -279,7 +279,7 @@ const ProfilePage = () => {
                           ))}
                         </div>
                       ) : (
-                        <div className="text-center py-6 text-muted-foreground">
+                        <div className="text-center py-6 text-muted-foreground font-body">
                           <Send className="w-8 h-8 mx-auto mb-2 opacity-30" />
                           <p className="text-sm">Nenhum desafio enviado</p>
                         </div>
@@ -290,7 +290,7 @@ const ProfilePage = () => {
                   {/* Received Challenges */}
                   <Card>
                     <CardHeader>
-                      <CardTitle className="flex items-center gap-2 text-lg">
+                      <CardTitle className="flex items-center gap-2 text-lg font-display">
                         <Inbox className="w-5 h-5 text-primary" />
                         Desafios Recebidos
                       </CardTitle>
@@ -310,7 +310,7 @@ const ProfilePage = () => {
                               className="p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
                             >
                               <div className="flex items-center justify-between mb-2">
-                                <span className="font-medium truncate">
+                                <span className="font-display truncate">
                                   {challenge.challenger_name}
                                 </span>
                                 <Badge 
@@ -329,7 +329,7 @@ const ProfilePage = () => {
                                     : 'Pendente'}
                                 </Badge>
                               </div>
-                              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                              <div className="flex items-center justify-between text-sm text-muted-foreground font-body">
                                 <span>Score a bater: {challenge.challenger_score}</span>
                                 {challenge.challenged_score && (
                                   <span>Seu score: {challenge.challenged_score}</span>
@@ -342,7 +342,7 @@ const ProfilePage = () => {
                           ))}
                         </div>
                       ) : (
-                        <div className="text-center py-6 text-muted-foreground">
+                        <div className="text-center py-6 text-muted-foreground font-body">
                           <Inbox className="w-8 h-8 mx-auto mb-2 opacity-30" />
                           <p className="text-sm">Nenhum desafio recebido</p>
                         </div>
@@ -355,11 +355,11 @@ const ProfilePage = () => {
 
             {/* CTA */}
             <div className="mt-8 text-center">
-              <Button onClick={() => navigate('/social')} variant="outline" className="mr-2">
+              <Button onClick={() => navigate('/social')} variant="outline" className="mr-2 touch-target font-display">
                 <Swords className="w-4 h-4 mr-2" />
                 Desafiar Amigos
               </Button>
-              <Button onClick={() => navigate('/selecionar-modo-jogo')}>
+              <Button onClick={() => navigate('/selecionar-modo-jogo')} className="touch-target font-display">
                 <Trophy className="w-4 h-4 mr-2" />
                 Jogar Agora
               </Button>
