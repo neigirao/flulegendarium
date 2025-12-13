@@ -53,20 +53,20 @@ const Index = () => {
         customDescription="🏆 Teste seus conhecimentos sobre os grandes ídolos e lendas do Fluminense! Quiz adaptativo com diferentes níveis de dificuldade."
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary">
+      <div className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">
         <TopNavigation />
         
         {/* Main Content */}
-        <div className="pt-24 min-h-screen">
+        <div className="pt-24 min-h-screen safe-area-top">
           {/* Hero Section */}
           <section className="container mx-auto px-4 pt-16 pb-8 text-center">
-            <h1 className="text-6xl md:text-8xl font-bold text-primary-foreground mb-6">
+            <h1 className="text-display-hero text-primary-foreground mb-6 drop-shadow-lg">
               LENDAS DO FLU
             </h1>
-            <p className="text-2xl text-primary-foreground/90 mb-4">
+            <p className="text-display-subtitle text-primary-foreground/90 mb-4 font-display">
               O Quiz Definitivo do Fluminense
             </p>
-            <p className="text-lg text-primary-foreground/80 mb-12 max-w-2xl mx-auto">
+            <p className="text-lg text-primary-foreground/80 mb-12 max-w-2xl mx-auto font-body">
               Teste seus conhecimentos sobre os grandes ídolos tricolores! Desde lendas 
               históricas até estrelas atuais - quanto você realmente conhece Flu.
             </p>
@@ -76,7 +76,7 @@ const Index = () => {
               <Button
                 onClick={handleStartGame}
                 size="lg"
-                className="text-xl px-12 py-6 shadow-xl hover:shadow-2xl bg-primary hover:bg-primary/90 text-primary-foreground"
+                className="text-xl px-12 py-6 shadow-xl hover:shadow-2xl bg-primary hover:bg-primary/90 text-primary-foreground touch-target-xl font-display tracking-wide animate-pulse hover:animate-none"
                 data-testid="play-button"
               >
                 <Rocket className="w-6 h-6 mr-2" />
@@ -125,9 +125,9 @@ const Index = () => {
             <div className="mb-16">
               <div className="flex items-center justify-center mb-8">
                 <Trophy className="w-8 h-8 text-warning mr-3" />
-                <h2 className="text-3xl font-bold text-primary-foreground">Hall da Fama Tricolor</h2>
+                <h2 className="text-display-title text-primary-foreground">Hall da Fama Tricolor</h2>
               </div>
-              <p className="text-primary-foreground/80 mb-8">Os maiores conhecedores do Fluminense</p>
+              <p className="text-primary-foreground/80 mb-8 font-body">Os maiores conhecedores do Fluminense</p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
                 {rankingsLoading ? (
@@ -170,8 +170,8 @@ const Index = () => {
             {/* Como Funciona */}
             <div className="mb-16">
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-primary-foreground mb-4">Como funciona o Quiz?</h2>
-                <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto">
+                <h2 className="text-display-title text-primary-foreground mb-4">Como funciona o Quiz?</h2>
+                <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto font-body">
                   É simples e divertido! Teste seus conhecimentos sobre os ídolos tricolores
                 </p>
               </div>
@@ -184,8 +184,8 @@ const Index = () => {
                       1
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-primary-foreground mb-4">Veja a Foto</h3>
-                  <p className="text-primary-foreground/80 leading-relaxed">
+                  <h3 className="text-display-sm text-primary-foreground mb-4">Veja a Foto</h3>
+                  <p className="text-primary-foreground/80 leading-relaxed font-body">
                     Uma foto de um jogador do Fluminense aparece na tela. Pode ser atual ou histórico!
                   </p>
                 </div>
@@ -196,8 +196,8 @@ const Index = () => {
                       2
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-primary-foreground mb-4">Digite o Nome</h3>
-                  <p className="text-primary-foreground/80 leading-relaxed">
+                  <h3 className="text-display-sm text-primary-foreground mb-4">Digite o Nome</h3>
+                  <p className="text-primary-foreground/80 leading-relaxed font-body">
                     Digite o nome do jogador. Pode usar apelidos ou nome completo - nosso sistema é inteligente!
                   </p>
                 </div>
@@ -208,8 +208,8 @@ const Index = () => {
                       3
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-primary-foreground mb-4">Ganhe Pontos</h3>
-                  <p className="text-primary-foreground/80 leading-relaxed">
+                  <h3 className="text-display-sm text-primary-foreground mb-4">Ganhe Pontos</h3>
+                  <p className="text-primary-foreground/80 leading-relaxed font-body">
                     Acertou? Ganhe pontos e continue! O jogo fica mais difícil conforme você evolui.
                   </p>
                 </div>

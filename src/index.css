@@ -84,6 +84,11 @@
     --difficulty-very-hard: 0 84% 60%;
     
     --radius: 0.75rem;
+    
+    /* Tricolor Stripe Pattern */
+    --stripe-grena: hsl(351 98% 24%);
+    --stripe-branco: hsl(0 0% 98%);
+    --stripe-verde: hsl(159 100% 19%);
   }
  
   .dark {
@@ -159,6 +164,75 @@
 
 .bg-flu-branco {
   background-color: hsl(var(--accent));
+}
+
+/* Tricolor Stripe Background Patterns */
+.bg-tricolor-vertical {
+  background: linear-gradient(
+    to right,
+    var(--stripe-grena) 0%,
+    var(--stripe-grena) 33.33%,
+    var(--stripe-branco) 33.33%,
+    var(--stripe-branco) 66.66%,
+    var(--stripe-verde) 66.66%,
+    var(--stripe-verde) 100%
+  );
+}
+
+.bg-tricolor-vertical-subtle {
+  background: linear-gradient(
+    to right,
+    hsl(351 98% 24% / 0.08) 0%,
+    hsl(351 98% 24% / 0.08) 33.33%,
+    hsl(0 0% 98% / 0.5) 33.33%,
+    hsl(0 0% 98% / 0.5) 66.66%,
+    hsl(159 100% 19% / 0.08) 66.66%,
+    hsl(159 100% 19% / 0.08) 100%
+  );
+}
+
+.bg-tricolor-vertical-border {
+  position: relative;
+}
+
+.bg-tricolor-vertical-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    var(--stripe-grena) 0%,
+    var(--stripe-grena) 33.33%,
+    var(--stripe-branco) 33.33%,
+    var(--stripe-branco) 66.66%,
+    var(--stripe-verde) 66.66%,
+    var(--stripe-verde) 100%
+  );
+}
+
+.bg-tricolor-left-accent {
+  position: relative;
+}
+
+.bg-tricolor-left-accent::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(
+    to bottom,
+    var(--stripe-grena) 0%,
+    var(--stripe-grena) 33.33%,
+    var(--stripe-branco) 33.33%,
+    var(--stripe-branco) 66.66%,
+    var(--stripe-verde) 66.66%,
+    var(--stripe-verde) 100%
+  );
 }
 
 /* Componentes essenciais */
