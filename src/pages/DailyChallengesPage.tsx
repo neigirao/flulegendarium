@@ -53,14 +53,14 @@ const DailyChallengesPage = () => {
       />
       <RootLayout>
         <TopNavigation />
-        <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 pt-16">
+        <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom pt-16">
           <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">
               <Button
                 variant="outline"
                 onClick={() => navigate(-1)}
-                className="mb-4 flex items-center gap-2"
+                className="mb-4 flex items-center gap-2 touch-target"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Voltar
@@ -71,53 +71,53 @@ const DailyChallengesPage = () => {
                   <Calendar className="w-10 h-10 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-primary">
+                  <h1 className="font-display text-display-title text-primary">
                     Desafios Diários
                   </h1>
-                  <p className="text-muted-foreground">
+                  <p className="font-body text-muted-foreground">
                     Complete desafios para ganhar pontos extras!
                   </p>
                 </div>
               </div>
 
               {/* Progress Overview */}
-              <Card className="bg-gradient-to-r from-primary/10 to-secondary/10">
+              <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
                 <CardContent className="p-6">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                     <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-2xl font-bold text-primary">
+                      <div className="flex items-center justify-center gap-1 font-display text-display-subtitle text-primary">
                         <CheckCircle className="w-6 h-6" />
                         {completedCount}
                       </div>
-                      <p className="text-sm text-muted-foreground">Completos</p>
+                      <p className="font-body text-sm text-muted-foreground">Completos</p>
                     </div>
                     <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-2xl font-bold text-muted-foreground">
+                      <div className="flex items-center justify-center gap-1 font-display text-display-subtitle text-muted-foreground">
                         <Target className="w-6 h-6" />
                         {totalChallenges - completedCount}
                       </div>
-                      <p className="text-sm text-muted-foreground">Restantes</p>
+                      <p className="font-body text-sm text-muted-foreground">Restantes</p>
                     </div>
                     <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-2xl font-bold text-green-600">
+                      <div className="flex items-center justify-center gap-1 font-display text-display-subtitle text-success">
                         <Trophy className="w-6 h-6" />
                         {totalRewards}
                       </div>
-                      <p className="text-sm text-muted-foreground">Pontos Ganhos</p>
+                      <p className="font-body text-sm text-muted-foreground">Pontos Ganhos</p>
                     </div>
                     <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 text-2xl font-bold text-yellow-600">
+                      <div className="flex items-center justify-center gap-1 font-display text-display-subtitle text-warning">
                         <Sparkles className="w-6 h-6" />
                         {potentialRewards - totalRewards}
                       </div>
-                      <p className="text-sm text-muted-foreground">Pontos Disponíveis</p>
+                      <p className="font-body text-sm text-muted-foreground">Pontos Disponíveis</p>
                     </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-sm font-body">
                       <span className="text-muted-foreground">Progresso do Dia</span>
-                      <span className="font-medium">{completedCount}/{totalChallenges}</span>
+                      <span className="font-medium text-foreground">{completedCount}/{totalChallenges}</span>
                     </div>
                     <Progress value={progressPercent} className="h-3" />
                   </div>
@@ -127,8 +127,8 @@ const DailyChallengesPage = () => {
 
             {/* Challenges List */}
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Flame className="w-5 h-5 text-orange-500" />
+              <h2 className="font-display text-display-sm flex items-center gap-2">
+                <Flame className="w-5 h-5 text-warning" />
                 Desafios Ativos
               </h2>
               
@@ -171,16 +171,16 @@ const DailyChallengesPage = () => {
                   ))}
                 </motion.div>
               ) : (
-                <Card className="border-dashed">
+                <Card className="border-dashed border-primary/30">
                   <CardContent className="p-12 text-center">
                     <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4 opacity-30" />
-                    <h3 className="text-lg font-semibold text-muted-foreground mb-2">
+                    <h3 className="font-display text-display-sm text-muted-foreground mb-2">
                       Nenhum desafio ativo
                     </h3>
-                    <p className="text-sm text-muted-foreground/70 mb-4">
+                    <p className="font-body text-sm text-muted-foreground/70 mb-4">
                       Volte mais tarde para novos desafios diários!
                     </p>
-                    <Button onClick={() => navigate('/selecionar-modo-jogo')}>
+                    <Button onClick={() => navigate('/selecionar-modo-jogo')} className="touch-target-lg">
                       <Trophy className="w-4 h-4 mr-2" />
                       Jogar Agora
                     </Button>
@@ -190,25 +190,25 @@ const DailyChallengesPage = () => {
             </div>
 
             {/* Tips */}
-            <Card className="mt-8">
+            <Card className="mt-8 border-primary/20">
               <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2">
+                <CardTitle className="font-display text-display-sm flex items-center gap-2">
                   <Clock className="w-5 h-5 text-primary" />
                   Dicas
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-2 font-body text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-success mt-0.5 shrink-0" />
                     Os desafios são renovados diariamente à meia-noite.
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-success mt-0.5 shrink-0" />
                     Complete todos os desafios para maximizar seus pontos.
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 shrink-0" />
+                    <CheckCircle className="w-4 h-4 text-success mt-0.5 shrink-0" />
                     O progresso é atualizado automaticamente durante o jogo.
                   </li>
                 </ul>
@@ -217,7 +217,7 @@ const DailyChallengesPage = () => {
 
             {/* CTA */}
             <div className="mt-8 text-center">
-              <Button onClick={() => navigate('/selecionar-modo-jogo')} size="lg">
+              <Button onClick={() => navigate('/selecionar-modo-jogo')} size="lg" className="touch-target-lg">
                 <Trophy className="w-5 h-5 mr-2" />
                 Começar a Jogar
               </Button>

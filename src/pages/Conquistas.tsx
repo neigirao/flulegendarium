@@ -64,26 +64,30 @@ const Conquistas = () => {
         description="Veja suas conquistas desbloqueadas no Lendas do Flu e acompanhe seu progresso!"
       />
       <RootLayout>
-        <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10 py-8 px-4">
+        <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom py-8 px-4">
           <div className="container mx-auto max-w-4xl">
             {/* Header */}
             <div className="mb-8">
               <Button
                 variant="outline"
                 onClick={() => navigate(-1)}
-                className="mb-4"
+                className="mb-4 touch-target"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar
               </Button>
               
               <div className="flex items-center gap-3 mb-2">
-                <Trophy className="w-8 h-8 text-flu-grena" />
-                <h1 className="text-3xl font-bold text-flu-grena">Minhas Conquistas</h1>
+                <div className="p-3 rounded-full bg-primary/10">
+                  <Trophy className="w-8 h-8 text-primary" />
+                </div>
+                <h1 className="font-display text-display-title text-primary">
+                  Minhas Conquistas
+                </h1>
               </div>
               
-              <p className="text-gray-600">
-                Olá, <span className="font-semibold">{user.user_metadata?.full_name || 'Tricolor'}</span>! 
+              <p className="font-body text-muted-foreground">
+                Olá, <span className="font-semibold text-foreground">{user.user_metadata?.full_name || 'Tricolor'}</span>! 
                 Acompanhe suas conquistas e mostre seu conhecimento sobre o Fluminense.
               </p>
             </div>
