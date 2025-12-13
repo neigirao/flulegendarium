@@ -48,20 +48,20 @@ const GameModeSelection = () => {
         url="https://flulegendarium.lovable.app/selecionar-modo-jogo"
       />
       <RootLayout>
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary/80 to-secondary/90 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary/80 to-secondary/90 relative overflow-hidden bg-tricolor-vertical-border">
           {/* Diagonal Stripe Pattern */}
           <div className="absolute inset-0 opacity-20">
             <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 via-transparent to-primary/30 transform -skew-y-12"></div>
             <div className="absolute inset-0 bg-gradient-to-tl from-primary/20 via-transparent to-secondary/20 transform skew-y-12"></div>
           </div>
           
-          <div className="relative z-10 container mx-auto px-4 pt-8 pb-8">
+          <div className="relative z-10 container mx-auto px-4 pt-8 pb-8 safe-area-top">
             {/* Back Button */}
             <div className="mb-8">
               <Button
                 variant="outline"
                 onClick={() => navigate('/')}
-                className="flex items-center gap-2 bg-background/20 border-border/30 text-primary-foreground hover:bg-background/30"
+                className="flex items-center gap-2 bg-background/20 border-border/30 text-primary-foreground hover:bg-background/30 touch-target"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Voltar ao Início
@@ -84,7 +84,7 @@ const GameModeSelection = () => {
                     </div>
                     <Button
                       onClick={handleAuthClick}
-                      className="bg-warning hover:bg-warning/90 text-warning-foreground font-bold whitespace-nowrap"
+                      className="bg-warning hover:bg-warning/90 text-warning-foreground font-bold whitespace-nowrap touch-target font-display tracking-wide"
                     >
                       <LogIn className="w-4 h-4 mr-2" />
                       Criar Conta Grátis
@@ -121,7 +121,7 @@ const GameModeSelection = () => {
                 </div>
               </div>
               
-              <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-2 tracking-wide">
+              <h1 className="text-display-title text-primary-foreground mb-2 drop-shadow-lg">
                 ESCOLHA SEU MODO DE JOGO
               </h1>
             </div>
@@ -143,13 +143,13 @@ const GameModeSelection = () => {
                           <div className="absolute top-1 right-1 w-2 h-2 bg-primary-foreground rounded-full"></div>
                         </div>
                       </div>
-                      <h2 className="text-2xl font-bold text-primary mb-2">Quiz Adaptativo</h2>
+                      <h2 className="text-display-subtitle text-primary mb-2">Quiz Adaptativo</h2>
                       <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
                         Adaptável
                       </span>
                     </div>
                     
-                    <p className="text-muted-foreground text-center mb-6">
+                    <p className="text-muted-foreground text-center mb-6 font-body">
                       Sistema inteligente que se adapta ao seu nível de conhecimento sobre o Fluminense
                     </p>
                     
@@ -170,7 +170,7 @@ const GameModeSelection = () => {
                     
                     <Button 
                       onClick={() => handleGameModeClick('adaptive', '/quiz-adaptativo')}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 text-lg"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-3 text-lg tracking-wide touch-target-lg"
                     >
                       JOGAR AGORA
                     </Button>
@@ -187,13 +187,13 @@ const GameModeSelection = () => {
                     <div className="w-16 h-16 mx-auto bg-secondary rounded-full flex items-center justify-center mb-4">
                       <div className="text-secondary-foreground text-2xl">🏆</div>
                     </div>
-                    <h2 className="text-2xl font-bold text-primary mb-2">Quiz por Década</h2>
+                    <h2 className="text-display-subtitle text-primary mb-2">Quiz por Década</h2>
                     <span className="inline-block bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm font-medium">
                       Variável
                     </span>
                   </div>
                   
-                  <p className="text-muted-foreground text-center mb-6">
+                  <p className="text-muted-foreground text-center mb-6 font-body">
                     Teste seus conhecimentos sobre jogadores de épocas específicas do Fluminense
                   </p>
                   
@@ -214,7 +214,7 @@ const GameModeSelection = () => {
                   
                   <Button 
                     onClick={() => handleGameModeClick('decade', '/quiz-decada')}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 text-lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-3 text-lg tracking-wide touch-target-lg"
                   >
                     JOGAR AGORA
                   </Button>
@@ -228,10 +228,10 @@ const GameModeSelection = () => {
                 <div className="flex items-start gap-4">
                   <div className="text-3xl">💡</div>
                   <div>
-                    <h3 className="text-xl font-bold text-warning mb-3">
+                    <h3 className="text-display-sm text-warning mb-3">
                       DICA PARA TRICOLORES
                     </h3>
-                    <p className="text-primary-foreground/90 leading-relaxed">
+                    <p className="text-primary-foreground/90 leading-relaxed font-body">
                       Cada modo oferece uma experiência única! O Quiz Adaptativo é perfeito para 
                       testar seu conhecimento geral, enquanto o Quiz por Década permite focar 
                       em épocas específicas da rica história do Fluminense.

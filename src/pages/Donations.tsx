@@ -26,14 +26,14 @@ const Donations = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-flu-grena via-red-800 to-flu-verde">
+    <div className="min-h-screen bg-gradient-to-br from-primary via-primary/80 to-secondary bg-tricolor-vertical-border">
       <SEOHead 
         title="Doações - Lendas do Flu"
         description="Apoie o desenvolvimento do Lendas do Flu e ajude a manter o jogo funcionando"
         canonical="/doacoes"
       />
       
-      <div className="container mx-auto px-4 py-8 pt-24">
+      <div className="container mx-auto px-4 py-8 pt-24 safe-area-top safe-area-bottom">
         <div className="max-w-2xl mx-auto space-y-8">
           
           {/* Header */}
@@ -44,20 +44,20 @@ const Donations = () => {
                 alt="Lendas do Flu Logo" 
                 className="w-16 h-16 object-contain"
               />
-              <h1 className="text-4xl md:text-5xl font-bold text-white">
+              <h1 className="text-display-title text-primary-foreground">
                 LENDAS DO FLU
               </h1>
             </div>
             
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            <h2 className="text-display-subtitle text-primary-foreground mb-4">
               Apoie o Lendas do Flu
             </h2>
             
-            <p className="text-xl text-white/90 mb-6">
+            <p className="text-xl text-primary-foreground/90 mb-6 font-body">
               Ajude a melhorar e manter o jogo
             </p>
             
-            <p className="text-white/80 leading-relaxed">
+            <p className="text-primary-foreground/80 leading-relaxed font-body">
               Seu apoio é essencial para cobrir custos com servidores, 
               desenvolver novos recursos e continuar trazendo melhorias ao 
               quiz. Contribua para o crescimento do Lendas do Flu!
@@ -69,29 +69,29 @@ const Donations = () => {
             <FluCardContent className="p-8">
               <div className="space-y-6">
                 <div className="flex items-center justify-center space-x-4 mb-6">
-                  <Smartphone className="h-8 w-8 text-flu-verde" />
-                  <h3 className="text-2xl font-bold text-white">Use o PIX para doar</h3>
+                  <Smartphone className="h-8 w-8 text-secondary" />
+                  <h3 className="text-display-sm text-primary-foreground">Use o PIX para doar</h3>
                 </div>
                 
                 {/* QR Code */}
-                <div className="bg-white rounded-lg p-6 max-w-xs mx-auto">
+                <div className="bg-background rounded-lg p-6 max-w-xs mx-auto">
                   <img 
                     src="/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png"
                     alt="PIX QR Code para doações"
                     className="w-48 h-48 object-contain mx-auto mb-4"
                   />
-                  <p className="text-sm text-gray-600 font-medium">PIX QR Code</p>
+                  <p className="text-sm text-muted-foreground font-medium font-body">PIX QR Code</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <p className="text-white/90">Escaneie o código para fazer uma doação</p>
-                  <p className="text-white/90 font-semibold">Qualquer quantia é bem-vinda</p>
+                  <p className="text-primary-foreground/90 font-body">Escaneie o código para fazer uma doação</p>
+                  <p className="text-primary-foreground/90 font-semibold font-body">Qualquer quantia é bem-vinda</p>
                 </div>
                 
                 <Button 
                   onClick={copyPixKey}
                   variant="secondary"
-                  className="mt-4"
+                  className="mt-4 touch-target font-body"
                 >
                   Copiar Chave PIX: {pixKey}
                 </Button>
@@ -102,8 +102,8 @@ const Donations = () => {
           {/* Donation Values */}
           <FluCard variant="glass">
             <FluCardHeader>
-              <h3 className="text-2xl font-bold text-white text-center flex items-center justify-center gap-2">
-                <Gift className="h-6 w-6 text-flu-verde" />
+              <h3 className="text-display-sm text-primary-foreground text-center flex items-center justify-center gap-2">
+                <Gift className="h-6 w-6 text-secondary" />
                 Valores de doação
               </h3>
             </FluCardHeader>
@@ -115,13 +115,13 @@ const Donations = () => {
                     className="bg-white/20 backdrop-blur-sm rounded-lg p-6 text-center border border-white/30"
                   >
                     <div className="text-4xl mb-3">{donation.icon}</div>
-                    <div className="text-3xl font-bold text-white mb-2">
+                    <div className="text-3xl font-display text-primary-foreground mb-2">
                       R$ {donation.amount}
                     </div>
-                    <div className="text-base text-white font-medium mb-1">
+                    <div className="text-base text-primary-foreground font-medium mb-1 font-body">
                       {donation.label}
                     </div>
-                    <div className="text-sm text-white/90">
+                    <div className="text-sm text-primary-foreground/90 font-body">
                       {donation.description}
                     </div>
                   </div>
@@ -133,8 +133,8 @@ const Donations = () => {
           {/* Thank You Section */}
           <FluCard variant="glass">
             <FluCardContent className="p-8 text-center">
-              <h3 className="text-2xl font-bold text-white mb-4 flex items-center justify-center gap-2">
-                <Heart className="h-6 w-6 text-red-400" />
+              <h3 className="text-display-sm text-primary-foreground mb-4 flex items-center justify-center gap-2">
+                <Heart className="h-6 w-6 text-destructive" />
                 Agradecemos muito pelo seu apoio!
               </h3>
             </FluCardContent>
