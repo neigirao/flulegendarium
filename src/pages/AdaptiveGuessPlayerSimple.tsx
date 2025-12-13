@@ -18,14 +18,14 @@ const AdaptiveGuessPlayerSimple = () => {
       />
       <RootLayout>
         <GameErrorBoundary>
-          <div className="min-h-screen bg-gradient-to-br from-flu-verde via-slate-700 to-flu-grena">
+          <div className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">
             <TopNavigation />
-            <div className="pt-24">
+            <div className="pt-24 safe-area-top safe-area-bottom">
               <Suspense fallback={
                 <div className="min-h-screen flex items-center justify-center">
-                  <div className="flex flex-col items-center gap-4 p-6 bg-white/80 backdrop-blur-sm rounded-xl shadow-lg">
-                    <div className="w-8 h-8 border-4 border-flu-grena border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-flu-grena font-semibold">Carregando Quiz Adaptativo...</p>
+                  <div className="flex flex-col items-center gap-4 p-6 bg-background/80 backdrop-blur-sm rounded-xl shadow-lg">
+                    <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-primary font-display tracking-wide">Carregando Quiz Adaptativo...</p>
                   </div>
                 </div>
               }>

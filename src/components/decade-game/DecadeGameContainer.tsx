@@ -400,7 +400,7 @@ export const DecadeGameContainer = () => {
           description="Você tem 60 segundos neste modo. Acerte o máximo de jogadores que conseguir!"
           position="bottom"
         >
-          <div className="text-center text-2xl font-bold text-primary mb-4">
+          <div className="text-center text-display-subtitle text-primary mb-4">
             ⏱️ {timeRemaining}s
           </div>
         </CoachMark>

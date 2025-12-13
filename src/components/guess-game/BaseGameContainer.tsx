@@ -67,7 +67,7 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
             <Button
               variant="outline"
               onClick={onBack}
-              className="flex items-center gap-2 text-sm"
+              className="flex items-center gap-2 text-sm touch-target"
             >
               <ArrowLeft className="w-4 h-4" />
               {backLabel}
@@ -76,16 +76,16 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
           
           <div className="flex items-center gap-2">
             {icon && (
-              <div className={`w-6 h-6 rounded-full ${iconColor} flex items-center justify-center text-white text-xs`}>
+              <div className={`w-6 h-6 rounded-full ${iconColor} flex items-center justify-center text-primary-foreground text-xs`}>
                 {icon}
               </div>
             )}
             <div>
-              <h1 className="text-lg font-bold text-flu-grena">
+              <h1 className="text-display-sm text-primary">
                 {title}
               </h1>
               {subtitle && (
-                <p className="text-sm text-gray-600">{subtitle}</p>
+                <p className="text-sm text-muted-foreground font-body">{subtitle}</p>
               )}
             </div>
           </div>
@@ -93,7 +93,7 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
 
         <div className="flex items-center gap-2">
           {playerCount !== undefined && (
-            <Badge variant="secondary" className="bg-flu-verde/10 text-flu-verde text-xs">
+            <Badge variant="secondary" className="bg-secondary/10 text-secondary text-xs font-body">
               {playerCount} jogadores
             </Badge>
           )}
@@ -103,7 +103,7 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
               variant="outline"
               size="sm"
               onClick={onReset}
-              className="flex items-center gap-1 text-xs"
+              className="flex items-center gap-1 text-xs touch-target"
             >
               <RotateCcw className="w-3 h-3" />
               Reset
@@ -121,7 +121,7 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
         ) : !hasPlayers ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">😕</div>
-            <h3 className="text-xl font-semibold text-flu-grena mb-2">
+            <h3 className="text-display-sm text-primary mb-2">
               {emptyStateMessage}
             </h3>
             {emptyStateAction}
@@ -133,8 +133,8 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
 
       {/* Debug section - apenas em desenvolvimento */}
       {showDebug && process.env.NODE_ENV === 'development' && debugContent && (
-        <div className="mt-8 p-4 bg-gray-100 rounded-lg">
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">Debug Info:</h3>
+        <div className="mt-8 p-4 bg-muted rounded-lg">
+          <h3 className="text-sm font-semibold text-muted-foreground mb-2 font-body">Debug Info:</h3>
           {debugContent}
         </div>
       )}
