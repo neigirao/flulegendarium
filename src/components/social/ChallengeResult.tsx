@@ -86,9 +86,9 @@ export const ChallengeResult = memo(({ yourScore, gameMode, difficulty, onDismis
       animate={{ opacity: 1, scale: 1 }}
       className="mb-4"
     >
-      <Card className={`border-2 ${won ? 'border-green-500 bg-green-50' : tied ? 'border-yellow-500 bg-yellow-50' : 'border-red-500 bg-red-50'}`}>
+      <Card className={`border-2 ${won ? 'border-success bg-success/10' : tied ? 'border-warning bg-warning/10' : 'border-error bg-error/10'}`}>
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-lg font-display">
             <Swords className="w-5 h-5" />
             <span>Resultado do Desafio</span>
           </CardTitle>
@@ -98,33 +98,33 @@ export const ChallengeResult = memo(({ yourScore, gameMode, difficulty, onDismis
           <div className="flex items-center justify-between gap-4">
             {/* Your Score */}
             <div className="flex-1 text-center p-3 bg-background rounded-lg border">
-              <p className="text-sm text-muted-foreground mb-1">Você</p>
-              <p className="text-2xl font-bold text-primary">{yourScore}</p>
+              <p className="text-sm text-muted-foreground mb-1 font-body">Você</p>
+              <p className="text-2xl font-display font-bold text-primary">{yourScore}</p>
             </div>
             
             {/* VS */}
             <div className="flex flex-col items-center">
               {won ? (
-                <CheckCircle className="w-8 h-8 text-green-500" />
+                <CheckCircle className="w-8 h-8 text-success" />
               ) : tied ? (
-                <Trophy className="w-8 h-8 text-yellow-500" />
+                <Trophy className="w-8 h-8 text-warning" />
               ) : (
-                <XCircle className="w-8 h-8 text-red-500" />
+                <XCircle className="w-8 h-8 text-error" />
               )}
-              <span className="text-xs text-muted-foreground mt-1">VS</span>
+              <span className="text-xs text-muted-foreground mt-1 font-body">VS</span>
             </div>
             
             {/* Challenger Score */}
             <div className="flex-1 text-center p-3 bg-background rounded-lg border">
-              <p className="text-sm text-muted-foreground mb-1 truncate">{challenge.challengerName}</p>
-              <p className="text-2xl font-bold text-muted-foreground">{challenge.score}</p>
+              <p className="text-sm text-muted-foreground mb-1 truncate font-body">{challenge.challengerName}</p>
+              <p className="text-2xl font-display font-bold text-muted-foreground">{challenge.score}</p>
             </div>
           </div>
           
           <div className="text-center">
             <Badge 
               variant={won ? 'default' : 'secondary'}
-              className={won ? 'bg-green-500' : tied ? 'bg-yellow-500' : 'bg-red-500'}
+              className={`font-display ${won ? 'bg-success' : tied ? 'bg-warning' : 'bg-error'}`}
             >
               {won ? '🎉 Você Venceu!' : tied ? '🤝 Empate!' : '😅 Quase lá!'}
             </Badge>
@@ -134,13 +134,13 @@ export const ChallengeResult = memo(({ yourScore, gameMode, difficulty, onDismis
             <Button 
               variant="outline" 
               onClick={handleDismiss}
-              className="flex-1"
+              className="flex-1 touch-target font-body"
             >
               Fechar
             </Button>
             <Button 
               onClick={handleShareRevenge}
-              className="flex-1"
+              className="flex-1 touch-target font-display"
             >
               <Share2 className="w-4 h-4 mr-2" />
               {won ? 'Provocar!' : 'Revanche!'}
