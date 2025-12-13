@@ -198,16 +198,16 @@ export default function FAQ() {
         title="FAQ - Perguntas Frequentes | Lendas do Flu"
         description="Tire suas dúvidas sobre o Lendas do Flu. Encontre respostas para as perguntas mais comuns sobre como jogar, ranking, pontuação e muito mais."
         keywords="faq lendas do flu, perguntas frequentes fluminense, ajuda quiz tricolor, dúvidas jogo fluminense"
-        url="https://flulegendarium.lovable.app/faq"
+        url="https://lendasdoflu.com/faq"
       />
       
-      <div className="min-h-screen bg-muted">
+      <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">
         {/* Header */}
-        <header className="bg-background shadow-sm py-4 bg-tricolor-vertical-border safe-area-top">
+        <header className="bg-background/95 backdrop-blur-md shadow-sm py-4 sticky top-0 z-40">
           <div className="container mx-auto px-4">
             <div className="flex items-center gap-4">
               <Button variant="ghost" size="sm" asChild className="touch-target">
-                <Link to="/" className="flex items-center gap-2">
+                <Link to="/" className="flex items-center gap-2 font-body">
                   <ArrowLeft className="w-4 h-4" />
                   Voltar
                 </Link>
@@ -219,8 +219,8 @@ export default function FAQ() {
                   className="w-8 h-8 object-contain"
                 />
                 <div>
-                  <h1 className="text-display-subtitle text-primary">FAQ</h1>
-                  <p className="text-sm text-muted-foreground font-body">Perguntas Frequentes</p>
+                  <h1 className="font-display text-display-sm text-primary">FAQ</h1>
+                  <p className="font-body text-sm text-muted-foreground">Perguntas Frequentes</p>
                 </div>
               </div>
             </div>
@@ -228,13 +228,13 @@ export default function FAQ() {
         </header>
 
         {/* Hero Section */}
-        <section className="py-12 bg-gradient-to-br from-primary to-secondary text-primary-foreground bg-tricolor-vertical-border">
+        <section className="py-12 bg-gradient-to-br from-primary to-secondary text-primary-foreground">
           <div className="container mx-auto px-4 text-center">
             <div className="flex items-center justify-center gap-3 mb-6">
               <HelpCircle className="w-12 h-12" />
             </div>
-            <h2 className="text-display-title mb-4">Como podemos ajudar?</h2>
-            <p className="text-xl opacity-90 max-w-2xl mx-auto font-body">
+            <h2 className="font-display text-display-hero mb-4">Como podemos ajudar?</h2>
+            <p className="font-body text-xl opacity-90 max-w-2xl mx-auto">
               Encontre respostas para as perguntas mais comuns sobre o Lendas do Flu
             </p>
           </div>
@@ -245,9 +245,9 @@ export default function FAQ() {
           <div className="container mx-auto px-4 max-w-4xl">
             <div className="space-y-8">
               {faqData.map((category, categoryIndex) => (
-                <Card key={categoryIndex} className="overflow-hidden">
-                  <CardHeader className="bg-muted">
-                    <CardTitle className="flex items-center gap-3 text-primary font-display tracking-wide">
+                <Card key={categoryIndex} className="overflow-hidden border-primary/20">
+                  <CardHeader className="bg-muted/50">
+                    <CardTitle className="flex items-center gap-3 text-primary font-display text-display-sm">
                       <category.icon className="w-6 h-6" />
                       {category.category}
                     </CardTitle>
@@ -259,7 +259,7 @@ export default function FAQ() {
                     <Accordion type="single" collapsible className="w-full">
                       {category.questions.map((faq, index) => (
                         <AccordionItem key={index} value={`${categoryIndex}-${index}`} className="px-6">
-                          <AccordionTrigger className="text-left py-4 hover:text-primary touch-target font-body">
+                          <AccordionTrigger className="text-left py-4 hover:text-primary touch-target font-body font-medium">
                             {faq.question}
                           </AccordionTrigger>
                           <AccordionContent className="pb-4 text-muted-foreground leading-relaxed font-body">
@@ -274,9 +274,9 @@ export default function FAQ() {
             </div>
 
             {/* Instagram Feedback Section */}
-            <Card className="mt-12 bg-gradient-to-r from-purple-600 to-pink-600 text-primary-foreground border-0">
+            <Card className="mt-12 bg-gradient-to-r from-accent to-primary text-primary-foreground border-0">
               <CardHeader className="text-center">
-                <CardTitle className="flex items-center justify-center gap-3 text-display-subtitle">
+                <CardTitle className="flex items-center justify-center gap-3 font-display text-display-subtitle">
                   <Instagram className="w-8 h-8" />
                   Não encontrou sua resposta?
                 </CardTitle>
@@ -292,7 +292,7 @@ export default function FAQ() {
                   <Button 
                     variant="secondary" 
                     size="lg"
-                    className="bg-background text-purple-600 hover:bg-muted font-display tracking-wide touch-target-lg"
+                    className="bg-background text-accent-foreground hover:bg-muted font-display touch-target-lg"
                     asChild
                   >
                     <a 
@@ -308,7 +308,7 @@ export default function FAQ() {
                   <Button 
                     variant="secondary" 
                     size="lg"
-                    className="bg-background text-primary hover:bg-muted font-display tracking-wide touch-target-lg"
+                    className="bg-background text-primary hover:bg-muted font-display touch-target-lg"
                     asChild
                   >
                     <Link to="/selecionar-modo-jogo">
@@ -320,9 +320,9 @@ export default function FAQ() {
             </Card>
 
             {/* Contact Section */}
-            <Card className="mt-8 bg-gradient-to-r from-primary to-secondary text-primary-foreground">
+            <Card className="mt-8 bg-gradient-to-r from-primary to-secondary text-primary-foreground border-0">
               <CardHeader className="text-center">
-                <CardTitle className="flex items-center justify-center gap-3 text-display-subtitle">
+                <CardTitle className="flex items-center justify-center gap-3 font-display text-display-subtitle">
                   <MessageCircle className="w-8 h-8" />
                   Outras formas de contato
                 </CardTitle>
@@ -338,7 +338,7 @@ export default function FAQ() {
                   <Button 
                     variant="secondary" 
                     size="lg"
-                    className="bg-background text-primary hover:bg-muted font-display tracking-wide touch-target-lg"
+                    className="bg-background text-primary hover:bg-muted font-display touch-target-lg"
                     asChild
                   >
                     <Link to="/selecionar-modo-jogo">

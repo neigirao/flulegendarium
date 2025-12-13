@@ -44,20 +44,20 @@ const Donations = () => {
                 alt="Lendas do Flu Logo" 
                 className="w-16 h-16 object-contain"
               />
-              <h1 className="text-display-title text-primary-foreground">
+              <h1 className="font-display text-display-hero text-primary-foreground">
                 LENDAS DO FLU
               </h1>
             </div>
             
-            <h2 className="text-display-subtitle text-primary-foreground mb-4">
+            <h2 className="font-display text-display-title text-primary-foreground mb-4">
               Apoie o Lendas do Flu
             </h2>
             
-            <p className="text-xl text-primary-foreground/90 mb-6 font-body">
+            <p className="font-body text-xl text-primary-foreground/90 mb-6">
               Ajude a melhorar e manter o jogo
             </p>
             
-            <p className="text-primary-foreground/80 leading-relaxed font-body">
+            <p className="font-body text-primary-foreground/80 leading-relaxed">
               Seu apoio é essencial para cobrir custos com servidores, 
               desenvolver novos recursos e continuar trazendo melhorias ao 
               quiz. Contribua para o crescimento do Lendas do Flu!
@@ -70,7 +70,7 @@ const Donations = () => {
               <div className="space-y-6">
                 <div className="flex items-center justify-center space-x-4 mb-6">
                   <Smartphone className="h-8 w-8 text-secondary" />
-                  <h3 className="text-display-sm text-primary-foreground">Use o PIX para doar</h3>
+                  <h3 className="font-display text-display-subtitle text-primary-foreground">Use o PIX para doar</h3>
                 </div>
                 
                 {/* QR Code */}
@@ -102,7 +102,7 @@ const Donations = () => {
           {/* Donation Values */}
           <FluCard variant="glass">
             <FluCardHeader>
-              <h3 className="text-display-sm text-primary-foreground text-center flex items-center justify-center gap-2">
+              <h3 className="font-display text-display-subtitle text-primary-foreground text-center flex items-center justify-center gap-2">
                 <Gift className="h-6 w-6 text-secondary" />
                 Valores de doação
               </h3>
@@ -133,7 +133,7 @@ const Donations = () => {
           {/* Thank You Section */}
           <FluCard variant="glass">
             <FluCardContent className="p-8 text-center">
-              <h3 className="text-display-sm text-primary-foreground mb-4 flex items-center justify-center gap-2">
+              <h3 className="font-display text-display-subtitle text-primary-foreground mb-4 flex items-center justify-center gap-2">
                 <Heart className="h-6 w-6 text-destructive" />
                 Agradecemos muito pelo seu apoio!
               </h3>
