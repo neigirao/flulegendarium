@@ -50,7 +50,7 @@ export const TopNavigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-secondary/20 shadow-lg">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-secondary/20 shadow-lg bg-tricolor-vertical-border safe-area-top">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo/Brand */}
@@ -71,10 +71,10 @@ export const TopNavigation = () => {
               />
             </div>
             <div className="flex flex-col">
-              <h1 className="text-xl font-bold text-primary leading-tight">
-                Lendas do Flu
+              <h1 className="text-xl font-display text-primary leading-tight tracking-wide">
+                LENDAS DO FLU
               </h1>
-              <span className="text-xs text-secondary font-medium">
+              <span className="text-xs text-secondary font-medium font-body">
                 Tricolor de Coração
               </span>
             </div>
@@ -88,7 +88,7 @@ export const TopNavigation = () => {
                 variant="ghost"
                 size="sm"
                 onClick={item.onClick}
-                className="text-primary hover:bg-secondary/10 hover:text-secondary transition-colors"
+                className="text-primary hover:bg-secondary/10 hover:text-secondary transition-colors touch-target"
               >
                 <item.icon className="h-4 w-4 mr-2" />
                 {item.label}
@@ -108,12 +108,12 @@ export const TopNavigation = () => {
                 <Button 
                   variant="ghost" 
                   size="sm"
-                  className="text-primary hover:bg-secondary/10"
+                  className="text-primary hover:bg-secondary/10 touch-target"
                 >
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80 bg-background border-l border-secondary/20">
+              <SheetContent side="right" className="w-80 bg-background border-l border-secondary/20 bg-tricolor-left-accent safe-area-right">
                 <div className="flex flex-col space-y-4 mt-8">
                   <div className="flex items-center space-x-3 pb-4 border-b border-secondary/20">
                     <div className="w-12 h-12 flex items-center justify-center">
@@ -124,8 +124,8 @@ export const TopNavigation = () => {
                       />
                     </div>
                     <div>
-                      <h2 className="font-bold text-primary">Lendas do Flu</h2>
-                      <p className="text-sm text-secondary">Menu Principal</p>
+                      <h2 className="font-display text-primary tracking-wide">LENDAS DO FLU</h2>
+                      <p className="text-sm text-secondary font-body">Menu Principal</p>
                     </div>
                   </div>
                   
@@ -134,7 +134,7 @@ export const TopNavigation = () => {
                       key={item.label}
                       variant="ghost"
                       onClick={() => handleNavigation(item.onClick)}
-                      className="justify-start text-primary hover:bg-secondary/10 hover:text-secondary h-12"
+                      className="justify-start text-primary hover:bg-secondary/10 hover:text-secondary touch-target-lg"
                     >
                       <item.icon className="h-5 w-5 mr-3" />
                       {item.label}
