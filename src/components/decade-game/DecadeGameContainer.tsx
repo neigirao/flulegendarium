@@ -5,6 +5,7 @@ import { GameContainer } from '@/components/guess-game/GameContainer';
 import { BaseGameContainer } from '@/components/guess-game/BaseGameContainer';
 import { GuestNameForm } from '@/components/guess-game/GuestNameForm';
 import { GameOverDialog } from '@/components/guess-game/GameOverDialog';
+import { GuessHistoryPanel } from '@/components/guess-game/GuessHistoryPanel';
 import { 
   useDecadePlayerSelection, 
   useSimpleGameLogic, 
@@ -19,6 +20,7 @@ import { AchievementNotification } from '@/components/achievements/AchievementNo
 import { useAchievementNotifications } from '@/hooks/use-achievement-notifications';
 import { useFunnelAnalytics } from '@/hooks/use-funnel-analytics';
 import { useChallengeProgress } from '@/hooks/use-challenge-progress';
+import { useGuessHistory } from '@/hooks/use-guess-history';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';
@@ -39,6 +41,7 @@ export const DecadeGameContainer = () => {
   const funnel = useFunnelAnalytics();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
   const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
+  const { history, addEntry, clearHistory, getStats } = useGuessHistory();
   
   // Tracking refs
   const hasTrackedFirstGuess = useRef(false);
@@ -136,6 +139,9 @@ export const DecadeGameContainer = () => {
     startTimer
   });
 
+  // Track last guess for history
+  const lastGuessRef = useRef<string>('');
+
   // Wrapped handleGuess with funnel tracking and onboarding
   const handleGuess = useCallback((guess: string) => {
     if (!hasTrackedFirstGuess.current && selectedDecade) {
@@ -147,6 +153,9 @@ export const DecadeGameContainer = () => {
     if (isStepActive('first-guess')) {
       nextStep();
     }
+    
+    // Store guess for history tracking
+    lastGuessRef.current = guess;
     
     originalHandleGuess(guess);
   }, [originalHandleGuess, funnel, selectedDecade, isStepActive, nextStep]);
@@ -163,14 +172,40 @@ export const DecadeGameContainer = () => {
   useEffect(() => {
     if (gameOver && !prevGameOverRef.current && selectedDecade) {
       funnel.trackGameCompleted(score, gamesPlayed, `decade_${selectedDecade}`);
+      onGameCompleted(score);
+      
+      // Add failed guess to history (timeout or wrong)
+      if (currentPlayer && lastGuessRef.current) {
+        addEntry({
+          playerName: currentPlayer.name,
+          playerImageUrl: currentPlayer.image_url,
+          guess: lastGuessRef.current,
+          isCorrect: false,
+          difficulty: currentDifficulty.label,
+          timeRemaining: timeRemaining,
+        });
+      }
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, selectedDecade, funnel]);
+  }, [gameOver, score, gamesPlayed, selectedDecade, funnel, onGameCompleted, currentPlayer, addEntry, currentDifficulty.label, timeRemaining]);
 
   // Track correct guesses based on streak changes
   useEffect(() => {
-    if (currentStreak > prevStreakRef.current) {
+    if (currentStreak > prevStreakRef.current && currentPlayer) {
       funnel.trackGuessResult(true, gamesPlayed);
+      onCorrectGuess();
+      onStreakAchieved(currentStreak);
+      
+      // Add correct guess to history
+      addEntry({
+        playerName: currentPlayer.name,
+        playerImageUrl: currentPlayer.image_url,
+        guess: lastGuessRef.current,
+        isCorrect: true,
+        difficulty: currentDifficulty.label,
+        pointsEarned: Math.floor(5 * (currentDifficulty.multiplier || 1)),
+        timeRemaining: timeRemaining,
+      });
       
       // Check for newly unlocked achievements
       const currentAchievements = getPlayerAchievements();
@@ -189,15 +224,16 @@ export const DecadeGameContainer = () => {
       previousAchievementsRef.current = currentIds;
     }
     prevStreakRef.current = currentStreak;
-  }, [currentStreak, gamesPlayed, funnel, getPlayerAchievements, queueNotification]);
+  }, [currentStreak, gamesPlayed, funnel, getPlayerAchievements, queueNotification, onCorrectGuess, onStreakAchieved, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
 
-  // Reset tracking refs when game resets
+  // Reset tracking refs and history when game resets
   useEffect(() => {
     if (!gameOver && gamesPlayed === 0) {
       hasTrackedFirstGuess.current = false;
       hasTrackedGameStart.current = false;
+      clearHistory();
     }
-  }, [gameOver, gamesPlayed]);
+  }, [gameOver, gamesPlayed, clearHistory]);
 
   // Ativar step de primeiro palpite quando imagem carregar
   useEffect(() => {
@@ -447,6 +483,16 @@ export const DecadeGameContainer = () => {
             } as any}
           />
         </CoachMark>
+        
+        {/* Guess History Panel */}
+        {history.length > 0 && (
+          <GuessHistoryPanel
+            history={history}
+            stats={getStats()}
+            compact
+            className="mt-4"
+          />
+        )}
       </BaseGameContainer>
     
       <GameOverDialog

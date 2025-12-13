@@ -12,12 +12,14 @@ import { GuestNameForm } from "./GuestNameForm";
 import { AdaptiveProgressionNotification } from "./AdaptiveProgressionNotification";
 import { DebugInfo } from "./DebugInfo";
 import { ErrorDisplay } from "./ErrorDisplay";
+import { GuessHistoryPanel } from "./GuessHistoryPanel";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { AchievementNotification } from "@/components/achievements/AchievementNotification";
 import { useAchievementNotifications } from "@/hooks/use-achievement-notifications";
 import { useEnhancedAnalytics } from "@/hooks/analytics";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { useChallengeProgress } from "@/hooks/use-challenge-progress";
+import { useGuessHistory } from "@/hooks/use-guess-history";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/mobile";
 import { useUX } from "@/components/ux/UXProvider";
@@ -56,6 +58,7 @@ const AdaptiveGameContainer = () => {
   const { showContextualFeedback } = useUX();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
   const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
+  const { history, addEntry, clearHistory, getStats } = useGuessHistory();
   const {
     currentPlayer,
     gameKey,
@@ -91,6 +94,9 @@ const AdaptiveGameContainer = () => {
     originalStartGame();
   }, [originalStartGame, funnel, currentDifficulty.level]);
 
+  // Track last guess for history
+  const lastGuessRef = useRef<string>('');
+
   // Wrapped handleGuess with funnel tracking and onboarding
   const handleGuess = useCallback((guess: string) => {
     // Track first guess
@@ -104,6 +110,9 @@ const AdaptiveGameContainer = () => {
       nextStep();
     }
     
+    // Store guess for history tracking
+    lastGuessRef.current = guess;
+    
     // Track guess (result will be determined by game state change)
     originalHandleGuess(guess);
   }, [originalHandleGuess, funnel, isStepActive, nextStep]);
@@ -114,19 +123,45 @@ const AdaptiveGameContainer = () => {
       funnel.trackGameCompleted(score, gamesPlayed, 'adaptive');
       // Update daily challenge progress
       onGameCompleted(score);
+      
+      // Add failed guess to history (timeout or wrong)
+      if (currentPlayer && lastGuessRef.current) {
+        addEntry({
+          playerName: currentPlayer.name,
+          playerImageUrl: currentPlayer.image_url,
+          guess: lastGuessRef.current,
+          isCorrect: false,
+          difficulty: currentDifficulty.label,
+          timeRemaining: timeRemaining,
+        });
+      }
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, funnel, onGameCompleted]);
+  }, [gameOver, score, gamesPlayed, funnel, onGameCompleted, currentPlayer, addEntry, currentDifficulty.label, timeRemaining]);
 
   // Track correct/incorrect guesses based on streak changes
   const prevStreakRef = useRef(currentStreak);
+  const prevGamesPlayedRef = useRef(gamesPlayed);
+  
   useEffect(() => {
-    if (currentStreak > prevStreakRef.current) {
+    // Correct guess detected
+    if (currentStreak > prevStreakRef.current && currentPlayer) {
       funnel.trackGuessResult(true, gamesPlayed);
       // Update daily challenge progress for correct guess
       onCorrectGuess();
       // Update streak challenges
       onStreakAchieved(currentStreak);
+      
+      // Add correct guess to history
+      addEntry({
+        playerName: currentPlayer.name,
+        playerImageUrl: currentPlayer.image_url,
+        guess: lastGuessRef.current,
+        isCorrect: true,
+        difficulty: currentDifficulty.label,
+        pointsEarned: Math.floor(5 * (currentDifficulty.multiplier || 1)),
+        timeRemaining: timeRemaining,
+      });
       
       // Check for newly unlocked achievements and queue notifications
       const currentAchievements = getPlayerAchievements();
@@ -145,15 +180,17 @@ const AdaptiveGameContainer = () => {
       previousAchievementsRef.current = currentIds;
     }
     prevStreakRef.current = currentStreak;
-  }, [currentStreak, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification]);
+    prevGamesPlayedRef.current = gamesPlayed;
+  }, [currentStreak, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
 
-  // Reset tracking refs when game resets
+  // Reset tracking refs and history when game resets
   useEffect(() => {
     if (!gameOver && gamesPlayed === 0) {
       hasTrackedFirstGuess.current = false;
       hasTrackedGameStart.current = false;
+      clearHistory();
     }
-  }, [gameOver, gamesPlayed]);
+  }, [gameOver, gamesPlayed, clearHistory]);
 
   // Ativar step de primeiro palpite quando imagem carregar
   useEffect(() => {
@@ -322,6 +359,16 @@ const AdaptiveGameContainer = () => {
                 />
               </CoachMark>
             </div>
+          )}
+          
+          {/* Guess History Panel */}
+          {history.length > 0 && (
+            <GuessHistoryPanel
+              history={history}
+              stats={getStats()}
+              compact
+              className="mt-4"
+            />
           )}
         </div>
       </BaseGameContainer>
