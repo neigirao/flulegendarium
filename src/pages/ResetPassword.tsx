@@ -98,13 +98,13 @@ const ResetPassword = () => {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-tricolor-vertical-border p-4 safe-area-top safe-area-bottom">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center gap-4 text-center">
-              <CheckCircle className="h-16 w-16 text-green-500" />
-              <h2 className="text-2xl font-bold text-foreground">Senha Atualizada!</h2>
-              <p className="text-muted-foreground">
+              <CheckCircle className="h-16 w-16 text-success" />
+              <h2 className="text-display-subtitle text-foreground">Senha Atualizada!</h2>
+              <p className="text-muted-foreground font-body">
                 Sua senha foi redefinida com sucesso. Você será redirecionado em instantes...
               </p>
             </div>
@@ -116,16 +116,16 @@ const ResetPassword = () => {
 
   if (!isRecoveryMode) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-tricolor-vertical-border p-4 safe-area-top safe-area-bottom">
         <Card className="w-full max-w-md">
           <CardContent className="pt-6">
             <div className="flex flex-col items-center gap-4 text-center">
-              <AlertCircle className="h-16 w-16 text-yellow-500" />
-              <h2 className="text-2xl font-bold text-foreground">Link Inválido</h2>
-              <p className="text-muted-foreground">
+              <AlertCircle className="h-16 w-16 text-warning" />
+              <h2 className="text-display-subtitle text-foreground">Link Inválido</h2>
+              <p className="text-muted-foreground font-body">
                 Este link de redefinição de senha é inválido ou expirou.
               </p>
-              <Button onClick={() => navigate('/auth')} className="mt-4">
+              <Button onClick={() => navigate('/auth')} className="mt-4 touch-target font-display">
                 Voltar para Login
               </Button>
             </div>
@@ -136,7 +136,7 @@ const ResetPassword = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-secondary/10 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-tricolor-vertical-border p-4 safe-area-top safe-area-bottom">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -146,8 +146,8 @@ const ResetPassword = () => {
               className="h-16 w-16 object-contain"
             />
           </div>
-          <CardTitle className="text-2xl font-bold">Redefinir Senha</CardTitle>
-          <CardDescription>
+          <CardTitle className="text-display-subtitle">Redefinir Senha</CardTitle>
+          <CardDescription className="font-body">
             Digite sua nova senha abaixo
           </CardDescription>
         </CardHeader>
@@ -161,7 +161,7 @@ const ResetPassword = () => {
             )}
             
             <div className="space-y-2">
-              <Label htmlFor="newPassword">Nova Senha</Label>
+              <Label htmlFor="newPassword" className="font-body">Nova Senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -185,7 +185,7 @@ const ResetPassword = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
+              <Label htmlFor="confirmPassword" className="font-body">Confirmar Nova Senha</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -210,7 +210,7 @@ const ResetPassword = () => {
             
             <Button 
               type="submit" 
-              className="w-full" 
+              className="w-full touch-target-lg font-display" 
               disabled={isLoading}
             >
               {isLoading ? 'Salvando...' : 'Salvar Nova Senha'}
@@ -220,7 +220,7 @@ const ResetPassword = () => {
               <button
                 type="button"
                 onClick={() => navigate('/auth')}
-                className="text-sm text-muted-foreground hover:text-primary underline"
+                className="text-sm text-muted-foreground hover:text-primary underline font-body"
               >
                 Voltar para o Login
               </button>

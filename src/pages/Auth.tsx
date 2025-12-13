@@ -129,8 +129,8 @@ const Auth = () => {
   if (loading) {
     return (
       <RootLayout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-flu-grena"></div>
+        <div className="min-h-screen flex items-center justify-center bg-tricolor-vertical-border safe-area-top safe-area-bottom">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       </RootLayout>
     );
@@ -143,14 +143,14 @@ const Auth = () => {
         description="Entre na sua conta para salvar seu progresso e competir no ranking global dos Lendas do Flu!"
       />
       <RootLayout>
-        <div className="min-h-screen bg-gradient-to-br from-flu-verde/10 via-white to-flu-grena/10 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-tricolor-vertical-border flex items-center justify-center p-4 safe-area-top safe-area-bottom">
           <div className="w-full max-w-md">
             {/* Header */}
             <div className="text-center mb-8">
               <Button
                 variant="outline"
                 onClick={() => navigate(-1)}
-                className="mb-4"
+                className="mb-4 touch-target"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar
@@ -162,22 +162,22 @@ const Auth = () => {
                   alt="Fluminense FC" 
                   className="w-12 h-12 object-contain"
                 />
-                <h1 className="text-3xl font-bold text-flu-grena">Lendas do Flu</h1>
+                <h1 className="text-display-title text-primary">Lendas do Flu</h1>
               </div>
-              <p className="text-gray-600">
+              <p className="text-muted-foreground font-body">
                 Entre na sua conta para salvar seu progresso
               </p>
             </div>
 
-            <Card className="shadow-2xl border-0 bg-white/95 backdrop-blur-sm">
+            <Card className="shadow-2xl border-0 bg-card/95 backdrop-blur-sm">
               <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl text-flu-grena">Acesse sua conta</CardTitle>
+                <CardTitle className="text-display-subtitle text-primary">Acesse sua conta</CardTitle>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="signin" className="w-full">
                   <TabsList className="grid w-full grid-cols-2 mb-6">
-                    <TabsTrigger value="signin">Entrar</TabsTrigger>
-                    <TabsTrigger value="signup">Criar Conta</TabsTrigger>
+                    <TabsTrigger value="signin" className="font-display">Entrar</TabsTrigger>
+                    <TabsTrigger value="signup" className="font-display">Criar Conta</TabsTrigger>
                   </TabsList>
 
                   {error && (
@@ -191,9 +191,9 @@ const Auth = () => {
                   <TabsContent value="signin">
                     <form onSubmit={handleSignIn} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email" className="font-body">Email</Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             id="email"
                             type="email"
@@ -207,9 +207,9 @@ const Auth = () => {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="password">Senha</Label>
+                        <Label htmlFor="password" className="font-body">Senha</Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             id="password"
                             type="password"
@@ -224,7 +224,7 @@ const Auth = () => {
 
                       <Button
                         type="submit"
-                        className="w-full bg-flu-grena hover:bg-flu-grena/90"
+                        className="w-full touch-target-lg font-display"
                         disabled={isLoading}
                       >
                         {isLoading ? 'Entrando...' : 'Entrar'}
@@ -233,7 +233,7 @@ const Auth = () => {
                       <Button
                         type="button"
                         variant="link"
-                        className="w-full text-flu-verde hover:text-flu-verde/80"
+                        className="w-full text-primary hover:text-primary/80 font-body"
                         onClick={() => setShowResetDialog(true)}
                       >
                         Esqueci minha senha
@@ -244,9 +244,9 @@ const Auth = () => {
                   <TabsContent value="signup">
                     <form onSubmit={handleSignUp} className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="fullName">Nome *</Label>
+                        <Label htmlFor="fullName" className="font-body">Nome *</Label>
                         <div className="relative">
-                          <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             id="fullName"
                             type="text"
@@ -261,9 +261,9 @@ const Auth = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="signup-email">Email</Label>
+                        <Label htmlFor="signup-email" className="font-body">Email</Label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             id="signup-email"
                             type="email"
@@ -277,9 +277,9 @@ const Auth = () => {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="signup-password">Senha</Label>
+                        <Label htmlFor="signup-password" className="font-body">Senha</Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             id="signup-password"
                             type="password"
@@ -293,9 +293,9 @@ const Auth = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="confirm-password">Confirmar Senha</Label>
+                        <Label htmlFor="confirm-password" className="font-body">Confirmar Senha</Label>
                         <div className="relative">
-                          <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                          <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                           <Input
                             id="confirm-password"
                             type="password"
@@ -310,7 +310,7 @@ const Auth = () => {
 
                       <Button
                         type="submit"
-                        className="w-full bg-flu-verde hover:bg-flu-verde/90"
+                        className="w-full touch-target-lg font-display"
                         disabled={isLoading}
                       >
                         {isLoading ? 'Criando conta...' : 'Criar Conta'}
@@ -325,7 +325,7 @@ const Auth = () => {
                     type="button"
                     variant="link"
                     onClick={() => navigate('/selecionar-modo-jogo')}
-                    className="text-flu-grena hover:text-flu-grena/80"
+                    className="text-primary hover:text-primary/80 font-body"
                   >
                     Jogar como convidado
                   </Button>
@@ -335,20 +335,19 @@ const Auth = () => {
           </div>
         </div>
 
-        {/* Reset Password Dialog */}
         <Dialog open={showResetDialog} onOpenChange={setShowResetDialog}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Recuperar Senha</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="font-display text-xl">Recuperar Senha</DialogTitle>
+              <DialogDescription className="font-body">
                 Digite seu email e enviaremos um link para redefinir sua senha.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="reset-email">Email</Label>
+                <Label htmlFor="reset-email" className="font-body">Email</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="reset-email"
                     type="email"
@@ -365,13 +364,13 @@ const Auth = () => {
                   type="button"
                   variant="outline"
                   onClick={() => setShowResetDialog(false)}
-                  className="flex-1"
+                  className="flex-1 touch-target font-body"
                 >
                   Cancelar
                 </Button>
                 <Button
                   type="submit"
-                  className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+                  className="flex-1 touch-target font-display"
                   disabled={resetLoading}
                 >
                   {resetLoading ? 'Enviando...' : 'Enviar'}
