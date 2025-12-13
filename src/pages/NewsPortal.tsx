@@ -48,18 +48,18 @@ const NewsPortal = () => {
         title="Portal de Notícias - Lendas do Flu | Notícias do Tricolor"
         description="🗞️ Fique por dentro das últimas notícias sobre o Fluminense Football Club. Notícias do time principal, base, história e muito mais!"
         keywords="notícias fluminense, portal tricolor, fluminense fc, notícias flu"
-        url="https://flulegendarium.lovable.app/noticias"
+        url="https://lendasdoflu.com/noticias"
       />
       <RootLayout>
-        <div className="min-h-screen bg-gradient-to-br from-flu-verde/5 via-white to-flu-grena/5">
+        <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">
           {/* Header */}
-          <div className="bg-gradient-to-r from-flu-grena via-flu-grena/90 to-flu-verde text-white py-16">
+          <div className="bg-gradient-to-r from-primary via-primary/90 to-secondary text-primary-foreground py-16">
             <div className="container mx-auto px-4">
               <div className="text-center mb-8">
-                <h1 className="text-4xl md:text-6xl font-bold tracking-wider mb-4">
+                <h1 className="font-display text-display-hero tracking-wider mb-4">
                   NOTÍCIAS DO TRICOLOR
                 </h1>
-                <p className="text-xl text-white/90 max-w-2xl mx-auto">
+                <p className="font-body text-display-sm text-primary-foreground/90 max-w-2xl mx-auto">
                   Fique por dentro das últimas notícias sobre o Fluminense Football Club.
                 </p>
               </div>
@@ -81,13 +81,13 @@ const NewsPortal = () => {
                 <div className="mt-8">
                   {selectedCategory && (
                     <div className="mb-6">
-                      <h2 className="text-2xl font-bold text-flu-grena mb-2">
+                      <h2 className="font-display text-display-subtitle text-primary mb-2">
                         {categories?.find(c => c.id === selectedCategory)?.name}
                       </h2>
                       <Button 
                         variant="ghost" 
                         onClick={() => handleCategorySelect(null)}
-                        className="text-flu-verde hover:text-flu-grena"
+                        className="touch-target text-secondary hover:text-primary"
                       >
                         ← Voltar para todas as notícias
                       </Button>
@@ -96,13 +96,13 @@ const NewsPortal = () => {
 
                   {searchTerm && (
                     <div className="mb-6">
-                      <h2 className="text-2xl font-bold text-flu-grena mb-2">
+                      <h2 className="font-display text-display-subtitle text-primary mb-2">
                         Resultados para "{searchTerm}"
                       </h2>
                       <Button 
                         variant="ghost" 
                         onClick={() => handleSearch("")}
-                        className="text-flu-verde hover:text-flu-grena"
+                        className="touch-target text-secondary hover:text-primary"
                       >
                         ← Limpar busca
                       </Button>
@@ -118,13 +118,13 @@ const NewsPortal = () => {
                         variant="outline"
                         onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
                         disabled={currentPage === 1}
-                        className="flex items-center gap-2"
+                        className="touch-target flex items-center gap-2"
                       >
                         <ChevronLeft className="w-4 h-4" />
                         Anterior
                       </Button>
                       
-                      <span className="text-flu-grena font-medium">
+                      <span className="font-body text-primary font-medium">
                         {currentPage} de {totalPages}
                       </span>
                       
@@ -132,7 +132,7 @@ const NewsPortal = () => {
                         variant="outline"
                         onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
                         disabled={currentPage === totalPages}
-                        className="flex items-center gap-2"
+                        className="touch-target flex items-center gap-2"
                       >
                         Próxima
                         <ChevronRight className="w-4 h-4" />
