@@ -87,7 +87,7 @@ const NewsArticle = () => {
   if (isLoading) {
     return (
       <RootLayout>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-muted safe-area-top safe-area-bottom">
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-4xl mx-auto">
               <SkeletonLoader className="h-8 w-3/4 mb-4" />
@@ -105,18 +105,18 @@ const NewsArticle = () => {
   if (notFound) {
     return (
       <RootLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-muted flex items-center justify-center safe-area-top safe-area-bottom">
           <div className="text-center">
             <div className="text-6xl mb-4">📰</div>
-            <h1 className="text-2xl font-bold text-flu-grena mb-2">
+            <h1 className="font-display text-display-subtitle text-primary mb-2">
               Notícia não encontrada
             </h1>
-            <p className="text-gray-600 mb-6">
+            <p className="font-body text-muted-foreground mb-6">
               A notícia que você está procurando não existe ou foi removida.
             </p>
             <Button 
               onClick={() => navigate('/noticias')}
-              className="bg-flu-grena hover:bg-flu-grena/90"
+              className="touch-target-lg bg-primary hover:bg-primary/90"
             >
               Voltar ao Portal de Notícias
             </Button>
@@ -134,17 +134,17 @@ const NewsArticle = () => {
         title={`${article.title} - Portal de Notícias | Lendas do Flu`}
         description={article.summary || article.content.substring(0, 160)}
         keywords={`${article.category?.name || 'notícias'}, fluminense, tricolor, ${article.title}`}
-        url={`https://flulegendarium.lovable.app/noticias/${article.slug}`}
+        url={`https://lendasdoflu.com/noticias/${article.slug}`}
       />
       <RootLayout>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">
           {/* Header */}
-          <div className="bg-gradient-to-r from-flu-grena to-flu-verde text-white py-8">
+          <div className="bg-gradient-to-r from-primary to-secondary text-primary-foreground py-8">
             <div className="container mx-auto px-4">
               <Button
                 variant="ghost"
                 onClick={() => navigate('/noticias')}
-                className="text-white hover:bg-white/20 mb-4"
+                className="touch-target text-primary-foreground hover:bg-primary-foreground/20 mb-4"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Voltar ao Portal
@@ -157,24 +157,24 @@ const NewsArticle = () => {
               {/* Article Header */}
               <header className="mb-8">
                 {article.category && (
-                  <Badge className="bg-flu-verde text-white mb-4">
+                  <Badge className="bg-secondary text-secondary-foreground mb-4">
                     {article.category.name}
                   </Badge>
                 )}
                 
-                <h1 className="text-3xl md:text-4xl font-bold text-flu-grena mb-4 leading-tight">
+                <h1 className="font-display text-display-title text-primary mb-4 leading-tight">
                   {article.title}
                 </h1>
 
                 {article.summary && (
-                  <p className="text-xl text-gray-600 mb-6 leading-relaxed">
+                  <p className="font-body text-display-sm text-muted-foreground mb-6 leading-relaxed">
                     {article.summary}
                   </p>
                 )}
 
                 {/* Meta Info */}
-                <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-gray-200">
-                  <div className="flex flex-wrap items-center gap-4 text-gray-600">
+                <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-y border-border">
+                  <div className="flex flex-wrap items-center gap-4 text-muted-foreground font-body">
                     <div className="flex items-center gap-2">
                       <User className="w-4 h-4" />
                       <span>{article.author_name}</span>
@@ -195,7 +195,7 @@ const NewsArticle = () => {
                     variant="outline"
                     size="sm"
                     onClick={handleShare}
-                    className="flex items-center gap-2"
+                    className="touch-target flex items-center gap-2"
                   >
                     <Share2 className="w-4 h-4" />
                     Compartilhar
@@ -218,17 +218,17 @@ const NewsArticle = () => {
               <div className="prose prose-lg max-w-none">
                 <SafeHtml 
                   html={article.content.replace(/\n/g, '<br>')}
-                  className="text-gray-800 leading-relaxed"
+                  className="font-body text-foreground leading-relaxed"
                 />
               </div>
 
               {/* Share Section */}
-              <div className="mt-8 pt-8 border-t border-gray-200">
+              <div className="mt-8 pt-8 border-t border-border">
                 <div className="flex items-center justify-between">
-                  <p className="text-gray-600">Gostou desta notícia?</p>
+                  <p className="font-body text-muted-foreground">Gostou desta notícia?</p>
                   <Button
                     onClick={handleShare}
-                    className="bg-flu-verde hover:bg-flu-verde/90 text-white"
+                    className="touch-target-lg bg-secondary hover:bg-secondary/90 text-secondary-foreground"
                   >
                     <Share2 className="w-4 h-4 mr-2" />
                     Compartilhar
