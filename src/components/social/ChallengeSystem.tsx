@@ -151,32 +151,32 @@ export const ChallengeSystem = memo(({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 font-display">
           <Swords className="w-5 h-5 text-primary" />
           <span>Desafiar Amigo</span>
         </CardTitle>
       </CardHeader>
       
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground font-body">
           Desafie seus amigos a superar sua pontuação! Gere um link único e compartilhe.
         </p>
         
         {isLoadingScore ? (
           <div className="flex items-center justify-center gap-2 p-4 bg-muted/50 rounded-lg">
             <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">Carregando pontuação...</span>
+            <span className="text-sm text-muted-foreground font-body">Carregando pontuação...</span>
           </div>
         ) : hasScore ? (
           <div className="flex items-center justify-center gap-2 p-4 bg-primary/10 rounded-lg">
             <Trophy className="w-6 h-6 text-primary" />
-            <span className="text-lg font-bold text-primary">{lastScore} pontos</span>
-            <Badge variant="outline">{gameMode === 'adaptive' ? 'Adaptativo' : 'Por Década'}</Badge>
+            <span className="text-lg font-display font-bold text-primary">{lastScore} pontos</span>
+            <Badge variant="outline" className="font-body">{gameMode === 'adaptive' ? 'Adaptativo' : 'Por Década'}</Badge>
           </div>
         ) : (
           <div className="flex items-center justify-center gap-2 p-4 bg-muted/50 rounded-lg border-2 border-dashed border-muted">
             <Trophy className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-muted-foreground font-body">
               {user ? 'Jogue uma partida para gerar desafios!' : 'Faça login para ver sua última pontuação'}
             </span>
           </div>
@@ -185,7 +185,7 @@ export const ChallengeSystem = memo(({
         {!challengeLink ? (
           <Button 
             onClick={handleGenerateChallenge} 
-            className="w-full"
+            className="w-full touch-target-lg font-display"
             disabled={buttonDisabled}
           >
             {isGenerating ? (
@@ -212,6 +212,7 @@ export const ChallengeSystem = memo(({
                 size="icon" 
                 variant="outline"
                 onClick={handleCopyLink}
+                className="touch-target"
               >
                 {copied ? (
                   <Check className="w-4 h-4 text-green-500" />
@@ -223,7 +224,7 @@ export const ChallengeSystem = memo(({
             
             <Button 
               onClick={handleNativeShare} 
-              className="w-full"
+              className="w-full touch-target-lg font-display"
               variant="default"
             >
               <Share2 className="w-4 h-4 mr-2" />
@@ -233,7 +234,7 @@ export const ChallengeSystem = memo(({
         )}
 
         {!user && (
-          <p className="text-xs text-muted-foreground text-center">
+          <p className="text-xs text-muted-foreground text-center font-body">
             💡 Faça login para salvar seus desafios e acompanhar quem aceitou!
           </p>
         )}

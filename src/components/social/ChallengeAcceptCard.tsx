@@ -71,7 +71,7 @@ export const ChallengeAcceptCard = memo(({ challenge, challengeLink, onDismiss }
     >
       <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-primary/10">
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-lg">
+          <CardTitle className="flex items-center gap-2 text-lg font-display">
             <Swords className="w-5 h-5 text-primary animate-pulse" />
             <span>Você foi desafiado!</span>
           </CardTitle>
@@ -80,23 +80,23 @@ export const ChallengeAcceptCard = memo(({ challenge, challengeLink, onDismiss }
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between p-3 bg-background rounded-lg border">
             <div>
-              <p className="font-medium">{challenge.challengerName}</p>
-              <p className="text-sm text-muted-foreground">quer ver se você supera...</p>
+              <p className="font-display font-medium">{challenge.challengerName}</p>
+              <p className="text-sm text-muted-foreground font-body">quer ver se você supera...</p>
             </div>
             <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-yellow-500" />
-              <span className="text-xl font-bold text-primary">{challenge.score}</span>
-              <span className="text-sm text-muted-foreground">pts</span>
+              <Trophy className="w-5 h-5 text-warning" />
+              <span className="text-xl font-display font-bold text-primary">{challenge.score}</span>
+              <span className="text-sm text-muted-foreground font-body">pts</span>
             </div>
           </div>
           
           <div className="flex items-center gap-2 justify-center">
-            <Badge variant="outline">
+            <Badge variant="outline" className="font-body">
               <Target className="w-3 h-3 mr-1" />
               {challenge.gameMode === 'adaptive' ? 'Modo Adaptativo' : 'Modo Por Década'}
             </Badge>
             {challenge.difficulty && (
-              <Badge variant="secondary">
+              <Badge variant="secondary" className="font-body">
                 {challenge.difficulty}
               </Badge>
             )}
@@ -106,14 +106,14 @@ export const ChallengeAcceptCard = memo(({ challenge, challengeLink, onDismiss }
             <Button 
               variant="outline" 
               onClick={onDismiss}
-              className="flex-1"
+              className="flex-1 touch-target font-body"
               disabled={isAccepting}
             >
               Depois
             </Button>
             <Button 
               onClick={handleAcceptChallenge}
-              className="flex-1"
+              className="flex-1 touch-target font-display"
               disabled={isAccepting}
             >
               {isAccepting ? (

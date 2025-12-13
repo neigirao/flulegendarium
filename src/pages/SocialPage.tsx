@@ -66,24 +66,24 @@ const SocialPage = () => {
       />
       <RootLayout>
         <TopNavigation />
-        <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 pt-16">
+        <div className="min-h-screen bg-tricolor-vertical-border pt-16 safe-area-top safe-area-bottom">
           <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">
               <Button
                 variant="outline"
                 onClick={() => navigate(-1)}
-                className="mb-4 flex items-center gap-2"
+                className="mb-4 flex items-center gap-2 touch-target"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Voltar
               </Button>
               
               <div className="text-center">
-                <h1 className="text-4xl font-bold text-primary mb-4">
+                <h1 className="text-display-hero text-primary mb-4">
                   Comunidade Tricolor
                 </h1>
-                <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                <p className="text-xl text-muted-foreground max-w-2xl mx-auto font-body">
                   Veja o ranking semanal, desafie seus amigos e celebre o conhecimento tricolor!
                 </p>
               </div>
@@ -121,16 +121,16 @@ const SocialPage = () => {
               <Card className="max-w-2xl mx-auto bg-gradient-to-r from-primary/10 to-secondary/10">
                 <CardContent className="p-8">
                   <Users className="w-16 h-16 text-primary mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-primary mb-4">
+                  <h3 className="text-display-subtitle text-primary mb-4">
                     Junte-se à Comunidade!
                   </h3>
-                  <p className="text-muted-foreground mb-6">
+                  <p className="text-muted-foreground mb-6 font-body">
                     Jogue para aparecer no ranking semanal e desafiar seus amigos tricolores.
                   </p>
                   <div className="space-y-3">
                     <Button 
                       onClick={() => navigate('/selecionar-modo-jogo')}
-                      className="w-full"
+                      className="w-full touch-target-lg font-display"
                     >
                       Começar a Jogar
                     </Button>
@@ -138,7 +138,7 @@ const SocialPage = () => {
                       <Button 
                         onClick={() => navigate('/auth')}
                         variant="outline"
-                        className="w-full"
+                        className="w-full touch-target font-display"
                       >
                         Fazer Login
                       </Button>
