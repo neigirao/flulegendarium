@@ -10,6 +10,9 @@
 import { Player, DifficultyLevel } from './guess-game';
 import { GameModeId } from '@/config/game-config';
 
+// Re-export DifficultyLevel for easier imports
+export type { DifficultyLevel } from './guess-game';
+
 /**
  * Configuração de um modo de jogo.
  */

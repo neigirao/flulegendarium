@@ -47,3 +47,25 @@ export {
   type CreateRankingEntryInput,
   type ValidatedRankingFilters,
 } from './ranking.schema';
+
+// Jersey schemas
+export {
+  JerseySchema,
+  JerseyListSchema,
+  CreateJerseySchema,
+  UpdateJerseySchema,
+  JerseyTypeSchema,
+  JerseyGuessSchema,
+  JerseyGuessResultSchema,
+  JerseyGameSessionSchema,
+  JerseyRankingEntrySchema,
+  JerseyDifficultyStatSchema,
+  type ValidatedJersey,
+  type ValidatedJerseyGuess,
+  type ValidatedJerseyGuessResult,
+  type ValidatedJerseyGameSession,
+  type ValidatedJerseyRankingEntry,
+  type ValidatedJerseyDifficultyStat,
+  type CreateJerseyInput,
+  type UpdateJerseyInput,
+} from './jersey.schema';
