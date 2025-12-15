@@ -462,6 +462,194 @@ export type Database = {
         }
         Relationships: []
       }
+      jersey_difficulty_stats: {
+        Row: {
+          created_at: string
+          device_type: string | null
+          guess_time: number
+          id: string
+          is_correct: boolean
+          jersey_id: string | null
+          session_id: string | null
+          user_id: string | null
+          year_difference: number
+        }
+        Insert: {
+          created_at?: string
+          device_type?: string | null
+          guess_time: number
+          id?: string
+          is_correct?: boolean
+          jersey_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+          year_difference: number
+        }
+        Update: {
+          created_at?: string
+          device_type?: string | null
+          guess_time?: number
+          id?: string
+          is_correct?: boolean
+          jersey_id?: string | null
+          session_id?: string | null
+          user_id?: string | null
+          year_difference?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jersey_difficulty_stats_jersey_id_fkey"
+            columns: ["jersey_id"]
+            isOneToOne: false
+            referencedRelation: "jerseys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jersey_game_rankings: {
+        Row: {
+          correct_guesses: number
+          created_at: string
+          difficulty_level: string | null
+          game_duration: number | null
+          game_mode: string | null
+          id: string
+          max_streak: number
+          player_name: string
+          score: number
+          total_attempts: number
+          user_id: string | null
+        }
+        Insert: {
+          correct_guesses?: number
+          created_at?: string
+          difficulty_level?: string | null
+          game_duration?: number | null
+          game_mode?: string | null
+          id?: string
+          max_streak?: number
+          player_name: string
+          score?: number
+          total_attempts?: number
+          user_id?: string | null
+        }
+        Update: {
+          correct_guesses?: number
+          created_at?: string
+          difficulty_level?: string | null
+          game_duration?: number | null
+          game_mode?: string | null
+          id?: string
+          max_streak?: number
+          player_name?: string
+          score?: number
+          total_attempts?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      jersey_game_sessions: {
+        Row: {
+          correct_guesses: number
+          difficulty_level: string | null
+          ended_at: string | null
+          final_score: number
+          game_mode: string
+          id: string
+          max_streak: number
+          metadata: Json | null
+          started_at: string
+          total_attempts: number
+          user_id: string | null
+        }
+        Insert: {
+          correct_guesses?: number
+          difficulty_level?: string | null
+          ended_at?: string | null
+          final_score?: number
+          game_mode?: string
+          id?: string
+          max_streak?: number
+          metadata?: Json | null
+          started_at?: string
+          total_attempts?: number
+          user_id?: string | null
+        }
+        Update: {
+          correct_guesses?: number
+          difficulty_level?: string | null
+          ended_at?: string | null
+          final_score?: number
+          game_mode?: string
+          id?: string
+          max_streak?: number
+          metadata?: Json | null
+          started_at?: string
+          total_attempts?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      jerseys: {
+        Row: {
+          average_guess_time: number | null
+          correct_attempts: number | null
+          created_at: string
+          decades: string[] | null
+          difficulty_confidence: number | null
+          difficulty_level: string | null
+          difficulty_score: number | null
+          fun_fact: string | null
+          id: string
+          image_url: string
+          manufacturer: string | null
+          nicknames: string[] | null
+          season: string | null
+          title: string | null
+          total_attempts: number | null
+          type: string
+          year: number
+        }
+        Insert: {
+          average_guess_time?: number | null
+          correct_attempts?: number | null
+          created_at?: string
+          decades?: string[] | null
+          difficulty_confidence?: number | null
+          difficulty_level?: string | null
+          difficulty_score?: number | null
+          fun_fact?: string | null
+          id?: string
+          image_url: string
+          manufacturer?: string | null
+          nicknames?: string[] | null
+          season?: string | null
+          title?: string | null
+          total_attempts?: number | null
+          type?: string
+          year: number
+        }
+        Update: {
+          average_guess_time?: number | null
+          correct_attempts?: number | null
+          created_at?: string
+          decades?: string[] | null
+          difficulty_confidence?: number | null
+          difficulty_level?: string | null
+          difficulty_score?: number | null
+          fun_fact?: string | null
+          id?: string
+          image_url?: string
+          manufacturer?: string | null
+          nicknames?: string[] | null
+          season?: string | null
+          title?: string | null
+          total_attempts?: number | null
+          type?: string
+          year?: number
+        }
+        Relationships: []
+      }
       live_events: {
         Row: {
           created_at: string
