@@ -11,7 +11,8 @@ import { BusinessIntelligenceDashboard } from "@/components/admin/bi/BusinessInt
 import { ImageAuditDashboard } from "@/components/admin/images/ImageAuditDashboard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LogOut, BarChart3, UserPlus, Users, FileText, Eye, UserCheck, Brain, Image } from "lucide-react";
+import { LogOut, BarChart3, UserPlus, Users, FileText, Eye, UserCheck, Brain, Image, Shirt } from "lucide-react";
+import { JerseysManagement } from "@/components/admin/jerseys";
 
 export default function Admin() {
   const { isAuthenticated, isLoading, adminData, logout } = useAdminAuth();
@@ -50,7 +51,7 @@ export default function Admin() {
       {/* Conteúdo Principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8 max-w-6xl">
+          <TabsList className="grid w-full grid-cols-9 max-w-7xl">
             <TabsTrigger value="dashboard" className="flex items-center gap-2">
               <BarChart3 size={16} />
               Dashboard
@@ -78,6 +79,10 @@ export default function Admin() {
             <TabsTrigger value="players" className="flex items-center gap-2">
               <Users size={16} />
               Gerenciar
+            </TabsTrigger>
+            <TabsTrigger value="jerseys" className="flex items-center gap-2">
+              <Shirt size={16} />
+              Camisas
             </TabsTrigger>
             <TabsTrigger value="add-player" className="flex items-center gap-2">
               <UserPlus size={16} />
@@ -121,6 +126,13 @@ export default function Admin() {
             <div className="bg-white rounded-lg shadow p-6">
               <h2 className="text-xl font-bold text-flu-grena mb-4">Gerenciar Jogadores</h2>
               <PlayersManagement />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="jerseys">
+            <div className="bg-white rounded-lg shadow p-6">
+              <h2 className="text-xl font-bold text-flu-grena mb-4">Gerenciar Camisas</h2>
+              <JerseysManagement />
             </div>
           </TabsContent>
 
