@@ -4,7 +4,7 @@ import { SEOHead } from "@/components/SEOHead";
 import { GameModeCard } from "@/components/GameModeCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, LogIn, Trophy, Star, Settings } from "lucide-react";
+import { ArrowLeft, LogIn, Trophy, Star, Settings, Shirt } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
@@ -134,8 +134,8 @@ const GameModeSelection = () => {
             </div>
 
             {/* Game Modes Grid */}
-            <div className="max-w-4xl mx-auto mb-12">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="max-w-6xl mx-auto mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* Quiz Adaptativo com CoachMark */}
                 <CoachMark
                   step="game-mode-selection"
@@ -143,41 +143,41 @@ const GameModeSelection = () => {
                   description="O Quiz Adaptativo ajusta a dificuldade conforme você joga. Recomendamos começar por aqui!"
                   position="top"
                 >
-                  <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-8 shadow-xl relative">
-                    <div className="text-center mb-6">
-                      <div className="w-16 h-16 mx-auto bg-primary rounded-full flex items-center justify-center mb-4">
-                        <div className="w-8 h-8 border-4 border-primary-foreground rounded-full relative">
-                          <div className="absolute top-1 right-1 w-2 h-2 bg-primary-foreground rounded-full"></div>
+                  <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative h-full">
+                    <div className="text-center mb-4">
+                      <div className="w-14 h-14 mx-auto bg-primary rounded-full flex items-center justify-center mb-3">
+                        <div className="w-7 h-7 border-4 border-primary-foreground rounded-full relative">
+                          <div className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-primary-foreground rounded-full"></div>
                         </div>
                       </div>
-                      <h2 className="text-display-subtitle text-primary mb-2">Quiz Adaptativo</h2>
-                      <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
+                      <h2 className="text-xl font-display text-primary mb-2">Quiz Adaptativo</h2>
+                      <span className="inline-block bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-medium">
                         Adaptável
                       </span>
                     </div>
                     
-                    <p className="text-muted-foreground text-center mb-6 font-body">
-                      Sistema inteligente que se adapta ao seu nível de conhecimento sobre o Fluminense
+                    <p className="text-muted-foreground text-center mb-4 text-sm font-body">
+                      Sistema inteligente que se adapta ao seu nível de conhecimento
                     </p>
                     
-                    <ul className="space-y-2 mb-8">
+                    <ul className="space-y-1.5 mb-6 text-sm">
                       <li className="flex items-center text-muted-foreground">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></span>
                         Dificuldade ajusta automaticamente
                       </li>
                       <li className="flex items-center text-muted-foreground">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></span>
                         Sistema de pontuação inteligente
                       </li>
                       <li className="flex items-center text-muted-foreground">
-                        <span className="w-2 h-2 bg-primary rounded-full mr-3"></span>
+                        <span className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></span>
                         Desafios personalizados
                       </li>
                     </ul>
                     
                     <Button 
                       onClick={() => handleGameModeClick('adaptive', '/quiz-adaptativo')}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-3 text-lg tracking-wide touch-target-lg"
+                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-2.5 text-base tracking-wide touch-target-lg"
                     >
                       JOGAR AGORA
                     </Button>
@@ -185,43 +185,82 @@ const GameModeSelection = () => {
                 </CoachMark>
 
                 {/* Quiz por Década */}
-                <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-8 shadow-xl relative">
-                  <div className="absolute top-4 right-4">
-                    <span className="bg-secondary text-secondary-foreground text-xs px-3 py-1 rounded-full font-bold">NOVO</span>
-                  </div>
-                  
-                  <div className="text-center mb-6">
-                    <div className="w-16 h-16 mx-auto bg-secondary rounded-full flex items-center justify-center mb-4">
-                      <div className="text-secondary-foreground text-2xl">🏆</div>
+                <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative h-full">
+                  <div className="text-center mb-4">
+                    <div className="w-14 h-14 mx-auto bg-secondary rounded-full flex items-center justify-center mb-3">
+                      <div className="text-secondary-foreground text-xl">🏆</div>
                     </div>
-                    <h2 className="text-display-subtitle text-primary mb-2">Quiz por Década</h2>
-                    <span className="inline-block bg-secondary/10 text-secondary px-3 py-1 rounded-full text-sm font-medium">
+                    <h2 className="text-xl font-display text-primary mb-2">Quiz por Década</h2>
+                    <span className="inline-block bg-secondary/10 text-secondary px-3 py-1 rounded-full text-xs font-medium">
                       Variável
                     </span>
                   </div>
                   
-                  <p className="text-muted-foreground text-center mb-6 font-body">
-                    Teste seus conhecimentos sobre jogadores de épocas específicas do Fluminense
+                  <p className="text-muted-foreground text-center mb-4 text-sm font-body">
+                    Teste seus conhecimentos sobre jogadores de épocas específicas
                   </p>
                   
-                  <ul className="space-y-2 mb-8">
+                  <ul className="space-y-1.5 mb-6 text-sm">
                     <li className="flex items-center text-muted-foreground">
-                      <span className="w-2 h-2 bg-secondary rounded-full mr-3"></span>
+                      <span className="w-1.5 h-1.5 bg-secondary rounded-full mr-2"></span>
                       Dos anos 70 até hoje
                     </li>
                     <li className="flex items-center text-muted-foreground">
-                      <span className="w-2 h-2 bg-secondary rounded-full mr-3"></span>
+                      <span className="w-1.5 h-1.5 bg-secondary rounded-full mr-2"></span>
                       Lendas de cada época
                     </li>
                     <li className="flex items-center text-muted-foreground">
-                      <span className="w-2 h-2 bg-secondary rounded-full mr-3"></span>
+                      <span className="w-1.5 h-1.5 bg-secondary rounded-full mr-2"></span>
                       História tricolor completa
                     </li>
                   </ul>
                   
                   <Button 
                     onClick={() => handleGameModeClick('decade', '/quiz-decada')}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-3 text-lg tracking-wide touch-target-lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-2.5 text-base tracking-wide touch-target-lg"
+                  >
+                    JOGAR AGORA
+                  </Button>
+                </div>
+
+                {/* Quiz das Camisas */}
+                <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative h-full">
+                  <div className="absolute top-3 right-3">
+                    <span className="bg-warning text-warning-foreground text-xs px-2 py-0.5 rounded-full font-bold">NOVO</span>
+                  </div>
+                  
+                  <div className="text-center mb-4">
+                    <div className="w-14 h-14 mx-auto bg-accent rounded-full flex items-center justify-center mb-3">
+                      <Shirt className="w-7 h-7 text-accent-foreground" />
+                    </div>
+                    <h2 className="text-xl font-display text-primary mb-2">Quiz das Camisas</h2>
+                    <span className="inline-block bg-accent/10 text-accent px-3 py-1 rounded-full text-xs font-medium">
+                      Histórico
+                    </span>
+                  </div>
+                  
+                  <p className="text-muted-foreground text-center mb-4 text-sm font-body">
+                    Adivinhe o ano das camisas históricas do Fluminense
+                  </p>
+                  
+                  <ul className="space-y-1.5 mb-6 text-sm">
+                    <li className="flex items-center text-muted-foreground">
+                      <span className="w-1.5 h-1.5 bg-accent rounded-full mr-2"></span>
+                      Camisas desde 1902
+                    </li>
+                    <li className="flex items-center text-muted-foreground">
+                      <span className="w-1.5 h-1.5 bg-accent rounded-full mr-2"></span>
+                      Uniformes históricos
+                    </li>
+                    <li className="flex items-center text-muted-foreground">
+                      <span className="w-1.5 h-1.5 bg-accent rounded-full mr-2"></span>
+                      Pontuação por aproximação
+                    </li>
+                  </ul>
+                  
+                  <Button 
+                    onClick={() => handleGameModeClick('jersey', '/quiz-camisas')}
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-2.5 text-base tracking-wide touch-target-lg"
                   >
                     JOGAR AGORA
                   </Button>
