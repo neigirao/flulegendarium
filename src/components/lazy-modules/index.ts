@@ -78,3 +78,9 @@ export const LazyDailyChallengesPage = createLazyComponent(
   () => import('@/pages/DailyChallengesPage'),
   React.createElement(PerformanceSkeleton, { height: 600 })
 );
+
+// Jersey Quiz Module
+export const LazyJerseyQuizPage = createLazyComponent(
+  () => import('@/pages/JerseyQuizPage'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);
