@@ -20,3 +20,8 @@ export { useDecadeGameTimer } from '../use-decade-game-timer';
 export { useGameConfirmations } from '../use-game-confirmations';
 export { useAchievements } from '../use-achievements';
 export { useDevToolsDetection } from '../use-devtools-detection';
+
+// Jersey Quiz hooks
+export { useJerseysData } from '../use-jerseys-data';
+export { useJerseySelection } from '../use-jersey-selection';
+export { useJerseyGuessGame } from '../use-jersey-guess-game';
