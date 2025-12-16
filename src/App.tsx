@@ -34,7 +34,8 @@ import {
   LazyConquistas,
   LazyResetPassword,
   LazyProfilePage,
-  LazyDailyChallengesPage
+  LazyDailyChallengesPage,
+  LazyJerseyQuizPage
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
@@ -85,6 +86,14 @@ function App() {
                             element={
                               <GameErrorBoundary>
                                 <DecadeGuessPlayerSimple />
+                              </GameErrorBoundary>
+                            } 
+                          />
+                          <Route 
+                            path="/quiz-camisas" 
+                            element={
+                              <GameErrorBoundary>
+                                <LazyJerseyQuizPage />
                               </GameErrorBoundary>
                             } 
                           />
