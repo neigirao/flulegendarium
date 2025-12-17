@@ -608,7 +608,7 @@ export type Database = {
           title: string | null
           total_attempts: number | null
           type: string
-          year: number
+          years: number[]
         }
         Insert: {
           average_guess_time?: number | null
@@ -627,7 +627,7 @@ export type Database = {
           title?: string | null
           total_attempts?: number | null
           type?: string
-          year: number
+          years: number[]
         }
         Update: {
           average_guess_time?: number | null
@@ -646,7 +646,7 @@ export type Database = {
           title?: string | null
           total_attempts?: number | null
           type?: string
-          year?: number
+          years?: number[]
         }
         Relationships: []
       }

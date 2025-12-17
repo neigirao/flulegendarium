@@ -6,7 +6,7 @@ import { logger } from "@/utils/logger";
 
 interface DatabaseJersey {
   id: string;
-  year: number;
+  years: number[];
   image_url: string;
   type: string;
   manufacturer: string | null;
@@ -43,7 +43,7 @@ export const useJerseysData = () => {
           .from('jerseys')
           .select(`
             id,
-            year,
+            years,
             image_url,
             type,
             manufacturer,
@@ -105,7 +105,7 @@ export const useJerseysData = () => {
     
     const processedJerseys = rawJerseys.map((jersey: DatabaseJersey): Jersey => ({
       id: jersey.id,
-      year: jersey.year,
+      years: Array.isArray(jersey.years) ? jersey.years : [jersey.years],
       image_url: jersey.image_url,
       type: jersey.type as Jersey['type'],
       manufacturer: jersey.manufacturer,

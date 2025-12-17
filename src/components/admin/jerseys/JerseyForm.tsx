@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { X } from "lucide-react";
+import { X, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import type { Jersey, JerseyType } from "@/types/jersey-game";
@@ -37,7 +37,8 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
   const { toast } = useToast();
   const isEditing = !!jersey;
 
-  const [year, setYear] = useState(jersey?.year?.toString() || '');
+  const [years, setYears] = useState<number[]>(jersey?.years || []);
+  const [newYear, setNewYear] = useState('');
   const [imageUrl, setImageUrl] = useState(jersey?.image_url || '');
   const [type, setType] = useState<JerseyType>(jersey?.type || 'home');
   const [manufacturer, setManufacturer] = useState(jersey?.manufacturer || '');
@@ -48,6 +49,24 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>(jersey?.difficulty_level || 'medio');
   const [decades, setDecades] = useState<string[]>(jersey?.decades || []);
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleAddYear = () => {
+    const yearNum = parseInt(newYear);
+    if (!isNaN(yearNum) && yearNum >= 1900 && yearNum <= 2030 && !years.includes(yearNum)) {
+      setYears(prev => [...prev, yearNum].sort((a, b) => a - b));
+      setNewYear('');
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Ano inválido ou já adicionado.",
+      });
+    }
+  };
+
+  const handleRemoveYear = (yearToRemove: number) => {
+    setYears(prev => prev.filter(y => y !== yearToRemove));
+  };
 
   const handleDecadeToggle = (decade: string) => {
     setDecades(prev => 
@@ -60,21 +79,11 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!year || !imageUrl) {
+    if (years.length === 0 || !imageUrl) {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Ano e URL da imagem são obrigatórios.",
-      });
-      return;
-    }
-
-    const yearNum = parseInt(year);
-    if (isNaN(yearNum) || yearNum < 1900 || yearNum > 2030) {
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Ano inválido. Use um valor entre 1900 e 2030.",
+        description: "Pelo menos um ano e URL da imagem são obrigatórios.",
       });
       return;
     }
@@ -83,7 +92,7 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
 
     try {
       const jerseyData = {
-        year: yearNum,
+        years,
         image_url: imageUrl,
         type,
         manufacturer: manufacturer || null,
@@ -92,7 +101,7 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
         fun_fact: funFact || null,
         nicknames: nicknames ? nicknames.split(',').map(n => n.trim()).filter(Boolean) : [],
         difficulty_level: difficultyLevel,
-        decades: decades.length > 0 ? decades : [Math.floor(yearNum / 10) * 10 + 's'],
+        decades: decades.length > 0 ? decades : [Math.floor(years[0] / 10) * 10 + 's'],
       };
 
       if (isEditing && jersey) {
@@ -133,11 +142,13 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
     }
   };
 
+  const yearsDisplay = years.length > 0 ? years.join(', ') : 'Nenhum ano';
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold">
-          {isEditing ? `Editar Camisa: ${jersey.year}` : 'Adicionar Nova Camisa'}
+          {isEditing ? `Editar Camisa: ${yearsDisplay}` : 'Adicionar Nova Camisa'}
         </h3>
         <Button variant="ghost" size="icon" onClick={onCancel}>
           <X size={20} />
@@ -145,37 +156,65 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="year">Ano *</Label>
+        {/* Anos - Multiple years input */}
+        <div className="space-y-2">
+          <Label>Anos Válidos *</Label>
+          <div className="flex gap-2">
             <Input
-              id="year"
               type="number"
-              value={year}
-              onChange={(e) => setYear(e.target.value)}
+              value={newYear}
+              onChange={(e) => setNewYear(e.target.value)}
               placeholder="Ex: 1984"
               min={1900}
               max={2030}
               disabled={isLoading}
-              required
+              className="flex-1"
             />
+            <Button 
+              type="button" 
+              onClick={handleAddYear} 
+              disabled={isLoading}
+              size="icon"
+            >
+              <Plus size={16} />
+            </Button>
           </div>
+          <div className="flex flex-wrap gap-2 mt-2">
+            {years.map(year => (
+              <div 
+                key={year} 
+                className="flex items-center gap-1 bg-primary/10 px-3 py-1 rounded-full"
+              >
+                <span className="text-sm font-medium">{year}</span>
+                <button 
+                  type="button" 
+                  onClick={() => handleRemoveYear(year)}
+                  className="text-destructive hover:text-destructive/80"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            Adicione todos os anos em que esta camisa foi usada. O jogador acerta se adivinhar qualquer um deles.
+          </p>
+        </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="type">Tipo</Label>
-            <Select value={type} onValueChange={(v) => setType(v as JerseyType)} disabled={isLoading}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {JERSEY_TYPES.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    {t.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="type">Tipo</Label>
+          <Select value={type} onValueChange={(v) => setType(v as JerseyType)} disabled={isLoading}>
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {JERSEY_TYPES.map((t) => (
+                <SelectItem key={t.value} value={t.value}>
+                  {t.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
@@ -299,7 +338,7 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
         </div>
 
         <div className="flex gap-2 pt-4">
-          <Button type="submit" disabled={isLoading} className="flex-1">
+          <Button type="submit" disabled={isLoading || years.length === 0} className="flex-1">
             {isLoading ? "Salvando..." : isEditing ? "Atualizar Camisa" : "Adicionar Camisa"}
           </Button>
           <Button type="button" variant="outline" onClick={onCancel}>

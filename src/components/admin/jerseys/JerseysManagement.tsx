@@ -38,13 +38,13 @@ export const JerseysManagement = () => {
       const { data, error } = await supabase
         .from('jerseys')
         .select('*')
-        .order('year', { ascending: false });
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       
       return (data || []).map((jersey): Jersey => ({
         id: jersey.id,
-        year: jersey.year,
+        years: jersey.years,
         image_url: jersey.image_url,
         type: jersey.type as JerseyType,
         manufacturer: jersey.manufacturer,
@@ -66,16 +66,18 @@ export const JerseysManagement = () => {
 
   const filteredJerseys = jerseys.filter(jersey => {
     const searchLower = searchTerm.toLowerCase();
+    const yearsString = jersey.years.join(', ');
     return (
-      jersey.year.toString().includes(searchTerm) ||
+      yearsString.includes(searchTerm) ||
       jersey.title?.toLowerCase().includes(searchLower) ||
       jersey.manufacturer?.toLowerCase().includes(searchLower) ||
       jersey.nicknames?.some(nick => nick.toLowerCase().includes(searchLower))
     );
   });
 
-  const handleDeleteJersey = async (jerseyId: string, jerseyYear: number) => {
-    if (!confirm(`Tem certeza que deseja excluir a camisa de ${jerseyYear}?`)) {
+  const handleDeleteJersey = async (jerseyId: string, jerseyYears: number[]) => {
+    const yearsDisplay = jerseyYears.join(', ');
+    if (!confirm(`Tem certeza que deseja excluir a camisa de ${yearsDisplay}?`)) {
       return;
     }
 
@@ -107,6 +109,23 @@ export const JerseysManagement = () => {
     setEditingJersey(null);
     setIsAddingNew(false);
     refetch();
+  };
+
+  const formatYears = (years: number[]): string => {
+    if (years.length === 0) return '-';
+    if (years.length === 1) return String(years[0]);
+    
+    // Check if consecutive years
+    const sorted = [...years].sort((a, b) => a - b);
+    const isConsecutive = sorted.every((year, i) => 
+      i === 0 || year === sorted[i - 1] + 1
+    );
+    
+    if (isConsecutive && years.length > 2) {
+      return `${sorted[0]}-${sorted[sorted.length - 1]}`;
+    }
+    
+    return sorted.join(', ');
   };
 
   if (editingJersey || isAddingNew) {
@@ -160,7 +179,7 @@ export const JerseysManagement = () => {
                 <div className="w-20 h-20 rounded-lg overflow-hidden bg-muted flex-shrink-0">
                   <img
                     src={jersey.image_url}
-                    alt={`Camisa ${jersey.year}`}
+                    alt={`Camisa ${formatYears(jersey.years)}`}
                     className="w-full h-full object-contain"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = '/placeholder.svg';
@@ -170,7 +189,7 @@ export const JerseysManagement = () => {
                 <div className="flex-1 min-w-0">
                   <CardTitle className="text-lg flex items-center gap-2">
                     <Shirt size={18} className="text-primary" />
-                    {jersey.year}
+                    {formatYears(jersey.years)}
                   </CardTitle>
                   <div className="flex flex-wrap gap-1 mt-1">
                     <Badge variant="outline" className="text-xs">
@@ -223,7 +242,7 @@ export const JerseysManagement = () => {
                 <Button
                   size="sm"
                   variant="destructive"
-                  onClick={() => handleDeleteJersey(jersey.id, jersey.year)}
+                  onClick={() => handleDeleteJersey(jersey.id, jersey.years)}
                 >
                   <Trash2 size={16} />
                 </Button>

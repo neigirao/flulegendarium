@@ -75,10 +75,11 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
 
     adjustDifficulty(false);
 
+    const yearsDisplay = currentJersey.years.join(' ou ');
     toast({
       variant: "destructive",
       title: "Tempo Esgotado!",
-      description: `Era ${currentJersey.year}. Sua pontuação final: ${score}`,
+      description: `Era ${yearsDisplay}. Sua pontuação final: ${score}`,
     });
   }, [currentJersey, gameOver, score]);
 
@@ -186,10 +187,10 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
       setGameKey(prev => prev + 1);
       
       logger.info(
-        `✅ Camisa selecionada: ${selectedJersey.year}`,
+        `✅ Camisa selecionada: ${selectedJersey.years.join(', ')}`,
         'JERSEY_GAME',
         { 
-          jerseyYear: selectedJersey.year,
+          jerseyYears: selectedJersey.years,
           jerseyDifficulty: selectedJersey.difficulty_level,
           gameDifficulty: currentDifficulty.label
         }
@@ -200,7 +201,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
   const startGameForJersey = useCallback(() => {
     if (!currentJersey) return;
     
-    logger.gameAction('Starting jersey quiz game', String(currentJersey.year));
+    logger.gameAction('Starting jersey quiz game', currentJersey.years.join(', '));
     setAttempts(0);
     setGameOver(false);
     setHasLost(false);
@@ -217,10 +218,10 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     
     try {
       logger.debug(`Processing jersey guess: ${guessYear}`, 'JERSEY_GUESS', { 
-        correctYear: currentJersey.year 
+        correctYears: currentJersey.years 
       });
       
-      const result = jerseyService.checkGuess(guessYear, currentJersey.year);
+      const result = jerseyService.checkGuess(guessYear, currentJersey.years);
       const yearDifference = result.yearDifference;
       
       // Calculate points
@@ -242,7 +243,8 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
       // Add to history
       const historyEntry: JerseyGuessHistoryEntry = {
         jerseyId: currentJersey.id,
-        jerseyYear: currentJersey.year,
+        jerseyYears: currentJersey.years,
+        matchedYear: result.matchedYear,
         jerseyImageUrl: currentJersey.image_url,
         userGuess: guessYear,
         isCorrect: result.isCorrect,
@@ -252,6 +254,8 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
         timeRemaining
       };
       setGuessHistory(prev => [...prev, historyEntry]);
+      
+      const yearsDisplay = currentJersey.years.join(' ou ');
       
       if (result.isCorrect) {
         const totalPoints = pointsEarned + bonus;
@@ -268,9 +272,10 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
         
         logger.debug(`Correct! +${totalPoints} points`, 'JERSEY_GUESS');
         
+        const matchedDisplay = result.matchedYear || currentJersey.years[0];
         toast({
           title: "Correto!",
-          description: `+${totalPoints} pontos! Era ${currentJersey.year}`,
+          description: `+${totalPoints} pontos! Era ${matchedDisplay}`,
         });
         
         stopTimer();
@@ -313,7 +318,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
           toast({
             variant: "destructive",
             title: "Incorreto!",
-            description: `Era ${currentJersey.year}. Pontuação final: ${score}`,
+            description: `Era ${yearsDisplay}. Pontuação final: ${score}`,
           });
 
           setIsProcessingGuess(false);

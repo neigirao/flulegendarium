@@ -9,7 +9,7 @@ import { logger } from '@/utils/logger';
  */
 const mapDbToJersey = (row: Record<string, unknown>): Jersey => ({
   id: row.id as string,
-  year: row.year as number,
+  years: row.years as number[],
   image_url: row.image_url as string,
   type: (row.type as JerseyType) || 'home',
   manufacturer: row.manufacturer as string | null,
@@ -39,7 +39,7 @@ export const jerseyService = {
       const { data, error } = await supabase
         .from('jerseys')
         .select('*')
-        .order('year', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) {
         logger.error('Erro ao buscar camisas:', error.message);
@@ -62,7 +62,7 @@ export const jerseyService = {
         .from('jerseys')
         .select('*')
         .contains('decades', [decade])
-        .order('year', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) {
         logger.error('Erro ao buscar camisas por década:', error.message);
@@ -85,7 +85,7 @@ export const jerseyService = {
         .from('jerseys')
         .select('*')
         .eq('difficulty_level', level)
-        .order('year', { ascending: false });
+        .order('created_at', { ascending: false });
 
       if (error) {
         logger.error('Erro ao buscar camisas por dificuldade:', error.message);
@@ -317,19 +317,36 @@ export const jerseyService = {
   },
 
   /**
-   * Verificar se o palpite está correto (com tolerância)
+   * Verificar se o palpite está correto (com múltiplos anos válidos)
    */
   checkGuess(
     guessYear: number,
-    correctYear: number
-  ): { isCorrect: boolean; yearDifference: number; hint?: 'higher' | 'lower' } {
-    const difference = Math.abs(guessYear - correctYear);
-    const isCorrect = difference <= 2; // Tolerância de ±2 anos
+    validYears: number[]
+  ): { isCorrect: boolean; yearDifference: number; hint?: 'higher' | 'lower'; matchedYear?: number } {
+    // Encontrar o ano mais próximo do palpite
+    let closestYear = validYears[0];
+    let minDifference = Math.abs(guessYear - validYears[0]);
+    let exactMatch: number | undefined;
+    
+    for (const year of validYears) {
+      const diff = Math.abs(guessYear - year);
+      if (diff < minDifference) {
+        minDifference = diff;
+        closestYear = year;
+      }
+      if (diff === 0) {
+        exactMatch = year;
+      }
+    }
+    
+    // Acerto se estiver dentro da tolerância de ±2 anos de qualquer ano válido
+    const isCorrect = minDifference <= 2;
 
     return {
       isCorrect,
-      yearDifference: difference,
-      hint: !isCorrect ? (guessYear < correctYear ? 'higher' : 'lower') : undefined,
+      yearDifference: minDifference,
+      matchedYear: exactMatch || (isCorrect ? closestYear : undefined),
+      hint: !isCorrect ? (guessYear < closestYear ? 'higher' : 'lower') : undefined,
     };
   },
 };
