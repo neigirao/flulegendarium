@@ -317,7 +317,7 @@ export const jerseyService = {
   },
 
   /**
-   * Verificar se o palpite está correto (com múltiplos anos válidos)
+   * Verificar se o palpite está correto (apenas acerto exato)
    */
   checkGuess(
     guessYear: number,
@@ -339,13 +339,13 @@ export const jerseyService = {
       }
     }
     
-    // Acerto se estiver dentro da tolerância de ±2 anos de qualquer ano válido
-    const isCorrect = minDifference <= 2;
+    // Acerto apenas se for exato (diferença 0)
+    const isCorrect = minDifference === 0;
 
     return {
       isCorrect,
       yearDifference: minDifference,
-      matchedYear: exactMatch || (isCorrect ? closestYear : undefined),
+      matchedYear: exactMatch,
       hint: !isCorrect ? (guessYear < closestYear ? 'higher' : 'lower') : undefined,
     };
   },
