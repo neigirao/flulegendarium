@@ -1,15 +1,13 @@
 import React, { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Trophy, Rocket, Instagram, User, LogIn } from "lucide-react";
+import { Rocket, Instagram, User, LogIn } from "lucide-react";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
-import { ShimmerSkeleton } from "@/components/ui/shimmer-skeleton";
+import { GameTypeRankings } from "@/components/home/GameTypeRankings";
 
 const Index = () => {
   const { user } = useAuth();
@@ -29,22 +27,6 @@ const Index = () => {
     trackAuthPromptShown('home_banner');
     navigate('/auth');
   };
-
-  // Fetch top 10 rankings
-  const { data: rankings, isLoading: rankingsLoading } = useQuery({
-    queryKey: ['top-rankings'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('rankings')
-        .select('*')
-        .order('score', { ascending: false })
-        .limit(10);
-      
-      if (error) throw error;
-      return data || [];
-    },
-    staleTime: 5 * 60 * 1000,
-  });
 
   return (
     <>
@@ -122,50 +104,7 @@ const Index = () => {
             </p>
 
             {/* Hall da Fama Section */}
-            <div className="mb-16">
-              <div className="flex items-center justify-center mb-8">
-                <Trophy className="w-8 h-8 text-warning mr-3" />
-                <h2 className="text-display-title text-primary-foreground">Hall da Fama Tricolor</h2>
-              </div>
-              <p className="text-primary-foreground/80 mb-8 font-body">Os maiores conhecedores do Fluminense</p>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-                {rankingsLoading ? (
-                  // Skeleton loading state
-                  Array.from({ length: 4 }, (_, index) => (
-                    <ShimmerSkeleton key={index} variant="card" />
-                  ))
-                ) : rankings?.length ? (
-                  rankings.map((ranking, index) => (
-                    <Card key={ranking.id} className="bg-card/10 backdrop-blur-sm border-border/20">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-primary-foreground text-sm ${
-                              index === 0 ? 'bg-warning' : 
-                              index === 1 ? 'bg-neutral-400' : 
-                              index === 2 ? 'bg-warning/70' : 'bg-secondary'
-                            }`}>
-                              {index + 1}
-                            </div>
-                            <div>
-                              <h3 className="text-primary-foreground font-bold text-sm">{ranking.player_name}</h3>
-                              <p className="text-primary-foreground/70 text-xs">{ranking.score} pontos</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-primary-foreground">{ranking.score}</div>
-                            <div className="text-primary-foreground/70 text-xs">pontos</div>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
-                ) : (
-                  <p className="text-primary-foreground/70 col-span-2 text-center py-8">Nenhum ranking disponível</p>
-                )}
-              </div>
-            </div>
+            <GameTypeRankings />
 
             {/* Como Funciona */}
             <div className="mb-16">
