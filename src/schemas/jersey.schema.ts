@@ -11,7 +11,7 @@ export const JerseyTypeSchema = z.enum(['home', 'away', 'third', 'special']);
  */
 export const JerseySchema = z.object({
   id: z.string().uuid(),
-  year: z.number().int().min(1902).max(2030),
+  years: z.array(z.number().int().min(1902).max(2030)).min(1),
   image_url: z.string().url(),
   type: JerseyTypeSchema.default('home'),
   manufacturer: z.string().nullable().optional(),
@@ -68,7 +68,8 @@ export const JerseyGuessResultSchema = z.object({
   hint: z.enum(['higher', 'lower']).optional(),
   pointsEarned: z.number().int().min(0),
   bonusPoints: z.number().int().min(0).optional(),
-  correctYear: z.number().int(),
+  correctYears: z.array(z.number().int()),
+  matchedYear: z.number().int().optional(),
   userGuess: z.number().int(),
 });
 

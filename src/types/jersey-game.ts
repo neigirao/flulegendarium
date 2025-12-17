@@ -10,7 +10,7 @@ export type JerseyType = 'home' | 'away' | 'third' | 'special';
  */
 export interface Jersey {
   id: string;
-  year: number;
+  years: number[];
   image_url: string;
   type: JerseyType;
   manufacturer?: string | null;
@@ -37,7 +37,8 @@ export interface JerseyGuessResult {
   hint?: 'higher' | 'lower';
   pointsEarned: number;
   bonusPoints?: number;
-  correctYear: number;
+  correctYears: number[];
+  matchedYear?: number;
   userGuess: number;
 }
 
@@ -112,7 +113,8 @@ export interface JerseyDifficultyStat {
  */
 export interface JerseyGuessHistoryEntry {
   jerseyId: string;
-  jerseyYear: number;
+  jerseyYears: number[];
+  matchedYear?: number;
   jerseyImageUrl: string;
   userGuess: number;
   isCorrect: boolean;

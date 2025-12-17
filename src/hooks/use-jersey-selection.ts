@@ -47,11 +47,11 @@ export const useJerseySelection = () => {
       const selectedJersey = jerseysAtDifficulty[randomIndex];
       
       logger.info(
-        `✅ Camisa selecionada da dificuldade ${difficultyLevel}: ${selectedJersey.year}`,
+        `✅ Camisa selecionada da dificuldade ${difficultyLevel}: ${selectedJersey.years.join(', ')}`,
         'JERSEY_SELECTION',
         { 
           difficulty: difficultyLevel,
-          jerseyYear: selectedJersey.year,
+          jerseyYears: selectedJersey.years,
           availableCount: jerseysAtDifficulty.length,
           totalAvailable: availableJerseys.length
         }
@@ -122,7 +122,7 @@ export const useJerseySelection = () => {
     const selectedJersey = availableJerseys[randomIndex];
     
     logger.info(
-      `Camisa selecionada da década ${decade}: ${selectedJersey.year}`,
+      `Camisa selecionada da década ${decade}: ${selectedJersey.years.join(', ')}`,
       'JERSEY_SELECTION'
     );
     

@@ -104,10 +104,11 @@ const JerseyGameContainer = () => {
     setTimeout(() => {
       if (guessHistory.length > 0) {
         const latestGuess = guessHistory[guessHistory.length - 1];
+        const closestYear = latestGuess.jerseyYears[0];
         setLastGuessResult({
           isCorrect: latestGuess.isCorrect,
-          hint: latestGuess.userGuess < latestGuess.jerseyYear ? 'higher' : 'lower',
-          correctYear: latestGuess.jerseyYear,
+          hint: latestGuess.userGuess < closestYear ? 'higher' : 'lower',
+          correctYear: latestGuess.matchedYear || closestYear,
           userGuess: latestGuess.userGuess,
           pointsEarned: latestGuess.pointsEarned
         });
@@ -115,7 +116,6 @@ const JerseyGameContainer = () => {
     }, 100);
   }, [originalHandleGuess, funnel, isStepActive, nextStep, guessHistory]);
 
-  // Track game completion
   useEffect(() => {
     if (gameOver && !prevGameOverRef.current) {
       funnel.trackGameCompleted(score, gamesPlayed, 'adaptive');
@@ -123,7 +123,7 @@ const JerseyGameContainer = () => {
       
       if (currentJersey && lastGuessRef.current) {
         addEntry({
-          playerName: `Camisa ${currentJersey.year}`,
+          playerName: `Camisa ${currentJersey.years.join('/')}`,
           playerImageUrl: currentJersey.image_url,
           guess: String(lastGuessRef.current),
           isCorrect: false,
@@ -147,7 +147,7 @@ const JerseyGameContainer = () => {
       onStreakAchieved(currentStreak);
       
       addEntry({
-        playerName: `Camisa ${latestGuess.jerseyYear}`,
+        playerName: `Camisa ${latestGuess.jerseyYears.join('/')}`,
         playerImageUrl: currentJersey.image_url,
         guess: String(latestGuess.userGuess),
         isCorrect: true,
@@ -374,7 +374,7 @@ const JerseyGameContainer = () => {
       <GameOverDialog
         open={gameOver}
         onClose={() => {}}
-        playerName={currentJersey ? `Camisa de ${currentJersey.year}` : ''}
+        playerName={currentJersey ? `Camisa de ${currentJersey.years.join('/')}` : ''}
         score={score}
         onResetScore={resetGame}
         isAuthenticated={!!user}
