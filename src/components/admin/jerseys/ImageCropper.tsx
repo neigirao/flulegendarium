@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Crop as CropIcon, RotateCcw, ZoomIn, Check, X } from "lucide-react";
+import { Crop as CropIcon, RotateCcw, ZoomIn, Check, X, ImageDown } from "lucide-react";
 
 interface ImageCropperProps {
   imageSrc: string;
@@ -49,6 +49,7 @@ export const ImageCropper = ({
   const [crop, setCrop] = useState<Crop>();
   const [scale, setScale] = useState(1);
   const [aspect, setAspect] = useState<number | undefined>(undefined);
+  const [quality, setQuality] = useState(80);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const onImageLoad = useCallback((e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -117,7 +118,7 @@ export const ImageCropper = ({
         canvas.height
       );
 
-      // Convert to blob
+      // Convert to blob with adjustable quality
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -129,7 +130,7 @@ export const ImageCropper = ({
           setIsProcessing(false);
         },
         "image/jpeg",
-        0.9
+        quality / 100
       );
     } catch (error) {
       console.error("Error cropping image:", error);
@@ -140,6 +141,7 @@ export const ImageCropper = ({
   const handleReset = () => {
     setScale(1);
     setAspect(undefined);
+    setQuality(80);
     if (imgRef.current) {
       const { width, height } = imgRef.current;
       setCrop(centerAspectCrop(width, height, 1));
@@ -216,6 +218,28 @@ export const ImageCropper = ({
               onValueChange={([value]) => setScale(value)}
               className="w-full"
             />
+          </div>
+
+          {/* Quality Control */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground flex items-center gap-2">
+              <ImageDown size={16} />
+              Qualidade: {quality}%
+              <span className="text-xs ml-2">
+                ({quality >= 90 ? 'Alta' : quality >= 70 ? 'Média' : 'Baixa'})
+              </span>
+            </Label>
+            <Slider
+              value={[quality]}
+              min={60}
+              max={100}
+              step={5}
+              onValueChange={([value]) => setQuality(value)}
+              className="w-full"
+            />
+            <p className="text-xs text-muted-foreground">
+              Menor qualidade = arquivo menor. Recomendado: 70-85% para web.
+            </p>
           </div>
 
           {/* Crop Area */}
