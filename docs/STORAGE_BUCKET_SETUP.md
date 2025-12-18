@@ -1,10 +1,19 @@
 # Configuração do Storage Bucket para Imagens
 
-## Bucket Necessário: `players`
+## Buckets Disponíveis
+
+O projeto utiliza dois buckets públicos no Supabase Storage:
+
+| Bucket | Descrição | Uso |
+|--------|-----------|-----|
+| `players` | Imagens de jogadores | Fotos para o jogo de adivinhar jogadores |
+| `jerseys` | Imagens de camisas | Fotos para o quiz de camisas |
+
+## Bucket: `players`
 
 Para que o sistema de migração de imagens funcione corretamente, é necessário ter um bucket público chamado `players` no Supabase Storage.
 
-## Verificação Rápida
+### Verificação Rápida
 
 Verifique se o bucket já existe:
 
@@ -14,7 +23,7 @@ FROM storage.buckets
 WHERE id = 'players';
 ```
 
-## Setup do Bucket
+### Setup do Bucket
 
 Se o bucket não existir, crie-o executando a migration abaixo:
 
@@ -28,6 +37,82 @@ VALUES (
   10485760, -- 10MB
   ARRAY['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
 );
+```
+
+## Bucket: `jerseys`
+
+Bucket para armazenar imagens de camisas históricas do Fluminense para o Quiz das Camisas.
+
+### Verificação Rápida
+
+```sql
+SELECT id, name, public, file_size_limit, allowed_mime_types 
+FROM storage.buckets 
+WHERE id = 'jerseys';
+```
+
+### Setup do Bucket
+
+```sql
+-- Criar bucket público para imagens de camisas
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'jerseys',
+  'jerseys',
+  true,
+  10485760, -- 10MB
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+);
+```
+
+### Políticas RLS para Jerseys
+
+```sql
+-- Leitura pública
+CREATE POLICY "Jerseys images are publicly accessible"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'jerseys');
+
+-- Upload por usuários autenticados
+CREATE POLICY "Authenticated users can upload jersey images"
+ON storage.objects FOR INSERT
+WITH CHECK (bucket_id = 'jerseys');
+
+-- Atualização por usuários autenticados
+CREATE POLICY "Authenticated users can update jersey images"
+ON storage.objects FOR UPDATE
+USING (bucket_id = 'jerseys');
+
+-- Exclusão por usuários autenticados
+CREATE POLICY "Authenticated users can delete jersey images"
+ON storage.objects FOR DELETE
+USING (bucket_id = 'jerseys');
+```
+
+### Estrutura de Arquivos para Jerseys
+
+As imagens são salvas com o seguinte padrão:
+
+```
+/jerseys/jersey-{timestamp}.{ext}
+```
+
+Exemplos:
+- `/jerseys/jersey-1734536789012.jpg`
+- `/jerseys/jersey-1734536790123.png`
+
+### Uso no Admin
+
+O componente `JerseyImageUpload` permite upload direto no painel admin:
+
+```typescript
+import { JerseyImageUpload } from '@/components/admin/jerseys';
+
+<JerseyImageUpload
+  imageUrl={imageUrl}
+  onImageUrlChange={setImageUrl}
+  disabled={isLoading}
+/>
 ```
 
 ## Políticas de Acesso (RLS)
