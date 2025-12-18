@@ -38,7 +38,7 @@ export const JerseysManagement = () => {
       const { data, error } = await supabase
         .from('jerseys')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('years', { ascending: true });
       
       if (error) throw error;
       
