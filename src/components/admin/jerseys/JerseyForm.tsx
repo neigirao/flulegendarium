@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { X, Plus, Trash2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { JerseyImageUpload } from "./JerseyImageUpload";
 import type { Jersey, JerseyType } from "@/types/jersey-game";
 import type { DifficultyLevel } from "@/types/guess-game";
 
@@ -217,30 +218,11 @@ export const JerseyForm = ({ jersey, onSuccess, onCancel }: JerseyFormProps) => 
           </Select>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="imageUrl">URL da Imagem *</Label>
-          <Input
-            id="imageUrl"
-            type="url"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="https://..."
-            disabled={isLoading}
-            required
-          />
-          {imageUrl && (
-            <div className="mt-2">
-              <img 
-                src={imageUrl} 
-                alt="Preview" 
-                className="max-h-40 rounded-lg border object-contain"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/placeholder.svg';
-                }}
-              />
-            </div>
-          )}
-        </div>
+        <JerseyImageUpload
+          imageUrl={imageUrl}
+          onImageUrlChange={setImageUrl}
+          disabled={isLoading}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
