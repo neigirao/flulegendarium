@@ -3,9 +3,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Upload, Link, Loader2, X, CheckCircle } from "lucide-react";
+import { Upload, Link, X, CheckCircle, Crop } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { ImageCropper } from "./ImageCropper";
 
 interface JerseyImageUploadProps {
   imageUrl: string;
@@ -29,6 +30,11 @@ export const JerseyImageUpload = ({
   const [uploadProgress, setUploadProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  
+  // Crop states
+  const [showCropper, setShowCropper] = useState(false);
+  const [originalImageSrc, setOriginalImageSrc] = useState<string | null>(null);
+  const [originalFileName, setOriginalFileName] = useState<string>('');
 
   const validateFile = (file: File): string | null => {
     if (!ALLOWED_TYPES.includes(file.type)) {
@@ -54,9 +60,40 @@ export const JerseyImageUpload = ({
       return;
     }
 
-    setSelectedFile(file);
-    const preview = URL.createObjectURL(file);
+    // Open cropper with the selected file
+    const imageSrc = URL.createObjectURL(file);
+    setOriginalImageSrc(imageSrc);
+    setOriginalFileName(file.name);
+    setShowCropper(true);
+  };
+
+  const handleCropComplete = (croppedBlob: Blob, croppedFile: File) => {
+    // Clean up original image URL
+    if (originalImageSrc) {
+      URL.revokeObjectURL(originalImageSrc);
+    }
+    
+    setSelectedFile(croppedFile);
+    const preview = URL.createObjectURL(croppedBlob);
     setPreviewUrl(preview);
+    setShowCropper(false);
+    setOriginalImageSrc(null);
+    
+    toast({
+      title: "Imagem recortada!",
+      description: `Tamanho otimizado: ${(croppedBlob.size / 1024).toFixed(0)} KB`,
+    });
+  };
+
+  const handleCropCancel = () => {
+    if (originalImageSrc) {
+      URL.revokeObjectURL(originalImageSrc);
+    }
+    setShowCropper(false);
+    setOriginalImageSrc(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleUpload = async () => {
@@ -127,6 +164,14 @@ export const JerseyImageUpload = ({
     }
   };
 
+  const handleReCrop = () => {
+    if (!selectedFile) return;
+    const imageSrc = URL.createObjectURL(selectedFile);
+    setOriginalImageSrc(imageSrc);
+    setOriginalFileName(selectedFile.name);
+    setShowCropper(true);
+  };
+
   const displayUrl = previewUrl || imageUrl;
 
   return (
@@ -160,7 +205,7 @@ export const JerseyImageUpload = ({
               <div className="space-y-3">
                 <div className="flex items-center justify-center gap-2">
                   <CheckCircle className="text-success" size={20} />
-                  <span className="font-medium">{selectedFile.name}</span>
+                  <span className="font-medium truncate max-w-[200px]">{selectedFile.name}</span>
                   <Button
                     type="button"
                     variant="ghost"
@@ -172,7 +217,7 @@ export const JerseyImageUpload = ({
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                  {(selectedFile.size / 1024).toFixed(0)} KB (otimizado)
                 </p>
                 
                 {isUploading ? (
@@ -188,14 +233,25 @@ export const JerseyImageUpload = ({
                     </p>
                   </div>
                 ) : (
-                  <Button
-                    type="button"
-                    onClick={handleUpload}
-                    disabled={disabled}
-                  >
-                    <Upload size={16} className="mr-2" />
-                    Enviar Imagem
-                  </Button>
+                  <div className="flex gap-2 justify-center">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={handleReCrop}
+                      disabled={disabled}
+                    >
+                      <Crop size={16} className="mr-2" />
+                      Recortar
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleUpload}
+                      disabled={disabled}
+                    >
+                      <Upload size={16} className="mr-2" />
+                      Enviar
+                    </Button>
+                  </div>
                 )}
               </div>
             ) : (
@@ -213,6 +269,9 @@ export const JerseyImageUpload = ({
                 </div>
                 <p className="text-sm text-muted-foreground">
                   JPEG, PNG, WebP ou GIF • Máx. 10MB
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Você poderá recortar e redimensionar a imagem antes do upload
                 </p>
               </div>
             )}
@@ -256,6 +315,17 @@ export const JerseyImageUpload = ({
             )}
           </div>
         </div>
+      )}
+
+      {/* Cropper Modal */}
+      {originalImageSrc && (
+        <ImageCropper
+          imageSrc={originalImageSrc}
+          fileName={originalFileName}
+          onCropComplete={handleCropComplete}
+          onCancel={handleCropCancel}
+          open={showCropper}
+        />
       )}
     </div>
   );
