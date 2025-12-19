@@ -7,6 +7,9 @@ import { GuestNameForm } from '@/components/guess-game/GuestNameForm';
 import { GameOverDialog } from '@/components/guess-game/GameOverDialog';
 import { GuessHistoryPanel } from '@/components/guess-game/GuessHistoryPanel';
 import { SkipPlayerButton } from '@/components/guess-game/SkipPlayerButton';
+import { AdaptiveProgressionNotification } from '@/components/guess-game/AdaptiveProgressionNotification';
+import { DebugInfo } from '@/components/guess-game/DebugInfo';
+import { DynamicSEO } from '@/components/seo/DynamicSEO';
 import { 
   useDecadePlayerSelection, 
   useSimpleGameLogic, 
@@ -30,9 +33,10 @@ import { Button } from '@/components/ui/button';
 import { logger } from '@/utils/logger';
 import { useDevToolsDetection } from '@/hooks/use-devtools-detection';
 import { useToast } from '@/hooks/use-toast';
-import { clearAllImageCache } from '@/utils/player-image/cache';
+import { clearAllImageCache, prepareNextBatch } from '@/utils/player-image';
 import { CoachMark, useOnboarding } from '@/components/onboarding';
 import { ACHIEVEMENTS } from '@/types/achievements';
+import type { DifficultyChangeInfo } from '@/types/guess-game';
 
 export const DecadeGameContainer = () => {
   const navigate = useNavigate();
@@ -57,6 +61,8 @@ export const DecadeGameContainer = () => {
   const [showGuestNameForm, setShowGuestNameForm] = useState(false);
   const [canStartTimer, setCanStartTimer] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
+  const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
   const [playerCounts, setPlayerCounts] = useState<Record<Decade, number>>({
     '1970s': 0,
     '1980s': 0,
@@ -247,6 +253,28 @@ export const DecadeGameContainer = () => {
     prevStreakRef.current = currentStreak;
   }, [currentStreak, gamesPlayed, funnel, getPlayerAchievements, queueNotification, onCorrectGuess, onStreakAchieved, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
 
+  // Track difficulty changes and trigger notification
+  const prevDifficultyRef = useRef(currentDifficulty.level);
+  useEffect(() => {
+    if (currentDifficulty.level !== prevDifficultyRef.current && gamesPlayed > 0) {
+      const isLevelUp = currentDifficulty.multiplier > 1;
+      setDifficultyChangeInfo({
+        oldLevel: prevDifficultyRef.current,
+        newLevel: currentDifficulty.level,
+        direction: currentDifficulty.level > prevDifficultyRef.current ? 'up' : 'down',
+        reason: isLevelUp ? 'Sequência de acertos' : 'Ajuste automático'
+      });
+    }
+    prevDifficultyRef.current = currentDifficulty.level;
+  }, [currentDifficulty.level, currentDifficulty.multiplier, gamesPlayed]);
+
+  // Preload next batch of players
+  useEffect(() => {
+    if (availablePlayers.length > 0 && currentPlayer) {
+      prepareNextBatch(availablePlayers, currentPlayer, 2);
+    }
+  }, [availablePlayers, currentPlayer]);
+
   // Reset tracking refs, history, and skips when game resets
   useEffect(() => {
     if (!gameOver && gamesPlayed === 0) {
@@ -254,6 +282,7 @@ export const DecadeGameContainer = () => {
       hasTrackedGameStart.current = false;
       clearHistory();
       resetSkips();
+      setDifficultyChangeInfo(null);
     }
   }, [gameOver, gamesPlayed, clearHistory, resetSkips]);
 
@@ -414,8 +443,32 @@ export const DecadeGameContainer = () => {
 
   const decadeInfo = getDecadeInfo(selectedDecade);
 
+  const handleClearDifficultyNotification = useCallback(() => {
+    setDifficultyChangeInfo(null);
+  }, []);
+
   return (
     <>
+      {/* DynamicSEO for this game mode */}
+      <DynamicSEO 
+        gameMode="decade"
+        difficulty={currentDifficulty.label}
+      />
+      
+      {/* Debug Info - only in dev */}
+      <DebugInfo
+        show={showDebug}
+        imageUrl={currentPlayer?.image_url}
+      />
+      
+      {/* Adaptive Progression Notification */}
+      {difficultyChangeInfo && (
+        <AdaptiveProgressionNotification
+          changeInfo={difficultyChangeInfo}
+          onClose={handleClearDifficultyNotification}
+        />
+      )}
+
       {/* GuestNameForm com CoachMark */}
       {showGuestNameForm && (
         <CoachMark
