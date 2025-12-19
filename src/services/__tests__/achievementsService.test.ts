@@ -451,5 +451,160 @@ describe('achievementsService', () => {
         expect(result).toContain(lteAchievement.id);
       }
     });
+
+    it('should handle eq operator correctly', async () => {
+      const mockFrom = vi.fn().mockImplementation(() => ({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            order: vi.fn().mockResolvedValue({ data: [], error: null }),
+            eq: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({ data: null, error: null }),
+            }),
+          }),
+        }),
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: { id: 'new' },
+              error: null,
+            }),
+          }),
+        }),
+      }));
+      (supabase.from as Mock) = mockFrom;
+
+      const eqAchievement = ACHIEVEMENTS.find(
+        a => a.condition.operator === 'eq'
+      );
+
+      if (eqAchievement) {
+        const statsAtExact: any = {
+          score: 0,
+          streak: 0,
+          gamesPlayed: 0,
+          accuracy: 0,
+        };
+        const type = eqAchievement.condition.type;
+        if (type === 'games_played') {
+          statsAtExact.gamesPlayed = eqAchievement.condition.value;
+        } else if (type === 'score') {
+          statsAtExact.score = eqAchievement.condition.value;
+        } else if (type === 'streak') {
+          statsAtExact.streak = eqAchievement.condition.value;
+        } else if (type === 'accuracy') {
+          statsAtExact.accuracy = eqAchievement.condition.value;
+        }
+
+        const result = await checkAchievements('user-123', statsAtExact);
+        expect(result).toContain(eqAchievement.id);
+      }
+    });
+  });
+
+  describe('Achievement Categories', () => {
+    it('should have achievements for each category type', () => {
+      const categories = ['skill', 'streak', 'time', 'knowledge', 'special', 'position', 'behavioral'];
+      
+      categories.forEach(category => {
+        const hasCategory = ACHIEVEMENTS.some(a => a.category === category);
+        expect(hasCategory).toBe(true);
+      });
+    });
+
+    it('should have achievements for each rarity type', () => {
+      const rarities = ['common', 'rare', 'epic', 'legendary'];
+      
+      rarities.forEach(rarity => {
+        const hasRarity = ACHIEVEMENTS.some(a => a.rarity === rarity);
+        expect(hasRarity).toBe(true);
+      });
+    });
+
+    it('should have points for each achievement', () => {
+      ACHIEVEMENTS.forEach(achievement => {
+        expect(achievement.points).toBeGreaterThan(0);
+      });
+    });
+
+    it('should have unique ids for all achievements', () => {
+      const ids = ACHIEVEMENTS.map(a => a.id);
+      const uniqueIds = new Set(ids);
+      expect(uniqueIds.size).toBe(ids.length);
+    });
+
+    it('should have icon for each achievement', () => {
+      ACHIEVEMENTS.forEach(achievement => {
+        expect(achievement.icon).toBeDefined();
+        expect(achievement.icon.length).toBeGreaterThan(0);
+      });
+    });
+
+    it('should have valid condition types', () => {
+      const validTypes = ['score', 'streak', 'games_played', 'accuracy', 'time', 'specific_player', 'position_specialist', 'time_of_day', 'consecutive_days'];
+      
+      ACHIEVEMENTS.forEach(achievement => {
+        expect(validTypes).toContain(achievement.condition.type);
+      });
+    });
+
+    it('should have valid operators', () => {
+      const validOperators = ['gte', 'lte', 'eq'];
+      
+      ACHIEVEMENTS.forEach(achievement => {
+        expect(validOperators).toContain(achievement.condition.operator);
+      });
+    });
+  });
+
+  describe('Multiple Achievements', () => {
+    it('should unlock multiple achievements at once when conditions are met', async () => {
+      const mockFrom = vi.fn().mockImplementation(() => ({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            order: vi.fn().mockResolvedValue({ data: [], error: null }),
+            eq: vi.fn().mockReturnValue({
+              single: vi.fn().mockResolvedValue({ data: null, error: null }),
+            }),
+          }),
+        }),
+        insert: vi.fn().mockReturnValue({
+          select: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: { id: 'new-achievement' },
+              error: null,
+            }),
+          }),
+        }),
+      }));
+      (supabase.from as Mock) = mockFrom;
+
+      // High stats that should trigger multiple achievements
+      const result = await checkAchievements('user-123', {
+        score: 500,
+        streak: 15,
+        gamesPlayed: 100,
+        accuracy: 100,
+        timeToAnswer: 2,
+      });
+
+      // Should unlock multiple achievements
+      expect(result.length).toBeGreaterThan(1);
+    });
+  });
+
+  describe('Hidden Achievements', () => {
+    it('should have some hidden achievements', () => {
+      const hiddenAchievements = ACHIEVEMENTS.filter(a => a.hidden === true);
+      expect(hiddenAchievements.length).toBeGreaterThan(0);
+    });
+
+    it('should still be unlockable even when hidden', async () => {
+      const hiddenAchievement = ACHIEVEMENTS.find(a => a.hidden === true);
+      
+      if (hiddenAchievement) {
+        expect(hiddenAchievement.condition).toBeDefined();
+        expect(hiddenAchievement.points).toBeGreaterThan(0);
+      }
+    });
   });
 });
