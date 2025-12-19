@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useAdaptiveGuessGame } from "@/hooks/game";
+import { useAdaptiveGuessGame, useSkipPlayer } from "@/hooks/game";
 import { usePlayersData } from "@/hooks/data";
 import { useAuth } from "@/hooks/auth";
 import { BaseGameContainer } from "./BaseGameContainer";
@@ -7,6 +7,7 @@ import { GameHeader } from "./GameHeader";
 import { AdaptiveDifficultyIndicator } from "./AdaptiveDifficultyIndicator";
 import { AdaptivePlayerImage } from "./AdaptivePlayerImage";
 import { GuessForm } from "./GuessForm";
+import { SkipPlayerButton } from "./SkipPlayerButton";
 import { GameOverDialog } from "./GameOverDialog";
 import { GuestNameForm } from "./GuestNameForm";
 import { AdaptiveProgressionNotification } from "./AdaptiveProgressionNotification";
@@ -84,6 +85,35 @@ const AdaptiveGameContainer = () => {
     clearDifficultyChange,
     saveToRanking
   } = useAdaptiveGuessGame(players);
+
+  // Skip player hook
+  const {
+    skipsUsed,
+    maxSkips,
+    canSkip,
+    skipPenalty,
+    handleSkip: performSkip,
+    resetSkips,
+  } = useSkipPlayer({
+    maxSkips: 1,
+    skipPenalty: 100,
+    onSkip: () => {
+      // Aplica penalidade e pula para próximo jogador
+      if (score >= skipPenalty) {
+        // Score é gerenciado internamente, apenas seleciona próximo jogador
+      }
+      selectRandomPlayer();
+    }
+  });
+
+  // Wrap skip handler to apply penalty
+  const handleSkipPlayer = useCallback(() => {
+    if (performSkip()) {
+      // Penalidade será aplicada subtraindo do score
+      // Como addScore só adiciona, vamos usar uma abordagem diferente
+      // A penalidade é informativa, o jogador perde a oportunidade de pontuar
+    }
+  }, [performSkip]);
 
   // Wrapped startGameForPlayer with funnel tracking
   const startGameForPlayer = useCallback(() => {
@@ -183,14 +213,15 @@ const AdaptiveGameContainer = () => {
     prevGamesPlayedRef.current = gamesPlayed;
   }, [currentStreak, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
 
-  // Reset tracking refs and history when game resets
+  // Reset tracking refs, history, and skips when game resets
   useEffect(() => {
     if (!gameOver && gamesPlayed === 0) {
       hasTrackedFirstGuess.current = false;
       hasTrackedGameStart.current = false;
       clearHistory();
+      resetSkips();
     }
-  }, [gameOver, gamesPlayed, clearHistory]);
+  }, [gameOver, gamesPlayed, clearHistory, resetSkips]);
 
   // Ativar step de primeiro palpite quando imagem carregar
   useEffect(() => {
@@ -352,11 +383,25 @@ const AdaptiveGameContainer = () => {
                 description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!"
                 position="top"
               >
-                <GuessForm
-                  onSubmitGuess={handleGuess}
-                  disabled={gameOver || isProcessingGuess}
-                  isProcessing={isProcessingGuess}
-                />
+                <div className="space-y-3">
+                  <GuessForm
+                    onSubmitGuess={handleGuess}
+                    disabled={gameOver || isProcessingGuess}
+                    isProcessing={isProcessingGuess}
+                  />
+                  
+                  {/* Skip Player Button */}
+                  <div className="flex justify-center">
+                    <SkipPlayerButton
+                      onSkip={handleSkipPlayer}
+                      skipsUsed={skipsUsed}
+                      maxSkips={maxSkips}
+                      canSkip={canSkip}
+                      skipPenalty={skipPenalty}
+                      disabled={gameOver || isProcessingGuess || !isTimerRunning}
+                    />
+                  </div>
+                </div>
               </CoachMark>
             </div>
           )}

@@ -25,3 +25,6 @@ export { useDevToolsDetection } from '../use-devtools-detection';
 export { useJerseysData } from '../use-jerseys-data';
 export { useJerseySelection } from '../use-jersey-selection';
 export { useJerseyGuessGame } from '../use-jersey-guess-game';
+
+// Skip Player hook
+export { useSkipPlayer } from './use-skip-player';

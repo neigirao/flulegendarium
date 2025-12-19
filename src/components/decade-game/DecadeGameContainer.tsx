@@ -6,13 +6,15 @@ import { BaseGameContainer } from '@/components/guess-game/BaseGameContainer';
 import { GuestNameForm } from '@/components/guess-game/GuestNameForm';
 import { GameOverDialog } from '@/components/guess-game/GameOverDialog';
 import { GuessHistoryPanel } from '@/components/guess-game/GuessHistoryPanel';
+import { SkipPlayerButton } from '@/components/guess-game/SkipPlayerButton';
 import { 
   useDecadePlayerSelection, 
   useSimpleGameLogic, 
   useSimpleGameCallbacks, 
   useSimpleGameMetrics,
   useDecadeGameTimer,
-  useDecadeGameState 
+  useDecadeGameState,
+  useSkipPlayer
 } from '@/hooks/game';
 import { useAuth } from '@/hooks/auth';
 import { useAchievementSystem } from '@/components/achievements/AchievementSystemProvider';
@@ -139,7 +141,26 @@ export const DecadeGameContainer = () => {
     startTimer
   });
 
-  // Track last guess for history
+  // Skip player hook
+  const {
+    skipsUsed,
+    maxSkips,
+    canSkip,
+    skipPenalty,
+    handleSkip: performSkip,
+    resetSkips,
+  } = useSkipPlayer({
+    maxSkips: 1,
+    skipPenalty: 100,
+    onSkip: () => {
+      selectRandomPlayer();
+    }
+  });
+
+  // Wrap skip handler
+  const handleSkipPlayer = useCallback(() => {
+    performSkip();
+  }, [performSkip]);
   const lastGuessRef = useRef<string>('');
 
   // Wrapped handleGuess with funnel tracking and onboarding
@@ -226,14 +247,15 @@ export const DecadeGameContainer = () => {
     prevStreakRef.current = currentStreak;
   }, [currentStreak, gamesPlayed, funnel, getPlayerAchievements, queueNotification, onCorrectGuess, onStreakAchieved, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
 
-  // Reset tracking refs and history when game resets
+  // Reset tracking refs, history, and skips when game resets
   useEffect(() => {
     if (!gameOver && gamesPlayed === 0) {
       hasTrackedFirstGuess.current = false;
       hasTrackedGameStart.current = false;
       clearHistory();
+      resetSkips();
     }
-  }, [gameOver, gamesPlayed, clearHistory]);
+  }, [gameOver, gamesPlayed, clearHistory, resetSkips]);
 
   // Ativar step de primeiro palpite quando imagem carregar
   useEffect(() => {
@@ -482,8 +504,19 @@ export const DecadeGameContainer = () => {
               multiplier: currentDifficulty.multiplier
             } as any}
           />
+          
+          {/* Skip Player Button */}
+          <div className="flex justify-center mt-4">
+            <SkipPlayerButton
+              onSkip={handleSkipPlayer}
+              skipsUsed={skipsUsed}
+              maxSkips={maxSkips}
+              canSkip={canSkip}
+              skipPenalty={skipPenalty}
+              disabled={gameOver || isProcessingGuess || !isTimerRunning}
+            />
+          </div>
         </CoachMark>
-        
         {/* Guess History Panel */}
         {history.length > 0 && (
           <GuessHistoryPanel
