@@ -2,12 +2,14 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useJerseyGuessGame } from "@/hooks/use-jersey-guess-game";
 import { useJerseysData } from "@/hooks/use-jerseys-data";
 import { useAuth } from "@/hooks/auth";
+import { useSkipPlayer } from "@/hooks/game";
 import { BaseGameContainer } from "@/components/guess-game/BaseGameContainer";
 import { GameHeader } from "@/components/guess-game/GameHeader";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
 import { GuestNameForm } from "@/components/guess-game/GuestNameForm";
 import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { GuessHistoryPanel } from "@/components/guess-game/GuessHistoryPanel";
+import { SkipPlayerButton } from "@/components/guess-game/SkipPlayerButton";
 import { AdaptiveDifficultyIndicator } from "@/components/guess-game/AdaptiveDifficultyIndicator";
 import { JerseyImage } from "./JerseyImage";
 import { JerseyGuessForm } from "./JerseyGuessForm";
@@ -74,7 +76,27 @@ const JerseyGameContainer = () => {
     guessHistory
   } = useJerseyGuessGame(jerseys || []);
 
-  // Wrapped startGameForJersey with funnel tracking
+  // Skip player hook
+  const {
+    skipsUsed,
+    maxSkips,
+    canSkip,
+    skipPenalty,
+    handleSkip: performSkip,
+    resetSkips,
+  } = useSkipPlayer({
+    maxSkips: 1,
+    skipPenalty: 100,
+    onSkip: () => {
+      // Seleciona próxima camisa
+      startGameForJersey();
+    }
+  });
+
+  // Wrap skip handler
+  const handleSkipPlayer = useCallback(() => {
+    performSkip();
+  }, [performSkip]);
   const startGameForPlayer = useCallback(() => {
     if (!hasTrackedGameStart.current) {
       funnel.trackGameStart('jersey', currentDifficulty.level);
@@ -175,14 +197,15 @@ const JerseyGameContainer = () => {
     prevStreakRef.current = currentStreak;
   }, [currentStreak, guessHistory, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentJersey, addEntry, currentDifficulty, timeRemaining]);
 
-  // Reset tracking refs and history when game resets
+  // Reset tracking refs, history, and skips when game resets
   useEffect(() => {
     if (!gameOver && gamesPlayed === 0) {
       hasTrackedFirstGuess.current = false;
       hasTrackedGameStart.current = false;
       clearHistory();
+      resetSkips();
     }
-  }, [gameOver, gamesPlayed, clearHistory]);
+  }, [gameOver, gamesPlayed, clearHistory, resetSkips]);
 
   // Activate first-guess step when image loads
   useEffect(() => {
@@ -339,11 +362,25 @@ const JerseyGameContainer = () => {
                 description="Digite o ano que você acha que essa camisa foi usada. Anos próximos também pontuam!"
                 position="top"
               >
-                <JerseyGuessForm
-                  onSubmitGuess={handleGuess}
-                  disabled={gameOver || isProcessingGuess}
-                  isProcessing={isProcessingGuess}
-                />
+                <div className="space-y-3">
+                  <JerseyGuessForm
+                    onSubmitGuess={handleGuess}
+                    disabled={gameOver || isProcessingGuess}
+                    isProcessing={isProcessingGuess}
+                  />
+                  
+                  {/* Skip Player Button */}
+                  <div className="flex justify-center">
+                    <SkipPlayerButton
+                      onSkip={handleSkipPlayer}
+                      skipsUsed={skipsUsed}
+                      maxSkips={maxSkips}
+                      canSkip={canSkip}
+                      skipPenalty={skipPenalty}
+                      disabled={gameOver || isProcessingGuess || !isTimerRunning}
+                    />
+                  </div>
+                </div>
               </CoachMark>
               
               {/* Show hint after wrong guess */}
