@@ -20,44 +20,44 @@ export const EnhancedFeedback = ({ feedback, show, onClose }: EnhancedFeedbackPr
 
   const feedbackStyles = {
     success: {
-      bg: "bg-gradient-to-r from-green-500 to-emerald-600",
+      bg: "bg-gradient-to-r from-success to-success/80",
       icon: CheckCircle,
-      iconColor: "text-white",
-      textColor: "text-white",
-      border: "border-green-400",
-      shadow: "shadow-green-500/50"
+      iconColor: "text-success-foreground",
+      textColor: "text-success-foreground",
+      border: "border-success/50",
+      shadow: "shadow-success/50"
     },
     error: {
-      bg: "bg-gradient-to-r from-red-500 to-rose-600",
+      bg: "bg-gradient-to-r from-destructive to-destructive/80",
       icon: XCircle,
-      iconColor: "text-white",
-      textColor: "text-white",
-      border: "border-red-400",
-      shadow: "shadow-red-500/50"
+      iconColor: "text-destructive-foreground",
+      textColor: "text-destructive-foreground",
+      border: "border-destructive/50",
+      shadow: "shadow-destructive/50"
     },
     timeout: {
-      bg: "bg-gradient-to-r from-orange-500 to-amber-600",
+      bg: "bg-gradient-to-r from-warning to-warning/80",
       icon: Clock,
-      iconColor: "text-white",
-      textColor: "text-white",
-      border: "border-orange-400",
-      shadow: "shadow-orange-500/50"
+      iconColor: "text-warning-foreground",
+      textColor: "text-warning-foreground",
+      border: "border-warning/50",
+      shadow: "shadow-warning/50"
     },
     hint: {
-      bg: "bg-gradient-to-r from-blue-500 to-cyan-600",
+      bg: "bg-gradient-to-r from-info to-info/80",
       icon: Target,
-      iconColor: "text-white",
-      textColor: "text-white",
-      border: "border-blue-400",
-      shadow: "shadow-blue-500/50"
+      iconColor: "text-info-foreground",
+      textColor: "text-info-foreground",
+      border: "border-info/50",
+      shadow: "shadow-info/50"
     },
     achievement: {
-      bg: "bg-gradient-to-r from-purple-500 to-pink-600",
+      bg: "bg-gradient-to-r from-accent to-accent/80",
       icon: Sparkles,
-      iconColor: "text-white",
-      textColor: "text-white",
-      border: "border-purple-400",
-      shadow: "shadow-purple-500/50"
+      iconColor: "text-accent-foreground",
+      textColor: "text-accent-foreground",
+      border: "border-accent/50",
+      shadow: "shadow-accent/50"
     }
   };
 
@@ -142,10 +142,10 @@ export const EnhancedFeedback = ({ feedback, show, onClose }: EnhancedFeedbackPr
         {/* Decorative elements */}
         {feedback.type === 'achievement' && (
           <>
-            <div className="absolute -top-1 -left-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>
-            <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
-            <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
-            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping" style={{ animationDelay: '1.5s' }}></div>
+            <div className="absolute -top-1 -left-1 w-3 h-3 bg-warning rounded-full animate-ping"></div>
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-warning rounded-full animate-ping" style={{ animationDelay: '0.5s' }}></div>
+            <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-warning rounded-full animate-ping" style={{ animationDelay: '1s' }}></div>
+            <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-warning rounded-full animate-ping" style={{ animationDelay: '1.5s' }}></div>
           </>
         )}
       </div>

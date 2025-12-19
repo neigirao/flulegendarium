@@ -64,7 +64,7 @@ export const UsersTable = ({
         <CardTitle>Usuários Logados que Jogaram</CardTitle>
         <div className="flex items-center gap-4">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
             <Input
               placeholder="Buscar por nome ou email..."
               value={searchTerm}
@@ -76,7 +76,7 @@ export const UsersTable = ({
       </CardHeader>
       <CardContent>
         {currentUsers.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-muted-foreground">
             {searchTerm ? 'Nenhum usuário encontrado para a busca.' : 'Nenhum usuário logado jogou ainda.'}
           </div>
         ) : (
@@ -108,8 +108,8 @@ export const UsersTable = ({
                           }}
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                          <UserCheck size={20} className="text-gray-500" />
+                        <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                          <UserCheck size={20} className="text-muted-foreground" />
                         </div>
                       )}
                     </TableCell>
@@ -166,7 +166,7 @@ export const UsersTable = ({
               </div>
             )}
 
-            <div className="mt-4 text-sm text-gray-500 text-center">
+            <div className="mt-4 text-sm text-muted-foreground text-center">
               Mostrando {startIndex + 1} - {Math.min(endIndex, filteredUsers.length)} de {filteredUsers.length} usuários
               {searchTerm && ` (filtrados de ${totalUsers.length} total)`}
             </div>
