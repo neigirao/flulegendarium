@@ -11,6 +11,8 @@ import { ErrorDisplay } from "@/components/guess-game/ErrorDisplay";
 import { GuessHistoryPanel } from "@/components/guess-game/GuessHistoryPanel";
 import { SkipPlayerButton } from "@/components/guess-game/SkipPlayerButton";
 import { AdaptiveDifficultyIndicator } from "@/components/guess-game/AdaptiveDifficultyIndicator";
+import { AdaptiveProgressionNotification } from "@/components/guess-game/AdaptiveProgressionNotification";
+import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { JerseyImage } from "./JerseyImage";
 import { JerseyGuessForm } from "./JerseyGuessForm";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
@@ -25,7 +27,8 @@ import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
 import { useToast } from "@/hooks/use-toast";
 import { CoachMark, useOnboarding } from "@/components/onboarding";
 import { ACHIEVEMENTS } from "@/types/achievements";
-import type { DifficultyLevel } from "@/types/guess-game";
+import { clearJerseyImageCache, prepareNextJerseyBatch } from "@/utils/jersey-image/preloadUtils";
+import type { DifficultyLevel, DifficultyChangeInfo } from "@/types/guess-game";
 
 const JerseyGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
@@ -34,6 +37,7 @@ const JerseyGameContainer = () => {
   const [canStartTimer, setCanStartTimer] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [lastGuessResult, setLastGuessResult] = useState<{ isCorrect: boolean; hint?: 'higher' | 'lower'; correctYear: number; userGuess: number; pointsEarned: number } | null>(null);
+  const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
   const { toast } = useToast();
   
   // Tracking state
@@ -204,8 +208,31 @@ const JerseyGameContainer = () => {
       hasTrackedGameStart.current = false;
       clearHistory();
       resetSkips();
+      setDifficultyChangeInfo(null);
     }
   }, [gameOver, gamesPlayed, clearHistory, resetSkips]);
+
+  // Track difficulty changes and trigger notification
+  const prevDifficultyRef = useRef(currentDifficulty.level);
+  useEffect(() => {
+    if (currentDifficulty.level !== prevDifficultyRef.current && gamesPlayed > 0) {
+      const isLevelUp = currentDifficulty.multiplier > 1;
+      setDifficultyChangeInfo({
+        oldLevel: prevDifficultyRef.current,
+        newLevel: currentDifficulty.level,
+        direction: currentDifficulty.level > prevDifficultyRef.current ? 'up' : 'down',
+        reason: isLevelUp ? 'Sequência de acertos' : 'Ajuste automático'
+      });
+    }
+    prevDifficultyRef.current = currentDifficulty.level;
+  }, [currentDifficulty.level, currentDifficulty.multiplier, gamesPlayed]);
+
+  // Preload next batch of jerseys
+  useEffect(() => {
+    if (jerseys && jerseys.length > 0 && currentJersey) {
+      prepareNextJerseyBatch(jerseys, currentJersey, 2);
+    }
+  }, [jerseys, currentJersey]);
 
   // Activate first-guess step when image loads
   useEffect(() => {
@@ -228,10 +255,11 @@ const JerseyGameContainer = () => {
 
   useDevToolsDetection(handleDevToolsDetected, !gameOver);
 
-  // Reset states on mount
+  // Reset states on mount and clear image cache
   useEffect(() => {
     setImageLoaded(false);
     setCanStartTimer(false);
+    clearJerseyImageCache();
     
     return () => {
       setImageLoaded(false);
@@ -307,12 +335,30 @@ const JerseyGameContainer = () => {
     return labels[diff] || diff;
   };
 
+  const handleClearDifficultyNotification = useCallback(() => {
+    setDifficultyChangeInfo(null);
+  }, []);
+
   return (
     <>
       <DynamicSEO 
         gameMode="adaptive"
         difficulty={currentDifficulty.label}
       />
+      
+      {/* Debug Info - only in dev */}
+      <DebugInfo
+        show={showDebug}
+        imageUrl={currentJersey?.image_url}
+      />
+      
+      {/* Adaptive Progression Notification */}
+      {difficultyChangeInfo && (
+        <AdaptiveProgressionNotification
+          changeInfo={difficultyChangeInfo}
+          onClose={handleClearDifficultyNotification}
+        />
+      )}
       
       <BaseGameContainer
         title="Quiz das Camisas"

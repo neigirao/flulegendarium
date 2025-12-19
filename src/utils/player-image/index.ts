@@ -14,7 +14,8 @@ export {
   imageCache,
   cleanExpiredCache,
   markImageAsLoaded,
-  isImageLoaded
+  isImageLoaded,
+  clearAllImageCache
 } from './cache';
 
 // Export image utilities
