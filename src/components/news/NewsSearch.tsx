@@ -24,11 +24,11 @@ export const NewsSearch = ({ onSearch, searchTerm }: NewsSearchProps) => {
           placeholder="Buscar notícias..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
-          className="bg-white/90 backdrop-blur-sm border-white/20 placeholder:text-gray-500"
+          className="bg-background/90 backdrop-blur-sm border-border placeholder:text-muted-foreground"
         />
         <Button 
           type="submit"
-          className="bg-flu-verde hover:bg-flu-verde/90 text-white"
+          className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
         >
           <Search className="w-4 h-4" />
         </Button>

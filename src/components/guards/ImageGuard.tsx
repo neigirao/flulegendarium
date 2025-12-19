@@ -90,10 +90,10 @@ export const ImageGuard = memo(({
   // Show loading state
   if (isLoading && !hasError) {
     return (
-      <div className={`flex items-center justify-center bg-gray-100 ${className}`}>
+      <div className={`flex items-center justify-center bg-muted ${className}`}>
         <div className="flex flex-col items-center gap-2 p-4">
-          <Loader className="w-6 h-6 text-flu-grena animate-spin" />
-          <span className="text-sm text-gray-600">Carregando...</span>
+          <Loader className="w-6 h-6 text-primary animate-spin" />
+          <span className="text-sm text-muted-foreground">Carregando...</span>
         </div>
       </div>
     );
@@ -102,10 +102,10 @@ export const ImageGuard = memo(({
   // Show error state (only if using fallback fails too)
   if (hasError && imageSrc === fallbackSrc) {
     return (
-      <div className={`flex items-center justify-center bg-gray-100 ${className}`}>
+      <div className={`flex items-center justify-center bg-muted ${className}`}>
         <div className="flex flex-col items-center gap-2 p-4 text-center">
-          <AlertTriangle className="w-6 h-6 text-red-500" />
-          <span className="text-sm text-red-600">Erro ao carregar imagem</span>
+          <AlertTriangle className="w-6 h-6 text-destructive" />
+          <span className="text-sm text-destructive">Erro ao carregar imagem</span>
         </div>
       </div>
     );

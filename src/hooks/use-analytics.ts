@@ -136,6 +136,40 @@ export const useAnalytics = () => {
     });
   };
 
+  // Funnel tracking events
+  const trackSignupStart = () => {
+    trackEvent({
+      action: 'signup_start',
+      category: 'Funnel',
+      label: 'registration_initiated',
+    });
+  };
+
+  const trackSignupComplete = (method: string = 'email') => {
+    trackEvent({
+      action: 'signup_complete',
+      category: 'Funnel',
+      label: method,
+    });
+  };
+
+  const trackDifficultyChange = (fromLevel: string, toLevel: string) => {
+    trackEvent({
+      action: 'difficulty_change',
+      category: 'Game',
+      label: `${fromLevel}_to_${toLevel}`,
+    });
+  };
+
+  const trackSessionDuration = (durationSeconds: number, gameMode: string) => {
+    trackEvent({
+      action: 'session_duration',
+      category: 'Engagement',
+      label: gameMode,
+      value: durationSeconds,
+    });
+  };
+
   return {
     trackEvent,
     trackPageView,
@@ -145,5 +179,9 @@ export const useAnalytics = () => {
     trackIncorrectGuess,
     trackAchievementUnlocked,
     trackSocialShare,
+    trackSignupStart,
+    trackSignupComplete,
+    trackDifficultyChange,
+    trackSessionDuration,
   };
 };

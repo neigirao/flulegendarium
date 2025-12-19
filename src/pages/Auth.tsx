@@ -181,8 +181,8 @@ const Auth = () => {
                   </TabsList>
 
                   {error && (
-                    <Alert className="mb-4 border-red-200 bg-red-50">
-                      <AlertDescription className="text-red-600">
+                    <Alert className="mb-4 border-destructive/20 bg-destructive/10">
+                      <AlertDescription className="text-destructive">
                         {error}
                       </AlertDescription>
                     </Alert>

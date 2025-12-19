@@ -49,13 +49,13 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
     },
     {
       title: "⚠️ REGRA IMPORTANTE",
-      icon: <AlertTriangle className="w-8 h-8 text-red-600" />,
+      icon: <AlertTriangle className="w-8 h-8 text-destructive" />,
       content: (
-        <div className="space-y-4 p-4 bg-red-50 rounded-lg border border-red-200">
-          <p className="font-bold text-red-800">NÃO TROQUE DE ABA!</p>
+        <div className="space-y-4 p-4 bg-destructive/10 rounded-lg border border-destructive/20">
+          <p className="font-bold text-destructive">NÃO TROQUE DE ABA!</p>
           <p>Se você trocar de aba, minimizar ou sair da janela durante o jogo, será <strong>Game Over</strong> automaticamente.</p>
           <p>Esta regra evita que você consulte outras fontes durante o jogo.</p>
-          <p className="text-sm text-red-700">⚠️ Mantenha o foco na aba do jogo!</p>
+          <p className="text-sm text-destructive/80">⚠️ Mantenha o foco na aba do jogo!</p>
         </div>
       )
     },
@@ -117,7 +117,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
               <X size={20} />
             </Button>
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-muted-foreground">
             Passo {currentStep + 1} de {steps.length}
           </div>
         </CardHeader>
@@ -128,7 +128,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
           </div>
 
           {/* Progress bar */}
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-muted rounded-full h-2">
             <div
               className="bg-flu-grena h-2 rounded-full transition-all duration-300"
               style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
@@ -160,7 +160,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
           <Button
             variant="link"
             onClick={onSkip}
-            className="w-full text-gray-500"
+            className="w-full text-muted-foreground"
           >
             Pular Tutorial
           </Button>

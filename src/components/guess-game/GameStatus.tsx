@@ -25,17 +25,17 @@ interface GameStatusProps {
 
 const GameRulesInfo = memo(() => (
   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-sm">
-    <div className="bg-white/70 rounded-lg p-3 border border-flu-grena/20">
-      <div className="font-semibold text-flu-grena">1 Tentativa</div>
-      <div className="text-gray-600">por jogador</div>
+    <div className="bg-background/70 rounded-lg p-3 border border-primary/20">
+      <div className="font-semibold text-primary">1 Tentativa</div>
+      <div className="text-muted-foreground">por jogador</div>
     </div>
-    <div className="bg-white/70 rounded-lg p-3 border border-flu-verde/20">
-      <div className="font-semibold text-flu-verde">60 Segundos</div>
-      <div className="text-gray-600">para responder</div>
+    <div className="bg-background/70 rounded-lg p-3 border border-secondary/20">
+      <div className="font-semibold text-secondary">60 Segundos</div>
+      <div className="text-muted-foreground">para responder</div>
     </div>
-    <div className="bg-white/70 rounded-lg p-3 border border-orange-300">
-      <div className="font-semibold text-orange-600">5 Pontos</div>
-      <div className="text-gray-600">por acerto</div>
+    <div className="bg-background/70 rounded-lg p-3 border border-warning/30">
+      <div className="font-semibold text-warning">5 Pontos</div>
+      <div className="text-muted-foreground">por acerto</div>
     </div>
   </div>
 ));
@@ -136,10 +136,10 @@ export const GameStatus = memo(({
           </div>
 
           {/* Progresso do jogo com visual aprimorado */}
-          <div className="p-6 bg-gradient-to-r from-gray-50 to-white">
+          <div className="p-6 bg-gradient-to-r from-muted to-background">
             <div className="flex items-center gap-2 mb-4 justify-center">
-              <Zap className="w-5 h-5 text-flu-verde" />
-              <h3 className="font-semibold text-gray-700 text-lg">Seu Progresso</h3>
+              <Zap className="w-5 h-5 text-secondary" />
+              <h3 className="font-semibold text-foreground text-lg">Seu Progresso</h3>
             </div>
             <div data-testid="game-score">
               <GameProgress 
@@ -152,10 +152,10 @@ export const GameStatus = memo(({
           </div>
 
           {/* Regras e informações */}
-          <div className="bg-gradient-to-r from-flu-verde/10 to-flu-grena/10 p-4 border-t border-gray-200">
+          <div className="bg-gradient-to-r from-secondary/10 to-primary/10 p-4 border-t border-border">
             <div className="flex items-center justify-center gap-2 mb-3">
-              <Info className="w-4 h-4 text-flu-grena" />
-              <span className="font-medium text-gray-700">Como Jogar</span>
+              <Info className="w-4 h-4 text-primary" />
+              <span className="font-medium text-foreground">Como Jogar</span>
             </div>
             
             <GameRulesInfo />
@@ -163,13 +163,13 @@ export const GameStatus = memo(({
 
           {/* Botão de sair com visual melhorado - só mostra quando o jogo não acabou */}
           {!gameOver && (
-            <div className="p-4 bg-white border-t border-gray-200">
+            <div className="p-4 bg-background border-t border-border">
               <div className="flex justify-center">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleExitGame}
-                  className="border-red-300 text-red-600 hover:bg-red-50 hover:border-red-400 transition-all duration-200 flex items-center gap-2 px-6 py-3 rounded-xl font-medium"
+                  className="border-destructive/30 text-destructive hover:bg-destructive/10 hover:border-destructive/40 transition-all duration-200 flex items-center gap-2 px-6 py-3 rounded-xl font-medium"
                 >
                   <Home className="w-4 h-4" />
                   Sair do Jogo

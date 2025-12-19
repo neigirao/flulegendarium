@@ -38,8 +38,8 @@ export const InstagramProfile = memo(({
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         <Avatar className={avatarSizes[avatarSize]}>
-          <AvatarFallback className="bg-gray-100">
-            <User className="w-3 h-3 text-gray-400" />
+          <AvatarFallback className="bg-muted">
+            <User className="w-3 h-3 text-muted-foreground" />
           </AvatarFallback>
         </Avatar>
         <span>{displayName}</span>
@@ -72,15 +72,15 @@ export const InstagramProfile = memo(({
           href={instagramUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="hover:text-flu-grena transition-colors hover:underline flex items-center gap-1"
+          className="hover:text-primary transition-colors hover:underline flex items-center gap-1"
         >
           {displayName}
-          <Instagram className="w-3 h-3 text-gray-400" />
+          <Instagram className="w-3 h-3 text-muted-foreground" />
         </a>
       ) : (
         <span className="flex items-center gap-1">
           {displayName}
-          <Instagram className="w-3 h-3 text-gray-400" />
+          <Instagram className="w-3 h-3 text-muted-foreground" />
         </span>
       )}
     </div>
