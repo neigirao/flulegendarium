@@ -6,6 +6,7 @@ import { useTabVisibility } from "./use-tab-visibility";
 import { logger } from "@/utils/logger";
 import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 import { jerseyService } from "@/services/jerseyService";
+import { clearJerseyImageCache } from "@/utils/jersey-image/preloadUtils";
 import type { Jersey, JerseyGuessHistoryEntry } from "@/types/jersey-game";
 
 /**
@@ -362,6 +363,9 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     setDifficultyChangeInfo(null);
     setCurrentJersey(null);
     setGuessHistory([]);
+    
+    // Clear image cache on reset
+    clearJerseyImageCache();
     
     usedJerseyIds.current.clear();
     setGameKey(Date.now());
