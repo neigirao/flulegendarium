@@ -2,14 +2,14 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Edit, Search, Trash2, Plus, Shirt } from "lucide-react";
+import { Edit, Trash2, Plus, Shirt } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { JerseyForm } from "./JerseyForm";
 import type { Jersey, JerseyType } from "@/types/jersey-game";
 import type { DifficultyLevel } from "@/types/guess-game";
+import { SearchWithFilters, FilterConfig, DIFFICULTY_LABELS } from "@/components/admin/shared";
 
 const TYPE_LABELS: Record<JerseyType, string> = {
   home: 'Principal',
@@ -18,17 +18,12 @@ const TYPE_LABELS: Record<JerseyType, string> = {
   special: 'Especial',
 };
 
-const DIFFICULTY_LABELS: Record<DifficultyLevel, string> = {
-  muito_facil: 'Muito Fácil',
-  facil: 'Fácil',
-  medio: 'Médio',
-  dificil: 'Difícil',
-  muito_dificil: 'Muito Difícil',
-};
+const DECADES = ['1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', '2020'];
 
 export const JerseysManagement = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [editingJersey, setEditingJersey] = useState<Jersey | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
 
@@ -64,16 +59,56 @@ export const JerseysManagement = () => {
     },
   });
 
+  const filters: FilterConfig[] = [
+    {
+      key: 'difficulty',
+      label: 'Dificuldade',
+      options: Object.entries(DIFFICULTY_LABELS).map(([value, label]) => ({ value, label }))
+    },
+    {
+      key: 'type',
+      label: 'Tipo',
+      options: Object.entries(TYPE_LABELS).map(([value, label]) => ({ value, label }))
+    },
+    {
+      key: 'decade',
+      label: 'Década',
+      options: DECADES.map(d => ({ value: d, label: `${d}s` }))
+    }
+  ];
+
   const filteredJerseys = jerseys.filter(jersey => {
     const searchLower = searchTerm.toLowerCase();
     const yearsString = jersey.years.join(', ');
-    return (
-      yearsString.includes(searchTerm) ||
+    
+    // Text search
+    const matchesSearch = yearsString.includes(searchTerm) ||
       jersey.title?.toLowerCase().includes(searchLower) ||
       jersey.manufacturer?.toLowerCase().includes(searchLower) ||
-      jersey.nicknames?.some(nick => nick.toLowerCase().includes(searchLower))
-    );
+      jersey.nicknames?.some(nick => nick.toLowerCase().includes(searchLower));
+    
+    // Difficulty filter
+    const matchesDifficulty = !activeFilters.difficulty || activeFilters.difficulty === 'all' || 
+      jersey.difficulty_level === activeFilters.difficulty;
+    
+    // Type filter
+    const matchesType = !activeFilters.type || activeFilters.type === 'all' || 
+      jersey.type === activeFilters.type;
+    
+    // Decade filter
+    const matchesDecade = !activeFilters.decade || activeFilters.decade === 'all' || 
+      jersey.decades?.includes(activeFilters.decade);
+    
+    return matchesSearch && matchesDifficulty && matchesType && matchesDecade;
   });
+
+  const handleFilterChange = (key: string, value: string) => {
+    setActiveFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setActiveFilters({});
+  };
 
   const handleDeleteJersey = async (jerseyId: string, jerseyYears: number[]) => {
     const yearsDisplay = jerseyYears.join(', ');
@@ -151,25 +186,22 @@ export const JerseysManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
-          <Input
-            placeholder="Buscar camisa por ano, título ou fabricante..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
+      <SearchWithFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        placeholder="Buscar camisa por ano, título ou fabricante..."
+        filters={filters}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        totalResults={filteredJerseys.length}
+        totalItems={jerseys.length}
+      >
         <Button onClick={() => setIsAddingNew(true)} className="flex items-center gap-2">
           <Plus size={16} />
           Nova Camisa
         </Button>
-      </div>
-
-      <div className="text-sm text-muted-foreground">
-        Total: {jerseys.length} camisas cadastradas
-      </div>
+      </SearchWithFilters>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredJerseys.map((jersey) => (
