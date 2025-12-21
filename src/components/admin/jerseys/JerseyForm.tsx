@@ -24,13 +24,7 @@ const JERSEY_TYPES: { value: JerseyType; label: string }[] = [
   { value: 'special', label: 'Especial/Comemorativa' },
 ];
 
-const DIFFICULTY_LEVELS: { value: DifficultyLevel; label: string }[] = [
-  { value: 'muito_facil', label: 'Muito Fácil' },
-  { value: 'facil', label: 'Fácil' },
-  { value: 'medio', label: 'Médio' },
-  { value: 'dificil', label: 'Difícil' },
-  { value: 'muito_dificil', label: 'Muito Difícil' },
-];
+import { DIFFICULTY_LEVELS } from "@/components/admin/shared/DifficultySection";
 
 const DECADES = ['1900', '1910', '1920', '1930', '1940', '1950', '1960', '1970', '1980', '1990', '2000', '2010', '2020'];
 

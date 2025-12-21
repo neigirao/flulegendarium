@@ -3,20 +3,21 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Edit, Search, Trash2 } from "lucide-react";
-import { Player } from "@/types/guess-game";
+import { Edit, Trash2 } from "lucide-react";
+import { Player, DifficultyLevel } from "@/types/guess-game";
 import { EditPlayerForm } from "./EditPlayerForm";
 import { useToast } from "@/components/ui/use-toast";
 import { Database } from "@/integrations/supabase/types";
 import { convertStatistics } from "@/utils/statistics-converter";
+import { SearchWithFilters, FilterConfig, DIFFICULTY_LABELS } from "./shared";
 
 type PlayerRow = Database['public']['Tables']['players']['Row'];
 
 export const PlayersManagement = () => {
   const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
 
   const { data: players = [], isLoading, refetch } = useQuery({
@@ -58,12 +59,51 @@ export const PlayersManagement = () => {
     },
   });
 
-  const filteredPlayers = players.filter(player =>
-    player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    player.nicknames?.some(nick => 
-      nick.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  );
+  const filters: FilterConfig[] = [
+    {
+      key: 'difficulty',
+      label: 'Dificuldade',
+      options: Object.entries(DIFFICULTY_LABELS).map(([value, label]) => ({ value, label }))
+    },
+    {
+      key: 'position',
+      label: 'Posição',
+      options: [
+        { value: 'Goleiro', label: 'Goleiro' },
+        { value: 'Zagueiro', label: 'Zagueiro' },
+        { value: 'Lateral', label: 'Lateral' },
+        { value: 'Volante', label: 'Volante' },
+        { value: 'Meia', label: 'Meia' },
+        { value: 'Atacante', label: 'Atacante' },
+      ]
+    }
+  ];
+
+  const filteredPlayers = players.filter(player => {
+    // Text search
+    const matchesSearch = player.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      player.nicknames?.some(nick => 
+        nick.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    
+    // Difficulty filter
+    const matchesDifficulty = !activeFilters.difficulty || activeFilters.difficulty === 'all' || 
+      player.difficulty_level === activeFilters.difficulty;
+    
+    // Position filter
+    const matchesPosition = !activeFilters.position || activeFilters.position === 'all' || 
+      player.position?.toLowerCase().includes(activeFilters.position.toLowerCase());
+    
+    return matchesSearch && matchesDifficulty && matchesPosition;
+  });
+
+  const handleFilterChange = (key: string, value: string) => {
+    setActiveFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setActiveFilters({});
+  };
 
   const handleEditPlayer = (player: Player) => {
     setEditingPlayer(player);
@@ -123,17 +163,17 @@ export const PlayersManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-          <Input
-            placeholder="Buscar jogador..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </div>
+      <SearchWithFilters
+        searchTerm={searchTerm}
+        onSearchChange={setSearchTerm}
+        placeholder="Buscar jogador por nome ou apelido..."
+        filters={filters}
+        activeFilters={activeFilters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        totalResults={filteredPlayers.length}
+        totalItems={players.length}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredPlayers.map((player) => (
