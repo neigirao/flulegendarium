@@ -12,7 +12,7 @@ export const GameRulesTooltip = () => {
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
-          <button className="text-gray-500 hover:text-flu-grena transition-colors">
+          <button className="text-muted-foreground hover:text-flu-grena transition-colors">
             <HelpCircle size={20} />
           </button>
         </TooltipTrigger>

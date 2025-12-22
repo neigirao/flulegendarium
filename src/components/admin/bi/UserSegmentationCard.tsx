@@ -23,7 +23,7 @@ export const UserSegmentationCard = ({ segments, isLoading }: UserSegmentationCa
         <CardContent>
           <div className="space-y-4">
             {[...Array(4)].map((_, i) => (
-              <div key={i} className="animate-pulse bg-gray-200 h-16 rounded"></div>
+              <div key={i} className="animate-pulse bg-muted h-16 rounded"></div>
             ))}
           </div>
         </CardContent>
@@ -40,9 +40,9 @@ export const UserSegmentationCard = ({ segments, isLoading }: UserSegmentationCa
       case 'Jogadores Regulares':
         return <TrendingUp className="w-4 h-4 text-blue-600" />;
       case 'Jogadores Casuais':
-        return <Target className="w-4 h-4 text-green-600" />;
+        return <Target className="w-4 h-4 text-flu-verde" />;
       default:
-        return <Users className="w-4 h-4 text-gray-600" />;
+        return <Users className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -53,13 +53,13 @@ export const UserSegmentationCard = ({ segments, isLoading }: UserSegmentationCa
       case 'Jogadores Regulares':
         return 'bg-blue-100 text-blue-800';
       case 'Jogadores Casuais':
-        return 'bg-green-100 text-green-800';
+        return 'bg-flu-verde/20 text-flu-verde';
       case 'Novos Usuários':
         return 'bg-purple-100 text-purple-800';
       case 'Jogadores Inativos':
-        return 'bg-red-100 text-red-800';
+        return 'bg-destructive/20 text-destructive';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -90,7 +90,7 @@ export const UserSegmentationCard = ({ segments, isLoading }: UserSegmentationCa
                 </Badge>
               </div>
               
-              <p className="text-sm text-gray-600 mb-3">{segment.description}</p>
+              <p className="text-sm text-muted-foreground mb-3">{segment.description}</p>
               
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
@@ -102,16 +102,16 @@ export const UserSegmentationCard = ({ segments, isLoading }: UserSegmentationCa
               
               <div className="grid grid-cols-3 gap-4 mt-3 text-sm">
                 <div className="text-center">
-                  <p className="text-gray-500">Score Médio</p>
+                  <p className="text-muted-foreground">Score Médio</p>
                   <p className="font-semibold text-flu-grena">{segment.avg_score}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-gray-500">Precisão</p>
+                  <p className="text-muted-foreground">Precisão</p>
                   <p className="font-semibold text-flu-verde">{segment.avg_accuracy}%</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-gray-500">Retenção</p>
-                  <p className="font-semibold text-blue-600">{segment.retention_rate}%</p>
+                  <p className="text-muted-foreground">Retenção</p>
+                  <p className="font-semibold text-primary">{segment.retention_rate}%</p>
                 </div>
               </div>
             </div>
@@ -119,7 +119,7 @@ export const UserSegmentationCard = ({ segments, isLoading }: UserSegmentationCa
         })}
         
         {segments.length === 0 && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-muted-foreground">
             <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
             <p>Dados insuficientes para segmentação</p>
             <p className="text-sm">Aguarde mais usuários para análise</p>

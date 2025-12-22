@@ -71,7 +71,7 @@ export const LoadingCard = ({
 
   return (
     <div className={cn(
-      "bg-white/90 backdrop-blur-sm rounded-lg shadow-md border border-gray-200 flex flex-col items-center text-center",
+      "bg-card backdrop-blur-sm rounded-lg shadow-md border border-border flex flex-col items-center text-center",
       styles.container,
       className
     )}>
@@ -79,17 +79,17 @@ export const LoadingCard = ({
         <IconComponent className={cn("text-flu-grena animate-pulse", styles.icon)} />
       </div>
       
-      <h3 className={cn("font-semibold text-gray-900 mb-2", styles.title)}>
+      <h3 className={cn("font-semibold text-foreground mb-2", styles.title)}>
         {title}
       </h3>
       
       {description && (
-        <p className={cn("text-gray-600", styles.description)}>
+        <p className={cn("text-muted-foreground", styles.description)}>
           {description}
         </p>
       )}
       
-      <div className="mt-4 w-16 h-1 bg-gray-200 rounded-full overflow-hidden">
+      <div className="mt-4 w-16 h-1 bg-muted rounded-full overflow-hidden">
         <div className="h-full bg-flu-grena rounded-full animate-pulse" style={{
           animation: "loading-bar 2s ease-in-out infinite"
         }} />
@@ -116,7 +116,7 @@ export const LoadingSkeleton = ({
           {Array.from({ length: lines }).map((_, i) => (
             <div
               key={i}
-              className="h-4 bg-gray-200 rounded animate-pulse"
+              className="h-4 bg-muted rounded animate-pulse"
               style={{
                 width: i === lines - 1 ? "75%" : "100%"
               }}
@@ -127,12 +127,12 @@ export const LoadingSkeleton = ({
       
     case "card":
       return (
-        <div className={cn("p-4 border rounded-lg bg-white", className)}>
+        <div className={cn("p-4 border rounded-lg bg-card", className)}>
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-gray-200 rounded-full animate-pulse" />
+            <div className="w-12 h-12 bg-muted rounded-full animate-pulse" />
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-gray-200 rounded animate-pulse" />
-              <div className="h-3 bg-gray-200 rounded animate-pulse w-3/4" />
+              <div className="h-4 bg-muted rounded animate-pulse" />
+              <div className="h-3 bg-muted rounded animate-pulse w-3/4" />
             </div>
           </div>
         </div>
@@ -140,17 +140,17 @@ export const LoadingSkeleton = ({
       
     case "avatar":
       return (
-        <div className={cn("w-10 h-10 bg-gray-200 rounded-full animate-pulse", className)} />
+        <div className={cn("w-10 h-10 bg-muted rounded-full animate-pulse", className)} />
       );
       
     case "button":
       return (
-        <div className={cn("h-10 bg-gray-200 rounded animate-pulse", className)} />
+        <div className={cn("h-10 bg-muted rounded animate-pulse", className)} />
       );
       
     default:
       return (
-        <div className={cn("h-4 bg-gray-200 rounded animate-pulse", className)} />
+        <div className={cn("h-4 bg-muted rounded animate-pulse", className)} />
       );
   }
 };
@@ -177,7 +177,7 @@ export const PageLoading = ({
 export const InlineLoading = ({ text = "Carregando..." }: { text?: string }) => (
   <div className="flex items-center justify-center gap-2 py-4">
     <LoadingSpinner size="sm" />
-    <span className="text-sm text-gray-600">{text}</span>
+    <span className="text-sm text-muted-foreground">{text}</span>
   </div>
 );
 

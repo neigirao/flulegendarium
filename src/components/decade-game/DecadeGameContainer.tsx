@@ -32,10 +32,15 @@ import { getDecadeInfo } from '@/data/decades';
 import { Button } from '@/components/ui/button';
 import { logger } from '@/utils/logger';
 import { useDevToolsDetection } from '@/hooks/use-devtools-detection';
-import { useToast } from '@/hooks/use-toast';
+import { useGameToasts } from '@/hooks/use-game-toasts';
 import { clearAllImageCache, prepareNextBatch } from '@/utils/player-image';
 import { CoachMark, useOnboarding } from '@/components/onboarding';
 import { ACHIEVEMENTS } from '@/types/achievements';
+import { 
+  AnimatedContainer, 
+  PlayerTransition, 
+  StreakIndicator 
+} from '@/components/animations/GameAnimations';
 import type { DifficultyChangeInfo } from '@/types/guess-game';
 
 export const DecadeGameContainer = () => {
@@ -43,7 +48,7 @@ export const DecadeGameContainer = () => {
   const { user } = useAuth();
   const { getPlayerAchievements } = useAchievementSystem();
   const { currentNotification, queueNotification, dismissNotification } = useAchievementNotifications();
-  const { toast } = useToast();
+  const gameToasts = useGameToasts();
   const funnel = useFunnelAnalytics();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
   const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
@@ -296,15 +301,11 @@ export const DecadeGameContainer = () => {
   // Detecção de DevTools - encerra o jogo se detectado
   const handleDevToolsDetected = useCallback(() => {
     if (!gameOver && selectedDecade) {
-      toast({
-        variant: "destructive",
-        title: "Jogo Encerrado",
-        description: "Uso de ferramentas de inspeção detectado. O jogo foi finalizado.",
-      });
+      gameToasts.showDevToolsDetected();
       endGame();
       resetStreak();
     }
-  }, [gameOver, selectedDecade, toast, endGame, resetStreak]);
+  }, [gameOver, selectedDecade, gameToasts, endGame, resetStreak]);
 
   useDevToolsDetection(handleDevToolsDetected, !gameOver && !!selectedDecade);
 

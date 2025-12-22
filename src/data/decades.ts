@@ -39,7 +39,7 @@ export const DECADES_INFO: Record<Decade, DecadeInfo> = {
     label: 'Anos 2010',
     description: 'Renascimento tricolor e grandes conquistas',
     period: '2010-2019',
-    color: 'bg-green-500',
+    color: 'bg-flu-verde',
     icon: '🚀'
   },
   '2020s': {
