@@ -24,10 +24,15 @@ import { useChallengeProgress } from "@/hooks/use-challenge-progress";
 import { useGuessHistory } from "@/hooks/use-guess-history";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
-import { useToast } from "@/hooks/use-toast";
+import { useGameToasts } from "@/hooks/use-game-toasts";
 import { CoachMark, useOnboarding } from "@/components/onboarding";
 import { ACHIEVEMENTS } from "@/types/achievements";
 import { clearJerseyImageCache, prepareNextJerseyBatch } from "@/utils/jersey-image/preloadUtils";
+import { 
+  AnimatedContainer, 
+  PlayerTransition, 
+  StreakIndicator 
+} from "@/components/animations/GameAnimations";
 import type { DifficultyLevel, DifficultyChangeInfo } from "@/types/guess-game";
 
 const JerseyGameContainer = () => {
@@ -38,7 +43,7 @@ const JerseyGameContainer = () => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [lastGuessResult, setLastGuessResult] = useState<{ isCorrect: boolean; hint?: 'higher' | 'lower'; correctYear: number; userGuess: number; pointsEarned: number } | null>(null);
   const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
-  const { toast } = useToast();
+  const gameToasts = useGameToasts();
   
   // Tracking state
   const hasTrackedFirstGuess = useRef(false);
@@ -244,14 +249,10 @@ const JerseyGameContainer = () => {
   // DevTools detection - reset game when detected
   const handleDevToolsDetected = useCallback(() => {
     if (!gameOver) {
-      toast({
-        variant: "destructive",
-        title: "Jogo Encerrado",
-        description: "Uso de ferramentas de inspeção detectado. O jogo foi finalizado.",
-      });
+      gameToasts.showDevToolsDetected();
       resetGame();
     }
-  }, [gameOver, toast, resetGame]);
+  }, [gameOver, gameToasts, resetGame]);
 
   useDevToolsDetection(handleDevToolsDetected, !gameOver);
 
@@ -342,7 +343,7 @@ const JerseyGameContainer = () => {
   return (
     <>
       <DynamicSEO 
-        gameMode="adaptive"
+        gameMode="jersey"
         difficulty={currentDifficulty.label}
       />
       

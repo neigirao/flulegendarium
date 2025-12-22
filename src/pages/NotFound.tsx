@@ -15,9 +15,9 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white shadow-sm py-4 sticky top-0 z-50">
+      <header className="bg-card shadow-sm py-4 sticky top-0 z-50">
         <div className="container mx-auto px-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">
             <img 
@@ -46,7 +46,7 @@ const NotFound = () => {
           <h2 className="text-2xl font-bold text-flu-grena mb-4">
             Página Não Encontrada
           </h2>
-          <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+          <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
             Ops! A página que você está procurando não existe ou foi movida.
           </p>
           <Button 

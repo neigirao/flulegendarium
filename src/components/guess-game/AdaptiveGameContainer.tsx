@@ -25,11 +25,16 @@ import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { useMobileOptimization } from "@/hooks/mobile";
 import { useUX } from "@/components/ux/UXProvider";
 import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
-import { useToast } from "@/hooks/use-toast";
+import { useGameToasts } from "@/hooks/use-game-toasts";
 import { clearAllImageCache } from "@/utils/player-image/cache";
 import { preloadNextPlayer, prepareNextBatch } from "@/utils/player-image/preloadUtils";
 import { CoachMark, useOnboarding } from "@/components/onboarding";
 import { ACHIEVEMENTS } from "@/types/achievements";
+import { 
+  AnimatedContainer, 
+  PlayerTransition, 
+  StreakIndicator 
+} from "@/components/animations/GameAnimations";
 
 const AdaptiveGameContainer = () => {
   const [showDebug, setShowDebug] = useState(false);
@@ -37,7 +42,7 @@ const AdaptiveGameContainer = () => {
   const [showGuestNameForm, setShowGuestNameForm] = useState(false);
   const [canStartTimer, setCanStartTimer] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const { toast } = useToast();
+  const gameToasts = useGameToasts();
   
   // Tracking state
   const hasTrackedFirstGuess = useRef(false);
@@ -233,15 +238,11 @@ const AdaptiveGameContainer = () => {
   // Detecção de DevTools - encerra o jogo se detectado
   const handleDevToolsDetected = useCallback(() => {
     if (!gameOver) {
-      toast({
-        variant: "destructive",
-        title: "Jogo Encerrado",
-        description: "Uso de ferramentas de inspeção detectado. O jogo foi finalizado.",
-      });
+      gameToasts.showDevToolsDetected();
       // O jogo será encerrado através do resetScore que força gameOver
       resetScore();
     }
-  }, [gameOver, toast, resetScore]);
+  }, [gameOver, gameToasts, resetScore]);
 
   useDevToolsDetection(handleDevToolsDetected, !gameOver);
 

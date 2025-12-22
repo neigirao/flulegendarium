@@ -47,13 +47,13 @@ export const NewsCard = ({ article }: NewsCardProps) => {
 
         {/* Summary */}
         {article.summary && (
-          <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+          <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
             {article.summary}
           </p>
         )}
 
         {/* Meta Info */}
-        <div className="space-y-2 text-xs text-gray-500">
+        <div className="space-y-2 text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
             <User className="w-3 h-3" />
             <span>{article.author_name}</span>
@@ -75,7 +75,7 @@ export const NewsCard = ({ article }: NewsCardProps) => {
         </div>
 
         {/* Read More */}
-        <div className="mt-4 pt-3 border-t border-gray-100">
+        <div className="mt-4 pt-3 border-t border-border">
           <span className="text-flu-verde text-sm font-medium group-hover:text-flu-grena transition-colors duration-300">
             Ler mais →
           </span>

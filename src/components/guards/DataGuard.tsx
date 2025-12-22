@@ -68,7 +68,7 @@ export const DataGuard = ({
   if (!data || (Array.isArray(data) && data.length === 0)) {
     return fallbackComponent || (
       <div className="text-center py-8">
-        <p className="text-gray-500">{emptyMessage}</p>
+        <p className="text-muted-foreground">{emptyMessage}</p>
       </div>
     );
   }

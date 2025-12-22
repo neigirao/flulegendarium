@@ -28,7 +28,7 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
             <User className="w-8 h-8 text-flu-verde" />
           </div>
           <CardTitle className="text-2xl text-flu-grena">Qual é o seu nome?</CardTitle>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Digite seu nome para começar a jogar como convidado
           </p>
         </CardHeader>
