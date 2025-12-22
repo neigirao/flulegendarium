@@ -292,38 +292,21 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
         }, 1500);
         
       } else {
-        // Partial points for close guesses
-        if (pointsEarned > 0) {
-          const totalPoints = pointsEarned + bonus;
-          const newScore = score + totalPoints;
-          setScore(newScore);
-          
-          toast({
-            title: `Quase! ${result.hint === 'higher' ? '↑ Mais recente' : '↓ Mais antiga'}`,
-            description: `+${totalPoints} pontos (diferença: ${yearDifference} anos)`,
-          });
-          
-          // Continue playing with close guesses
-          setAttempts(prev => prev + 1);
-          setIsProcessingGuess(false);
-          
-        } else {
-          // Game over for far misses
-          setGameOver(true);
-          setHasLost(true);
-          setCurrentStreak(0);
-          stopTimer();
-          
-          adjustDifficulty(false);
-          
-          toast({
-            variant: "destructive",
-            title: "Incorreto!",
-            description: `Era ${yearsDisplay}. Pontuação final: ${score}`,
-          });
+        // Game over on any wrong answer - no partial points, no hints
+        setGameOver(true);
+        setHasLost(true);
+        setCurrentStreak(0);
+        stopTimer();
+        
+        adjustDifficulty(false);
+        
+        toast({
+          variant: "destructive",
+          title: "Incorreto!",
+          description: `Era ${yearsDisplay}. Pontuação final: ${score}`,
+        });
 
-          setIsProcessingGuess(false);
-        }
+        setIsProcessingGuess(false);
       }
     } catch (error) {
       logger.error('Error processing jersey guess', 'JERSEY_GUESS', error);

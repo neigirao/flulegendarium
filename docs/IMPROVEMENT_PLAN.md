@@ -32,24 +32,7 @@ Estimativa: 2h
 Impacto: Alto (elimina confusão do usuário)
 ```
 
-### 1.2 UX - Reconhecimento vs Memorização (H6)
-**Problema:** Sem sistema de dicas para jogadores difíceis  
-**Solução:** Adicionar botão de dica que mostra posição/década após 15s
-
-```
-Arquivos a criar:
-- src/components/guess-game/HintSystem.tsx
-- src/hooks/use-hint-system.ts
-
-Arquivos a modificar:
-- src/components/guess-game/AdaptiveGameContainer.tsx
-- src/hooks/use-adaptive-guess-game.ts
-
-Estimativa: 4h
-Impacto: Alto (reduz frustração)
-```
-
-### 1.3 Design - Cores Hardcoded
+### 1.2 Design - Cores Hardcoded
 **Problema:** 47+ ocorrências de cores fora do design system  
 **Solução:** Migrar para tokens semânticos
 
@@ -339,7 +322,6 @@ Impacto: Médio (receita + engajamento)
 ```
 Semana 1-2:   Fase 1 (Quick Wins)
               - Skeleton loaders ✓
-              - Sistema de dicas ✓
               - Migração de cores ✓
               - Tracking de funil ✓
 
