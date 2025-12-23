@@ -13,11 +13,11 @@ export const UserEngagementReport = () => {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <div className="animate-pulse h-6 bg-gray-200 rounded w-1/3" />
+            <div className="animate-pulse h-6 bg-muted rounded w-1/3" />
           </CardHeader>
           <CardContent>
             <div className="animate-pulse space-y-4">
-              <div className="h-64 bg-gray-200 rounded" />
+              <div className="h-64 bg-muted rounded" />
             </div>
           </CardContent>
         </Card>
@@ -75,7 +75,7 @@ export const UserEngagementReport = () => {
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-semibold text-flu-grena mb-2">Relatório de Engajamento do Usuário</h3>
-        <p className="text-gray-600 text-sm">Análise detalhada do comportamento e engajamento dos usuários</p>
+        <p className="text-muted-foreground text-sm">Análise detalhada do comportamento e engajamento dos usuários</p>
       </div>
 
       {/* Métricas Resumo */}
@@ -87,9 +87,9 @@ export const UserEngagementReport = () => {
               {getTrendIcon(avgDAU, avgDAU * 0.9)}
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-600">DAU Médio</p>
+              <p className="text-sm font-medium text-muted-foreground">DAU Médio</p>
               <p className="text-2xl font-bold text-blue-600">{avgDAU}</p>
-              <p className="text-xs text-gray-500">Últimos 7 dias</p>
+              <p className="text-xs text-muted-foreground">Últimos 7 dias</p>
             </div>
           </CardContent>
         </Card>
@@ -101,9 +101,9 @@ export const UserEngagementReport = () => {
               {getTrendIcon(avgSessionDuration, 5)}
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-600">Sessão Média</p>
-              <p className="text-2xl font-bold text-green-600">{avgSessionDuration}min</p>
-              <p className="text-xs text-gray-500">Duração por sessão</p>
+              <p className="text-sm font-medium text-muted-foreground">Sessão Média</p>
+              <p className="text-2xl font-bold text-flu-verde">{avgSessionDuration}min</p>
+              <p className="text-xs text-muted-foreground">Duração por sessão</p>
             </div>
           </CardContent>
         </Card>
@@ -117,9 +117,9 @@ export const UserEngagementReport = () => {
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-600">Engajamento</p>
+              <p className="text-sm font-medium text-muted-foreground">Engajamento</p>
               <p className="text-2xl font-bold text-purple-600">{avgEngagementScore}%</p>
-              <p className="text-xs text-gray-500">Score médio</p>
+              <p className="text-xs text-muted-foreground">Score médio</p>
             </div>
           </CardContent>
         </Card>
@@ -131,9 +131,9 @@ export const UserEngagementReport = () => {
               {getTrendIcon(totalNewUsers, totalNewUsers * 0.8)}
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-600">Novos Usuários</p>
+              <p className="text-sm font-medium text-muted-foreground">Novos Usuários</p>
               <p className="text-2xl font-bold text-orange-600">{totalNewUsers}</p>
-              <p className="text-xs text-gray-500">Período total</p>
+              <p className="text-xs text-muted-foreground">Período total</p>
             </div>
           </CardContent>
         </Card>
@@ -147,9 +147,9 @@ export const UserEngagementReport = () => {
               </Badge>
             </div>
             <div className="space-y-1">
-              <p className="text-sm font-medium text-gray-600">Taxa Rejeição</p>
-              <p className="text-2xl font-bold text-red-600">{avgBounceRate}%</p>
-              <p className="text-xs text-gray-500">Sessões &lt; 1min</p>
+              <p className="text-sm font-medium text-muted-foreground">Taxa Rejeição</p>
+              <p className="text-2xl font-bold text-destructive">{avgBounceRate}%</p>
+              <p className="text-xs text-muted-foreground">Sessões &lt; 1min</p>
             </div>
           </CardContent>
         </Card>

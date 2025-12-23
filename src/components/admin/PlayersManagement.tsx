@@ -190,7 +190,7 @@ export const PlayersManagement = () => {
                 />
                 <div className="flex-1">
                   <CardTitle className="text-lg">{player.name}</CardTitle>
-                  <p className="text-sm text-gray-600">{player.position}</p>
+                  <p className="text-sm text-muted-foreground">{player.position}</p>
                   <p className="text-xs text-muted-foreground">
                     <strong>Dificuldade:</strong> {player.difficulty_level || 'Não definida'}
                   </p>
@@ -230,7 +230,7 @@ export const PlayersManagement = () => {
       </div>
 
       {filteredPlayers.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="text-center py-8 text-muted-foreground">
           {searchTerm ? 'Nenhum jogador encontrado.' : 'Nenhum jogador cadastrado.'}
         </div>
       )}

@@ -282,7 +282,7 @@ export const NewsCategoriesManagement = () => {
                 </div>
 
                 {category.description && (
-                  <p className="text-sm text-gray-600">{category.description}</p>
+                  <p className="text-sm text-muted-foreground">{category.description}</p>
                 )}
 
                 <div className="flex gap-2">
@@ -335,7 +335,7 @@ export const NewsCategoriesManagement = () => {
           <h3 className="text-xl font-semibold text-flu-grena mb-2">
             Nenhuma categoria encontrada
           </h3>
-          <p className="text-gray-600 mb-4">
+          <p className="text-muted-foreground mb-4">
             Comece criando sua primeira categoria de notícias.
           </p>
           <Button onClick={handleNewCategory} className="bg-flu-verde hover:bg-flu-verde/90">

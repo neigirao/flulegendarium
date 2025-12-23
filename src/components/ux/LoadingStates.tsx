@@ -61,7 +61,7 @@ export const LoadingState = ({ type, message, showProgress = false, progress = 0
 
       {/* Message */}
       <div className="text-center space-y-2">
-        <p className="text-lg font-medium text-gray-700">
+        <p className="text-lg font-medium text-foreground">
           {config.message}
         </p>
         
@@ -76,11 +76,11 @@ export const LoadingState = ({ type, message, showProgress = false, progress = 0
       {/* Progress bar */}
       {showProgress && (
         <div className="w-full max-w-xs">
-          <div className="flex justify-between text-sm text-gray-600 mb-1">
+          <div className="flex justify-between text-sm text-muted-foreground mb-1">
             <span>Progresso</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
+          <div className="w-full bg-muted rounded-full h-2">
             <div 
               className="bg-gradient-to-r from-flu-grena to-flu-verde h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
@@ -98,15 +98,15 @@ export const PlayerCardSkeleton = () => {
     <div className="w-full max-w-sm mx-auto bg-white rounded-xl shadow-lg overflow-hidden animate-pulse">
       <div className="relative">
         {/* Image skeleton */}
-        <div className="w-full aspect-square bg-gray-200"></div>
+        <div className="w-full aspect-square bg-muted"></div>
         
         {/* Content skeleton */}
         <div className="p-4 space-y-3">
-          <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-          <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-muted rounded w-3/4"></div>
+          <div className="h-3 bg-muted rounded w-1/2"></div>
           <div className="space-y-2">
-            <div className="h-3 bg-gray-200 rounded"></div>
-            <div className="h-3 bg-gray-200 rounded w-5/6"></div>
+            <div className="h-3 bg-muted rounded"></div>
+            <div className="h-3 bg-muted rounded w-5/6"></div>
           </div>
         </div>
       </div>
@@ -130,7 +130,7 @@ export const FullScreenLoading = ({ message = "Carregando aplicação..." }: { m
           <h2 className="text-xl font-bold text-flu-grena">
             Flu Legendarium
           </h2>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             {message}
           </p>
         </div>

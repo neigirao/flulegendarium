@@ -126,7 +126,7 @@ export const CriticalImage = memo(({
       {/* Reserve space to prevent layout shift */}
       {!isLoaded && !hasError && (
         <div 
-          className="absolute inset-0 bg-gray-100 animate-pulse"
+          className="absolute inset-0 bg-muted animate-pulse"
           style={{ aspectRatio: aspectRatio }}
         />
       )}
@@ -166,7 +166,7 @@ export const CriticalImage = memo(({
 
       {/* Error state */}
       {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 text-gray-500">
+        <div className="absolute inset-0 flex items-center justify-center bg-muted text-muted-foreground">
           <div className="text-center p-4">
             <img 
               src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 

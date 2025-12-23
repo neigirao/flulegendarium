@@ -159,23 +159,23 @@ Teste seus conhecimentos: ${window.location.origin}
               <div className="relative p-6 text-center">
                 <div className="mb-4">
                   <h3 className="text-2xl font-black text-flu-grena mb-1">🏆 Lendas do Flu</h3>
-                  <p className="text-sm text-gray-600">Quiz Oficial Tricolor</p>
+                  <p className="text-sm text-muted-foreground">Quiz Oficial Tricolor</p>
                 </div>
                 
                 <div className="space-y-3">
-                  <div className="bg-white/80 rounded-lg p-3">
+                  <div className="bg-card/80 rounded-lg p-3">
                     <div className="text-3xl font-black text-flu-grena">{score}</div>
-                    <div className="text-sm text-gray-600">pontos conquistados</div>
+                    <div className="text-sm text-muted-foreground">pontos conquistados</div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="bg-flu-verde/20 rounded-lg p-2">
                       <div className="font-bold text-flu-verde">{accuracy}%</div>
-                      <div className="text-xs text-gray-600">precisão</div>
+                      <div className="text-xs text-muted-foreground">precisão</div>
                     </div>
                     <div className="bg-flu-grena/20 rounded-lg p-2">
                       <div className="font-bold text-flu-grena">{streak}</div>
-                      <div className="text-xs text-gray-600">sequência</div>
+                      <div className="text-xs text-muted-foreground">sequência</div>
                     </div>
                   </div>
                   
@@ -186,7 +186,7 @@ Teste seus conhecimentos: ${window.location.origin}
                   )}
                 </div>
                 
-                <div className="mt-4 text-xs text-gray-500">
+                <div className="mt-4 text-xs text-muted-foreground">
                   flulegendarium.lovable.app
                 </div>
               </div>
@@ -208,7 +208,7 @@ Teste seus conhecimentos: ${window.location.origin}
 
             {/* Redes Sociais */}
             <div>
-              <h4 className="font-medium text-gray-900 mb-3">Redes Sociais:</h4>
+              <h4 className="font-medium text-foreground mb-3">Redes Sociais:</h4>
               <div className="grid grid-cols-2 gap-2">
                 <Button
                   variant="outline"
@@ -252,7 +252,7 @@ Teste seus conhecimentos: ${window.location.origin}
 
             {/* Ferramentas */}
             <div>
-              <h4 className="font-medium text-gray-900 mb-3">Ferramentas:</h4>
+              <h4 className="font-medium text-foreground mb-3">Ferramentas:</h4>
               <div className="space-y-2">
                 <Button
                   variant="outline"
