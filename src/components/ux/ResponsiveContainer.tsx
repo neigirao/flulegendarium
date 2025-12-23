@@ -21,9 +21,9 @@ export const ResponsiveContainer = ({
   
   const variants = {
     default: "bg-transparent",
-    game: "bg-gradient-to-br from-flu-verde/5 via-white to-flu-grena/5 border border-gray-100 rounded-2xl shadow-lg backdrop-blur-sm",
-    modal: "bg-white border border-gray-200 rounded-xl shadow-xl",
-    card: "bg-white/90 backdrop-blur-sm border border-gray-100 rounded-xl shadow-md hover:shadow-lg transition-shadow"
+    game: "bg-gradient-to-br from-flu-verde/5 via-background to-flu-grena/5 border border-border rounded-2xl shadow-lg backdrop-blur-sm",
+    modal: "bg-card border border-border rounded-xl shadow-xl",
+    card: "bg-card/90 backdrop-blur-sm border border-border rounded-xl shadow-md hover:shadow-lg transition-shadow"
   };
 
   const maxWidths = {
@@ -75,7 +75,7 @@ export const GameContainer = ({ children, className }: { children: ReactNode; cl
 export const HeaderContainer = ({ children, className }: { children: ReactNode; className?: string }) => {
   return (
     <div className={cn(
-      "w-full bg-white/95 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40",
+      "w-full bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-40",
       "safe-area-top", // Para dispositivos com notch
       className
     )}>

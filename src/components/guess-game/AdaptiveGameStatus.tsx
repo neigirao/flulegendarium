@@ -23,10 +23,10 @@ export const AdaptiveGameStatus = ({
   return (
     <div className="flex gap-4">
       {/* Timer */}
-      <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-sm">
+      <div className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-sm">
         <div className="flex items-center gap-2 mb-2">
           <Clock className="w-4 h-4 text-flu-grena" />
-          <span className="text-sm font-medium text-gray-600">Tempo</span>
+          <span className="text-sm font-medium text-muted-foreground">Tempo</span>
         </div>
         <GameTimer 
           timeRemaining={timeRemaining} 

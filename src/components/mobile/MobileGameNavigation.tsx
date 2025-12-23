@@ -38,7 +38,7 @@ export const MobileGameNavigation = ({
       {/* Mobile navigation bar */}
       {showNavigation && (
         <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 md:hidden">
-          <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md rounded-full p-2 shadow-lg border border-gray-200">
+          <div className="flex items-center gap-2 bg-card/90 backdrop-blur-md rounded-full p-2 shadow-lg border border-border">
             {onHome && (
               <UniversalTouchTarget
                 size="sm"
@@ -53,7 +53,7 @@ export const MobileGameNavigation = ({
               <UniversalTouchTarget
                 size="sm"
                 onClick={onPrevious}
-                className="hover:bg-gray-100"
+                className="hover:bg-muted"
               >
                 <ChevronLeft className="w-5 h-5" />
               </UniversalTouchTarget>
@@ -63,7 +63,7 @@ export const MobileGameNavigation = ({
               <UniversalTouchTarget
                 size="sm"
                 onClick={onReset}
-                className="hover:bg-gray-100"
+                className="hover:bg-muted"
               >
                 <RotateCcw className="w-5 h-5" />
               </UniversalTouchTarget>
@@ -73,7 +73,7 @@ export const MobileGameNavigation = ({
               <UniversalTouchTarget
                 size="sm"
                 onClick={onNext}
-                className="hover:bg-gray-100"
+                className="hover:bg-muted"
               >
                 <ChevronRight className="w-5 h-5" />
               </UniversalTouchTarget>
@@ -82,7 +82,7 @@ export const MobileGameNavigation = ({
           
           {/* Swipe indicator */}
           <div className="absolute -top-8 left-1/2 transform -translate-x-1/2">
-            <div className="text-xs text-gray-500 text-center whitespace-nowrap">
+            <div className="text-xs text-muted-foreground text-center whitespace-nowrap">
               👈 Deslize para navegar 👉
             </div>
           </div>

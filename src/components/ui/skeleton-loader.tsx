@@ -22,7 +22,7 @@ export const SkeletonLoader = ({
         {Array.from({ length: lines }).map((_, i) => (
           <div
             key={i}
-            className="h-4 bg-gray-200 rounded animate-pulse"
+            className="h-4 bg-muted rounded animate-pulse"
             style={{
               width: i === lines - 1 ? '75%' : '100%'
             }}
@@ -35,7 +35,7 @@ export const SkeletonLoader = ({
   return (
     <div
       className={cn(
-        "bg-gray-200 animate-pulse",
+        "bg-muted animate-pulse",
         variant === 'circular' ? 'rounded-full' : 'rounded',
         className
       )}
@@ -46,10 +46,10 @@ export const SkeletonLoader = ({
 
 // Skeleton específico para o player image
 export const PlayerImageSkeleton = () => (
-  <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-gray-100 border-2 border-flu-verde">
-    <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+  <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-muted border-2 border-flu-verde">
+    <div className="absolute inset-0 bg-gradient-to-r from-muted via-muted-foreground/20 to-muted animate-pulse" />
     <div className="absolute inset-0 flex items-center justify-center">
-      <div className="w-20 h-20 bg-gray-300 rounded-full animate-pulse" />
+      <div className="w-20 h-20 bg-muted-foreground/30 rounded-full animate-pulse" />
     </div>
   </div>
 );

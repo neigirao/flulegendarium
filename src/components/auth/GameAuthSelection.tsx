@@ -104,7 +104,7 @@ export const GameAuthSelection = ({ onGuestPlay, onAuthenticatedPlay }: GameAuth
 
       {/* Informações adicionais */}
       <div className="mt-12 text-center">
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-gray-100">
+        <div className="bg-card/80 backdrop-blur-sm rounded-2xl p-8 shadow-xl border border-border">
           <div className="flex items-center justify-center gap-4 mb-6">
             <img 
               src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
@@ -119,21 +119,21 @@ export const GameAuthSelection = ({ onGuestPlay, onAuthenticatedPlay }: GameAuth
                 <span className="text-2xl">🏆</span>
               </div>
               <h4 className="font-semibold text-flu-grena mb-2">Ranking Global</h4>
-              <p className="text-gray-600">Apareça no ranking dos melhores jogadores tricolores</p>
+              <p className="text-muted-foreground">Apareça no ranking dos melhores jogadores tricolores</p>
             </div>
             <div>
               <div className="w-16 h-16 bg-flu-verde/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">📊</span>
               </div>
               <h4 className="font-semibold text-flu-grena mb-2">Progresso Salvo</h4>
-              <p className="text-gray-600">Acompanhe suas estatísticas e melhor pontuação</p>
+              <p className="text-muted-foreground">Acompanhe suas estatísticas e melhor pontuação</p>
             </div>
             <div>
               <div className="w-16 h-16 bg-orange-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-2xl">🎯</span>
               </div>
               <h4 className="font-semibold text-flu-grena mb-2">Sistema Adaptativo</h4>
-              <p className="text-gray-600">Dificuldade que se ajusta ao seu conhecimento</p>
+              <p className="text-muted-foreground">Dificuldade que se ajusta ao seu conhecimento</p>
             </div>
           </div>
         </div>

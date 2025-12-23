@@ -70,11 +70,11 @@ export const FeedbackReport = () => {
       gameplay: 'bg-blue-100 text-blue-800',
       ui: 'bg-purple-100 text-purple-800',
       performance: 'bg-orange-100 text-orange-800',
-      content: 'bg-green-100 text-green-800',
-      bug: 'bg-red-100 text-red-800',
+      content: 'bg-flu-verde/20 text-flu-verde',
+      bug: 'bg-destructive/20 text-destructive',
       suggestion: 'bg-yellow-100 text-yellow-800'
     };
-    return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[category as keyof typeof colors] || 'bg-muted text-muted-foreground';
   };
 
   const getCategoryLabel = (category: string) => {
@@ -93,9 +93,9 @@ export const FeedbackReport = () => {
     const colors = {
       new: 'bg-blue-100 text-blue-800',
       reviewed: 'bg-yellow-100 text-yellow-800',
-      resolved: 'bg-green-100 text-green-800'
+      resolved: 'bg-flu-verde/20 text-flu-verde'
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || 'bg-muted text-muted-foreground';
   };
 
   const renderStars = (rating: number) => {
@@ -103,7 +103,7 @@ export const FeedbackReport = () => {
       <Star
         key={i}
         className={`w-4 h-4 ${
-          i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-gray-300'
+          i < rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'
         }`}
       />
     ));
@@ -119,8 +119,8 @@ export const FeedbackReport = () => {
           <div className="animate-pulse space-y-4">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+                <div className="h-4 bg-muted rounded w-1/2"></div>
               </div>
             ))}
           </div>
@@ -150,26 +150,26 @@ export const FeedbackReport = () => {
       <CardContent className="space-y-4">
         {/* Resumo */}
         <div className="grid grid-cols-3 gap-4 pb-4 border-b">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              {renderStars(Math.round(parseFloat(avgRating)))}
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                {renderStars(Math.round(parseFloat(avgRating)))}
+              </div>
+              <p className="text-sm text-muted-foreground">Média: {avgRating}</p>
             </div>
-            <p className="text-sm text-gray-600">Média: {avgRating}</p>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <ThumbsUp className="w-4 h-4 text-green-600" />
-              <span className="font-medium text-green-600">{positiveCount}</span>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <ThumbsUp className="w-4 h-4 text-flu-verde" />
+                <span className="font-medium text-flu-verde">{positiveCount}</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Positivos</p>
             </div>
-            <p className="text-xs text-gray-600">Positivos</p>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <ThumbsDown className="w-4 h-4 text-red-600" />
-              <span className="font-medium text-red-600">{negativeCount}</span>
+            <div className="text-center">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <ThumbsDown className="w-4 h-4 text-destructive" />
+                <span className="font-medium text-destructive">{negativeCount}</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Negativos</p>
             </div>
-            <p className="text-xs text-gray-600">Negativos</p>
-          </div>
         </div>
 
         {/* Lista de Feedbacks */}
@@ -190,26 +190,26 @@ export const FeedbackReport = () => {
                         {feedback.status}
                       </Badge>
                     </div>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {new Date(feedback.created_at).toLocaleDateString('pt-BR')}
                     </span>
                   </div>
                   
                   {feedback.comment && (
-                    <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded">
+                    <p className="text-sm text-foreground bg-muted p-2 rounded">
                       "{feedback.comment}"
                     </p>
                   )}
                   
                   {feedback.user_email && (
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       Por: {feedback.user_email}
                     </p>
                   )}
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <MessageSquare className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p>Nenhum feedback recebido ainda</p>
               </div>

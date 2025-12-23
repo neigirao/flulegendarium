@@ -55,18 +55,18 @@ export const ErrorMetricsReport = () => {
 
   const getSeverityColor = (severity: string) => {
     const colors = {
-      low: 'bg-green-100 text-green-800',
+      low: 'bg-flu-verde/20 text-flu-verde',
       medium: 'bg-yellow-100 text-yellow-800',
       high: 'bg-orange-100 text-orange-800',
-      critical: 'bg-red-100 text-red-800'
+      critical: 'bg-destructive/20 text-destructive'
     };
-    return colors[severity as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[severity as keyof typeof colors] || 'bg-muted text-muted-foreground';
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'up': return <TrendingUp className="w-4 h-4 text-red-600" />;
-      case 'down': return <TrendingDown className="w-4 h-4 text-green-600" />;
+      case 'up': return <TrendingUp className="w-4 h-4 text-destructive" />;
+      case 'down': return <TrendingDown className="w-4 h-4 text-flu-verde" />;
       default: return <div className="w-4 h-4" />;
     }
   };
@@ -79,7 +79,7 @@ export const ErrorMetricsReport = () => {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-64 bg-gray-200 rounded" />
+            <div className="h-64 bg-muted rounded" />
           </div>
         </CardContent>
       </Card>
@@ -104,13 +104,13 @@ export const ErrorMetricsReport = () => {
         <CardContent>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center p-4 bg-red-50 rounded-lg">
-                <div className="text-2xl font-bold text-red-600">{totalErrors}</div>
-                <p className="text-sm text-gray-600">Total de Erros</p>
+              <div className="text-center p-4 bg-destructive/10 rounded-lg">
+                <div className="text-2xl font-bold text-destructive">{totalErrors}</div>
+                <p className="text-sm text-muted-foreground">Total de Erros</p>
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">
                 <div className="text-2xl font-bold text-orange-600">{criticalErrors}</div>
-                <p className="text-sm text-gray-600">Críticos</p>
+                <p className="text-sm text-muted-foreground">Críticos</p>
               </div>
             </div>
 
@@ -121,7 +121,7 @@ export const ErrorMetricsReport = () => {
                     <AlertTriangle className="w-4 h-4 text-orange-500" />
                     <div>
                       <p className="font-medium text-sm">{error.error_type}</p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         Última vez: {new Date(error.last_occurred).toLocaleString('pt-BR')}
                       </p>
                     </div>

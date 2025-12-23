@@ -36,25 +36,25 @@ export const TouchOptimizedButton = forwardRef<HTMLButtonElement, TouchOptimized
         'bg-flu-grena text-white',
         'hover:bg-flu-grena/90',
         'active:bg-flu-grena/80',
-        'disabled:bg-gray-300 disabled:text-gray-500'
+        'disabled:bg-muted disabled:text-muted-foreground'
       ],
       secondary: [
         'bg-flu-verde text-white',
         'hover:bg-flu-verde/90',
         'active:bg-flu-verde/80',
-        'disabled:bg-gray-300 disabled:text-gray-500'
+        'disabled:bg-muted disabled:text-muted-foreground'
       ],
       outline: [
         'border-2 border-flu-grena text-flu-grena bg-transparent',
         'hover:bg-flu-grena hover:text-white',
         'active:bg-flu-grena/90',
-        'disabled:border-gray-300 disabled:text-gray-400'
+        'disabled:border-border disabled:text-muted-foreground'
       ],
       ghost: [
         'text-flu-grena bg-transparent',
         'hover:bg-flu-grena/10',
         'active:bg-flu-grena/20',
-        'disabled:text-gray-400'
+        'disabled:text-muted-foreground'
       ]
     };
 
