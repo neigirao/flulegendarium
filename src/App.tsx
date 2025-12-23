@@ -14,6 +14,7 @@ import { MobileViewport } from "@/components/mobile/MobileViewport";
 import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBoundary";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
+import { RoutePrefetchProvider } from "@/components/performance/RoutePrefetchProvider";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
@@ -55,6 +56,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <PWAProvider>
           <BrowserRouter>
+            <RoutePrefetchProvider>
             <AuthProvider>
               <UXProvider>
                 <TooltipProvider>
@@ -133,6 +135,7 @@ function App() {
                 </TooltipProvider>
               </UXProvider>
             </AuthProvider>
+            </RoutePrefetchProvider>
           </BrowserRouter>
         </PWAProvider>
       </QueryClientProvider>
