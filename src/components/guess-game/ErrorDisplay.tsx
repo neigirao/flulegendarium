@@ -10,8 +10,8 @@ export const ErrorDisplay = ({ error }: ErrorDisplayProps) => {
   
   return (
     <div className="text-center p-8">
-      <p className="text-red-500 font-semibold mb-4">Erro ao carregar jogadores.</p>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-destructive font-semibold mb-4">Erro ao carregar jogadores.</p>
+      <p className="text-sm text-muted-foreground mb-4">
         {error instanceof Error ? error.message : "Erro desconhecido"}
       </p>
       <button 

@@ -58,17 +58,17 @@ const PlayerTable = memo(({ players, title, icon }: {
               <TableRow key={player.player_name}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">#{index + 1}</span>
+                    <span className="text-xs text-muted-foreground">#{index + 1}</span>
                     {player.player_name}
                   </div>
                 </TableCell>
                 <TableCell className="text-center">{player.total_attempts}</TableCell>
                 <TableCell className="text-center">
                   <span className={`font-semibold ${
-                    player.recognition_rate >= 70 ? 'text-green-600' :
+                    player.recognition_rate >= 70 ? 'text-flu-verde' :
                     player.recognition_rate >= 50 ? 'text-yellow-600' :
                     player.recognition_rate >= 30 ? 'text-orange-600' :
-                    'text-red-600'
+                    'text-destructive'
                   }`}>
                     {player.recognition_rate.toFixed(1)}%
                   </span>
@@ -118,10 +118,10 @@ export const PlayerPerformanceAnalysis = memo(() => {
             <div className="animate-pulse space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="h-24 bg-gray-200 rounded-lg" />
+                  <div key={i} className="h-24 bg-muted rounded-lg" />
                 ))}
               </div>
-              <div className="h-64 bg-gray-200 rounded-lg" />
+              <div className="h-64 bg-muted rounded-lg" />
             </div>
           </CardContent>
         </Card>
@@ -151,12 +151,12 @@ export const PlayerPerformanceAnalysis = memo(() => {
               <p className="text-2xl font-bold text-blue-900">{playerPerformance.length}</p>
             </div>
             
-            <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-lg">
+            <div className="bg-gradient-to-r from-flu-verde/10 to-flu-verde/20 p-4 rounded-lg">
               <div className="flex items-center gap-2">
-                <Eye className="h-5 w-5 text-green-600" />
-                <span className="text-sm font-medium text-green-800">Taxa Média de Acerto</span>
+                <Eye className="h-5 w-5 text-flu-verde" />
+                <span className="text-sm font-medium text-flu-verde">Taxa Média de Acerto</span>
               </div>
-              <p className="text-2xl font-bold text-green-900">{averageDifficulty.toFixed(1)}%</p>
+              <p className="text-2xl font-bold text-flu-verde">{averageDifficulty.toFixed(1)}%</p>
             </div>
             
             <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg">
@@ -188,7 +188,7 @@ export const PlayerPerformanceAnalysis = memo(() => {
               <PlayerTable 
                 players={mostRecognized}
                 title="Jogadores Mais Reconhecidos"
-                icon={<TrendingUp className="h-5 w-5 text-green-600" />}
+                icon={<TrendingUp className="h-5 w-5 text-flu-verde" />}
               />
             </TabsContent>
 
@@ -196,7 +196,7 @@ export const PlayerPerformanceAnalysis = memo(() => {
               <PlayerTable 
                 players={leastRecognized}
                 title="Jogadores Menos Reconhecidos"
-                icon={<TrendingDown className="h-5 w-5 text-red-600" />}
+                icon={<TrendingDown className="h-5 w-5 text-destructive" />}
               />
             </TabsContent>
 
@@ -228,7 +228,7 @@ export const PlayerPerformanceAnalysis = memo(() => {
                           <TableRow key={player.player_name}>
                             <TableCell className="font-medium">
                               <div className="flex items-center gap-2">
-                                <span className="text-xs text-gray-500">#{index + 1}</span>
+                                <span className="text-xs text-muted-foreground">#{index + 1}</span>
                                 {player.player_name}
                               </div>
                             </TableCell>
@@ -240,10 +240,10 @@ export const PlayerPerformanceAnalysis = memo(() => {
                             <TableCell className="text-center">{player.total_attempts}</TableCell>
                             <TableCell className="text-center">
                               <span className={`font-semibold ${
-                                player.recognition_rate >= 70 ? 'text-green-600' :
+                                player.recognition_rate >= 70 ? 'text-flu-verde' :
                                 player.recognition_rate >= 50 ? 'text-yellow-600' :
                                 player.recognition_rate >= 30 ? 'text-orange-600' :
-                                'text-red-600'
+                                'text-destructive'
                               }`}>
                                 {player.recognition_rate.toFixed(1)}%
                               </span>

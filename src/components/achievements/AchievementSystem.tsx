@@ -162,23 +162,23 @@ export const AchievementSystem = ({
             className={`p-3 rounded-lg border-2 transition-all ${
               achievement.unlocked
                 ? 'border-flu-grena bg-flu-grena/10'
-                : 'border-gray-200 bg-gray-50 opacity-70'
+                : 'border-border bg-muted opacity-70'
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
               {achievement.icon}
               <span className={`text-sm font-medium ${
-                achievement.unlocked ? 'text-flu-grena' : 'text-gray-600'
+                achievement.unlocked ? 'text-flu-grena' : 'text-muted-foreground'
               }`}>
                 {achievement.name}
               </span>
             </div>
             
-            <div className="text-xs text-gray-600 mb-2">
+            <div className="text-xs text-muted-foreground mb-2">
               {achievement.description}
             </div>
             
-            <div className="w-full bg-gray-200 rounded-full h-2">
+            <div className="w-full bg-muted rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all ${
                   achievement.unlocked ? 'bg-flu-grena' : 'bg-flu-verde'
@@ -189,7 +189,7 @@ export const AchievementSystem = ({
               />
             </div>
             
-            <div className="text-xs text-gray-500 mt-1 text-center">
+            <div className="text-xs text-muted-foreground mt-1 text-center">
               {achievement.progress}/{achievement.maxProgress}
             </div>
           </div>

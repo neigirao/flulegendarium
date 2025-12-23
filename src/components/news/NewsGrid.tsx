@@ -33,7 +33,7 @@ export const NewsGrid = ({ articles, isLoading }: NewsGridProps) => {
         <h3 className="text-xl font-semibold text-flu-grena mb-2">
           Nenhuma notícia encontrada
         </h3>
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Tente ajustar os filtros ou buscar por outros termos.
         </p>
       </div>

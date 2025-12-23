@@ -142,7 +142,7 @@ export const AdaptiveTutorial = ({ isOpen, onComplete }: AdaptiveTutorialProps) 
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentStep ? 'bg-flu-grena' : 'bg-gray-300'
+                  index === currentStep ? 'bg-flu-grena' : 'bg-muted'
                 }`}
               />
             ))}

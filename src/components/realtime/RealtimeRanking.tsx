@@ -124,13 +124,13 @@ export const RealtimeRanking = () => {
               exit={{ opacity: 0, y: -20 }}
               className={`
                 flex items-center justify-between p-3 rounded-lg border transition-all duration-300
-                ${isNew ? 'bg-flu-grena/10 border-flu-grena shadow-lg' : 'bg-white border-gray-100 hover:bg-gray-50'}
+                ${isNew ? 'bg-flu-grena/10 border-flu-grena shadow-lg' : 'bg-card border-border hover:bg-muted'}
               `}
             >
               <div className="flex items-center gap-3">
                 <div className={`
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-                  ${index < 3 ? 'bg-flu-grena text-white' : 'bg-gray-100 text-gray-600'}
+                  ${index < 3 ? 'bg-flu-grena text-white' : 'bg-muted text-muted-foreground'}
                 `}>
                   {index + 1}
                 </div>

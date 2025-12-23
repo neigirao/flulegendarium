@@ -116,10 +116,10 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
 
           {/* Timer */}
           {timeRemaining !== undefined && (
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-4 border border-gray-200 shadow-lg">
+            <div className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="w-4 h-4 text-flu-grena" />
-                <span className="text-sm font-medium text-gray-600">Tempo</span>
+                <span className="text-sm font-medium text-muted-foreground">Tempo</span>
               </div>
               <GameTimer 
                 timeRemaining={timeRemaining} 
@@ -134,11 +134,11 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <GameRulesTooltip />
           <div 
-            className="p-2 rounded-full bg-white/70 hover:bg-white/90 border border-gray-200 hover:border-gray-300 transition-colors cursor-pointer opacity-60 hover:opacity-80 backdrop-blur-sm"
+            className="p-2 rounded-full bg-card/70 hover:bg-card/90 border border-border hover:border-border/80 transition-colors cursor-pointer opacity-60 hover:opacity-80 backdrop-blur-sm"
             onClick={onDebugClick}
             title="Informações de Debug"
           >
-            <Info className="w-3 h-3 sm:w-4 sm:h-4 text-gray-600" />
+            <Info className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
           </div>
         </div>
       </div>

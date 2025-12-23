@@ -99,9 +99,9 @@ export const TouchOptimizedInput = ({
       autoComplete={autoComplete}
       className={cn(
         // Base styles
-        "w-full rounded-xl border-2 border-gray-200 bg-white",
+        "w-full rounded-xl border-2 border-border bg-background",
         "px-4 py-4 text-base font-medium", // text-base previne zoom no iOS
-        "placeholder:text-gray-400",
+        "placeholder:text-muted-foreground",
         "transition-all duration-200",
         
         // Focus styles
@@ -112,7 +112,7 @@ export const TouchOptimizedInput = ({
         "touch-manipulation",
         
         // Disabled styles
-        disabled && "opacity-50 cursor-not-allowed bg-gray-50",
+        disabled && "opacity-50 cursor-not-allowed bg-muted",
         
         className
       )}
@@ -138,16 +138,16 @@ export const TouchOptimizedCard = ({
     <div
       onClick={onClick}
       className={cn(
-        "relative rounded-xl bg-white border border-gray-100 shadow-md",
+        "relative rounded-xl bg-card border border-border shadow-md",
         "transition-all duration-200",
         "touch-manipulation",
         
         // Interactive styles
         onClick && "cursor-pointer active:scale-95 transform-gpu",
-        hoverable && "hover:shadow-lg hover:border-gray-200",
+        hoverable && "hover:shadow-lg hover:border-border/80",
         
         // Touch feedback
-        onClick && "active:bg-gray-50",
+        onClick && "active:bg-muted",
         
         className
       )}
