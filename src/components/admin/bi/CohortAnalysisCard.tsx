@@ -40,7 +40,7 @@ export const CohortAnalysisCard = ({ cohorts, isLoading }: CohortAnalysisCardPro
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] animate-pulse bg-gray-200 rounded"></div>
+          <div className="h-[300px] animate-pulse bg-muted rounded"></div>
         </CardContent>
       </Card>
     );
@@ -56,7 +56,7 @@ export const CohortAnalysisCard = ({ cohorts, isLoading }: CohortAnalysisCardPro
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-[300px] flex items-center justify-center text-gray-500">
+          <div className="h-[300px] flex items-center justify-center text-muted-foreground">
             <div className="text-center">
               <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p>Dados insuficientes para análise de coorte</p>
@@ -81,11 +81,11 @@ export const CohortAnalysisCard = ({ cohorts, isLoading }: CohortAnalysisCardPro
             Análise de Coorte - Retenção de Usuários
             <div className="ml-auto flex items-center gap-2">
               {isRetentionHealthy ? (
-                <TrendingUp className="w-4 h-4 text-green-500" />
+                <TrendingUp className="w-4 h-4 text-flu-verde" />
               ) : (
-                <TrendingDown className="w-4 h-4 text-red-500" />
+                <TrendingDown className="w-4 h-4 text-destructive" />
               )}
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-muted-foreground">
                 Retenção Média 4 sem: {Math.round(avgRetentionWeek4)}%
               </span>
             </div>
@@ -167,16 +167,16 @@ export const CohortAnalysisCard = ({ cohorts, isLoading }: CohortAnalysisCardPro
               </thead>
               <tbody>
                 {cohorts.map((cohort, index) => (
-                  <tr key={index} className="border-b hover:bg-gray-50">
+                  <tr key={index} className="border-b hover:bg-muted">
                     <td className="p-2 font-medium">
                       {new Date(cohort.cohort_period + '-01').toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
                     </td>
                     <td className="p-2 text-right">{cohort.users_acquired}</td>
-                    <td className="p-2 text-right text-green-600 font-medium">{cohort.retention_week_1}%</td>
+                    <td className="p-2 text-right text-flu-verde font-medium">{cohort.retention_week_1}%</td>
                     <td className="p-2 text-right text-blue-600 font-medium">{cohort.retention_week_2}%</td>
                     <td className="p-2 text-right text-orange-600 font-medium">{cohort.retention_week_4}%</td>
-                    <td className="p-2 text-right text-red-600 font-medium">{cohort.retention_week_12}%</td>
-                    <td className="p-2 text-right text-gray-700">R$ {cohort.avg_ltv}</td>
+                    <td className="p-2 text-right text-destructive font-medium">{cohort.retention_week_12}%</td>
+                    <td className="p-2 text-right text-foreground">R$ {cohort.avg_ltv}</td>
                   </tr>
                 ))}
               </tbody>

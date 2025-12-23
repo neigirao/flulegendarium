@@ -85,22 +85,22 @@ export const SupportTicketsReport = () => {
 
   const getPriorityColor = (priority: string) => {
     const colors = {
-      low: 'bg-green-100 text-green-800',
+      low: 'bg-flu-verde/20 text-flu-verde',
       medium: 'bg-yellow-100 text-yellow-800',
       high: 'bg-orange-100 text-orange-800',
-      urgent: 'bg-red-100 text-red-800'
+      urgent: 'bg-destructive/20 text-destructive'
     };
-    return colors[priority as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[priority as keyof typeof colors] || 'bg-muted text-muted-foreground';
   };
 
   const getStatusColor = (status: string) => {
     const colors = {
       open: 'bg-blue-100 text-blue-800',
       in_progress: 'bg-yellow-100 text-yellow-800',
-      resolved: 'bg-green-100 text-green-800',
-      closed: 'bg-gray-100 text-gray-800'
+      resolved: 'bg-flu-verde/20 text-flu-verde',
+      closed: 'bg-muted text-muted-foreground'
     };
-    return colors[status as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+    return colors[status as keyof typeof colors] || 'bg-muted text-muted-foreground';
   };
 
   const getCategoryIcon = (category: string) => {
@@ -125,8 +125,8 @@ export const SupportTicketsReport = () => {
           <div className="animate-pulse space-y-4">
             {[...Array(3)].map((_, i) => (
               <div key={i} className="space-y-2">
-                <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div className="h-4 bg-muted rounded w-3/4"></div>
+                <div className="h-4 bg-muted rounded w-1/2"></div>
               </div>
             ))}
           </div>
@@ -159,23 +159,23 @@ export const SupportTicketsReport = () => {
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 pb-4 border-b">
           <div className="text-center">
             <div className="text-2xl font-bold text-flu-grena">{stats.total}</div>
-            <p className="text-xs text-gray-600">Total</p>
+            <p className="text-xs text-muted-foreground">Total</p>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-blue-600">{stats.open}</div>
-            <p className="text-xs text-gray-600">Abertos</p>
+            <p className="text-xs text-muted-foreground">Abertos</p>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-yellow-600">{stats.inProgress}</div>
-            <p className="text-xs text-gray-600">Em Progresso</p>
+            <p className="text-xs text-muted-foreground">Em Progresso</p>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-green-600">{stats.resolved}</div>
-            <p className="text-xs text-gray-600">Resolvidos</p>
+            <div className="text-2xl font-bold text-flu-verde">{stats.resolved}</div>
+            <p className="text-xs text-muted-foreground">Resolvidos</p>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-red-600">{stats.urgent}</div>
-            <p className="text-xs text-gray-600">Urgentes</p>
+            <div className="text-2xl font-bold text-destructive">{stats.urgent}</div>
+            <p className="text-xs text-muted-foreground">Urgentes</p>
           </div>
         </div>
 
@@ -184,7 +184,7 @@ export const SupportTicketsReport = () => {
           <div className="space-y-3">
             {tickets && tickets.length > 0 ? (
               tickets.map((ticket) => (
-                <div key={ticket.id} className="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                <div key={ticket.id} className="p-4 border rounded-lg hover:bg-muted transition-colors">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       {getCategoryIcon(ticket.category)}
@@ -202,11 +202,11 @@ export const SupportTicketsReport = () => {
                     </div>
                   </div>
                   
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
                     {ticket.description}
                   </p>
                   
-                  <div className="flex items-center justify-between text-xs text-gray-500">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground">
                     <div className="flex items-center gap-4">
                       {ticket.user_email && (
                         <span className="flex items-center gap-1">
@@ -226,7 +226,7 @@ export const SupportTicketsReport = () => {
                 </div>
               ))
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-muted-foreground">
                 <LifeBuoy className="w-12 h-12 mx-auto mb-2 opacity-50" />
                 <p>Nenhum ticket de suporte encontrado</p>
               </div>

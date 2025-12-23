@@ -28,12 +28,12 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-gray-200 h-32 rounded-lg"></div>
+            <div key={i} className="animate-pulse bg-muted h-32 rounded-lg"></div>
           ))}
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {[...Array(2)].map((_, i) => (
-            <div key={i} className="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
+            <div key={i} className="animate-pulse bg-muted h-64 rounded-lg"></div>
           ))}
         </div>
       </div>
@@ -43,24 +43,24 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'healthy':
-        return <CheckCircle className="w-4 h-4 text-green-500" />;
+        return <CheckCircle className="w-4 h-4 text-flu-verde" />;
       case 'warning':
         return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
       case 'critical':
-        return <AlertTriangle className="w-4 h-4 text-red-500" />;
+        return <AlertTriangle className="w-4 h-4 text-destructive" />;
       default:
-        return <Activity className="w-4 h-4 text-gray-500" />;
+        return <Activity className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
       case 'up':
-        return <TrendingUp className="w-4 h-4 text-green-500" />;
+        return <TrendingUp className="w-4 h-4 text-flu-verde" />;
       case 'down':
-        return <TrendingDown className="w-4 h-4 text-red-500" />;
+        return <TrendingDown className="w-4 h-4 text-destructive" />;
       case 'stable':
-        return <Minus className="w-4 h-4 text-gray-500" />;
+        return <Minus className="w-4 h-4 text-muted-foreground" />;
       default:
         return null;
     }
@@ -69,13 +69,13 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'healthy':
-        return 'bg-green-100 text-green-800';
+        return 'bg-flu-verde/20 text-flu-verde';
       case 'warning':
         return 'bg-yellow-100 text-yellow-800';
       case 'critical':
-        return 'bg-red-100 text-red-800';
+        return 'bg-destructive/20 text-destructive';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -173,18 +173,18 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
 
               <div className="grid grid-cols-3 gap-4 mb-3">
                 <div>
-                  <p className="text-sm text-gray-500">Valor Atual</p>
+                  <p className="text-sm text-muted-foreground">Valor Atual</p>
                   <p className="text-xl font-bold text-flu-grena">{metric.current_value}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Valor Anterior</p>
-                  <p className="text-lg font-semibold text-gray-700">{metric.previous_value}</p>
+                  <p className="text-sm text-muted-foreground">Valor Anterior</p>
+                  <p className="text-lg font-semibold text-foreground">{metric.previous_value}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Variação</p>
+                  <p className="text-sm text-muted-foreground">Variação</p>
                   <p className={`text-lg font-semibold ${
-                    metric.change_percentage > 0 ? 'text-green-600' : 
-                    metric.change_percentage < 0 ? 'text-red-600' : 'text-gray-600'
+                    metric.change_percentage > 0 ? 'text-flu-verde' : 
+                    metric.change_percentage < 0 ? 'text-destructive' : 'text-muted-foreground'
                   }`}>
                     {metric.change_percentage > 0 ? '+' : ''}{metric.change_percentage}%
                   </p>
@@ -203,7 +203,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
                     value={(metric.current_value / metric.target_value) * 100} 
                     className="h-2"
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-muted-foreground">
                     Meta: {metric.target_value}
                   </p>
                 </div>
@@ -212,7 +212,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
           ))}
 
           {metrics.length === 0 && (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               <Activity className="w-12 h-12 mx-auto mb-2 opacity-50" />
               <p>Métricas operacionais carregando...</p>
             </div>

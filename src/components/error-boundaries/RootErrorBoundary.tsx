@@ -101,7 +101,7 @@ export class RootErrorBoundary extends Component<Props, State> {
       const canRetry = this.retryCount < this.maxRetries;
       
       return (
-        <div className="min-h-screen bg-gradient-to-b from-flu-verde/10 to-gray-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-b from-flu-verde/10 to-background flex items-center justify-center p-4">
           <Card className="w-full max-w-lg">
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
@@ -119,11 +119,11 @@ export class RootErrorBoundary extends Component<Props, State> {
             </CardHeader>
             
             <CardContent className="space-y-4">
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="text-sm text-gray-600">
+              <div className="bg-muted p-3 rounded-lg">
+                <p className="text-sm text-muted-foreground">
                   <strong>ID do Erro:</strong> {this.state.errorId}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Use este código ao reportar o problema
                 </p>
               </div>
