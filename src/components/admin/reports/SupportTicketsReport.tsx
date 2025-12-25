@@ -28,14 +28,20 @@ interface SupportTicket {
   assigned_to?: string;
 }
 
-export const SupportTicketsReport = () => {
+interface SupportTicketsReportProps {
+  days?: number;
+}
+
+export const SupportTicketsReport = ({ days = 30 }: SupportTicketsReportProps) => {
   const { data: tickets, isLoading } = useQuery({
-    queryKey: ['support-tickets'],
+    queryKey: ['support-tickets', days],
     queryFn: async (): Promise<SupportTicket[]> => {
       try {
+        const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
         const { data, error } = await supabase
           .from('support_tickets')
           .select('*')
+          .gte('created_at', periodAgo)
           .order('created_at', { ascending: false })
           .limit(100);
 

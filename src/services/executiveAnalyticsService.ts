@@ -33,28 +33,28 @@ export const executiveAnalyticsService = {
    * Busca dados do funil de conversão completo
    * game_starts → game_attempts → game_sessions → rankings
    */
-  async getFunnelData(): Promise<FunnelStage[]> {
+  async getFunnelData(days: number = 30): Promise<FunnelStage[]> {
     try {
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
       // Buscar dados de cada etapa do funil
       const [startsRes, attemptsRes, sessionsRes, rankingsRes] = await Promise.all([
         supabase
           .from('game_starts')
           .select('id', { count: 'exact' })
-          .gte('created_at', thirtyDaysAgo),
+          .gte('created_at', periodAgo),
         supabase
           .from('game_attempts')
           .select('id', { count: 'exact' })
-          .gte('created_at', thirtyDaysAgo),
+          .gte('created_at', periodAgo),
         supabase
           .from('game_sessions')
           .select('id', { count: 'exact' })
-          .gte('created_at', thirtyDaysAgo),
+          .gte('created_at', periodAgo),
         supabase
           .from('rankings')
           .select('id', { count: 'exact' })
-          .gte('created_at', thirtyDaysAgo)
+          .gte('created_at', periodAgo)
       ]);
 
       const gameStarts = startsRes.count || 0;
@@ -108,19 +108,19 @@ export const executiveAnalyticsService = {
   /**
    * Busca dados para o heatmap de atividade por hora/dia
    */
-  async getActivityHeatmap(): Promise<HeatmapCell[]> {
+  async getActivityHeatmap(days: number = 30): Promise<HeatmapCell[]> {
     try {
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
       const { data: gameStarts } = await supabase
         .from('game_starts')
         .select('created_at')
-        .gte('created_at', thirtyDaysAgo);
+        .gte('created_at', periodAgo);
 
       const { data: gameSessions } = await supabase
         .from('game_sessions')
         .select('created_at')
-        .gte('created_at', thirtyDaysAgo);
+        .gte('created_at', periodAgo);
 
       // Combinar todos os eventos
       const allEvents = [

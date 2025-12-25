@@ -16,16 +16,22 @@ interface FeedbackItem {
   status: 'new' | 'reviewed' | 'resolved';
 }
 
-export const FeedbackReport = () => {
+interface FeedbackReportProps {
+  days?: number;
+}
+
+export const FeedbackReport = ({ days = 30 }: FeedbackReportProps) => {
   const { data: feedbacks, isLoading } = useQuery({
-    queryKey: ['feedback-report'],
+    queryKey: ['feedback-report', days],
     queryFn: async (): Promise<FeedbackItem[]> => {
       try {
+        const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
         const { data, error } = await supabase
           .from('user_feedback')
           .select('*')
+          .gte('created_at', periodAgo)
           .order('created_at', { ascending: false })
-          .limit(50);
+          .limit(100);
 
         if (error) {
           console.error('Error fetching feedback data:', error);

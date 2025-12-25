@@ -52,16 +52,16 @@ export interface BusinessMetrics {
 }
 
 export const adminBusinessIntelligence = {
-  async getUserSegments(): Promise<UserSegment[]> {
+  async getUserSegments(days: number = 30): Promise<UserSegment[]> {
     try {
-      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
-      const sixtyDaysAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString();
+      const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+      const extendedPeriodAgo = new Date(Date.now() - (days * 2) * 24 * 60 * 60 * 1000).toISOString();
 
       // Buscar dados de usuários e histórico de jogos
       const { data: gameHistory } = await supabase
         .from('user_game_history')
         .select('user_id, score, created_at, game_duration, correct_guesses, total_attempts')
-        .gte('created_at', sixtyDaysAgo);
+        .gte('created_at', extendedPeriodAgo);
 
       const { data: profiles } = await supabase
         .from('profiles')
@@ -72,7 +72,7 @@ export const adminBusinessIntelligence = {
       // Calcular métricas por usuário
       const userMetrics = gameHistory.reduce((acc, game) => {
         const userId = game.user_id;
-        const isRecent = new Date(game.created_at) >= new Date(thirtyDaysAgo);
+        const isRecent = new Date(game.created_at) >= new Date(periodAgo);
         
         if (!acc[userId]) {
           acc[userId] = {
@@ -510,13 +510,13 @@ export const adminBusinessIntelligence = {
     }
   },
 
-  async getBusinessMetrics(): Promise<BusinessMetrics> {
+  async getBusinessMetrics(days: number = 30): Promise<BusinessMetrics> {
     try {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
       const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-      const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const periodAgo = new Date(today.getTime() - days * 24 * 60 * 60 * 1000);
 
       // Buscar dados para diferentes períodos
       const { data: dailyData } = await supabase
@@ -529,10 +529,10 @@ export const adminBusinessIntelligence = {
         .select('user_id')
         .gte('created_at', weekAgo.toISOString());
 
-      const { data: monthlyData } = await supabase
+      const { data: periodData } = await supabase
         .from('user_game_history')
         .select('user_id, created_at')
-        .gte('created_at', monthAgo.toISOString());
+        .gte('created_at', periodAgo.toISOString());
 
       const { data: allTimeData } = await supabase
         .from('user_game_history')
@@ -541,13 +541,13 @@ export const adminBusinessIntelligence = {
       // Calcular métricas
       const dailyActiveUsers = new Set(dailyData?.map(d => d.user_id) || []).size;
       const weeklyActiveUsers = new Set(weeklyData?.map(d => d.user_id) || []).size;
-      const monthlyActiveUsers = new Set(monthlyData?.map(d => d.user_id) || []).size;
+      const periodActiveUsers = new Set(periodData?.map(d => d.user_id) || []).size;
 
-      const engagementScore = monthlyActiveUsers > 0 ? 
-        Math.round((dailyActiveUsers / monthlyActiveUsers) * 100) : 0;
+      const engagementScore = periodActiveUsers > 0 ? 
+        Math.round((dailyActiveUsers / periodActiveUsers) * 100) : 0;
 
       // Calcular retenção (usuários que jogaram esta semana e na semana passada)
-      const lastWeekData = monthlyData?.filter(d => 
+      const lastWeekData = periodData?.filter(d =>
         new Date(d.created_at) >= weekAgo && new Date(d.created_at) < today
       ) || [];
       const thisWeekUsers = new Set(weeklyData?.map(d => d.user_id) || []);
@@ -562,7 +562,7 @@ export const adminBusinessIntelligence = {
         Math.round((dailyData.reduce((sum, d) => sum + (d.game_duration || 180), 0) / dailyData.length) / 60) : 0;
 
       return {
-        monthly_active_users: monthlyActiveUsers,
+        monthly_active_users: periodActiveUsers,
         daily_active_users: dailyActiveUsers,
         weekly_active_users: weeklyActiveUsers,
         engagement_score: engagementScore,

@@ -3,6 +3,8 @@ import { UserSegmentationCard } from "./UserSegmentationCard";
 import { CohortAnalysisCard } from "./CohortAnalysisCard";
 import { OperationalDashboard } from "./OperationalDashboard";
 import { ExecutiveAnalyticsDashboard } from "../analytics/ExecutiveAnalyticsDashboard";
+import { PeriodSelector } from "../shared/PeriodSelector";
+import { useReportPeriod } from "@/hooks/use-report-period";
 import { useBusinessIntelligence } from "@/hooks/use-business-intelligence";
 import { 
   Users, 
@@ -18,6 +20,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const BusinessIntelligenceDashboard = () => {
+  const { period, setPeriod } = useReportPeriod();
   const {
     userSegments,
     cohortAnalysis,
@@ -28,15 +31,18 @@ export const BusinessIntelligenceDashboard = () => {
     isLoadingCohorts,
     isLoadingOperational,
     isLoadingBusiness
-  } = useBusinessIntelligence();
+  } = useBusinessIntelligence(period);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-primary mb-2">Business Intelligence</h2>
-        <p className="text-muted-foreground">
-          Analytics avançados, segmentação de usuários e métricas operacionais em tempo real
-        </p>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div>
+          <h2 className="text-2xl font-bold text-primary mb-2">Business Intelligence</h2>
+          <p className="text-muted-foreground">
+            Analytics avançados, segmentação de usuários e métricas operacionais em tempo real
+          </p>
+        </div>
+        <PeriodSelector value={period} onChange={setPeriod} />
       </div>
 
       {/* Resumo Executivo */}
@@ -45,7 +51,7 @@ export const BusinessIntelligenceDashboard = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Brain className="w-5 h-5 text-primary" />
-              Resumo Executivo
+              Resumo Executivo ({period} dias)
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -56,7 +62,7 @@ export const BusinessIntelligenceDashboard = () => {
                   <span className="text-sm font-medium text-muted-foreground">Base Ativa</span>
                 </div>
                 <p className="text-2xl font-bold text-blue-600">{businessMetrics.monthly_active_users}</p>
-                <p className="text-xs text-muted-foreground">MAU</p>
+                <p className="text-xs text-muted-foreground">Usuários no Período</p>
               </div>
               
               <div className="text-center p-4">
@@ -65,7 +71,7 @@ export const BusinessIntelligenceDashboard = () => {
                   <span className="text-sm font-medium text-muted-foreground">Engagement</span>
                 </div>
                 <p className="text-2xl font-bold text-green-600">{businessMetrics.engagement_score}%</p>
-                <p className="text-xs text-muted-foreground">DAU/MAU</p>
+                <p className="text-xs text-muted-foreground">DAU/Período</p>
               </div>
               
               <div className="text-center p-4">
@@ -83,7 +89,7 @@ export const BusinessIntelligenceDashboard = () => {
                   <span className="text-sm font-medium text-muted-foreground">Churn</span>
                 </div>
                 <p className="text-2xl font-bold text-orange-600">{businessMetrics.churn_rate}%</p>
-                <p className="text-xs text-muted-foreground">Taxa mensal</p>
+                <p className="text-xs text-muted-foreground">Taxa do período</p>
               </div>
             </div>
           </CardContent>

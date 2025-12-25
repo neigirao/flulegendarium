@@ -16,16 +16,21 @@ interface NPSData {
   previous_score?: number;
 }
 
-export const NPSReport = () => {
+interface NPSReportProps {
+  days?: number;
+}
+
+export const NPSReport = ({ days = 30 }: NPSReportProps) => {
   const { data: npsData, isLoading } = useQuery({
-    queryKey: ['nps-report'],
+    queryKey: ['nps-report', days],
     queryFn: async (): Promise<NPSData> => {
       try {
+        const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
         // Try to get actual feedback data from the user_feedback table
         const { data: feedbacks, error } = await supabase
           .from('user_feedback')
           .select('rating, created_at')
-          .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+          .gte('created_at', periodAgo);
 
         if (error) {
           console.error('Error fetching NPS data:', error);
@@ -131,7 +136,7 @@ export const NPSReport = () => {
           {getTrendIcon()}
         </CardTitle>
         <CardDescription>
-          Índice de satisfação dos últimos 30 dias
+          Índice de satisfação dos últimos {days} dias
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

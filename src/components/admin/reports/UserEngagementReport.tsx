@@ -5,8 +5,12 @@ import { TrendingUp, TrendingDown, Users, Clock, Target } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useReports } from "@/hooks/use-reports";
 
-export const UserEngagementReport = () => {
-  const { userEngagementData, isLoadingEngagement } = useReports();
+interface UserEngagementReportProps {
+  days?: number;
+}
+
+export const UserEngagementReport = ({ days = 30 }: UserEngagementReportProps) => {
+  const { userEngagementData, isLoadingEngagement } = useReports(days);
 
   if (isLoadingEngagement) {
     return (

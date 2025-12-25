@@ -3,6 +3,8 @@ import { FunnelVisualization } from "./FunnelVisualization";
 import { ActivityHeatmap } from "./ActivityHeatmap";
 import { PlayerDifficultyAnalysis } from "./PlayerDifficultyAnalysis";
 import { ScoreDistributionChart } from "./ScoreDistributionChart";
+import { PeriodSelector } from "../shared/PeriodSelector";
+import { useReportPeriod } from "@/hooks/use-report-period";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RefreshCw, TrendingUp, Users, Target, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +12,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 export const ExecutiveAnalyticsDashboard = () => {
   const queryClient = useQueryClient();
+  const { period, setPeriod } = useReportPeriod();
   const {
     funnelData,
     heatmapData,
@@ -20,11 +23,11 @@ export const ExecutiveAnalyticsDashboard = () => {
     isLoadingHeatmap,
     isLoadingDifficulty,
     isLoadingScores
-  } = useExecutiveAnalytics();
+  } = useExecutiveAnalytics(period);
 
   const handleRefresh = () => {
-    queryClient.invalidateQueries({ queryKey: ['executive-funnel'] });
-    queryClient.invalidateQueries({ queryKey: ['executive-heatmap'] });
+    queryClient.invalidateQueries({ queryKey: ['executive-funnel', period] });
+    queryClient.invalidateQueries({ queryKey: ['executive-heatmap', period] });
     queryClient.invalidateQueries({ queryKey: ['executive-player-difficulty'] });
     queryClient.invalidateQueries({ queryKey: ['executive-score-distribution'] });
   };
@@ -44,7 +47,7 @@ export const ExecutiveAnalyticsDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h2 className="text-2xl font-bold text-primary mb-1">
             Dashboard Analytics Executivo
@@ -53,15 +56,18 @@ export const ExecutiveAnalyticsDashboard = () => {
             Visão completa do funil, atividade e performance dos jogadores
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={isLoading}
-        >
-          <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
-          Atualizar
-        </Button>
+        <div className="flex items-center gap-4">
+          <PeriodSelector value={period} onChange={setPeriod} size="sm" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={isLoading}
+          >
+            <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? 'animate-spin' : ''}`} />
+            Atualizar
+          </Button>
+        </div>
       </div>
 
       {/* Cards de resumo */}
@@ -88,7 +94,7 @@ export const ExecutiveAnalyticsDashboard = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{totalStarts.toLocaleString()}</p>
-                <p className="text-sm text-muted-foreground">Jogos Iniciados (30d)</p>
+                <p className="text-sm text-muted-foreground">Jogos Iniciados ({period}d)</p>
               </div>
             </div>
           </CardContent>
@@ -102,7 +108,7 @@ export const ExecutiveAnalyticsDashboard = () => {
               </div>
               <div>
                 <p className="text-2xl font-bold">{totalRankings.toLocaleString()}</p>
-                <p className="text-sm text-muted-foreground">Rankings Salvos (30d)</p>
+                <p className="text-sm text-muted-foreground">Rankings Salvos ({period}d)</p>
               </div>
             </div>
           </CardContent>
