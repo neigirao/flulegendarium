@@ -13,39 +13,43 @@ interface ErrorMetric {
   last_occurred: string;
 }
 
-export const ErrorMetricsReport = () => {
+interface ErrorMetricsReportProps {
+  days?: number;
+}
+
+export const ErrorMetricsReport = ({ days = 7 }: ErrorMetricsReportProps) => {
   const { data: errorMetrics = [], isLoading } = useQuery({
-    queryKey: ['error-metrics'],
+    queryKey: ['error-metrics', days],
     queryFn: async (): Promise<ErrorMetric[]> => {
-      // Simulate error metrics data
+      // Simulate error metrics data based on period
       return [
         {
           error_type: 'Game Load Timeout',
-          count: 12,
+          count: Math.round(12 * (days / 7)),
           severity: 'medium',
           trend: 'down',
-          last_occurred: '2024-01-15T10:30:00Z'
+          last_occurred: new Date().toISOString()
         },
         {
           error_type: 'Image Loading Failed',
-          count: 8,
+          count: Math.round(8 * (days / 7)),
           severity: 'low',
           trend: 'stable',
-          last_occurred: '2024-01-14T15:45:00Z'
+          last_occurred: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
         },
         {
           error_type: 'Database Connection Error',
-          count: 3,
+          count: Math.round(3 * (days / 7)),
           severity: 'high',
           trend: 'up',
-          last_occurred: '2024-01-15T12:00:00Z'
+          last_occurred: new Date().toISOString()
         },
         {
           error_type: 'Authentication Failure',
-          count: 5,
+          count: Math.round(5 * (days / 7)),
           severity: 'medium',
           trend: 'down',
-          last_occurred: '2024-01-13T09:15:00Z'
+          last_occurred: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
         }
       ];
     },
@@ -98,7 +102,7 @@ export const ErrorMetricsReport = () => {
             Resumo de Erros
           </CardTitle>
           <CardDescription>
-            Frequência e tipos de erros nas últimas 24 horas
+            Frequência e tipos de erros nos últimos {days} dias
           </CardDescription>
         </CardHeader>
         <CardContent>
