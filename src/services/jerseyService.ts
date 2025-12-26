@@ -1,8 +1,9 @@
 import { supabase } from '@/integrations/supabase/client';
-import { Jersey, JerseyRankingEntry, JerseyGameSession, JerseyType } from '@/types/jersey-game';
+import { Jersey, JerseyRankingEntry, JerseyGameSession, JerseyType, JerseyYearOption } from '@/types/jersey-game';
 import type { DifficultyLevel } from '@/types/guess-game';
 import type { Json } from '@/integrations/supabase/types';
 import { logger } from '@/utils/logger';
+import { generateYearOptions, checkYearOption } from '@/utils/jersey-game';
 
 /**
  * Mapear dados do banco para tipo Jersey
@@ -135,6 +136,26 @@ export const jerseyService = {
 
     const randomIndex = Math.floor(Math.random() * availableJerseys.length);
     return availableJerseys[randomIndex];
+  },
+
+  /**
+   * Gerar opções de ano para múltipla escolha
+   */
+  generateOptions(
+    correctYears: number[],
+    difficulty: DifficultyLevel = 'medio'
+  ): JerseyYearOption[] {
+    return generateYearOptions(correctYears, difficulty);
+  },
+
+  /**
+   * Verificar se opção selecionada está correta
+   */
+  checkOptionSelection(
+    selectedYear: number,
+    correctYears: number[]
+  ): boolean {
+    return checkYearOption(selectedYear, correctYears);
   },
 
   /**
@@ -274,41 +295,34 @@ export const jerseyService = {
   },
 
   /**
-   * Calcular pontos baseado na diferença de anos
+   * Calcular pontos para múltipla escolha (sempre exato ou zero)
    */
   calculatePoints(
-    yearDifference: number,
+    isCorrect: boolean,
     difficultyMultiplier: number,
     timeRemaining: number,
     totalTime: number
   ): { points: number; bonus: number } {
-    let basePoints = 0;
-    let bonus = 0;
+    if (!isCorrect) {
+      return { points: 0, bonus: 0 };
+    }
 
-    // Pontuação base por precisão
-    if (yearDifference === 0) {
-      basePoints = 10; // Acerto exato
-      bonus = 5; // Bônus por acerto exato
-    } else if (yearDifference <= 1) {
-      basePoints = 5; // ±1 ano
-    } else if (yearDifference <= 2) {
-      basePoints = 3; // ±2 anos
-    } else {
-      basePoints = 0; // Erro
+    // Pontuação base para acerto
+    const basePoints = 10;
+    let bonus = 5; // Bônus base por acerto
+
+    // Bônus por tempo
+    if (totalTime > 0) {
+      const timePercentage = timeRemaining / totalTime;
+      if (timePercentage > 0.7) {
+        bonus += 3; // Resposta muito rápida
+      } else if (timePercentage > 0.4) {
+        bonus += 1; // Resposta rápida
+      }
     }
 
     // Aplicar multiplicador de dificuldade
     const pointsWithMultiplier = Math.round(basePoints * difficultyMultiplier);
-
-    // Bônus por tempo (se acertou)
-    if (basePoints > 0 && totalTime > 0) {
-      const timePercentage = timeRemaining / totalTime;
-      if (timePercentage > 0.7) {
-        bonus += 2; // Resposta rápida
-      } else if (timePercentage > 0.4) {
-        bonus += 1; // Resposta média
-      }
-    }
 
     return {
       points: pointsWithMultiplier,
@@ -318,6 +332,7 @@ export const jerseyService = {
 
   /**
    * Verificar se o palpite está correto (apenas acerto exato)
+   * @deprecated Use checkOptionSelection para múltipla escolha
    */
   checkGuess(
     guessYear: number,

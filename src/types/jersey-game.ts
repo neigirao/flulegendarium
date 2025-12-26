@@ -6,6 +6,15 @@ import type { DifficultyLevel } from '@/types/guess-game';
 export type JerseyType = 'home' | 'away' | 'third' | 'special';
 
 /**
+ * Opção de ano para múltipla escolha
+ */
+export interface JerseyYearOption {
+  year: number;
+  isCorrect: boolean;
+  position: number;
+}
+
+/**
  * Interface principal da camisa
  */
 export interface Jersey {
@@ -57,6 +66,9 @@ export interface JerseyGameState {
   timeRemaining: number;
   difficulty: DifficultyLevel;
   usedJerseyIds: Set<string>;
+  currentOptions: JerseyYearOption[];
+  selectedOption: number | null;
+  showResult: boolean;
 }
 
 /**
@@ -122,4 +134,6 @@ export interface JerseyGuessHistoryEntry {
   pointsEarned: number;
   difficulty: DifficultyLevel;
   timeRemaining: number;
+  options?: JerseyYearOption[];
+  selectedOption?: number;
 }
