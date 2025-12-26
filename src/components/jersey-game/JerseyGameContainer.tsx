@@ -14,7 +14,7 @@ import { AdaptiveDifficultyIndicator } from "@/components/guess-game/AdaptiveDif
 import { AdaptiveProgressionNotification } from "@/components/guess-game/AdaptiveProgressionNotification";
 import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { JerseyImage } from "./JerseyImage";
-import { JerseyGuessForm } from "./JerseyGuessForm";
+import { JerseyYearOptions } from "./JerseyYearOptions";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { AchievementNotification } from "@/components/achievements/AchievementNotification";
 import { useAchievementNotifications } from "@/hooks/use-achievement-notifications";
@@ -41,7 +41,6 @@ const JerseyGameContainer = () => {
   const [showGuestNameForm, setShowGuestNameForm] = useState(false);
   const [canStartTimer, setCanStartTimer] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [lastGuessResult, setLastGuessResult] = useState<{ isCorrect: boolean; hint?: 'higher' | 'lower'; correctYear: number; userGuess: number; pointsEarned: number } | null>(null);
   const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
   const gameToasts = useGameToasts();
   
@@ -73,7 +72,7 @@ const JerseyGameContainer = () => {
     score,
     gameOver,
     timeRemaining,
-    handleGuess: originalHandleGuess,
+    handleOptionSelect,
     isProcessingGuess,
     startGameForJersey,
     isTimerRunning,
@@ -82,7 +81,11 @@ const JerseyGameContainer = () => {
     currentStreak,
     maxStreak,
     saveToRanking,
-    guessHistory
+    guessHistory,
+    // Multiple choice state
+    currentOptions,
+    selectedOption,
+    showResult
   } = useJerseyGuessGame(jerseys || []);
 
   // Skip player hook
@@ -106,6 +109,7 @@ const JerseyGameContainer = () => {
   const handleSkipPlayer = useCallback(() => {
     performSkip();
   }, [performSkip]);
+
   const startGameForPlayer = useCallback(() => {
     if (!hasTrackedGameStart.current) {
       funnel.trackGameStart('jersey', currentDifficulty.level);
@@ -114,11 +118,8 @@ const JerseyGameContainer = () => {
     startGameForJersey();
   }, [startGameForJersey, funnel, currentDifficulty.level]);
 
-  // Track last guess for history
-  const lastGuessRef = useRef<number>(0);
-
-  // Wrapped handleGuess with funnel tracking and result tracking
-  const handleGuess = useCallback((year: number) => {
+  // Wrapped handleOptionSelect with funnel tracking
+  const handleSelectOption = useCallback((year: number) => {
     if (!hasTrackedFirstGuess.current) {
       funnel.trackFirstGuess('jersey');
       hasTrackedFirstGuess.current = true;
@@ -128,35 +129,20 @@ const JerseyGameContainer = () => {
       nextStep();
     }
     
-    lastGuessRef.current = year;
-    originalHandleGuess(year);
-    
-    // Track result from guessHistory after guess
-    setTimeout(() => {
-      if (guessHistory.length > 0) {
-        const latestGuess = guessHistory[guessHistory.length - 1];
-        const closestYear = latestGuess.jerseyYears[0];
-        setLastGuessResult({
-          isCorrect: latestGuess.isCorrect,
-          hint: latestGuess.userGuess < closestYear ? 'higher' : 'lower',
-          correctYear: latestGuess.matchedYear || closestYear,
-          userGuess: latestGuess.userGuess,
-          pointsEarned: latestGuess.pointsEarned
-        });
-      }
-    }, 100);
-  }, [originalHandleGuess, funnel, isStepActive, nextStep, guessHistory]);
+    handleOptionSelect(year);
+  }, [handleOptionSelect, funnel, isStepActive, nextStep]);
 
   useEffect(() => {
     if (gameOver && !prevGameOverRef.current) {
       funnel.trackGameCompleted(score, gamesPlayed, 'adaptive');
       onGameCompleted(score);
       
-      if (currentJersey && lastGuessRef.current) {
+      if (currentJersey && guessHistory.length > 0) {
+        const lastGuess = guessHistory[guessHistory.length - 1];
         addEntry({
           playerName: `Camisa ${currentJersey.years.join('/')}`,
           playerImageUrl: currentJersey.image_url,
-          guess: String(lastGuessRef.current),
+          guess: String(lastGuess.userGuess),
           isCorrect: false,
           difficulty: currentDifficulty.label,
           timeRemaining: timeRemaining,
@@ -164,7 +150,7 @@ const JerseyGameContainer = () => {
       }
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, funnel, onGameCompleted, currentJersey, addEntry, currentDifficulty, timeRemaining]);
+  }, [gameOver, score, gamesPlayed, funnel, onGameCompleted, currentJersey, guessHistory, addEntry, currentDifficulty, timeRemaining]);
 
   // Track correct guesses
   const prevStreakRef = useRef(currentStreak);
@@ -340,6 +326,9 @@ const JerseyGameContainer = () => {
     setDifficultyChangeInfo(null);
   }, []);
 
+  // Get correct year for display in options
+  const correctYear = currentJersey?.years[0];
+
   return (
     <>
       <DynamicSEO 
@@ -375,7 +364,7 @@ const JerseyGameContainer = () => {
         <CoachMark
           step="timer-explanation"
           title="Fique de Olho no Tempo!"
-          description="Você tem tempo limitado para adivinhar. Respostas exatas valem mais pontos!"
+          description="Você tem tempo limitado para escolher. Respostas rápidas valem mais pontos!"
           position="bottom"
         >
           <GameHeader 
@@ -394,7 +383,7 @@ const JerseyGameContainer = () => {
           />
 
           {currentJersey && (
-            <div className="relative">
+            <div className="relative space-y-6">
               <JerseyImage
                 key={`${gameKey}-${currentJersey.id}`}
                 jersey={currentJersey}
@@ -402,44 +391,39 @@ const JerseyGameContainer = () => {
                 difficulty={currentDifficulty.level as DifficultyLevel}
               />
               
-              {/* GuessForm with CoachMark */}
+              {/* Year Options with CoachMark */}
               <CoachMark
                 step="first-guess"
-                title="Faça seu Palpite!"
-                description="Digite o ano que você acha que essa camisa foi usada. Anos próximos também pontuam!"
+                title="Escolha o Ano!"
+                description="Selecione uma das opções abaixo. Cada camisa foi usada em um ano específico!"
                 position="top"
               >
                 <div className="space-y-3">
-                  <JerseyGuessForm
-                    onSubmitGuess={handleGuess}
-                    disabled={gameOver || isProcessingGuess}
-                    isProcessing={isProcessingGuess}
-                  />
+                  {currentOptions.length > 0 && (
+                    <JerseyYearOptions
+                      options={currentOptions}
+                      onSelectOption={handleSelectOption}
+                      disabled={gameOver || !isTimerRunning}
+                      isProcessing={isProcessingGuess}
+                      selectedYear={selectedOption}
+                      showResult={showResult}
+                      correctYear={correctYear}
+                    />
+                  )}
                   
                   {/* Skip Player Button */}
-                  <div className="flex justify-center">
+                  <div className="flex justify-center pt-2">
                     <SkipPlayerButton
                       onSkip={handleSkipPlayer}
                       skipsUsed={skipsUsed}
                       maxSkips={maxSkips}
                       canSkip={canSkip}
                       skipPenalty={skipPenalty}
-                      disabled={gameOver || isProcessingGuess || !isTimerRunning}
+                      disabled={gameOver || isProcessingGuess || !isTimerRunning || showResult}
                     />
                   </div>
                 </div>
               </CoachMark>
-              
-              {/* Show hint after wrong guess */}
-              {lastGuessResult && !lastGuessResult.isCorrect && (
-                <div className="mt-4 text-center">
-                  <p className="text-muted-foreground">
-                    {lastGuessResult.hint === 'higher' 
-                      ? '📈 O ano correto é mais recente!' 
-                      : '📉 O ano correto é mais antigo!'}
-                  </p>
-                </div>
-              )}
             </div>
           )}
           
@@ -484,10 +468,12 @@ const JerseyGameContainer = () => {
       )}
 
       {/* Achievement Notification */}
-      <AchievementNotification
-        achievement={currentNotification}
-        onClose={dismissNotification}
-      />
+      {currentNotification && (
+        <AchievementNotification
+          achievement={currentNotification}
+          onClose={dismissNotification}
+        />
+      )}
     </>
   );
 };

@@ -7,7 +7,7 @@ import { logger } from "@/utils/logger";
 import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 import { jerseyService } from "@/services/jerseyService";
 import { clearJerseyImageCache } from "@/utils/jersey-image/preloadUtils";
-import type { Jersey, JerseyGuessHistoryEntry } from "@/types/jersey-game";
+import type { Jersey, JerseyGuessHistoryEntry, JerseyYearOption } from "@/types/jersey-game";
 
 /**
  * Informações sobre mudança de dificuldade
@@ -20,13 +20,14 @@ interface DifficultyChangeInfo {
 }
 
 /**
- * Hook principal do Quiz das Camisas.
+ * Hook principal do Quiz das Camisas com múltipla escolha.
  * 
  * Gerencia todo o fluxo do jogo incluindo:
  * - Seleção de camisas baseada em dificuldade
+ * - Geração de opções de ano (1 correta, 3 incorretas)
  * - Ajuste automático de dificuldade
  * - Controle de pontuação, streaks e timer
- * - Validação de palpites (ano da camisa)
+ * - Validação de seleção de opção
  * - Histórico de tentativas
  */
 export const useJerseyGuessGame = (jerseys: Jersey[]) => {
@@ -43,6 +44,11 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
   const [maxStreak, setMaxStreak] = useState(0);
   const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
   const [guessHistory, setGuessHistory] = useState<JerseyGuessHistoryEntry[]>([]);
+
+  // Multiple choice state
+  const [currentOptions, setCurrentOptions] = useState<JerseyYearOption[]>([]);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
+  const [showResult, setShowResult] = useState(false);
 
   // Adaptive difficulty state
   const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
@@ -63,6 +69,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     
     setGameOver(true);
     setHasLost(true);
+    setShowResult(true);
     stopTimer();
     
     // Record stat
@@ -187,13 +194,23 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
       setCurrentJersey(selectedJersey);
       setGameKey(prev => prev + 1);
       
+      // Generate options for multiple choice
+      const options = jerseyService.generateOptions(
+        selectedJersey.years,
+        currentDifficulty.level as any
+      );
+      setCurrentOptions(options);
+      setSelectedOption(null);
+      setShowResult(false);
+      
       logger.info(
         `✅ Camisa selecionada: ${selectedJersey.years.join(', ')}`,
         'JERSEY_GAME',
         { 
           jerseyYears: selectedJersey.years,
           jerseyDifficulty: selectedJersey.difficulty_level,
-          gameDifficulty: currentDifficulty.label
+          gameDifficulty: currentDifficulty.label,
+          options: options.map(o => o.year)
         }
       );
     }
@@ -207,27 +224,37 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     setGameOver(false);
     setHasLost(false);
     setIsProcessingGuess(false);
+    setSelectedOption(null);
+    setShowResult(false);
     lastGuessTimeRef.current = Date.now();
     startTimer();
   }, [currentJersey, startTimer]);
 
-  const handleGuess = useCallback(async (guessYear: number) => {
-    if (!currentJersey || gameOver || isProcessingGuess) return;
+  /**
+   * Handler para seleção de opção (múltipla escolha)
+   */
+  const handleOptionSelect = useCallback(async (selectedYear: number) => {
+    if (!currentJersey || gameOver || isProcessingGuess || showResult) return;
 
     setIsProcessingGuess(true);
+    setSelectedOption(selectedYear);
+    setShowResult(true);
+    
     const guessTime = Date.now() - lastGuessTimeRef.current;
     
     try {
-      logger.debug(`Processing jersey guess: ${guessYear}`, 'JERSEY_GUESS', { 
+      logger.debug(`Processing jersey option: ${selectedYear}`, 'JERSEY_GUESS', { 
         correctYears: currentJersey.years 
       });
       
-      const result = jerseyService.checkGuess(guessYear, currentJersey.years);
-      const yearDifference = result.yearDifference;
+      const isCorrect = jerseyService.checkOptionSelection(selectedYear, currentJersey.years);
+      const yearDifference = isCorrect ? 0 : Math.min(
+        ...currentJersey.years.map(y => Math.abs(selectedYear - y))
+      );
       
       // Calculate points
       const { points: pointsEarned, bonus } = jerseyService.calculatePoints(
-        yearDifference,
+        isCorrect,
         currentDifficulty.multiplier,
         timeRemaining,
         30 // default timer
@@ -238,27 +265,29 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
         currentJersey.id,
         guessTime,
         yearDifference,
-        result.isCorrect
+        isCorrect
       );
 
       // Add to history
       const historyEntry: JerseyGuessHistoryEntry = {
         jerseyId: currentJersey.id,
         jerseyYears: currentJersey.years,
-        matchedYear: result.matchedYear,
+        matchedYear: isCorrect ? selectedYear : undefined,
         jerseyImageUrl: currentJersey.image_url,
-        userGuess: guessYear,
-        isCorrect: result.isCorrect,
+        userGuess: selectedYear,
+        isCorrect,
         yearDifference,
         pointsEarned: pointsEarned + bonus,
         difficulty: currentDifficulty.level as any,
-        timeRemaining
+        timeRemaining,
+        options: currentOptions,
+        selectedOption: selectedYear
       };
       setGuessHistory(prev => [...prev, historyEntry]);
       
       const yearsDisplay = currentJersey.years.join(' ou ');
       
-      if (result.isCorrect) {
+      if (isCorrect) {
         const totalPoints = pointsEarned + bonus;
         const newScore = score + totalPoints;
         const newStreak = currentStreak + 1;
@@ -273,15 +302,14 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
         
         logger.debug(`Correct! +${totalPoints} points`, 'JERSEY_GUESS');
         
-        const matchedDisplay = result.matchedYear || currentJersey.years[0];
         toast({
-          title: "Correto!",
-          description: `+${totalPoints} pontos! Era ${matchedDisplay}`,
+          title: "Correto! 🎉",
+          description: `+${totalPoints} pontos!`,
         });
         
         stopTimer();
         
-        // Continue to next jersey
+        // Continue to next jersey after showing result
         setTimeout(() => {
           selectNextJersey();
           setTimeout(() => {
@@ -292,7 +320,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
         }, 1500);
         
       } else {
-        // Game over on any wrong answer - no partial points, no hints
+        // Game over on any wrong answer
         setGameOver(true);
         setHasLost(true);
         setCurrentStreak(0);
@@ -309,16 +337,18 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
         setIsProcessingGuess(false);
       }
     } catch (error) {
-      logger.error('Error processing jersey guess', 'JERSEY_GUESS', error);
+      logger.error('Error processing jersey option', 'JERSEY_GUESS', error);
       setIsProcessingGuess(false);
     }
   }, [
     currentJersey, 
     gameOver, 
-    isProcessingGuess, 
+    isProcessingGuess,
+    showResult,
     score, 
     currentStreak, 
     currentDifficulty,
+    currentOptions,
     timeRemaining,
     adjustDifficulty,
     stopTimer,
@@ -326,6 +356,13 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     startTimer,
     toast
   ]);
+
+  /**
+   * @deprecated Use handleOptionSelect for multiple choice
+   */
+  const handleGuess = useCallback(async (guessYear: number) => {
+    return handleOptionSelect(guessYear);
+  }, [handleOptionSelect]);
 
   const handleJerseyImageLoaded = useCallback(() => {
     lastGuessTimeRef.current = Date.now();
@@ -346,6 +383,9 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     setDifficultyChangeInfo(null);
     setCurrentJersey(null);
     setGuessHistory([]);
+    setCurrentOptions([]);
+    setSelectedOption(null);
+    setShowResult(false);
     
     // Clear image cache on reset
     clearJerseyImageCache();
@@ -397,13 +437,19 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     maxStreak,
     guessHistory,
     
+    // Multiple choice state
+    currentOptions,
+    selectedOption,
+    showResult,
+    
     // Adaptive difficulty
     currentDifficulty,
     difficultyProgress,
     difficultyChangeInfo,
     
     // Actions
-    handleGuess,
+    handleGuess, // deprecated, kept for compatibility
+    handleOptionSelect, // new handler for multiple choice
     selectNextJersey,
     handleJerseyImageLoaded,
     startGameForJersey,
