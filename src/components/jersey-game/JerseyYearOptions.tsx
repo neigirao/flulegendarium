@@ -38,8 +38,8 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
     if (!showResult) {
       return cn(
         'relative flex items-center justify-center',
-        'text-2xl sm:text-3xl font-bold',
-        'h-16 sm:h-20',
+        'text-xl sm:text-2xl font-bold',
+        'w-20 sm:w-24 h-14 sm:h-16',
         'rounded-xl border-2',
         'transition-all duration-200',
         'bg-card text-card-foreground border-border',
@@ -55,8 +55,8 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
       // Selecionou o correto
       return cn(
         'relative flex items-center justify-center',
-        'text-2xl sm:text-3xl font-bold',
-        'h-16 sm:h-20',
+        'text-xl sm:text-2xl font-bold',
+        'w-20 sm:w-24 h-14 sm:h-16',
         'rounded-xl border-2',
         'bg-flu-verde/20 text-flu-verde border-flu-verde',
         'ring-2 ring-flu-verde ring-offset-2 ring-offset-background'
@@ -67,8 +67,8 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
       // Selecionou o errado
       return cn(
         'relative flex items-center justify-center',
-        'text-2xl sm:text-3xl font-bold',
-        'h-16 sm:h-20',
+        'text-xl sm:text-2xl font-bold',
+        'w-20 sm:w-24 h-14 sm:h-16',
         'rounded-xl border-2',
         'bg-destructive/20 text-destructive border-destructive'
       );
@@ -78,8 +78,8 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
       // Revelar o correto quando errou
       return cn(
         'relative flex items-center justify-center',
-        'text-2xl sm:text-3xl font-bold',
-        'h-16 sm:h-20',
+        'text-xl sm:text-2xl font-bold',
+        'w-20 sm:w-24 h-14 sm:h-16',
         'rounded-xl border-2',
         'bg-flu-verde/10 text-flu-verde border-flu-verde',
         'ring-2 ring-flu-verde/50'
@@ -89,8 +89,8 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
     // Opções não selecionadas e incorretas
     return cn(
       'relative flex items-center justify-center',
-      'text-2xl sm:text-3xl font-bold',
-      'h-16 sm:h-20',
+      'text-xl sm:text-2xl font-bold',
+      'w-20 sm:w-24 h-14 sm:h-16',
       'rounded-xl border-2',
       'bg-muted/50 text-muted-foreground border-border/50',
       'opacity-50'
@@ -98,12 +98,13 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full flex flex-col items-center">
       <p className="text-sm text-muted-foreground text-center mb-3">
         Escolha o ano da camisa:
       </p>
       
-      <div className="grid grid-cols-2 gap-3 sm:gap-4">
+      {/* 3 opções em linha, centralizadas */}
+      <div className="flex justify-center gap-3 sm:gap-4">
         {options.map((option, index) => (
           <motion.button
             key={`${option.year}-${index}`}
@@ -124,7 +125,7 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-flu-verde rounded-full flex items-center justify-center text-white text-sm"
+                className="absolute -top-2 -right-2 w-5 h-5 bg-flu-verde rounded-full flex items-center justify-center text-white text-xs"
               >
                 ✓
               </motion.span>
@@ -135,7 +136,7 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute -top-2 -right-2 w-6 h-6 bg-destructive rounded-full flex items-center justify-center text-white text-sm"
+                className="absolute -top-2 -right-2 w-5 h-5 bg-destructive rounded-full flex items-center justify-center text-white text-xs"
               >
                 ✗
               </motion.span>

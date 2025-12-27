@@ -141,11 +141,8 @@ export const jerseyService = {
   /**
    * Gerar opções de ano para múltipla escolha
    */
-  generateOptions(
-    correctYears: number[],
-    difficulty: DifficultyLevel = 'medio'
-  ): JerseyYearOption[] {
-    return generateYearOptions(correctYears, difficulty);
+  generateOptions(correctYears: number[]): JerseyYearOption[] {
+    return generateYearOptions(correctYears);
   },
 
   /**
