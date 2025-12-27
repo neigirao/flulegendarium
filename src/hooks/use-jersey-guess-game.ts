@@ -194,11 +194,8 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
       setCurrentJersey(selectedJersey);
       setGameKey(prev => prev + 1);
       
-      // Generate options for multiple choice
-      const options = jerseyService.generateOptions(
-        selectedJersey.years,
-        currentDifficulty.level as any
-      );
+      // Generate options for multiple choice (3 options with 1-3 years difference)
+      const options = jerseyService.generateOptions(selectedJersey.years);
       setCurrentOptions(options);
       setSelectedOption(null);
       setShowResult(false);

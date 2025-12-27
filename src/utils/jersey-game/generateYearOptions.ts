@@ -1,17 +1,4 @@
-import type { DifficultyLevel } from '@/types/guess-game';
 import type { JerseyYearOption } from '@/types/jersey-game';
-
-/**
- * Configuração de distância de opções por nível de dificuldade
- * Níveis mais difíceis têm opções mais próximas
- */
-const DIFFICULTY_DISTANCES: Record<DifficultyLevel, number[]> = {
-  muito_facil: [4, 7, 10],    // Opções bem distantes
-  facil: [3, 5, 8],           // Opções distantes
-  medio: [2, 4, 6],           // Opções moderadas
-  dificil: [1, 3, 5],         // Opções próximas
-  muito_dificil: [1, 2, 3],   // Opções muito próximas
-};
 
 /**
  * Limites de ano válidos para o jogo
@@ -32,31 +19,26 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 /**
+ * Gera uma distância aleatória entre 1 e 3 anos
+ */
+function getRandomDistance(): number {
+  return Math.floor(Math.random() * 3) + 1; // 1, 2 ou 3
+}
+
+/**
  * Gera um ano incorreto que não colida com os anos corretos
  */
 function generateIncorrectYear(
   correctYears: number[],
   baseYear: number,
-  distance: number,
-  usedYears: Set<number>,
-  direction: 'up' | 'down' | 'random'
+  usedYears: Set<number>
 ): number {
   const attempts = 20;
   
   for (let i = 0; i < attempts; i++) {
-    let year: number;
-    
-    if (direction === 'random') {
-      const sign = Math.random() > 0.5 ? 1 : -1;
-      year = baseYear + (distance * sign);
-    } else if (direction === 'up') {
-      year = baseYear + distance;
-    } else {
-      year = baseYear - distance;
-    }
-    
-    // Ajustar variação aleatória para não ficar previsível
-    year += Math.floor(Math.random() * 2) - 1;
+    const distance = getRandomDistance();
+    const sign = Math.random() > 0.5 ? 1 : -1;
+    const year = baseYear + (distance * sign);
     
     // Verificar se está dentro dos limites e não é um ano correto ou já usado
     if (
@@ -69,24 +51,19 @@ function generateIncorrectYear(
     }
     
     // Tentar direção oposta
-    if (direction === 'up') {
-      year = baseYear - distance;
-    } else if (direction === 'down') {
-      year = baseYear + distance;
-    }
-    
+    const yearOpposite = baseYear - (distance * sign);
     if (
-      year >= MIN_YEAR &&
-      year <= MAX_YEAR &&
-      !correctYears.includes(year) &&
-      !usedYears.has(year)
+      yearOpposite >= MIN_YEAR &&
+      yearOpposite <= MAX_YEAR &&
+      !correctYears.includes(yearOpposite) &&
+      !usedYears.has(yearOpposite)
     ) {
-      return year;
+      return yearOpposite;
     }
   }
   
   // Fallback: gerar ano próximo que seja válido
-  for (let offset = 1; offset <= 20; offset++) {
+  for (let offset = 1; offset <= 10; offset++) {
     const yearUp = baseYear + offset;
     const yearDown = baseYear - offset;
     
@@ -108,54 +85,42 @@ function generateIncorrectYear(
   }
   
   // Último fallback
-  return baseYear + 5;
+  return baseYear + 2;
 }
 
 /**
- * Gera 4 opções de ano para múltipla escolha
+ * Gera 3 opções de ano para múltipla escolha
+ * Cada opção incorreta tem de 1 a 3 anos de diferença (randomizado)
  * 
  * @param correctYears Array de anos corretos (qualquer um é aceito)
- * @param difficulty Nível de dificuldade do jogo
- * @returns Array de 4 opções embaralhadas
+ * @returns Array de 3 opções embaralhadas
  */
 export function generateYearOptions(
-  correctYears: number[],
-  difficulty: DifficultyLevel = 'medio'
+  correctYears: number[]
 ): JerseyYearOption[] {
   // Escolher um ano correto aleatório para usar como base
   const correctYear = correctYears[Math.floor(Math.random() * correctYears.length)];
   
-  // Obter distâncias baseadas na dificuldade
-  const distances = DIFFICULTY_DISTANCES[difficulty] || DIFFICULTY_DISTANCES.medio;
-  
-  // Gerar anos incorretos
+  // Gerar 2 anos incorretos
   const usedYears = new Set<number>(correctYears);
   const incorrectYears: number[] = [];
   
-  const directions: ('up' | 'down' | 'random')[] = ['up', 'down', 'random'];
-  
-  for (let i = 0; i < 3; i++) {
-    const distance = distances[i];
-    const direction = directions[i];
-    
+  for (let i = 0; i < 2; i++) {
     const incorrectYear = generateIncorrectYear(
       correctYears,
       correctYear,
-      distance,
-      usedYears,
-      direction
+      usedYears
     );
     
     usedYears.add(incorrectYear);
     incorrectYears.push(incorrectYear);
   }
   
-  // Criar opções
+  // Criar opções (1 correta + 2 incorretas = 3 total)
   const options: JerseyYearOption[] = [
     { year: correctYear, isCorrect: true, position: 0 },
     { year: incorrectYears[0], isCorrect: false, position: 1 },
     { year: incorrectYears[1], isCorrect: false, position: 2 },
-    { year: incorrectYears[2], isCorrect: false, position: 3 },
   ];
   
   // Embaralhar e atribuir novas posições
