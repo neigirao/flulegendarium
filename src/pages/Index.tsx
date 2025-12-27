@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Rocket, Instagram, User, LogIn } from "lucide-react";
@@ -8,16 +8,25 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { GameTypeRankings } from "@/components/home/GameTypeRankings";
+import { useLinkPrefetch, useRoutePrefetch } from "@/hooks/use-route-prefetch";
 
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { trackPageView, trackAuthPromptShown } = useFunnelAnalytics();
+  const { onMouseEnter } = useLinkPrefetch();
+  
+  // Prefetch likely next routes automatically
+  useRoutePrefetch();
 
   // Track page view on mount
   useEffect(() => {
     trackPageView('home');
   }, [trackPageView]);
+
+  const handlePrefetchGameMode = useCallback(() => {
+    onMouseEnter('/selecionar-modo-jogo');
+  }, [onMouseEnter]);
   
   const handleStartGame = () => {
     window.location.href = '/selecionar-modo-jogo';
@@ -57,6 +66,8 @@ const Index = () => {
             <div className="mb-8">
               <Button
                 onClick={handleStartGame}
+                onMouseEnter={handlePrefetchGameMode}
+                onTouchStart={handlePrefetchGameMode}
                 size="lg"
                 className="text-xl px-12 py-6 shadow-xl hover:shadow-2xl bg-primary hover:bg-primary/90 text-primary-foreground touch-target-xl font-display tracking-wide animate-pulse hover:animate-none"
                 data-testid="play-button"
