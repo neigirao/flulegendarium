@@ -1,48 +1,60 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
-import { Shield, HelpCircle, User, Menu, X, Newspaper, Heart, Trophy } from "lucide-react";
+import { Shield, HelpCircle, User, Menu, Newspaper, Heart, Trophy } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useLinkPrefetch } from "@/hooks/use-route-prefetch";
 
 export const TopNavigation = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+  const { onMouseEnter } = useLinkPrefetch();
 
   const navigationItems = [
     {
       label: "Portal de Notícias",
+      route: '/noticias',
       onClick: () => navigate('/noticias'),
       icon: Newspaper,
     },
     ...(user ? [{
       label: "Meu Perfil",
+      route: '/perfil',
       onClick: () => navigate('/perfil'),
       icon: User,
     }] : []),
     ...(user ? [{
       label: "Conquistas",
+      route: '/conquistas',
       onClick: () => navigate('/conquistas'),
       icon: Trophy,
     }] : []),
     {
       label: "Doações",
+      route: '/doacoes',
       onClick: () => navigate('/doacoes'),
       icon: Heart,
     },
     {
       label: "FAQ",
+      route: '/faq',
       onClick: () => navigate('/faq'),
       icon: HelpCircle,
     },
     {
       label: "Admin",
+      route: '/admin/login-administrador',
       onClick: () => navigate('/admin/login-administrador'),
       icon: Shield,
     }
   ];
+
+  const handlePrefetch = useCallback((route: string) => {
+    onMouseEnter(route);
+  }, [onMouseEnter]);
 
   const handleNavigation = (onClick: () => void) => {
     onClick();
@@ -88,6 +100,7 @@ export const TopNavigation = () => {
                 variant="ghost"
                 size="sm"
                 onClick={item.onClick}
+                onMouseEnter={() => handlePrefetch(item.route)}
                 className="text-primary hover:bg-secondary/10 hover:text-secondary transition-colors touch-target"
               >
                 <item.icon className="h-4 w-4 mr-2" />

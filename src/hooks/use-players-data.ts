@@ -4,6 +4,7 @@ import { Player } from "@/types/guess-game";
 import { convertStatistics } from "@/utils/statistics-converter";
 import { useMemo } from "react";
 import { logger } from "@/utils/logger";
+import { fetchWithSWR, invalidateSWRCache } from "@/utils/cache";
 
 interface DatabasePlayer {
   id: string;
@@ -23,68 +24,81 @@ interface DatabasePlayer {
   average_guess_time: number | null;
 }
 
+const PLAYERS_CACHE_KEY = 'players-data';
+
+/**
+ * Fetches players from Supabase with SWR caching for better performance
+ */
+const fetchPlayersFromSupabase = async (): Promise<DatabasePlayer[]> => {
+  logger.info('Carregando dados dos jogadores', 'PLAYERS_DATA');
+  
+  const { data, error } = await supabase
+    .from('players')
+    .select(`
+      id,
+      name,
+      position,
+      image_url,
+      year_highlight,
+      fun_fact,
+      achievements,
+      nicknames,
+      statistics,
+      difficulty_level,
+      difficulty_score,
+      difficulty_confidence,
+      total_attempts,
+      correct_attempts,
+      average_guess_time
+    `);
+  
+  if (error) {
+    logger.error('Erro ao buscar jogadores', 'PLAYERS_DATA', error);
+    throw error;
+  }
+  
+  if (!data || data.length === 0) {
+    logger.warn('Nenhum jogador encontrado no banco', 'PLAYERS_DATA');
+    return [];
+  }
+
+  logger.info(`Jogadores carregados do banco: ${data.length}`, 'PLAYERS_DATA');
+  
+  // Log detalhado dos dados brutos do banco
+  logger.debug('Dados brutos do banco', 'PLAYERS_DATA', { 
+    total: data.length,
+    sample: data.slice(0, 3).map(p => ({ 
+      id: p.id, 
+      name: p.name, 
+      difficulty: p.difficulty_level 
+    }))
+  });
+  
+  // Log da distribuição de dificuldades
+  const difficultyCount: Record<string, number> = {};
+  data.forEach(player => {
+    const difficulty = player.difficulty_level || 'sem_dificuldade';
+    difficultyCount[difficulty] = (difficultyCount[difficulty] || 0) + 1;
+  });
+  logger.info('Distribuição de dificuldades (dados brutos)', 'PLAYERS_DATA', difficultyCount);
+  
+  return data;
+};
+
 export const usePlayersData = () => {
   const { data: rawPlayers = [], isLoading, error: playersError } = useQuery({
     queryKey: ['players'],
     queryFn: async (): Promise<DatabasePlayer[]> => {
-      try {
-        logger.info('Carregando dados dos jogadores', 'PLAYERS_DATA');
-        
-        const { data, error } = await supabase
-          .from('players')
-          .select(`
-            id,
-            name,
-            position,
-            image_url,
-            year_highlight,
-            fun_fact,
-            achievements,
-            nicknames,
-            statistics,
-            difficulty_level,
-            difficulty_score,
-            difficulty_confidence,
-            total_attempts,
-            correct_attempts,
-            average_guess_time
-          `);
-        
-        if (error) {
-          logger.error('Erro ao buscar jogadores', 'PLAYERS_DATA', error);
-          throw error;
+      // Use SWR cache wrapper for stale-while-revalidate pattern
+      return fetchWithSWR(
+        PLAYERS_CACHE_KEY,
+        fetchPlayersFromSupabase,
+        {
+          ttl: 10 * 60 * 1000,      // 10 minutes total cache
+          staleTime: 2 * 60 * 1000, // Consider stale after 2 minutes
+          persistOffline: true       // Persist in IndexedDB for offline
         }
-        
-        if (!data || data.length === 0) {
-          logger.warn('Nenhum jogador encontrado no banco', 'PLAYERS_DATA');
-          return [];
-        }
-
-        logger.info(`Jogadores carregados do banco: ${data.length}`, 'PLAYERS_DATA');
-        
-        // Log detalhado dos dados brutos do banco
-        logger.debug('Dados brutos do banco', 'PLAYERS_DATA', { 
-          total: data.length,
-          sample: data.slice(0, 3).map(p => ({ 
-            id: p.id, 
-            name: p.name, 
-            difficulty: p.difficulty_level 
-          }))
-        });
-        
-        // Log da distribuição de dificuldades
-        const difficultyCount: Record<string, number> = {};
-        data.forEach(player => {
-          const difficulty = player.difficulty_level || 'sem_dificuldade';
-          difficultyCount[difficulty] = (difficultyCount[difficulty] || 0) + 1;
-        });
-        logger.info('Distribuição de dificuldades (dados brutos)', 'PLAYERS_DATA', difficultyCount);
-        
-        return data;
-      } catch (err) {
-        logger.error('Exceção ao buscar jogadores', 'PLAYERS_DATA', err);
-        throw err;
-      }
+      );
     },
     staleTime: 5 * 60 * 1000,
     retry: (failureCount, error: any) => {
@@ -150,6 +164,7 @@ export const usePlayersData = () => {
   return {
     players,
     isLoading,
-    playersError
+    playersError,
+    invalidateCache: () => invalidateSWRCache(PLAYERS_CACHE_KEY)
   };
 };
