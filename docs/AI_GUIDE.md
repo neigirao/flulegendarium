@@ -21,9 +21,21 @@
 ```
 src/
 ├── components/          # Componentes React organizados por funcionalidade
-│   ├── guess-game/     # Componentes do jogo principal
+│   ├── guess-game/     # Componentes do jogo principal (Quiz Jogadores)
 │   ├── decade-game/    # Componentes do modo década
+│   ├── jersey-game/    # 🆕 Componentes do Quiz das Camisas
+│   │   ├── JerseyGameContainer.tsx
+│   │   ├── JerseyYearOptions.tsx  # Múltipla escolha
+│   │   ├── JerseyImage.tsx        # Imagem otimizada
+│   │   ├── JerseyTutorial.tsx     # Tutorial onboarding
+│   │   └── index.ts
+│   ├── home/           # 🆕 Componentes da homepage
+│   │   ├── GameModesPreview.tsx   # Preview dos 3 modos
+│   │   └── GameTypeRankings.tsx
 │   ├── admin/          # Dashboard administrativo
+│   │   └── shared/     # 🆕 Componentes compartilhados
+│   │       ├── PeriodSelector.tsx
+│   │       └── index.ts
 │   ├── ui/             # Componentes de UI base (shadcn)
 │   ├── achievements/   # Sistema de conquistas
 │   ├── auth/           # Autenticação
@@ -32,12 +44,19 @@ src/
 │   ├── game/           # Hooks de estado do jogo (consolidados)
 │   ├── analytics/      # Hooks de analytics (consolidados)
 │   ├── performance/    # Hooks de performance (consolidados)
-│   └── admin-stats/    # Hooks para estatísticas admin
+│   ├── admin-stats/    # Hooks para estatísticas admin
+│   ├── use-jersey-guess-game.ts  # 🆕 Hook do quiz camisas
+│   └── use-report-period.ts      # 🆕 Hook período reports
 ├── pages/              # Páginas/rotas da aplicação
 ├── services/           # Lógica de negócio e integrações
+│   └── jerseyService.ts  # 🆕 Serviço do quiz camisas
 ├── utils/              # Funções utilitárias
 │   ├── logger.ts       # Logger centralizado (USE SEMPRE)
 │   ├── player-image/   # Gerenciamento de imagens
+│   ├── jersey-game/    # 🆕 Utilitários do quiz camisas
+│   │   └── generateYearOptions.ts
+│   ├── image/
+│   │   └── supabaseTransforms.ts  # 🆕 Transforms de imagem
 │   └── validation/     # Validadores de dados
 ├── types/              # Definições TypeScript
 ├── stores/             # Zustand stores
@@ -51,6 +70,14 @@ src/
 ---
 
 ## 🎮 Fluxos Principais do Sistema
+
+### Modos de Jogo Disponíveis
+
+| Modo | Rota | Mecânica | Dificuldade |
+|------|------|----------|-------------|
+| Quiz Adaptativo | `/quiz-adaptativo` | Digitar nome do jogador | Automática |
+| Quiz por Década | `/quiz-decada` | Digitar nome do jogador | Por época |
+| **Quiz das Camisas** 🆕 | `/quiz-camisas` | Múltipla escolha (3 opções) | Por camisa |
 
 ### 1. **Fluxo do Jogo Adaptativo** (Modo Principal)
 
@@ -76,6 +103,30 @@ graph TD
     P -->|Não| F
     P -->|Sim| Q[Salvar ranking]
 ```
+
+### 2. **Fluxo do Quiz das Camisas** 🆕
+
+```mermaid
+graph TD
+    A[Usuário inicia quiz] --> B[Carregar camisa aleatória]
+    B --> C[generateYearOptions - 3 opções]
+    C --> D[Exibir camisa + opções]
+    D --> E{Usuário clica opção}
+    E --> F[showResult = true]
+    F --> G{Acertou?}
+    G -->|Sim| H[Feedback verde + pontos]
+    G -->|Não| I[Feedback vermelho + mostrar correto]
+    H --> J[Aguarda 1.5s]
+    I --> K[Game Over]
+    J --> B
+```
+
+**Geração de Opções** (`generateYearOptions.ts`):
+1. Escolhe um ano correto aleatório do array `correctYears`
+2. Gera 2 anos incorretos com diferença de 1-3 anos
+3. Garante que anos incorretos não colidam com corretos
+4. Garante range válido (1902-2025)
+5. Embaralha posições aleatoriamente
 
 **Hooks envolvidos**:
 - `useAdaptiveGuessGame`: Gerencia todo o estado do jogo

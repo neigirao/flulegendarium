@@ -1,10 +1,9 @@
-
 import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, HelpCircle, MessageCircle, Trophy, Users, GamepadIcon, Shield, Instagram, Brain } from "lucide-react";
+import { ArrowLeft, HelpCircle, MessageCircle, Trophy, Users, GamepadIcon, Shield, Instagram, Brain, Shirt } from "lucide-react";
 
 const faqData = [
   {
@@ -17,7 +16,7 @@ const faqData = [
       },
       {
         question: "Quais modos de jogo estão disponíveis?",
-        answer: "Temos dois modos: 1) Quiz Adaptativo - Sistema inteligente que ajusta a dificuldade baseado no seu desempenho; 2) Quiz por Década - Escolha uma época específica (anos 70, 80, 90, 2000s, 2010s, 2020s) e teste conhecimentos sobre jogadores daquela era."
+        answer: "Temos TRÊS modos: 1) Quiz Adaptativo - Sistema inteligente que ajusta a dificuldade baseado no seu desempenho; 2) Quiz por Década - Escolha uma época específica (anos 70, 80, 90, 2000s, 2010s, 2020s); 3) Quiz das Camisas - Veja uma camisa histórica e escolha o ano correto entre 3 opções!"
       },
       {
         question: "Como funciona o Quiz por Década?",
@@ -38,6 +37,36 @@ const faqData = [
       {
         question: "Quantos jogadores estão no jogo?",
         answer: "Temos mais de 200 jogadores históricos e atuais do Fluminense, desde os clássicos como Castilho e Telê Santana até os ídolos mais recentes. Novos jogadores são adicionados regularmente!"
+      }
+    ]
+  },
+  {
+    category: "Quiz das Camisas",
+    icon: Shirt,
+    questions: [
+      {
+        question: "O que é o Quiz das Camisas?",
+        answer: "É um modo de jogo onde você vê uma camisa histórica do Fluminense e precisa escolher entre 3 opções qual é o ano correto daquele uniforme. É perfeito para quem conhece a história visual do clube!"
+      },
+      {
+        question: "Como funciona a escolha de anos?",
+        answer: "Ao ver a camisa, você terá 3 opções de ano para escolher. Uma é a correta e as outras duas são anos próximos (de 1 a 3 anos de diferença). Clique na opção que você acredita ser a correta!"
+      },
+      {
+        question: "O que acontece se eu errar?",
+        answer: "Se escolher o ano errado, o jogo termina (Game Over). A opção correta será destacada em verde para você aprender qual era o ano certo daquela camisa."
+      },
+      {
+        question: "Qual é a pontuação do Quiz das Camisas?",
+        answer: "A pontuação varia conforme a dificuldade da camisa. Camisas mais antigas e raras valem mais pontos! Quanto mais rápido você acertar, mais pontos ganha."
+      },
+      {
+        question: "Quantas camisas históricas existem no jogo?",
+        answer: "Temos dezenas de camisas históricas do Fluminense, desde uniformes clássicos dos anos 1900 até as mais recentes. Novos uniformes são adicionados regularmente!"
+      },
+      {
+        question: "Posso jogar o Quiz das Camisas no celular?",
+        answer: "Sim! O modo foi otimizado para telas touch. As 3 opções aparecem lado a lado facilitando a escolha com um simples toque."
       }
     ]
   },

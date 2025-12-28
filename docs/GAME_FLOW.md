@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Este documento detalha o fluxo completo de uma partida no "Lendas do Flu", incluindo ambos os modos de jogo (Adaptativo e Década).
+Este documento detalha o fluxo completo de uma partida no "Lendas do Flu", incluindo todos os modos de jogo.
 
 ## Modos de Jogo
 
@@ -11,6 +11,9 @@ Sistema que ajusta a dificuldade automaticamente baseado no desempenho do jogado
 
 ### 2. Quiz por Década (`/quiz-decada`)
 Jogadores filtrados por período histórico (1970s-2020s).
+
+### 3. Quiz das Camisas (`/quiz-camisas`) 🆕
+Adivinhe o ano das camisas históricas do Fluminense escolhendo entre 3 opções.
 
 ---
 

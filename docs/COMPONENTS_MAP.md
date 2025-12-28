@@ -568,4 +568,27 @@ src/components/
 
 ---
 
-**Última atualização**: 2025-12-03
+## 👕 Componentes do Quiz das Camisas
+
+### **JerseyGameContainer**
+Container principal do modo Quiz das Camisas com `JerseyImage`, `JerseyYearOptions`.
+
+### **JerseyYearOptions**
+Exibe 3 opções de ano em layout horizontal com feedback visual (verde/vermelho).
+
+### **JerseyTutorial**
+Tutorial de onboarding para novos jogadores do quiz de camisas (4 passos).
+
+## 🏠 Componentes da Home
+
+### **GameModesPreview**
+Exibe os 3 modos de jogo (Adaptativo, Década, Camisas) em cards com links.
+
+## 📊 Componentes Admin Compartilhados
+
+### **PeriodSelector**
+Seletor de período para relatórios (7, 14, 30, 60, 90 dias).
+
+---
+
+**Última atualização**: 2025-01-XX

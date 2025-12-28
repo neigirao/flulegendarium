@@ -8,6 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { GameTypeRankings } from "@/components/home/GameTypeRankings";
+import { GameModesPreview } from "@/components/home/GameModesPreview";
 import { useLinkPrefetch, useRoutePrefetch } from "@/hooks/use-route-prefetch";
 
 const Index = () => {
@@ -40,8 +41,8 @@ const Index = () => {
   return (
     <>
       <DynamicSEO 
-        customTitle="Lendas do Flu | Quiz Interativo dos Jogadores do Fluminense"
-        customDescription="🏆 Teste seus conhecimentos sobre os grandes ídolos e lendas do Fluminense! Quiz adaptativo com diferentes níveis de dificuldade."
+        customTitle="Lendas do Flu | Quiz de Jogadores e Camisas Históricas do Fluminense"
+        customDescription="🏆 3 modos de quiz: Jogadores, Por Década e Camisas Históricas! Teste seus conhecimentos sobre os ídolos e uniformes tricolores."
       />
       
       <div className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">
@@ -57,9 +58,9 @@ const Index = () => {
             <p className="text-display-subtitle text-primary-foreground/90 mb-4 font-display">
               O Quiz Definitivo do Fluminense
             </p>
-            <p className="text-lg text-primary-foreground/80 mb-12 max-w-2xl mx-auto font-body">
-              Teste seus conhecimentos sobre os grandes ídolos tricolores! Desde lendas 
-              históricas até estrelas atuais - quanto você realmente conhece Flu.
+            <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto font-body">
+              3 modos de jogo: Jogadores, Décadas e Camisas Históricas!
+              Teste seus conhecimentos sobre os ídolos e uniformes tricolores.
             </p>
 
             {/* Main CTA Button */}
@@ -110,9 +111,12 @@ const Index = () => {
               </p>
             )}
 
-            <p className="text-primary-foreground/70 text-sm mb-16">
-              Gratuito • Jogue sem cadastro • 188+ jogadores
+            <p className="text-primary-foreground/70 text-sm mb-12">
+              Gratuito • Jogue sem cadastro • 188+ jogadores • 50+ camisas históricas
             </p>
+
+            {/* Game Modes Preview */}
+            <GameModesPreview />
 
             {/* Hall da Fama Section */}
             <GameTypeRankings />
