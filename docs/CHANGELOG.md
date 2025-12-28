@@ -7,6 +7,54 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Unreleased]
 
+### 👕 Quiz das Camisas - Múltipla Escolha (2025-01-XX)
+
+#### Added
+- ✅ `JerseyYearOptions` - Componente de 3 opções de ano com feedback visual
+- ✅ `generateYearOptions()` - Gerador de opções com distância 1-3 anos
+- ✅ `JerseyTutorial` - Tutorial de onboarding para o quiz de camisas
+- ✅ Mecânica de múltipla escolha em vez de input de texto
+- ✅ `GameModesPreview` - Componente na home mostrando os 3 modos de jogo
+
+#### Changed
+- 🔄 `use-jersey-guess-game.ts` - Suporte a opções e resultado visual
+- 🔄 `jerseyService.ts` - Métodos `generateOptions()` e `checkOptionSelection()`
+- 🔄 `JerseyGameContainer.tsx` - Usa `JerseyYearOptions` em vez de `JerseyGuessForm`
+- 🔄 `Index.tsx` - Atualizada home com GameModesPreview e contagem de camisas
+
+### 📊 Sistema de Relatórios Estendidos - 90 dias (2025-01-XX)
+
+#### Added
+- ✅ `useReportPeriod` hook - Gerencia período de relatórios com persistência
+- ✅ `PeriodSelector` componente - UI para seleção de período
+- ✅ Suporte a períodos de 7, 14, 30, 60 e 90 dias
+
+#### Changed
+- 🔄 `executiveAnalyticsService` - Suporte a `days` dinâmico
+- 🔄 `adminBusinessIntelligence` - Suporte a `days` dinâmico
+- 🔄 Todos os hooks de reports com queryKey dinâmica
+
+### ⚡ Otimizações de Performance (2025-01-XX)
+
+#### Added
+- ✅ SWR Cache em `usePlayersData` (TTL: 10min, stale: 2min)
+- ✅ `OptimizedImage` em `JerseyImage` com srcset e lazy loading
+- ✅ Hover prefetch em `TopNavigation` e botão principal da Index
+- ✅ `supabaseTransforms.ts` - Utilitário para transformar URLs de imagens
+
+### 📝 FAQ e SEO (2025-01-XX)
+
+#### Added
+- ✅ Nova categoria "Quiz das Camisas" no FAQ com 6 perguntas
+- ✅ Rotas SEO para `/quiz-camisas`, `/conquistas`, `/perfil`, `/doacoes`
+- ✅ Schema FAQPage para structured data
+
+#### Changed
+- 🔄 FAQ atualizado com informação dos 3 modos de jogo
+- 🔄 SEO da home atualizado com menção aos 3 modos
+
+---
+
 ### 🎉 Fase Final de Manutenibilidade - COMPLETA (2025-01-16)
 
 #### Removed (Dead Code Cleanup)

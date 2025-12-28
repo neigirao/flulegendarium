@@ -18,9 +18,12 @@ O **Lendas do Flu** é uma aplicação web moderna que desafia os torcedores a r
 
 - 🎯 **Quiz Adaptativo**: Dificuldade ajusta automaticamente baseado no desempenho
 - 📅 **Quiz por Década**: Filtre jogadores por período histórico (1970s-2020s)
+- 👕 **Quiz das Camisas**: Adivinhe o ano das camisas históricas entre 3 opções 🆕
+- 📊 **Relatórios Estendidos**: Análises de até 90 dias no painel admin 🆕
 - 🏆 **Sistema de Conquistas**: Desbloqueie achievements únicos
 - 📊 **Ranking Global**: Compare sua pontuação com outros torcedores
-- ⏱️ **Timer Dinâmico**: 60 segundos para cada jogador
+- ⏱️ **Timer Dinâmico**: 60 segundos para cada jogador/camisa
+- ⚡ **Performance Otimizada**: SWR Cache, Image Transforms, Prefetch 🆕
 - 💾 **Progressive Web App**: Instale e jogue offline
 - 🌙 **Dark Mode**: Interface otimizada para dia e noite
 - 📱 **Totalmente Responsivo**: Experiência perfeita em qualquer dispositivo
@@ -150,15 +153,21 @@ sequenceDiagram
 ```
 src/
 ├── components/        # Componentes React organizados por feature
-│   ├── guess-game/   # Componentes do jogo principal
+│   ├── guess-game/   # Componentes do quiz de jogadores
+│   ├── decade-game/  # Componentes do quiz por década
+│   ├── jersey-game/  # 🆕 Componentes do quiz de camisas
+│   ├── home/         # 🆕 Componentes da homepage
 │   ├── achievements/ # Sistema de conquistas
 │   ├── admin/        # Painel administrativo
 │   └── ui/           # Componentes UI reutilizáveis (shadcn)
 ├── hooks/            # Hooks customizados
 │   ├── game/         # Hooks de lógica de jogo
-│   └── admin-stats/  # Hooks de estatísticas
+│   ├── admin-stats/  # Hooks de estatísticas
+│   ├── use-jersey-guess-game.ts  # 🆕 Hook quiz camisas
+│   └── use-report-period.ts      # 🆕 Hook período reports
 ├── services/         # Serviços de negócio
 │   ├── playerSelectionService.ts
+│   ├── jerseyService.ts  # 🆕 Serviço quiz camisas
 │   ├── rankingService.ts
 │   └── achievementsService.ts
 ├── schemas/          # Schemas Zod para validação

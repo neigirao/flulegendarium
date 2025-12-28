@@ -11,8 +11,8 @@ interface EnhancedSEORouterProps {
 const SEO_ROUTES = {
   '/': {
     title: 'Lendas do Flu - Quiz Tricolor dos Ídolos do Fluminense',
-    description: 'Teste seus conhecimentos sobre as lendas do Fluminense! Quiz interativo com jogadores históricos do time tricolor das Laranjeiras.',
-    keywords: 'quiz fluminense, teste tricolor, jogadores fluminense, ídolos flu, quiz futebol, fluminense história',
+    description: '3 modos de quiz: Jogadores, Por Década e Camisas Históricas! Teste seus conhecimentos sobre os ídolos e uniformes tricolores.',
+    keywords: 'quiz fluminense, teste tricolor, jogadores fluminense, ídolos flu, quiz futebol, fluminense história, camisas históricas',
     schema: 'WebSite'
   },
   '/quiz-adaptativo': {
@@ -27,9 +27,15 @@ const SEO_ROUTES = {
     keywords: 'fluminense por década, história tricolor, jogadores anos 80 90 2000, eras douradas flu',
     schema: 'Game'
   },
+  '/quiz-camisas': {
+    title: 'Quiz das Camisas - Adivinhe o Ano dos Uniformes Históricos',
+    description: 'Veja a camisa histórica do Fluminense e escolha entre 3 opções qual é o ano correto! Teste seu conhecimento sobre os uniformes tricolores.',
+    keywords: 'quiz camisas fluminense, uniformes históricos tricolor, camisas antigas flu, adivinhar ano camisa',
+    schema: 'Game'
+  },
   '/selecionar-modo-jogo': {
     title: 'Modos de Jogo - Escolha seu Desafio Tricolor',
-    description: 'Escolha entre quiz adaptativo ou por década. Diferentes modos para testar seu conhecimento sobre o Fluminense.',
+    description: 'Escolha entre 3 modos: Quiz Adaptativo, Por Década ou Camisas Históricas. Diferentes desafios para testar seu conhecimento tricolor!',
     keywords: 'modos jogo fluminense, escolher quiz tricolor, desafio flu, tipos quiz futebol',
     schema: 'Game'
   },
@@ -38,6 +44,24 @@ const SEO_ROUTES = {
     description: 'Tire suas dúvidas sobre o jogo! Regras, pontuação e dicas para dominar o quiz dos ídolos tricolores.',
     keywords: 'como jogar quiz fluminense, regras jogo tricolor, dúvidas flu, ajuda quiz',
     schema: 'FAQ'
+  },
+  '/conquistas': {
+    title: 'Conquistas - Desbloqueie Achievements no Quiz do Fluminense',
+    description: 'Desbloqueie conquistas especiais jogando o quiz do Fluminense. Mostre seu conhecimento tricolor e colecione todos os badges!',
+    keywords: 'conquistas fluminense, achievements quiz, badges tricolor, medalhas flu',
+    schema: 'WebPage'
+  },
+  '/perfil': {
+    title: 'Meu Perfil - Estatísticas e Histórico no Quiz do Fluminense',
+    description: 'Acompanhe suas estatísticas, histórico de jogos e conquistas no quiz do Fluminense.',
+    keywords: 'perfil fluminense, estatísticas quiz, histórico jogos tricolor',
+    schema: 'WebPage'
+  },
+  '/doacoes': {
+    title: 'Apoie o Projeto - Doações para Lendas do Flu',
+    description: 'Ajude a manter o quiz das lendas do Fluminense no ar! Sua contribuição faz a diferença.',
+    keywords: 'doar fluminense, apoiar lendas do flu, contribuir quiz tricolor',
+    schema: 'WebPage'
   },
   '/noticias': {
     title: 'Notícias do Fluminense - Portal Tricolor Atualizado',

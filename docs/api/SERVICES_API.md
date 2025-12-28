@@ -148,3 +148,117 @@ const cachedData = await queryClient.fetchQuery({
   staleTime: 5 * 60 * 1000 // 5 minutos
 });
 ```
+
+## JerseyService 🆕
+
+Serviço para gerenciamento do Quiz das Camisas.
+
+### Métodos
+
+#### `generateOptions(correctYears: number[])`
+
+Gera 3 opções de ano para múltipla escolha.
+
+**Parâmetros:**
+- `correctYears: number[]` - Array de anos corretos da camisa
+
+**Retorna:** 
+```typescript
+JerseyYearOption[] // Array com 3 opções: 1 correta, 2 incorretas
+```
+
+**Algoritmo:**
+1. Escolhe um ano correto aleatório
+2. Gera 2 anos incorretos com diferença de 1-3 anos
+3. Garante range válido (1902-2025)
+4. Embaralha posições
+
+#### `checkOptionSelection(selectedYear, correctYears)`
+
+Verifica se a opção selecionada é correta.
+
+**Parâmetros:**
+- `selectedYear: number` - Ano selecionado pelo usuário
+- `correctYears: number[]` - Array de anos corretos
+
+**Retorna:**
+```typescript
+{
+  isCorrect: boolean,
+  matchedYear?: number
+}
+```
+
+#### `calculatePoints(difficulty, timeRemaining, isCorrect)`
+
+Calcula pontos baseado em dificuldade e tempo.
+
+**Parâmetros:**
+- `difficulty: string` - Nível de dificuldade da camisa
+- `timeRemaining: number` - Tempo restante em segundos
+- `isCorrect: boolean` - Se acertou
+
+**Retorna:** `number` - Pontos calculados
+
+---
+
+## Supabase Image Transforms 🆕
+
+Utilitário para otimização de imagens do Supabase Storage.
+
+**Localização:** `src/utils/image/supabaseTransforms.ts`
+
+### Funções
+
+#### `getTransformedImageUrl(url, options)`
+
+Adiciona parâmetros de transformação à URL do Supabase.
+
+**Parâmetros:**
+```typescript
+{
+  url: string,
+  options: {
+    width?: number,
+    height?: number,
+    quality?: number,
+    format?: 'webp' | 'avif' | 'origin'
+  }
+}
+```
+
+**Retorna:** `string` - URL transformada
+
+#### `getResponsiveSrcSet(url, sizes)`
+
+Gera srcset para imagens responsivas.
+
+**Parâmetros:**
+- `url: string` - URL base da imagem
+- `sizes?: number[]` - Array de larguras (default: [320, 640, 1024])
+
+**Retorna:** `string` - srcset para uso em `<img>`
+
+**Exemplo:**
+```typescript
+const srcset = getResponsiveSrcSet(imageUrl);
+// "url?width=320 320w, url?width=640 640w, url?width=1024 1024w"
+```
+
+#### `getOptimizedImageUrl(url, context)`
+
+URL otimizada para contexto específico.
+
+**Parâmetros:**
+- `url: string` - URL da imagem
+- `context: 'thumbnail' | 'card' | 'full' | 'hero'`
+
+**Retorna:** `string` - URL otimizada para o contexto
+
+**Contextos:**
+| Context | Width | Quality |
+|---------|-------|---------|
+| thumbnail | 150 | 70 |
+| card | 400 | 80 |
+| full | 800 | 85 |
+| hero | 1200 | 90 |

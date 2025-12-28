@@ -10,10 +10,11 @@ const JerseyQuizPage = () => {
   return (
     <>
       <SEOHead 
-        title="Quiz das Camisas - Lendas do Flu | Adivinhe o Ano das Camisas Históricas"
-        description="🎽 Teste seu conhecimento sobre as camisas históricas do Fluminense! Adivinhe o ano de cada camisa lendária do Tricolor."
-        keywords="quiz camisas fluminense, camisas históricas tricolor, uniformes fluminense, história camisas flu"
+        title="Quiz das Camisas - Adivinhe o Ano | Lendas do Flu"
+        description="🎽 Veja a camisa histórica do Fluminense e escolha entre 3 opções qual é o ano correto! Teste seu conhecimento sobre os uniformes tricolores."
+        keywords="quiz camisas fluminense, uniformes históricos tricolor, camisas antigas flu, adivinhar ano camisa, quiz múltipla escolha"
         url="https://lendasdoflu.com/quiz-camisas"
+        canonical="https://lendasdoflu.com/quiz-camisas"
       />
       <RootLayout>
         <GameErrorBoundary>

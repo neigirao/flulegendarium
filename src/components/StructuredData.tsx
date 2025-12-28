@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 const CANONICAL_DOMAIN = "https://lendasdoflu.com";
 
 interface StructuredDataProps {
-  type: 'Game' | 'WebSite' | 'Organization';
+  type: 'Game' | 'WebSite' | 'Organization' | 'FAQ' | 'WebPage';
   data?: any;
 }
 
@@ -76,6 +76,57 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
             "@type": "ContactPoint",
             "contactType": "customer service",
             "availableLanguage": "Portuguese"
+          }
+        };
+        break;
+
+      case 'FAQ':
+        structuredData = {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "name": "FAQ - Lendas do Flu",
+          "description": "Perguntas frequentes sobre o quiz do Fluminense",
+          "url": `${CANONICAL_DOMAIN}/faq`,
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "O que é Lendas do Flu?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Lendas do Flu é um quiz interativo onde você testa seus conhecimentos sobre jogadores históricos e atuais do Fluminense FC."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Quais modos de jogo estão disponíveis?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Temos TRÊS modos: Quiz Adaptativo (dificuldade automática), Quiz por Década (escolha a era) e Quiz das Camisas (adivinhe o ano entre 3 opções)."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "O que é o Quiz das Camisas?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "É um modo onde você vê uma camisa histórica do Fluminense e precisa escolher entre 3 opções qual é o ano correto daquele uniforme."
+              }
+            }
+          ]
+        };
+        break;
+
+      case 'WebPage':
+        structuredData = {
+          "@context": "https://schema.org",
+          "@type": "WebPage",
+          "name": data?.title || "Lendas do Flu",
+          "description": data?.description || "Quiz interativo do Fluminense",
+          "url": `${CANONICAL_DOMAIN}${data?.path || '/'}`,
+          "isPartOf": {
+            "@type": "WebSite",
+            "name": "Lendas do Flu",
+            "url": CANONICAL_DOMAIN
           }
         };
         break;
