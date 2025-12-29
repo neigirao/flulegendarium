@@ -4,6 +4,9 @@ import type { DifficultyLevel } from "@/types/guess-game";
 import { cn } from "@/lib/utils";
 import { UnifiedSkeleton } from "@/components/skeletons/UnifiedSkeleton";
 import { getTransformedImageUrl, isSupabaseStorageUrl, getResponsiveSrcSet } from '@/utils/image/supabaseTransforms';
+import { getReliableJerseyImageUrl, jerseyDefaultImage } from '@/utils/jersey-image/imageUtils';
+import { reportJerseyImageProblem } from '@/utils/jersey-image/problemTracking';
+import { logger } from '@/utils/logger';
 
 interface JerseyImageProps {
   jersey: Jersey;
@@ -56,18 +59,31 @@ export const JerseyImage = ({
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [inView, setInView] = useState(priority);
+  const [triedFallback, setTriedFallback] = useState(false);
+  const [currentSrc, setCurrentSrc] = useState<string>('');
   const containerRef = useRef<HTMLDivElement>(null);
   
   const effects = difficultyEffects[difficulty] || difficultyEffects.medio;
 
+  // Get reliable image URL with fallback system
+  const reliableUrl = getReliableJerseyImageUrl(jersey);
+  
   // Optimized image URL with Supabase transforms
-  const optimizedSrc = isSupabaseStorageUrl(jersey.image_url)
-    ? getTransformedImageUrl(jersey.image_url, { width: 384, height: 384, quality: 85 })
-    : jersey.image_url;
+  const optimizedSrc = isSupabaseStorageUrl(reliableUrl)
+    ? getTransformedImageUrl(reliableUrl, { width: 384, height: 384, quality: 85 })
+    : reliableUrl;
 
-  const srcSet = isSupabaseStorageUrl(jersey.image_url)
-    ? getResponsiveSrcSet(jersey.image_url)
+  const srcSet = isSupabaseStorageUrl(reliableUrl)
+    ? getResponsiveSrcSet(reliableUrl)
     : undefined;
+
+  // Initialize currentSrc when optimizedSrc changes
+  useEffect(() => {
+    setCurrentSrc(optimizedSrc);
+    setTriedFallback(false);
+    setHasError(false);
+    setIsLoading(true);
+  }, [optimizedSrc]);
 
   // Intersection Observer for lazy loading (when not priority)
   useEffect(() => {
@@ -99,11 +115,35 @@ export const JerseyImage = ({
   }, [onImageLoaded]);
 
   const handleError = useCallback(() => {
+    logger.error(`❌ Erro ao carregar imagem da camisa ${jersey.years.join('/')}`, 'JERSEY_IMAGE', {
+      jerseyId: jersey.id,
+      originalUrl: jersey.image_url,
+      optimizedUrl: currentSrc,
+      triedFallback
+    });
+    
+    // Se ainda não tentou fallback, tentar imagem padrão
+    if (!triedFallback) {
+      logger.info(`🔄 Tentando fallback para camisa ${jersey.years.join('/')}`, 'JERSEY_IMAGE');
+      setTriedFallback(true);
+      setCurrentSrc(jerseyDefaultImage);
+      return;
+    }
+    
+    // Reportar problema para tracking
+    reportJerseyImageProblem(
+      jersey.id,
+      jersey.years,
+      jersey.image_url,
+      currentSrc,
+      'Failed to load even after fallback'
+    );
+    
     setIsLoading(false);
     setHasError(true);
     // Still call onImageLoaded to prevent game from stalling
     onImageLoaded();
-  }, [onImageLoaded]);
+  }, [jersey, currentSrc, triedFallback, onImageLoaded]);
 
   return (
     <div className="flex flex-col items-center space-y-6">
@@ -128,14 +168,18 @@ export const JerseyImage = ({
           {hasError ? (
             <div className="w-full h-full flex items-center justify-center bg-muted">
               <div className="text-center text-muted-foreground">
-                <span className="text-4xl mb-2">👕</span>
+                <img 
+                  src={jerseyDefaultImage} 
+                  alt="Camisa não disponível"
+                  className="w-24 h-24 mx-auto mb-2 opacity-50"
+                />
                 <p className="text-sm">Imagem não disponível</p>
               </div>
             </div>
-          ) : (inView || priority) && (
+          ) : (inView || priority) && currentSrc && (
             <img
-              src={optimizedSrc}
-              srcSet={srcSet}
+              src={currentSrc}
+              srcSet={!triedFallback ? srcSet : undefined}
               sizes="(max-width: 640px) 320px, 384px"
               alt="Camisa histórica do Fluminense"
               className={cn(
