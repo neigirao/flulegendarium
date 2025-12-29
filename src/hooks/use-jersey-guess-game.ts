@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useJerseySelection } from "./use-jersey-selection";
 import { useCleanTimer } from "./use-clean-timer";
 import { useToast } from "@/components/ui/use-toast";
@@ -7,6 +8,8 @@ import { logger } from "@/utils/logger";
 import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 import { jerseyService } from "@/services/jerseyService";
 import { clearJerseyImageCache } from "@/utils/jersey-image/preloadUtils";
+import { clearJerseyImageUrlCache } from "@/utils/jersey-image/imageUtils";
+import { clearJerseyProblems } from "@/utils/jersey-image/problemTracking";
 import type { Jersey, JerseyGuessHistoryEntry, JerseyYearOption } from "@/types/jersey-game";
 
 /**
@@ -31,6 +34,8 @@ interface DifficultyChangeInfo {
  * - Histórico de tentativas
  */
 export const useJerseyGuessGame = (jerseys: Jersey[]) => {
+  const queryClient = useQueryClient();
+  
   // Game state
   const [currentJersey, setCurrentJersey] = useState<Jersey | null>(null);
   const [gameKey, setGameKey] = useState(0);
@@ -384,16 +389,23 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     setSelectedOption(null);
     setShowResult(false);
     
-    // Clear image cache on reset
+    // Clear all image caches on reset
     clearJerseyImageCache();
+    clearJerseyImageUrlCache();
+    clearJerseyProblems();
     
     usedJerseyIds.current.clear();
     setGameKey(Date.now());
     
+    // Invalidar query para forçar re-fetch e novo shuffle das camisas
+    queryClient.invalidateQueries({ queryKey: ['jerseys'] });
+    
+    logger.info('Game reset - camisas serão re-carregadas e embaralhadas', 'JERSEY_GAME');
+    
     setTimeout(() => {
       selectNextJersey();
     }, 100);
-  }, [selectNextJersey]);
+  }, [selectNextJersey, queryClient]);
 
   const saveToRanking = useCallback(async (playerName: string) => {
     return jerseyService.saveRanking({

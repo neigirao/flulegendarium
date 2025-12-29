@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Jersey } from "@/types/jersey-game";
 import { useMemo } from "react";
 import { logger } from "@/utils/logger";
+import { shuffleJerseysByDifficulty } from "@/utils/jersey-game/shuffleJerseys";
 
 interface DatabaseJersey {
   id: string;
@@ -131,7 +132,11 @@ export const useJerseysData = () => {
     });
     logger.info('Distribuição final de dificuldades das camisas', 'JERSEYS_DATA', finalDifficultyCount);
 
-    return processedJerseys;
+    // Embaralhar camisas para ordem aleatória a cada carregamento
+    const shuffledJerseys = shuffleJerseysByDifficulty(processedJerseys);
+    logger.info(`Camisas embaralhadas: ${shuffledJerseys.length}`, 'JERSEYS_DATA');
+
+    return shuffledJerseys;
   }, [rawJerseys]);
 
   logger.debug('Hook useJerseysData', 'JERSEYS_DATA', { 
