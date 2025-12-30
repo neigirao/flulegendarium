@@ -21,6 +21,12 @@ const jerseyImageCache = new Map<string, { url: string; timestamp: number }>();
 export const isValidJerseyImageUrl = (url: string): boolean => {
   if (!url) return false;
   
+  // CRÍTICO: Rejeitar URLs base64 - são muito longas e problemáticas
+  if (url.startsWith('data:')) {
+    logger.warn('URL de imagem de camisa é base64 (inválida):', 'JERSEY_IMAGE', url.substring(0, 50) + '...');
+    return false;
+  }
+  
   // Verificar protocolo válido
   if (!url.startsWith('http') && !url.startsWith('https') && !url.startsWith('/')) {
     logger.warn('URL de imagem de camisa inválida (protocolo):', 'JERSEY_IMAGE', url);
