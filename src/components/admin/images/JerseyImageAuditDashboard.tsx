@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Loader, AlertTriangle, CheckCircle, Download, Upload, RefreshCw } from 'lucide-react';
+import { Loader, AlertTriangle, CheckCircle, Download, Upload, RefreshCw, Zap } from 'lucide-react';
 import { toast } from 'sonner';
 import { logger } from '@/utils/logger';
 
@@ -14,6 +14,7 @@ interface JerseyImageAudit {
   image_url: string;
   type: string;
   is_external: boolean;
+  is_base64: boolean;
   is_problematic: boolean;
   domain: string;
   needs_migration: boolean;
@@ -39,6 +40,10 @@ const PROBLEMATIC_DOMAINS = [
   'twitter.com', 'twimg.com',
   'facebook.com',
 ];
+
+const isBase64Url = (url: string): boolean => {
+  return url.startsWith('data:');
+};
 
 const isProblematicDomain = (url: string): boolean => {
   try {
@@ -70,12 +75,16 @@ export const JerseyImageAuditDashboard = () => {
       if (error) throw error;
 
       const results: JerseyImageAudit[] = jerseys.map(jersey => {
+        const isBase64 = isBase64Url(jersey.image_url);
         const isExternal = jersey.image_url.startsWith('http://') || 
                           jersey.image_url.startsWith('https://');
         let domain = '';
         let isProblematic = false;
 
-        if (isExternal) {
+        if (isBase64) {
+          domain = 'BASE64 (inválido)';
+          isProblematic = true;
+        } else if (isExternal) {
           try {
             const url = new URL(jersey.image_url);
             domain = url.hostname;
@@ -92,10 +101,11 @@ export const JerseyImageAuditDashboard = () => {
           image_url: jersey.image_url,
           type: jersey.type,
           is_external: isExternal,
+          is_base64: isBase64,
           is_problematic: isProblematic,
           domain,
-          needs_migration: isExternal && isProblematic,
-          migration_status: 'pending',
+          needs_migration: isBase64 || (isExternal && isProblematic),
+          migration_status: 'pending' as const,
         };
       });
 
@@ -338,11 +348,37 @@ export const JerseyImageAuditDashboard = () => {
     }
   };
 
+  const migrateBase64ViaEdgeFunction = async () => {
+    setIsMigrating(true);
+    try {
+      logger.info('🚀 Iniciando migração de base64 via Edge Function...');
+      toast.info('Migrando imagens base64... Isso pode levar alguns minutos.');
+      
+      const { data, error } = await supabase.functions.invoke('migrate-jersey-images');
+      
+      if (error) throw error;
+      
+      logger.info('✅ Migração via Edge Function concluída:', data);
+      toast.success(`Migração concluída: ${data.success}/${data.total} imagens migradas`);
+      
+      // Refresh audit results
+      await auditDatabase();
+    } catch (error) {
+      logger.error('❌ Erro na migração via Edge Function:', error);
+      toast.error('Erro ao migrar imagens base64');
+    } finally {
+      setIsMigrating(false);
+    }
+  };
+
+  const base64Count = auditResults.filter(r => r.is_base64).length;
+  
   const stats = {
     total: auditResults.length,
-    external: auditResults.filter(r => r.is_external).length,
+    external: auditResults.filter(r => r.is_external && !r.is_base64).length,
+    base64: base64Count,
     problematic: auditResults.filter(r => r.needs_migration).length,
-    local: auditResults.filter(r => !r.is_external).length,
+    local: auditResults.filter(r => !r.is_external && !r.is_base64).length,
   };
 
   return (
@@ -378,6 +414,25 @@ export const JerseyImageAuditDashboard = () => {
 
             {auditResults.length > 0 && (
               <>
+                {base64Count > 0 && (
+                  <Button 
+                    variant="destructive"
+                    onClick={migrateBase64ViaEdgeFunction}
+                    disabled={isMigrating}
+                  >
+                    {isMigrating ? (
+                      <>
+                        <Loader className="w-4 h-4 mr-2 animate-spin" />
+                        Migrando Base64...
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="w-4 h-4 mr-2" />
+                        Migrar Base64 ({base64Count})
+                      </>
+                    )}
+                  </Button>
+                )}
                 <Button 
                   variant="outline" 
                   onClick={selectAllProblematic}
@@ -442,11 +497,17 @@ export const JerseyImageAuditDashboard = () => {
           )}
 
           {auditResults.length > 0 && (
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-5 gap-4">
               <Card>
                 <CardContent className="pt-6">
                   <div className="text-2xl font-bold">{stats.total}</div>
                   <p className="text-sm text-muted-foreground">Total de Camisas</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-2xl font-bold text-orange-600">{stats.base64}</div>
+                  <p className="text-sm text-muted-foreground">Base64 (Crítico)</p>
                 </CardContent>
               </Card>
               <Card>
@@ -548,7 +609,9 @@ export const JerseyImageAuditDashboard = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    {jersey.needs_migration ? (
+                    {jersey.is_base64 ? (
+                      <Badge variant="destructive" className="bg-orange-600">Base64</Badge>
+                    ) : jersey.needs_migration ? (
                       <Badge variant="destructive">Migrar</Badge>
                     ) : jersey.is_external ? (
                       <Badge variant="secondary">Externa</Badge>
