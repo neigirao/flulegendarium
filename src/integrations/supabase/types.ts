@@ -462,6 +462,59 @@ export type Database = {
         }
         Relationships: []
       }
+      image_error_reports: {
+        Row: {
+          created_at: string | null
+          device_info: Json | null
+          error_type: string
+          id: string
+          original_url: string | null
+          player_id: string | null
+          player_name: string
+          reported_at: string | null
+          resolved: boolean | null
+          resolved_at: string | null
+          resolved_url: string | null
+          retry_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          device_info?: Json | null
+          error_type?: string
+          id?: string
+          original_url?: string | null
+          player_id?: string | null
+          player_name: string
+          reported_at?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_url?: string | null
+          retry_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          device_info?: Json | null
+          error_type?: string
+          id?: string
+          original_url?: string | null
+          player_id?: string | null
+          player_name?: string
+          reported_at?: string | null
+          resolved?: boolean | null
+          resolved_at?: string | null
+          resolved_url?: string | null
+          retry_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "image_error_reports_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jersey_difficulty_stats: {
         Row: {
           created_at: string
