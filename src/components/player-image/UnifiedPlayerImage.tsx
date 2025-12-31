@@ -3,7 +3,9 @@ import { Player, DifficultyLevel } from '@/types/guess-game';
 import { getReliableImageUrl } from '@/utils/player-image/imageUtils';
 import { markImageAsLoaded } from '@/utils/player-image/cache';
 import { cn } from '@/lib/utils';
-import { PlayerImageSkeleton } from '@/components/ui/shimmer-skeleton';
+import { defaultImage, MAX_IMAGE_RETRIES, SUPABASE_STORAGE_URL } from '@/utils/player-image/constants';
+import { reportImageError } from '@/services/imageReportService';
+import { logger } from '@/utils/logger';
 
 interface UnifiedPlayerImageProps {
   player: Player;
@@ -42,6 +44,25 @@ const difficultyEffects = {
   }
 };
 
+/**
+ * Gera URL alternativa para retry baseada no nome do jogador
+ */
+const getAlternativeUrl = (player: Player, retryCount: number): string => {
+  // Primeira tentativa: Supabase Storage com nome normalizado
+  if (retryCount === 1) {
+    const normalizedName = player.name
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+    return `${SUPABASE_STORAGE_URL}/${normalizedName}.png`;
+  }
+  
+  // Segunda tentativa: imagem padrão
+  return defaultImage;
+};
+
 export const UnifiedPlayerImage = memo(({
   player,
   onImageLoaded,
@@ -51,11 +72,22 @@ export const UnifiedPlayerImage = memo(({
   showDifficultyIndicator = false
 }: UnifiedPlayerImageProps) => {
   const [imageStatus, setImageStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  const [retryCount, setRetryCount] = useState(0);
+  const [currentSrc, setCurrentSrc] = useState<string>('');
   const [inView, setInView] = useState(priority);
   const imgRef = useRef<HTMLImageElement>(null);
   const observerRef = useRef<IntersectionObserver>();
+  const originalSrcRef = useRef<string>('');
 
-  const imageSrc = getReliableImageUrl(player);
+  // Obter URL inicial
+  useEffect(() => {
+    const initialSrc = getReliableImageUrl(player);
+    originalSrcRef.current = initialSrc;
+    setCurrentSrc(initialSrc);
+    setRetryCount(0);
+    setImageStatus('loading');
+  }, [player]);
+
   const effects = difficulty ? difficultyEffects[difficulty] : null;
 
   // Intersection Observer for lazy loading
@@ -89,21 +121,59 @@ export const UnifiedPlayerImage = memo(({
   const handleImageLoad = useCallback(() => {
     setImageStatus('loaded');
     markImageAsLoaded(player.id);
+    
+    if (retryCount > 0) {
+      logger.info(`Imagem carregada após ${retryCount} retry(s)`, 'IMAGE_RETRY', {
+        playerId: player.id,
+        playerName: player.name,
+        finalUrl: currentSrc
+      });
+    }
+    
     onImageLoaded?.();
-  }, [player.id, onImageLoaded]);
+  }, [player.id, player.name, currentSrc, retryCount, onImageLoaded]);
 
   const handleImageError = useCallback(() => {
-    console.error(`❌ Erro ao carregar imagem do jogador ${player.name} (${player.id}):`, imageSrc);
-    setImageStatus('error');
-    
-    // Notificar sobre o erro para tracking
-    console.warn(`🔍 Detalhes do erro:`, {
+    logger.warn(`Erro ao carregar imagem (tentativa ${retryCount + 1})`, 'IMAGE_ERROR', {
       playerId: player.id,
       playerName: player.name,
-      imageUrl: player.image_url,
-      resolvedUrl: imageSrc
+      attemptedUrl: currentSrc
     });
-  }, [player.id, player.name, player.image_url, imageSrc]);
+
+    // Tentar URL alternativa se ainda houver retries disponíveis
+    if (retryCount < MAX_IMAGE_RETRIES) {
+      const nextRetry = retryCount + 1;
+      const alternativeUrl = getAlternativeUrl(player, nextRetry);
+      
+      logger.info(`Tentando URL alternativa (retry ${nextRetry})`, 'IMAGE_RETRY', {
+        playerId: player.id,
+        newUrl: alternativeUrl
+      });
+      
+      setRetryCount(nextRetry);
+      setCurrentSrc(alternativeUrl);
+      return;
+    }
+
+    // Todas as tentativas falharam - reportar erro
+    setImageStatus('error');
+    
+    // Reportar erro para o backend (async, não bloqueia)
+    reportImageError({
+      player_id: player.id,
+      player_name: player.name,
+      original_url: originalSrcRef.current,
+      resolved_url: currentSrc,
+      error_type: 'load_error',
+      retry_count: retryCount
+    });
+
+    logger.error(`Todas as tentativas falharam para ${player.name}`, 'IMAGE_ERROR', {
+      playerId: player.id,
+      originalUrl: originalSrcRef.current,
+      lastAttemptedUrl: currentSrc
+    });
+  }, [player, currentSrc, retryCount]);
 
   return (
     <div className={cn("w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto", className)}>
@@ -151,10 +221,10 @@ export const UnifiedPlayerImage = memo(({
           style={effects ? { filter: effects.filter } : undefined}
         >
           {/* Image */}
-          {(inView || priority) && (
+          {(inView || priority) && currentSrc && (
             <img
-              key={`${player.id}-${imageSrc}`}
-              src={imageSrc}
+              key={`${player.id}-${currentSrc}-${retryCount}`}
+              src={currentSrc}
               alt={`Foto de ${player.name}`}
               className={cn(
                 "w-full h-full object-contain transition-all duration-500 border-2 border-primary shadow-md hover:shadow-lg",
