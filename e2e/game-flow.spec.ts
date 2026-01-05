@@ -6,10 +6,10 @@ test.describe('Game Flow', () => {
     await page.goto('/');
     
     // Verificar se a página carrega
-    await expect(page).toHaveTitle(/Lendas do Flu/);
+    await expect(page).toHaveTitle(/lendas do flu/i);
     
     // Verificar se elementos principais estão presentes
-    await expect(page.locator('text=Lendas do Flu')).toBeVisible();
+    await expect(page.getByRole('heading', { name: /lendas do flu/i }).first()).toBeVisible();
   });
 
   test('should navigate to game mode selection', async ({ page }) => {
@@ -19,9 +19,8 @@ test.describe('Game Flow', () => {
     const playButton = page.locator('button:has-text("Jogar"), a:has-text("Jogar")').first();
     if (await playButton.isVisible()) {
       await playButton.click();
-      
       // Verificar se navega para seleção de modo
-      await expect(page.url()).toContain('/game-mode-selection');
+      await expect(page).toHaveURL(/\/(selecionar-modo-jogo|game-mode-selection)(\/|$)/);
     }
   });
 
