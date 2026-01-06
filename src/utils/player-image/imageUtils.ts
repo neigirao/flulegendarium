@@ -1,6 +1,5 @@
-
 import { Player } from './types';
-import { playerImagesFallbacks, defaultImage, CACHE_EXPIRATION } from './constants';
+import { playerImagesFallbacks, defaultImage, guaranteedFallbackImage, CACHE_EXPIRATION } from './constants';
 import { imageCache, cleanExpiredCache } from './cache';
 import { isProblematicDomain, isUrlProblematic } from './problematicUrls';
 import { logger } from '@/utils/logger';
@@ -89,6 +88,12 @@ export const getReliableImageUrl = (player: Player): string => {
   if (!isValidImageUrl(imageUrl)) {
     logger.error(`❌ Usando imagem padrão para ${player.name} - URL final inválida:`, imageUrl);
     imageUrl = defaultImage;
+  }
+  
+  // GARANTIA FINAL: Se ainda for inválida, usar SVG inline
+  if (!imageUrl || imageUrl === '') {
+    logger.error(`🚨 Usando SVG garantido para ${player.name}`);
+    imageUrl = guaranteedFallbackImage;
   }
   
   // Save to cache with timestamp

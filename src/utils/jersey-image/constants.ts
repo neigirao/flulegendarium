@@ -1,3 +1,5 @@
+import { fluminenseJerseySvg } from '@/utils/fallback-images/fluminenseSvg';
+
 /**
  * Constantes para gerenciamento de imagens de camisas
  */
@@ -7,6 +9,9 @@ export const JERSEY_CACHE_EXPIRATION = 10 * 60 * 1000;
 
 // Imagem padrão para fallback quando camisa não carrega
 export const jerseyDefaultImage = "/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png";
+
+// SVG inline que NUNCA falha (fallback final garantido)
+export const guaranteedJerseyFallback = fluminenseJerseySvg;
 
 /**
  * IDs de camisas problemáticas identificadas no banco de dados
