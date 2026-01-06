@@ -1,6 +1,12 @@
+import { playerSilhouetteSvg } from '@/utils/fallback-images/fluminenseSvg';
+
 export const CACHE_EXPIRATION = 10 * 60 * 1000; // 10 minutes
 
+// Imagem padrão do storage (primeiro fallback)
 export const defaultImage = "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png";
+
+// SVG inline que NUNCA falha (fallback final garantido)
+export const guaranteedFallbackImage = playerSilhouetteSvg;
 
 // Base URL do Supabase Storage para imagens de jogadores
 export const SUPABASE_STORAGE_URL = "https://hafxruwnggitvtyngedy.supabase.co/storage/v1/object/public/players";
