@@ -196,15 +196,16 @@ describe('GameStateSchema', () => {
     expect(result.correctGuesses).toBe(0);
   });
 
-  it('should reject negative score', () => {
-    const invalidState = {
+  it('should accept negative score after skipping player', () => {
+    const stateWithNegativeScore = {
       mode: 'classic',
       currentPlayer: null,
       score: -100,
       timeLeft: null,
     };
 
-    expect(() => GameStateSchema.parse(invalidState)).toThrow();
+    const result = GameStateSchema.parse(stateWithNegativeScore);
+    expect(result.score).toBe(-100);
   });
 });
 

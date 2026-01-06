@@ -72,13 +72,14 @@ describe('RankingEntrySchema', () => {
     expect(() => RankingEntrySchema.parse(invalidEntry)).toThrow();
   });
 
-  it('should reject negative score', () => {
-    const invalidEntry = {
+  it('should accept negative score after skipping player', () => {
+    const entryWithNegativeScore = {
       playerName: 'Player',
       score: -50,
     };
 
-    expect(() => RankingEntrySchema.parse(invalidEntry)).toThrow();
+    const result = RankingEntrySchema.parse(entryWithNegativeScore);
+    expect(result.score).toBe(-50);
   });
 
   it('should reject non-integer score', () => {

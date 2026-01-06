@@ -43,7 +43,7 @@ export const DecadeGameMetadataSchema = z.object({
 export const GameStateSchema = z.object({
   mode: GameModeSchema,
   currentPlayer: z.string().uuid().nullable(),
-  score: z.number().int().min(0).default(0),
+  score: z.number().int().default(0), // Permite negativo após pular jogador
   gameOver: z.boolean().default(false),
   gameActive: z.boolean().default(false),
   timeLeft: z.number().int().min(0).nullable(),
