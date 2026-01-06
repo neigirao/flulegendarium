@@ -11,7 +11,7 @@ export const RankingEntrySchema = z.object({
     .min(1, 'Nome é obrigatório')
     .max(100, 'Nome muito longo')
     .trim(),
-  score: z.number().int().min(0, 'Pontuação deve ser positiva'),
+  score: z.number().int(), // Permite negativo após pular jogador
   gameMode: GameModeSchema.default('classic'),
   difficultyLevel: DifficultyLevelSchema.optional(),
   gamesPlayed: z.number().int().min(1).default(1),
