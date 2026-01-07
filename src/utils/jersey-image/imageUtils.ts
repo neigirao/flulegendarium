@@ -39,6 +39,8 @@ export const isValidJerseyImageUrl = (url: string): boolean => {
     /null/i,
     /\s+/, // espaços
     /chat_\d+_ss\.png/, // padrão de erro
+    /encrypted-tbn0\.gstatic\.com/i, // Google thumbnails/QR codes
+    /gstatic\.com\/images\?q=tbn/i, // Google image thumbnails
   ];
   
   for (const pattern of suspiciousPatterns) {

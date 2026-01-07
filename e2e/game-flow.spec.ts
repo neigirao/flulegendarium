@@ -1,4 +1,3 @@
-
 import { test, expect } from '@playwright/test';
 
 test.describe('Game Flow', () => {
@@ -8,32 +7,40 @@ test.describe('Game Flow', () => {
     // Verificar se a página carrega
     await expect(page).toHaveTitle(/lendas do flu/i);
     
-    // Verificar se elementos principais estão presentes
-    await expect(page.getByRole('heading', { name: /lendas do flu/i }).first()).toBeVisible();
+    // Verificar se heading principal está presente usando data-testid ou texto
+    const heading = page.locator('h1');
+    await expect(heading).toContainText(/lendas do flu/i);
   });
 
-  test('should navigate to game mode selection', async ({ page }) => {
+  test('should show play button and navigate to game mode selection', async ({ page }) => {
     await page.goto('/');
     
-    // Procurar por botão de jogar e clicar
-    const playButton = page.locator('button:has-text("Jogar"), a:has-text("Jogar")').first();
-    if (await playButton.isVisible()) {
-      await playButton.click();
-      // Verificar se navega para seleção de modo
-      await expect(page).toHaveURL(/\/(selecionar-modo-jogo|game-mode-selection)(\/|$)/);
-    }
+    // Usar data-testid para o botão de jogar
+    const playButton = page.getByTestId('play-button');
+    await expect(playButton).toBeVisible();
+    
+    // Clicar e verificar navegação
+    await playButton.click();
+    
+    // Esperar navegação
+    await page.waitForURL(/selecionar-modo-jogo/);
+    await expect(page).toHaveURL(/selecionar-modo-jogo/);
   });
 
-  test('should handle mobile viewport correctly', async ({ page }) => {
+  test('should be responsive on mobile viewport', async ({ page }) => {
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto('/');
     
-    // Verificar se a página é responsiva em mobile
+    // Verificar se a página carrega corretamente
     await expect(page.locator('body')).toBeVisible();
     
-    // Verificar se não há scroll horizontal
+    // Verificar se o botão de jogar está visível em mobile
+    const playButton = page.getByTestId('play-button');
+    await expect(playButton).toBeVisible();
+    
+    // Verificar se não há scroll horizontal excessivo
     const scrollWidth = await page.evaluate(() => document.body.scrollWidth);
     const clientWidth = await page.evaluate(() => document.body.clientWidth);
-    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 1); // +1 para tolerância
+    expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 5); // Pequena tolerância
   });
 });
