@@ -191,6 +191,7 @@ export const JerseyImage = ({
               loading={priority ? "eager" : "lazy"}
               decoding="async"
               fetchPriority={priority ? "high" : "auto"}
+              data-testid="jersey-image"
             />
           )}
         </div>
