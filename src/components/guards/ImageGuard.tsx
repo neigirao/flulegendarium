@@ -128,9 +128,9 @@ export const ImageGuard = memo(({
   // Loading state com skeleton
   if (isLoading) {
     return (
-      <div className={`relative ${className}`}>
+      <div className={`relative ${className}`} data-testid="image-guard-container">
         {/* Skeleton loader */}
-        <div className="absolute inset-0 bg-muted animate-pulse rounded-lg" />
+        <div className="absolute inset-0 bg-muted animate-pulse rounded-lg" data-testid="image-skeleton" />
         
         {/* Imagem carregando por baixo */}
         <img
@@ -165,6 +165,7 @@ export const ImageGuard = memo(({
       loading={priority ? "eager" : "lazy"}
       decoding="async"
       onError={handleError}
+      data-testid="image-guard"
     />
   );
 });

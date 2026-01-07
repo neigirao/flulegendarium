@@ -235,6 +235,7 @@ export const UnifiedPlayerImage = memo(({
               fetchPriority={priority ? 'high' : 'auto'}
               onLoad={handleImageLoad}
               onError={handleImageError}
+              data-testid="player-image"
               style={{
                 aspectRatio: difficulty ? '1' : '4/5',
                 contentVisibility: priority ? 'visible' : 'auto'
