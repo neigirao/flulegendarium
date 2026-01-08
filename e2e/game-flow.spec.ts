@@ -7,8 +7,8 @@ test.describe('Game Flow', () => {
     // Verificar se a página carrega
     await expect(page).toHaveTitle(/lendas do flu/i);
     
-    // Verificar se heading principal está presente usando data-testid ou texto
-    const heading = page.locator('h1');
+    // Verificar se heading principal está presente (usa .first() pois há 2 h1)
+    const heading = page.locator('h1').first();
     await expect(heading).toContainText(/lendas do flu/i);
   });
 
