@@ -7,9 +7,9 @@ test.describe('Game Flow', () => {
     // Verificar se a página carrega
     await expect(page).toHaveTitle(/lendas do flu/i);
     
-    // Verificar se heading principal está presente (usa .first() pois há 2 h1)
-    const heading = page.locator('h1').first();
-    await expect(heading).toContainText(/lendas do flu/i);
+    // Verificar se o heading da página está presente sem ambiguidade (há 2 h1: header + hero)
+    const heading = page.getByRole('heading', { name: /lendas do flu/i }).first();
+    await expect(heading).toBeVisible();
   });
 
   test('should show play button and navigate to game mode selection', async ({ page }) => {
