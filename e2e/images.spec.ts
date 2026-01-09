@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Image Display Guarantee', () => {
   test.describe('Player Images', () => {
     test('should display player image on game page', async ({ page }) => {
-      await page.goto('/jogo-adivinhacao');
+      await page.goto('/quiz-adaptativo');
       
       // Esperar carregamento
       await page.waitForLoadState('networkidle');
@@ -24,7 +24,7 @@ test.describe('Image Display Guarantee', () => {
     });
 
     test('should not show error icons for player images', async ({ page }) => {
-      await page.goto('/jogo-adivinhacao');
+      await page.goto('/quiz-adaptativo');
       await page.waitForLoadState('networkidle');
       
       // Verificar que não há ícones de erro visíveis
@@ -35,7 +35,7 @@ test.describe('Image Display Guarantee', () => {
 
   test.describe('Jersey Images', () => {
     test('should display jersey image on jersey game page', async ({ page }) => {
-      await page.goto('/jogo-camisas');
+      await page.goto('/quiz-camisas');
       
       // Esperar carregamento
       await page.waitForLoadState('networkidle');
@@ -55,7 +55,7 @@ test.describe('Image Display Guarantee', () => {
     });
 
     test('should not show error icons for jersey images', async ({ page }) => {
-      await page.goto('/jogo-camisas');
+      await page.goto('/quiz-camisas');
       await page.waitForLoadState('networkidle');
       
       // Verificar que não há ícones de erro visíveis
