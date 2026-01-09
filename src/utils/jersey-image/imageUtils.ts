@@ -50,6 +50,19 @@ export const isValidJerseyImageUrl = (url: string): boolean => {
     }
   }
   
+  // Apenas permitir URLs do Supabase storage ou uploads locais
+  const allowedPatterns = [
+    /^\/lovable-uploads\//i,
+    /supabase\.co\/storage/i,
+    /hafxruwnggitvtyngedy\.supabase\.co/i,
+  ];
+  
+  const isAllowed = allowedPatterns.some(pattern => pattern.test(url));
+  if (!isAllowed) {
+    logger.warn('URL de imagem de camisa não permitida (domínio externo):', 'JERSEY_IMAGE', url);
+    return false;
+  }
+  
   return true;
 };
 
