@@ -31,13 +31,17 @@ export const RootLayout = ({ children }: RootLayoutProps) => {
   }, []);
   
   return (
-    <Suspense fallback={
-      <PageLoading 
-        title="Carregando Lendas do Flu..."
-        description="Preparando sua experiência tricolor"
-      />
-    }>
-      {children}
-    </Suspense>
+    <main role="main">
+      <Suspense
+        fallback={
+          <PageLoading
+            title="Carregando Lendas do Flu..."
+            description="Preparando sua experiência tricolor"
+          />
+        }
+      >
+        {children}
+      </Suspense>
+    </main>
   );
 };
