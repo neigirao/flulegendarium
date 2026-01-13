@@ -58,7 +58,9 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
         {/* Score e Timer lado a lado */}
         <div className="flex-1 flex justify-center gap-4">
           {/* Score */}
-          <div className={cn(
+          <div 
+            data-testid="score-display"
+            className={cn(
             "relative px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 rounded-xl sm:rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 cursor-default",
             "text-center border backdrop-blur-sm min-w-[120px] sm:min-w-[160px] md:min-w-[180px]",
             scoreStyles[variant]
@@ -116,7 +118,7 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
 
           {/* Timer */}
           {timeRemaining !== undefined && (
-            <div className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-lg">
+            <div data-testid="timer-display" className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-lg">
               <div className="flex items-center gap-2 mb-2">
                 <Clock className="w-4 h-4 text-flu-grena" />
                 <span className="text-sm font-medium text-muted-foreground">Tempo</span>

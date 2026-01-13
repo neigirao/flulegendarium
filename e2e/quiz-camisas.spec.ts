@@ -1,36 +1,54 @@
 import { test, expect } from '@playwright/test';
+import { waitForPageReady, startGameWithName } from './helpers/test-helpers';
 
 test.describe('Quiz de Camisas', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/quiz-camisas');
-    await page.waitForLoadState('networkidle');
+    await waitForPageReady(page);
+  });
+
+  test('should load game page', async ({ page }) => {
+    const quizPage = page.getByTestId('quiz-camisas-page');
+    await expect(quizPage).toBeVisible({ timeout: 15000 });
   });
 
   test('should load game page with jersey image', async ({ page }) => {
+    await startGameWithName(page, 'Jogador Teste');
+    
     const jerseyImage = page.getByTestId('jersey-image');
-    await expect(jerseyImage.first()).toBeVisible({ timeout: 15000 });
+    await expect(jerseyImage).toBeVisible({ timeout: 20000 });
   });
 
   test('should display year options for guessing', async ({ page }) => {
-    // Quiz de camisas tem opções de anos - busca por botões com texto numérico de 4 dígitos
-    const buttons = page.getByRole('button');
-    const allButtons = await buttons.all();
-    const yearButtons = allButtons.filter(async (btn) => {
-      const text = await btn.textContent();
-      return text && /^(19|20)\d{2}$/.test(text.trim());
-    });
-    // Verifica se há pelo menos alguns botões visíveis (a página pode ter opções de anos)
-    const buttonCount = await buttons.count();
-    expect(buttonCount).toBeGreaterThanOrEqual(1);
+    await startGameWithName(page, 'Jogador Teste');
+    await page.waitForTimeout(2000);
+    
+    // Quiz de camisas tem opções de anos com data-testid
+    const yearOptions = page.locator('[data-testid^="year-option-"]');
+    const count = await yearOptions.count();
+    
+    // Deve haver pelo menos 3 opções de ano
+    expect(count).toBeGreaterThanOrEqual(3);
   });
 
   test('should show score counter', async ({ page }) => {
-    const score = page.locator('text=/pontos?|score/i');
-    await expect(score.first()).toBeVisible();
+    await startGameWithName(page, 'Jogador Teste');
+    
+    const scoreDisplay = page.getByTestId('score-display');
+    await expect(scoreDisplay).toBeVisible({ timeout: 15000 });
+  });
+
+  test('should show skip button', async ({ page }) => {
+    await startGameWithName(page, 'Jogador Teste');
+    
+    const skipButton = page.getByTestId('skip-button');
+    await expect(skipButton).toBeVisible({ timeout: 15000 });
   });
 
   test('should not show error icons', async ({ page }) => {
-    const errorIcon = page.locator('[data-testid="image-error"]');
+    await startGameWithName(page, 'Jogador Teste');
+    
+    const errorIcon = page.getByTestId('image-error');
     await expect(errorIcon).not.toBeVisible();
   });
 });

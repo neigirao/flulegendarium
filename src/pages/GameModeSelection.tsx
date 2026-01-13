@@ -49,7 +49,7 @@ const GameModeSelection = () => {
         url="https://flulegendarium.lovable.app/selecionar-modo-jogo"
       />
       <RootLayout>
-        <div className="min-h-screen bg-gradient-to-br from-secondary via-primary/80 to-secondary/90 relative overflow-hidden bg-tricolor-vertical-border">
+        <div data-testid="game-mode-page" className="min-h-screen bg-gradient-to-br from-secondary via-primary/80 to-secondary/90 relative overflow-hidden bg-tricolor-vertical-border">
           {/* Diagonal Stripe Pattern */}
           <div className="absolute inset-0 opacity-20">
             <div className="absolute inset-0 bg-gradient-to-br from-secondary/30 via-transparent to-primary/30 transform -skew-y-12"></div>
@@ -176,6 +176,7 @@ const GameModeSelection = () => {
                     </ul>
                     
                     <Button 
+                      data-testid="game-mode-adaptativo"
                       onClick={() => handleGameModeClick('adaptive', '/quiz-adaptativo')}
                       className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-2.5 text-base tracking-wide touch-target-lg"
                     >
@@ -216,6 +217,7 @@ const GameModeSelection = () => {
                   </ul>
                   
                   <Button 
+                    data-testid="game-mode-decada"
                     onClick={() => handleGameModeClick('decade', '/quiz-decada')}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-2.5 text-base tracking-wide touch-target-lg"
                   >
@@ -259,6 +261,7 @@ const GameModeSelection = () => {
                   </ul>
                   
                   <Button 
+                    data-testid="game-mode-camisas"
                     onClick={() => handleGameModeClick('jersey', '/quiz-camisas')}
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display py-2.5 text-base tracking-wide touch-target-lg"
                   >

@@ -18,7 +18,7 @@ const JerseyQuizPage = () => {
       />
       <RootLayout>
         <GameErrorBoundary>
-          <div className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">
+          <div data-testid="quiz-camisas-page" className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">
             <TopNavigation />
             <div className="pt-24 safe-area-top safe-area-bottom">
               <Suspense fallback={
