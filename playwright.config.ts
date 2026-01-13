@@ -6,12 +6,15 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? 'github' : 'html',
+  reporter: process.env.CI 
+    ? [['github'], ['html', { open: 'never', outputFolder: 'playwright-report' }]]
+    : 'html',
   timeout: 30000,
   use: {
     baseURL: process.env.CI ? 'http://localhost:4173' : 'http://localhost:8080',
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    video: 'retain-on-failure',
   },
   // Apenas Chromium para simplificar CI
   projects: [
