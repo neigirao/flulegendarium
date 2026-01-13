@@ -29,6 +29,7 @@ export const SkipPlayerButton: React.FC<SkipPlayerButtonProps> = ({
 
   return (
     <Button
+      data-testid="skip-button"
       variant="outline"
       size="sm"
       onClick={onSkip}

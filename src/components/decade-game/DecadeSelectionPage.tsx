@@ -28,7 +28,7 @@ export const DecadeSelectionPage = ({
   const decades = getAllDecades();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10 p-4 bg-tricolor-vertical-border safe-area-top safe-area-bottom">
+    <div data-testid="decade-selection-page" className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10 p-4 bg-tricolor-vertical-border safe-area-top safe-area-bottom">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -86,6 +86,7 @@ export const DecadeSelectionPage = ({
                 )}
                 
                 <Button 
+                  data-testid={`decade-option-${decade.id}`}
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-display tracking-wide touch-target-lg"
                   onClick={(e) => {
                     e.stopPropagation();

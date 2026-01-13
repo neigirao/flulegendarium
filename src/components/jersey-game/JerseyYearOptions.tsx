@@ -109,6 +109,7 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
           <motion.button
             key={`${option.year}-${index}`}
             type="button"
+            data-testid={`year-option-${option.year}`}
             onClick={() => handleClick(option.year)}
             disabled={disabled || isProcessing || showResult}
             className={getButtonStyle(option)}

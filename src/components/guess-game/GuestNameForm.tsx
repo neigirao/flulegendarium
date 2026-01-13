@@ -21,7 +21,7 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div data-testid="guest-name-form" className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center w-16 h-16 bg-flu-verde/10 rounded-full mx-auto mb-4">
@@ -36,6 +36,7 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Input
+                data-testid="player-name-input"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -48,6 +49,7 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
             
             <div className="flex gap-3">
               <Button
+                data-testid="cancel-button"
                 type="button"
                 variant="outline"
                 onClick={onCancel}
@@ -56,6 +58,7 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
                 Voltar
               </Button>
               <Button
+                data-testid="start-game-button"
                 type="submit"
                 disabled={!name.trim()}
                 className="flex-1 bg-flu-verde hover:bg-flu-verde/90 text-white"
