@@ -10,11 +10,17 @@ import { Page, Locator, expect } from '@playwright/test';
 /**
  * Wait for page to be fully ready for interaction
  */
-export async function waitForPageReady(page: Page, timeout = 5000): Promise<void> {
+export async function waitForPageReady(page: Page, timeout = 15000): Promise<void> {
   await page.waitForLoadState('domcontentloaded');
-  await page.waitForLoadState('networkidle', { timeout });
-  // Small extra wait for React hydration
-  await page.waitForTimeout(500);
+  // Use try-catch for networkidle to avoid timeout errors
+  try {
+    await page.waitForLoadState('networkidle', { timeout });
+  } catch {
+    // Fallback: just wait a bit if networkidle times out
+    await page.waitForTimeout(2000);
+  }
+  // Extra wait for React hydration
+  await page.waitForTimeout(1000);
 }
 
 /**

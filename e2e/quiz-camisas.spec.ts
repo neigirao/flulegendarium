@@ -15,13 +15,16 @@ test.describe('Quiz de Camisas', () => {
   test('should load game page with jersey image', async ({ page }) => {
     await startGameWithName(page, 'Jogador Teste');
     
+    // Aguardar imagem carregar
     const jerseyImage = page.getByTestId('jersey-image');
     await expect(jerseyImage).toBeVisible({ timeout: 20000 });
   });
 
   test('should display year options for guessing', async ({ page }) => {
     await startGameWithName(page, 'Jogador Teste');
-    await page.waitForTimeout(2000);
+    
+    // Aguardar jogo carregar
+    await page.waitForTimeout(3000);
     
     // Quiz de camisas tem opções de anos com data-testid
     const yearOptions = page.locator('[data-testid^="year-option-"]');
@@ -34,6 +37,9 @@ test.describe('Quiz de Camisas', () => {
   test('should show score counter', async ({ page }) => {
     await startGameWithName(page, 'Jogador Teste');
     
+    // Aguardar jogo carregar
+    await page.waitForTimeout(2000);
+    
     const scoreDisplay = page.getByTestId('score-display');
     await expect(scoreDisplay).toBeVisible({ timeout: 15000 });
   });
@@ -41,12 +47,18 @@ test.describe('Quiz de Camisas', () => {
   test('should show skip button', async ({ page }) => {
     await startGameWithName(page, 'Jogador Teste');
     
+    // Aguardar jogo carregar
+    await page.waitForTimeout(2000);
+    
     const skipButton = page.getByTestId('skip-button');
     await expect(skipButton).toBeVisible({ timeout: 15000 });
   });
 
   test('should not show error icons', async ({ page }) => {
     await startGameWithName(page, 'Jogador Teste');
+    
+    // Aguardar carregamento completo
+    await page.waitForTimeout(3000);
     
     const errorIcon = page.getByTestId('image-error');
     await expect(errorIcon).not.toBeVisible();
