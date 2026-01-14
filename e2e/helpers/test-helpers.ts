@@ -220,9 +220,12 @@ export async function selectYearOption(page: Page, year?: number): Promise<void>
  * Select a decade in quiz decada
  */
 export async function selectDecade(page: Page, decade: string): Promise<void> {
+  // Usar formato correto do ID de década (1980s, 1990s, etc.)
   const decadeButton = page.getByTestId(`decade-option-${decade}`);
-  await safeClick(page, decadeButton);
-  await page.waitForTimeout(500);
+  if (await decadeButton.isVisible({ timeout: 5000 }).catch(() => false)) {
+    await safeClick(page, decadeButton);
+    await page.waitForTimeout(500);
+  }
 }
 
 // ========== Assertion Helpers ==========

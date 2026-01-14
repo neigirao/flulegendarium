@@ -9,10 +9,11 @@ interface TouchOptimizedButtonProps {
   size?: 'sm' | 'md' | 'lg';
   className?: string;
   type?: 'button' | 'submit' | 'reset';
+  'data-testid'?: string;
 }
 
 export const TouchOptimizedButton = forwardRef<HTMLButtonElement, TouchOptimizedButtonProps>(
-  ({ children, onClick, disabled, variant = 'primary', size = 'md', className, type = 'button' }, ref) => {
+  ({ children, onClick, disabled, variant = 'primary', size = 'md', className, type = 'button', 'data-testid': dataTestId }, ref) => {
     
     const variants = {
       primary: "bg-gradient-to-r from-flu-grena to-flu-grena/90 text-white hover:from-flu-grena/90 hover:to-flu-grena/80 shadow-lg hover:shadow-xl",
@@ -33,6 +34,7 @@ export const TouchOptimizedButton = forwardRef<HTMLButtonElement, TouchOptimized
         type={type}
         onClick={onClick}
         disabled={disabled}
+        data-testid={dataTestId}
         className={cn(
           // Base styles
           "relative rounded-xl font-semibold transition-all duration-200",
@@ -78,6 +80,7 @@ interface TouchOptimizedInputProps {
   type?: 'text' | 'email' | 'password' | 'number';
   className?: string;
   autoComplete?: string;
+  'data-testid'?: string;
 }
 
 export const TouchOptimizedInput = ({
@@ -87,7 +90,8 @@ export const TouchOptimizedInput = ({
   disabled,
   type = 'text',
   className,
-  autoComplete = 'off'
+  autoComplete = 'off',
+  'data-testid': dataTestId
 }: TouchOptimizedInputProps) => {
   return (
     <input
@@ -97,6 +101,7 @@ export const TouchOptimizedInput = ({
       placeholder={placeholder}
       disabled={disabled}
       autoComplete={autoComplete}
+      data-testid={dataTestId}
       className={cn(
         // Base styles
         "w-full rounded-xl border-2 border-border bg-background",
