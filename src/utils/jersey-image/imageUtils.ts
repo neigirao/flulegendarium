@@ -4,10 +4,10 @@
  */
 
 import { logger } from '@/utils/logger';
-import { JERSEY_CACHE_EXPIRATION } from './constants';
+import { JERSEY_CACHE_EXPIRATION, jerseyDefaultImage as defaultImage, guaranteedJerseyFallback } from './constants';
 
-// Imagem padrão para fallback quando camisa não carrega
-export const jerseyDefaultImage = "/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png";
+// Re-export para manter compatibilidade
+export { jerseyDefaultImage } from './constants';
 
 // Fallbacks manuais para camisas problemáticas (por ID)
 export const jerseyImagesFallbacks: Record<string, string> = {};
@@ -50,11 +50,14 @@ export const isValidJerseyImageUrl = (url: string): boolean => {
     }
   }
   
-  // Apenas permitir URLs do Supabase storage ou uploads locais
+  // Permitir URLs do Supabase storage, uploads locais, fluzao.xyz e placeholder
   const allowedPatterns = [
     /^\/lovable-uploads\//i,
+    /^\/placeholder\.svg$/i,
     /supabase\.co\/storage/i,
     /hafxruwnggitvtyngedy\.supabase\.co/i,
+    /www\.fluzao\.xyz/i,
+    /fluzao\.xyz/i,
   ];
   
   const isAllowed = allowedPatterns.some(pattern => pattern.test(url));
@@ -102,13 +105,13 @@ export const getReliableJerseyImageUrl = (jersey: JerseyForImage): string => {
   // PRIORIDADE 3: Imagem padrão
   else {
     logger.error(`❌ Nenhuma URL válida para camisa ${jersey.years.join('/')}. Usando padrão.`, 'JERSEY_IMAGE');
-    imageUrl = jerseyDefaultImage;
+    imageUrl = defaultImage;
   }
   
   // Validação final de segurança
   if (!isValidJerseyImageUrl(imageUrl)) {
     logger.error(`❌ URL final inválida para camisa ${jersey.years.join('/')}:`, 'JERSEY_IMAGE', imageUrl);
-    imageUrl = jerseyDefaultImage;
+    imageUrl = defaultImage;
   }
   
   // Salvar no cache
