@@ -86,7 +86,7 @@ export const GameContainer = ({
       
       {/* Timer - igual ao adaptativo */}
       <div className="flex justify-center mb-6">
-        <div className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-lg">
+        <div data-testid="timer-display" className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-lg">
           <div className="flex items-center gap-2 mb-2">
             <Clock className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-muted-foreground">Tempo</span>
