@@ -506,16 +506,22 @@ export const DecadeGameContainer = () => {
         showReset={true}
       >
         {/* Timer com CoachMark */}
+        {/* Timer com CoachMark */}
         <CoachMark
           step="timer-explanation"
           title="Fique de Olho no Tempo!"
           description="Você tem 60 segundos neste modo. Acerte o máximo de jogadores que conseguir!"
           position="bottom"
         >
-          <div className="text-center text-display-subtitle text-primary mb-4">
+          <div data-testid="timer-display" className="text-center text-display-subtitle text-primary mb-4">
             ⏱️ {timeRemaining}s
           </div>
         </CoachMark>
+        
+        {/* Score display para testes E2E */}
+        <div data-testid="score-display" className="text-center text-lg font-bold text-primary mb-4">
+          Pontos: {score}
+        </div>
 
         {/* GuessForm com CoachMark via GameContainer */}
         <CoachMark
