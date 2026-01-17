@@ -6,12 +6,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Upload, Link } from "lucide-react";
 import { DifficultyLevel } from "@/types/guess-game";
 import { getAllDecades } from "@/data/decades";
+import { PlayerImageUpload } from "./admin/players/PlayerImageUpload";
 
 const DIFFICULTY_LEVELS = [
   { value: 'muito_facil' as DifficultyLevel, label: 'Muito Fácil' },
@@ -26,9 +25,7 @@ export const AddPlayerForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [image, setImage] = useState<File | null>(null);
   const [nicknames, setNicknames] = useState("");
-  const [uploadMethod, setUploadMethod] = useState<'file' | 'url'>('file');
   const [difficultyLevel, setDifficultyLevel] = useState<DifficultyLevel>('medio');
   const [selectedDecades, setSelectedDecades] = useState<string[]>([]);
 
@@ -46,46 +43,17 @@ export const AddPlayerForm = () => {
       return;
     }
 
-    if (uploadMethod === 'file' && !image) {
+    if (!imageUrl) {
       toast({
         variant: "destructive",
         title: "Erro",
-        description: "Por favor, selecione uma imagem.",
-      });
-      return;
-    }
-
-    if (uploadMethod === 'url' && !imageUrl) {
-      toast({
-        variant: "destructive",
-        title: "Erro",
-        description: "Por favor, informe a URL da imagem.",
+        description: "Por favor, adicione uma imagem do jogador.",
       });
       return;
     }
 
     setIsLoading(true);
     try {
-      let finalImageUrl = imageUrl;
-
-      // Se for upload de arquivo, fazer upload para o storage
-      if (uploadMethod === 'file' && image) {
-        const fileExt = image.name.split('.').pop();
-        const fileName = `${name.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}.${fileExt}`;
-        
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('players')
-          .upload(fileName, image);
-
-        if (uploadError) throw uploadError;
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('players')
-          .getPublicUrl(fileName);
-
-        finalImageUrl = publicUrl;
-      }
-
       // Processar apelidos (separar por vírgula e limpar espaços)
       const nicknamesArray = nicknames
         .split(',')
@@ -97,7 +65,7 @@ export const AddPlayerForm = () => {
         .from('players')
         .insert({
           name,
-          image_url: finalImageUrl,
+          image_url: imageUrl,
           nicknames: nicknamesArray,
           position: 'Não informada', // Valor padrão já que ainda é obrigatório no banco
           difficulty_level: difficultyLevel,
@@ -116,7 +84,6 @@ export const AddPlayerForm = () => {
       // Limpar formulário
       setName("");
       setImageUrl("");
-      setImage(null);
       setNicknames("");
       setDifficultyLevel('medio');
       setSelectedDecades([]);
@@ -145,40 +112,11 @@ export const AddPlayerForm = () => {
         />
       </div>
 
-      <div className="space-y-2">
-        <Label>Imagem do Jogador *</Label>
-        <Tabs value={uploadMethod} onValueChange={(value) => setUploadMethod(value as 'file' | 'url')}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="file" className="flex items-center gap-2">
-              <Upload size={16} />
-              Upload
-            </TabsTrigger>
-            <TabsTrigger value="url" className="flex items-center gap-2">
-              <Link size={16} />
-              URL
-            </TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="file" className="space-y-2">
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setImage(e.target.files?.[0] || null)}
-              disabled={isLoading}
-            />
-          </TabsContent>
-          
-          <TabsContent value="url" className="space-y-2">
-            <Input
-              type="url"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://exemplo.com/imagem.jpg"
-              disabled={isLoading}
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
+      <PlayerImageUpload
+        imageUrl={imageUrl}
+        onImageUrlChange={setImageUrl}
+        disabled={isLoading}
+      />
 
       <div className="space-y-2">
         <Label htmlFor="nicknames">Apelidos (opcional)</Label>
