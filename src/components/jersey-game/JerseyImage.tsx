@@ -189,9 +189,14 @@ export const JerseyImage = ({
               onLoad={handleLoad}
               onError={handleError}
               loading={priority ? "eager" : "lazy"}
-              decoding="async"
+              decoding={priority ? "sync" : "async"}
               fetchPriority={priority ? "high" : "auto"}
               data-testid="jersey-image"
+              data-lcp-critical={priority ? "true" : undefined}
+              style={{
+                containIntrinsicSize: '384px 384px',
+                contentVisibility: priority ? 'visible' : 'auto'
+              }}
             />
           )}
         </div>
