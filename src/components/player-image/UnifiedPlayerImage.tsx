@@ -6,6 +6,11 @@ import { cn } from '@/lib/utils';
 import { defaultImage, MAX_IMAGE_RETRIES, SUPABASE_STORAGE_URL } from '@/utils/player-image/constants';
 import { reportImageError } from '@/services/imageReportService';
 import { logger } from '@/utils/logger';
+import { 
+  getTransformedImageUrl, 
+  isSupabaseStorageUrl, 
+  getResponsiveSrcSet 
+} from '@/utils/image/supabaseTransforms';
 
 interface UnifiedPlayerImageProps {
   player: Player;
@@ -218,27 +223,36 @@ export const UnifiedPlayerImage = memo(({
             "relative bg-background rounded-lg overflow-hidden",
             difficulty ? "w-80 h-80 md:w-96 md:h-96 rounded-2xl" : "aspect-[4/5] min-h-[300px]"
           )}
-          style={effects ? { filter: effects.filter } : undefined}
         >
-          {/* Image */}
+          {/* Image with srcset for responsive loading */}
           {(inView || priority) && currentSrc && (
             <img
               key={`${player.id}-${currentSrc}-${retryCount}`}
-              src={currentSrc}
+              src={isSupabaseStorageUrl(currentSrc) 
+                ? getTransformedImageUrl(currentSrc, { width: 400, quality: 80, format: 'webp' }) 
+                : currentSrc}
+              srcSet={isSupabaseStorageUrl(currentSrc) 
+                ? getResponsiveSrcSet(currentSrc, [320, 480, 640, 800]) 
+                : undefined}
+              sizes={difficulty 
+                ? "(max-width: 768px) 320px, 384px" 
+                : "(max-width: 640px) 100vw, (max-width: 1024px) 400px, 500px"}
               alt={`Foto de ${player.name}`}
               className={cn(
                 "w-full h-full object-contain transition-all duration-500 border-2 border-primary shadow-md hover:shadow-lg",
                 imageStatus === 'loaded' ? 'opacity-100' : 'opacity-0'
               )}
               loading={priority ? 'eager' : 'lazy'}
-              decoding="async"
+              decoding={priority ? 'sync' : 'async'}
               fetchPriority={priority ? 'high' : 'auto'}
               onLoad={handleImageLoad}
               onError={handleImageError}
               data-testid="player-image"
+              data-lcp-critical={priority ? 'true' : undefined}
               style={{
                 aspectRatio: difficulty ? '1' : '4/5',
-                contentVisibility: priority ? 'visible' : 'auto'
+                contentVisibility: priority ? 'visible' : 'auto',
+                containIntrinsicSize: difficulty ? '384px 384px' : '400px 500px'
               }}
             />
           )}
