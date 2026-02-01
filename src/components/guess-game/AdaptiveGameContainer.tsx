@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useAdaptiveGuessGame, useSkipPlayer } from "@/hooks/game";
 import { usePlayersData } from "@/hooks/data";
 import { useAuth } from "@/hooks/auth";
+import { useGameKeyboardShortcuts } from "@/hooks/use-game-keyboard-shortcuts";
 import { BaseGameContainer } from "./BaseGameContainer";
 import { GameHeader } from "./GameHeader";
 import { AdaptiveDifficultyIndicator } from "./AdaptiveDifficultyIndicator";
@@ -14,6 +15,7 @@ import { AdaptiveProgressionNotification } from "./AdaptiveProgressionNotificati
 import { DebugInfo } from "./DebugInfo";
 import { ErrorDisplay } from "./ErrorDisplay";
 import { GuessHistoryPanel } from "./GuessHistoryPanel";
+import { KeyboardShortcutsHint } from "@/components/game/KeyboardShortcutsHint";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { AchievementNotification } from "@/components/achievements/AchievementNotification";
 import { useAchievementNotifications } from "@/hooks/use-achievement-notifications";
@@ -315,6 +317,15 @@ const AdaptiveGameContainer = () => {
     }
   }, [user]);
 
+  // Keyboard shortcuts (Esc to skip, R to restart)
+  const { shortcuts } = useGameKeyboardShortcuts({
+    onSkip: canSkip ? handleSkipPlayer : undefined,
+    onRestart: resetScore,
+    disabled: !isTimerRunning,
+    gameOver,
+    isProcessing: isProcessingGuess,
+  });
+
   if (playersError) {
     return <ErrorDisplay error={playersError} />;
   }
@@ -416,6 +427,13 @@ const AdaptiveGameContainer = () => {
               className="mt-4"
             />
           )}
+          
+          {/* Keyboard Shortcuts Hint */}
+          <KeyboardShortcutsHint 
+            shortcuts={shortcuts} 
+            show={!showGuestNameForm && currentPlayer !== null}
+            className="mt-4"
+          />
         </div>
       </BaseGameContainer>
 
