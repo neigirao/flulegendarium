@@ -1,4 +1,5 @@
 import { useCallback, useRef, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/utils/logger';
 
 // Funnel steps enum
@@ -18,7 +19,8 @@ export type FunnelStep =
   | 'share_completed'
   | 'auth_prompt_shown'
   | 'auth_started'
-  | 'auth_completed';
+  | 'auth_completed'
+  | 'play_again';
 
 interface FunnelEvent {
   step: FunnelStep;
@@ -56,18 +58,53 @@ const updateSessionActivity = () => {
   }
 };
 
+const getDeviceType = (): string => {
+  if (typeof window === 'undefined') return 'unknown';
+  const width = window.innerWidth;
+  if (width < 768) return 'mobile';
+  if (width < 1024) return 'tablet';
+  return 'desktop';
+};
+
 export const useFunnelAnalytics = () => {
   const eventQueue = useRef<FunnelEvent[]>([]);
   const batchTimer = useRef<NodeJS.Timeout | null>(null);
   const sessionId = useRef<string>(getSessionId());
 
-  const flushEvents = useCallback(() => {
+  const flushEvents = useCallback(async () => {
     if (eventQueue.current.length === 0) return;
 
     const events = [...eventQueue.current];
     eventQueue.current = [];
 
-    // Send to Google Analytics
+    // Persist to Supabase
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      const eventsToInsert = events.map(event => ({
+        session_id: sessionId.current,
+        user_id: user?.id || null,
+        event_type: event.step,
+        event_data: event.metadata || {},
+        page_url: typeof window !== 'undefined' ? window.location.pathname : null,
+        referrer: typeof document !== 'undefined' ? document.referrer : null,
+        device_type: getDeviceType()
+      }));
+
+      const { error } = await supabase
+        .from('funnel_events')
+        .insert(eventsToInsert);
+
+      if (error) {
+        logger.warn('Failed to persist funnel events', 'ANALYTICS', { error: error.message });
+      } else {
+        logger.debug('Funnel events persisted', 'ANALYTICS', { count: events.length });
+      }
+    } catch (err) {
+      logger.warn('Error persisting funnel events', 'ANALYTICS', { error: String(err) });
+    }
+
+    // Also send to Google Analytics if available
     events.forEach(event => {
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'funnel_step', {
@@ -173,6 +210,10 @@ export const useFunnelAnalytics = () => {
     trackFunnelStep('auth_completed', { method });
   }, [trackFunnelStep]);
 
+  const trackPlayAgain = useCallback((mode: string, previousScore: number) => {
+    trackFunnelStep('play_again', { mode, previous_score: previousScore });
+  }, [trackFunnelStep]);
+
   return {
     trackFunnelStep,
     trackPageView,
@@ -188,6 +229,7 @@ export const useFunnelAnalytics = () => {
     trackAuthPromptShown,
     trackAuthStarted,
     trackAuthCompleted,
+    trackPlayAgain,
     sessionId: sessionId.current
   };
 };
