@@ -3,6 +3,7 @@ import { useJerseyGuessGame } from "@/hooks/use-jersey-guess-game";
 import { useJerseysData } from "@/hooks/use-jerseys-data";
 import { useAuth } from "@/hooks/auth";
 import { useSkipPlayer } from "@/hooks/game";
+import { useGameKeyboardShortcuts } from "@/hooks/use-game-keyboard-shortcuts";
 import { BaseGameContainer } from "@/components/guess-game/BaseGameContainer";
 import { GameHeader } from "@/components/guess-game/GameHeader";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
@@ -15,6 +16,7 @@ import { AdaptiveProgressionNotification } from "@/components/guess-game/Adaptiv
 import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { JerseyImage } from "./JerseyImage";
 import { JerseyYearOptions } from "./JerseyYearOptions";
+import { KeyboardShortcutsHint } from "@/components/game/KeyboardShortcutsHint";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { AchievementNotification } from "@/components/achievements/AchievementNotification";
 import { useAchievementNotifications } from "@/hooks/use-achievement-notifications";
@@ -302,14 +304,36 @@ const JerseyGameContainer = () => {
     }
   }, [user]);
 
-  if (jerseysError) {
-    return <ErrorDisplay error={jerseysError} />;
-  }
-
   // Wrapper for saveToRanking to match GameOverDialog signature
   const handleSaveToRanking = useCallback(async (playerName: string, _score: number, _difficultyLevel?: string) => {
     await saveToRanking(playerName);
   }, [saveToRanking]);
+
+  const handleClearDifficultyNotification = useCallback(() => {
+    setDifficultyChangeInfo(null);
+  }, []);
+
+  // Handler for keyboard option selection
+  const handleKeyboardOptionSelect = useCallback((index: number) => {
+    if (currentOptions && currentOptions[index]) {
+      handleSelectOption(currentOptions[index].year);
+    }
+  }, [currentOptions, handleSelectOption]);
+
+  // Keyboard shortcuts
+  const { shortcuts } = useGameKeyboardShortcuts({
+    onSkip: canSkip ? handleSkipPlayer : undefined,
+    onRestart: resetGame,
+    onSelectOption: handleKeyboardOptionSelect,
+    maxOptions: currentOptions?.length || 3,
+    disabled: !isTimerRunning || showResult,
+    gameOver,
+    isProcessing: isProcessingGuess,
+  });
+
+  if (jerseysError) {
+    return <ErrorDisplay error={jerseysError} />;
+  }
 
   const getDifficultyLabel = (diff: DifficultyLevel): string => {
     const labels: Record<DifficultyLevel, string> = {
@@ -321,10 +345,6 @@ const JerseyGameContainer = () => {
     };
     return labels[diff] || diff;
   };
-
-  const handleClearDifficultyNotification = useCallback(() => {
-    setDifficultyChangeInfo(null);
-  }, []);
 
   // Get correct year for display in options
   const correctYear = currentJersey?.years[0];
@@ -436,6 +456,13 @@ const JerseyGameContainer = () => {
               className="mt-4"
             />
           )}
+          
+          {/* Keyboard Shortcuts Hint */}
+          <KeyboardShortcutsHint 
+            shortcuts={shortcuts} 
+            show={!showGuestNameForm && currentJersey !== null}
+            className="mt-4"
+          />
         </div>
       </BaseGameContainer>
 

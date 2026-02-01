@@ -10,6 +10,7 @@ import { SkipPlayerButton } from '@/components/guess-game/SkipPlayerButton';
 import { AdaptiveProgressionNotification } from '@/components/guess-game/AdaptiveProgressionNotification';
 import { DebugInfo } from '@/components/guess-game/DebugInfo';
 import { DynamicSEO } from '@/components/seo/DynamicSEO';
+import { KeyboardShortcutsHint } from '@/components/game/KeyboardShortcutsHint';
 import { 
   useDecadePlayerSelection, 
   useSimpleGameLogic, 
@@ -20,6 +21,7 @@ import {
   useSkipPlayer
 } from '@/hooks/game';
 import { useAuth } from '@/hooks/auth';
+import { useGameKeyboardShortcuts } from '@/hooks/use-game-keyboard-shortcuts';
 import { useAchievementSystem } from '@/components/achievements/AchievementSystemProvider';
 import { AchievementNotification } from '@/components/achievements/AchievementNotification';
 import { useAchievementNotifications } from '@/hooks/use-achievement-notifications';
@@ -432,6 +434,19 @@ export const DecadeGameContainer = () => {
     }
   }, [user]);
 
+  const handleClearDifficultyNotification = useCallback(() => {
+    setDifficultyChangeInfo(null);
+  }, []);
+
+  // Keyboard shortcuts (Esc to skip, R to restart)
+  const { shortcuts } = useGameKeyboardShortcuts({
+    onSkip: canSkip ? handleSkipPlayer : undefined,
+    onRestart: handleResetGame,
+    disabled: !isTimerRunning,
+    gameOver,
+    isProcessing: isProcessingGuess,
+  });
+
   // Se nenhuma década foi selecionada, mostrar página de seleção
   if (!selectedDecade) {
     return (
@@ -443,10 +458,6 @@ export const DecadeGameContainer = () => {
   }
 
   const decadeInfo = getDecadeInfo(selectedDecade);
-
-  const handleClearDifficultyNotification = useCallback(() => {
-    setDifficultyChangeInfo(null);
-  }, []);
 
   return (
     <>
@@ -586,6 +597,13 @@ export const DecadeGameContainer = () => {
             className="mt-4"
           />
         )}
+        
+        {/* Keyboard Shortcuts Hint */}
+        <KeyboardShortcutsHint 
+          shortcuts={shortcuts} 
+          show={!showGuestNameForm && currentPlayer !== null}
+          className="mt-4"
+        />
       </BaseGameContainer>
     
       <GameOverDialog
