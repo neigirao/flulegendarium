@@ -364,6 +364,42 @@ export type Database = {
         }
         Relationships: []
       }
+      funnel_events: {
+        Row: {
+          created_at: string
+          device_type: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          page_url: string | null
+          referrer: string | null
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_type?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          page_url?: string | null
+          referrer?: string | null
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_type?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          page_url?: string | null
+          referrer?: string | null
+          session_id?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       game_attempts: {
         Row: {
           attempt_number: number
@@ -1692,7 +1728,19 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      funnel_summary: {
+        Row: {
+          completions: number | null
+          event_date: string | null
+          first_guesses: number | null
+          game_starts: number | null
+          home_views: number | null
+          mode_clicks: number | null
+          rankings_saved: number | null
+          shares: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       can_user_open_pack: { Args: { user_uuid: string }; Returns: boolean }
