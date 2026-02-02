@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { Resend } from "npm:resend@4.0.0";
 
 const corsHeaders = {
@@ -28,6 +28,12 @@ interface AuditResult {
   isProblematic: boolean;
 }
 
+interface PlayerData {
+  id: string;
+  name: string;
+  image_url: string;
+}
+
 const isProblematicDomain = (url: string): boolean => {
   try {
     const urlObj = new URL(url);
@@ -39,7 +45,7 @@ const isProblematicDomain = (url: string): boolean => {
   }
 };
 
-const auditPlayerImages = async (supabase: any): Promise<{
+const auditPlayerImages = async (supabase: SupabaseClient): Promise<{
   total: number;
   external: number;
   problematic: number;
@@ -58,14 +64,14 @@ const auditPlayerImages = async (supabase: any): Promise<{
     throw error;
   }
 
-  console.log(`📊 Total de jogadores encontrados: ${players.length}`);
+  console.log(`📊 Total de jogadores encontrados: ${(players as PlayerData[]).length}`);
 
   const results: AuditResult[] = [];
   let externalCount = 0;
   let problematicCount = 0;
   let localCount = 0;
 
-  for (const player of players) {
+  for (const player of players as PlayerData[]) {
     const isExternal = player.image_url.startsWith('http://') || 
                       player.image_url.startsWith('https://');
     
@@ -106,7 +112,7 @@ const auditPlayerImages = async (supabase: any): Promise<{
   console.log(`✅ Auditoria concluída: ${problematicCount} jogadores problemáticos`);
 
   return {
-    total: players.length,
+    total: (players as PlayerData[]).length,
     external: externalCount,
     problematic: problematicCount,
     local: localCount,
@@ -309,13 +315,14 @@ const handler = async (req: Request): Promise<Response> => {
         },
       }
     );
-  } catch (error: any) {
-    console.error('❌ Erro na auditoria semanal:', error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ Erro na auditoria semanal:', errorMessage);
     return new Response(
       JSON.stringify({ 
         success: false,
-        error: error.message,
-        details: error.toString(),
+        error: errorMessage,
+        details: String(error),
       }),
       {
         status: 500,

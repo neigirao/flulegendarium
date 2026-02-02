@@ -1,14 +1,14 @@
 
 // Utilitários para validação de dados e prevenção de erros
 
-export interface ValidationResult {
+export interface ValidationResult<T = unknown> {
   isValid: boolean;
   error?: string;
-  sanitizedData?: any;
+  sanitizedData?: T;
 }
 
 // Validador de URLs de imagem
-export const validateImageUrl = (url: string | null | undefined): ValidationResult => {
+export const validateImageUrl = (url: string | null | undefined): ValidationResult<string> => {
   if (!url) {
     return {
       isValid: false,
@@ -50,8 +50,16 @@ export const validateImageUrl = (url: string | null | undefined): ValidationResu
   };
 };
 
+interface SanitizedPlayerData {
+  id: string;
+  name: string;
+  image_url: string | null;
+  position: string;
+  period: string;
+}
+
 // Validador de dados de jogador
-export const validatePlayerData = (player: any): ValidationResult => {
+export const validatePlayerData = (player: Record<string, unknown> | null | undefined): ValidationResult<SanitizedPlayerData> => {
   if (!player) {
     return {
       isValid: false,
@@ -70,12 +78,12 @@ export const validatePlayerData = (player: any): ValidationResult => {
   }
 
   // Sanitiza os dados
-  const sanitizedPlayer = {
+  const sanitizedPlayer: SanitizedPlayerData = {
     id: String(player.id),
     name: String(player.name).trim(),
-    image_url: player.image_url || null,
-    position: player.position || 'Não informado',
-    period: player.period || 'Não informado'
+    image_url: player.image_url ? String(player.image_url) : null,
+    position: player.position ? String(player.position) : 'Não informado',
+    period: player.period ? String(player.period) : 'Não informado'
   };
 
   return {
@@ -85,7 +93,7 @@ export const validatePlayerData = (player: any): ValidationResult => {
 };
 
 // Validador de dados de resposta da API
-export const validateApiResponse = (data: any, expectedFields: string[] = []): ValidationResult => {
+export const validateApiResponse = (data: unknown, expectedFields: string[] = []): ValidationResult => {
   if (!data) {
     return {
       isValid: false,
@@ -102,14 +110,16 @@ export const validateApiResponse = (data: any, expectedFields: string[] = []): V
 
   if (expectedFields.length > 0) {
     const dataToCheck = Array.isArray(data) ? data[0] : data;
-    const missingFields = expectedFields.filter(field => !(field in dataToCheck));
-    
-    if (missingFields.length > 0) {
-      console.warn('⚠️ Campos esperados ausentes:', missingFields);
-      return {
-        isValid: false,
-        error: `Campos esperados ausentes: ${missingFields.join(', ')}`
-      };
+    if (dataToCheck && typeof dataToCheck === 'object') {
+      const missingFields = expectedFields.filter(field => !(field in (dataToCheck as Record<string, unknown>)));
+      
+      if (missingFields.length > 0) {
+        console.warn('⚠️ Campos esperados ausentes:', missingFields);
+        return {
+          isValid: false,
+          error: `Campos esperados ausentes: ${missingFields.join(', ')}`
+        };
+      }
     }
   }
 
@@ -147,9 +157,13 @@ export const withRetry = async <T>(
 };
 
 // Sanitizador de strings
-export const sanitizeString = (str: any): string => {
+export const sanitizeString = (str: unknown): string => {
+  if (str === null || str === undefined) {
+    return '';
+  }
+  
   if (typeof str !== 'string') {
-    return String(str || '');
+    return String(str);
   }
   
   return str
@@ -159,7 +173,7 @@ export const sanitizeString = (str: any): string => {
 };
 
 // Validador de números
-export const validateNumber = (value: any, min?: number, max?: number): ValidationResult => {
+export const validateNumber = (value: unknown, min?: number, max?: number): ValidationResult<number> => {
   const num = Number(value);
   
   if (isNaN(num)) {

@@ -112,7 +112,7 @@ export const CriticalMeta = () => {
     optimizeForLCP();
     
     // Execute non-critical optimizations after initial render
-    const scheduler = (window as any).scheduler;
+    const scheduler = window.scheduler;
     if (scheduler && 'postTask' in scheduler) {
       scheduler.postTask(() => {
         addResourceHints();

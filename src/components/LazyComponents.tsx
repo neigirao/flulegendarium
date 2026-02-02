@@ -35,25 +35,5 @@ export const LazyWrapper = ({ children, fallback }: LazyWrapperProps) => {
   );
 };
 
-// Simplified higher-order component for lazy loading with preloading
-export const withLazyPreload = <P extends {}>(
-  importFn: () => Promise<{ default: React.ComponentType<P> }>,
-  preloadTrigger?: () => boolean
-) => {
-  const LazyComponent = lazy(importFn);
-  
-  // Preload component when trigger condition is met
-  if (preloadTrigger && preloadTrigger()) {
-    importFn();
-  }
-  
-  const WrappedComponent = React.forwardRef<any, P>((props, ref) => (
-    <LazyWrapper>
-      <LazyComponent {...props} ref={ref} />
-    </LazyWrapper>
-  ));
-  
-  WrappedComponent.displayName = 'LazyPreloadedComponent';
-  
-  return WrappedComponent;
-};
+// Re-export withLazyPreload from utils for backwards compatibility
+export { withLazyPreload } from '@/utils/lazy-preload.tsx';

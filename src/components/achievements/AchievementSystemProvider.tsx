@@ -1,16 +1,22 @@
-import { ReactNode, createContext, useContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useState } from 'react';
 import { useAchievements } from '@/hooks/game';
-import { AchievementNotification } from './AchievementNotification';
 import { useUX } from '@/components/ux/UXProvider';
+
+interface PendingAchievement {
+  id: string;
+  title: string;
+  description: string;
+  points: number;
+}
 
 interface AchievementContextType {
   unlockAchievement: (achievementId: string, playerName?: string) => void;
   checkProgressAchievements: (score: number, streak: number, timeBonus: number) => void;
-  getPlayerAchievements: () => any[];
+  getPlayerAchievements: () => PendingAchievement[];
   getTotalPoints: () => number;
 }
 
-const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
+export const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
 
 interface AchievementSystemProviderProps {
   children: ReactNode;
@@ -19,12 +25,7 @@ interface AchievementSystemProviderProps {
 export const AchievementSystemProvider = ({ children }: AchievementSystemProviderProps) => {
   const { checkAndUnlockAchievements } = useAchievements();
   const { showAchievement, triggerHapticFeedback } = useUX();
-  const [pendingAchievements, setPendingAchievements] = useState<Array<{
-    id: string;
-    title: string;
-    description: string;
-    points: number;
-  }>>([]);
+  const [pendingAchievements, setPendingAchievements] = useState<PendingAchievement[]>([]);
 
   const unlockAchievement = async (achievementId: string, playerName?: string) => {
     // Create mock achievement for immediate feedback
@@ -172,10 +173,5 @@ export const AchievementSystemProvider = ({ children }: AchievementSystemProvide
   );
 };
 
-export const useAchievementSystem = () => {
-  const context = useContext(AchievementContext);
-  if (context === undefined) {
-    throw new Error('useAchievementSystem must be used within an AchievementSystemProvider');
-  }
-  return context;
-};
+// Re-export hook for backwards compatibility
+export { useAchievementSystem } from '@/hooks/use-achievement-system';

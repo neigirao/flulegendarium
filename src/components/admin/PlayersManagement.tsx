@@ -71,7 +71,7 @@ export const PlayersManagement = () => {
           achievements: player.achievements || [],
           nicknames: player.nicknames || [],
           statistics: convertStatistics(player.statistics),
-          difficulty_level: player.difficulty_level as any || 'medio',
+          difficulty_level: (player.difficulty_level as DifficultyLevel) || 'medio',
           difficulty_score: player.difficulty_score || 50,
           difficulty_confidence: player.difficulty_confidence || 0,
           total_attempts: player.total_attempts || 0,

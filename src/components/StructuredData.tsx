@@ -2,14 +2,21 @@ import { useEffect } from 'react';
 
 const CANONICAL_DOMAIN = "https://lendasdoflu.com";
 
+interface WebPageData {
+  title?: string;
+  description?: string;
+  path?: string;
+  breadcrumbs?: Array<{ name: string; url: string }>;
+}
+
 interface StructuredDataProps {
   type: 'Game' | 'WebSite' | 'Organization' | 'FAQ' | 'WebPage';
-  data?: any;
+  data?: WebPageData;
 }
 
 export const StructuredData = ({ type, data }: StructuredDataProps) => {
   useEffect(() => {
-    let structuredData: any = {};
+    let structuredData: Record<string, unknown> = {};
 
     switch (type) {
       case 'WebSite':

@@ -3,9 +3,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart3 } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 
+interface ScoreDistributionData {
+  range: string;
+  count: number;
+  percent?: number;
+}
+
 interface ScoreDistributionChartProps {
-  data: { range: string; count: number }[];
+  data: ScoreDistributionData[];
   isLoading: boolean;
+}
+
+interface TooltipPayload {
+  payload: { percent: number };
 }
 
 export const ScoreDistributionChart = ({ data, isLoading }: ScoreDistributionChartProps) => {
@@ -66,7 +76,7 @@ export const ScoreDistributionChart = ({ data, isLoading }: ScoreDistributionCha
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '8px'
                   }}
-                  formatter={(value: number, name: string, props: any) => [
+                  formatter={(value: number, name: string, props: TooltipPayload) => [
                     `${value} jogadores (${props.payload.percent}%)`,
                     'Quantidade'
                   ]}

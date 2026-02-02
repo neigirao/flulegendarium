@@ -7,6 +7,14 @@ import { usePlayerPerformance } from "@/hooks/admin-stats/use-player-performance
 import { TrendingUp, TrendingDown, Eye, EyeOff, BarChart3, Users } from "lucide-react";
 import { memo } from "react";
 
+interface PlayerPerformanceData {
+  player_name: string;
+  total_attempts: number;
+  recognition_rate: number;
+  difficulty_level: string;
+  recent_attempts?: number;
+}
+
 const getDifficultyColor = (difficulty: string) => {
   switch (difficulty) {
     case 'Muito Fácil':
@@ -31,7 +39,7 @@ const getDifficultyIcon = (difficulty: string) => {
 };
 
 const PlayerTable = memo(({ players, title, icon }: { 
-  players: any[], 
+  players: PlayerPerformanceData[], 
   title: string, 
   icon: React.ReactNode 
 }) => (
