@@ -109,9 +109,9 @@ describe('dataValidators (expanded)', () => {
         };
         
         const result = validatePlayerData(player);
-        expect(result.sanitizedData.id).toBe('123');
-        expect(result.sanitizedData.name).toBe('Romário');
-        expect(result.sanitizedData.position).toBe('Não informado');
+        expect(result.sanitizedData?.id).toBe('123');
+        expect(result.sanitizedData?.name).toBe('Romário');
+        expect(result.sanitizedData?.position).toBe('Não informado');
       });
     });
 
@@ -154,19 +154,19 @@ describe('dataValidators (expanded)', () => {
       it('should use default for missing image_url', () => {
         const player = { id: '1', name: 'Test' };
         const result = validatePlayerData(player);
-        expect(result.sanitizedData.image_url).toBeNull();
+        expect(result.sanitizedData?.image_url).toBeNull();
       });
 
       it('should use default for missing position', () => {
         const player = { id: '1', name: 'Test' };
         const result = validatePlayerData(player);
-        expect(result.sanitizedData.position).toBe('Não informado');
+        expect(result.sanitizedData?.position).toBe('Não informado');
       });
 
       it('should use default for missing period', () => {
         const player = { id: '1', name: 'Test' };
         const result = validatePlayerData(player);
-        expect(result.sanitizedData.period).toBe('Não informado');
+        expect(result.sanitizedData?.period).toBe('Não informado');
       });
     });
   });
@@ -342,12 +342,12 @@ describe('dataValidators (expanded)', () => {
     });
 
     it('should handle boolean input', () => {
-      expect(sanitizeString(true as any)).toBe('true');
-      expect(sanitizeString(false as any)).toBe('false');
+      expect(sanitizeString(true)).toBe('true');
+      expect(sanitizeString(false)).toBe('false');
     });
 
     it('should handle object input', () => {
-      expect(sanitizeString({} as any)).toBe('[object Object]');
+      expect(sanitizeString({})).toBe('[object Object]');
     });
   });
 

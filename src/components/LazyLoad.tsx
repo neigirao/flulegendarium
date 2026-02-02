@@ -41,34 +41,5 @@ export const LazyLoad: React.FC<LazyLoadProps> = ({
   );
 };
 
-// Higher-order component for lazy loading
-export const withLazyLoad = <P extends object>(
-  Component: ComponentType<P>,
-  fallback?: React.ReactNode
-) => {
-  const WrappedComponent = (props: P) => (
-    <LazyLoad fallback={fallback}>
-      <Component {...props} />
-    </LazyLoad>
-  );
-  
-  WrappedComponent.displayName = `withLazyLoad(${Component.displayName || Component.name})`;
-  return WrappedComponent;
-};
-
-// Utility for creating lazy components with better error handling
-export const createLazyComponent = (
-  importFn: () => Promise<{ default: ComponentType<any> }>,
-  fallback?: React.ReactNode
-) => {
-  const LazyComponent = React.lazy(importFn);
-  
-  const WrappedComponent = (props: any) => (
-    <LazyLoad fallback={fallback}>
-      <LazyComponent {...props} />
-    </LazyLoad>
-  );
-  
-  WrappedComponent.displayName = 'LazyComponent';
-  return WrappedComponent;
-};
+// Re-export utilities from utils for backwards compatibility
+export { withLazyLoad, createLazyComponent } from '@/utils/lazy-load-utils.tsx';

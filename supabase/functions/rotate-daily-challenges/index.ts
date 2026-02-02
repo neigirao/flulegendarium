@@ -198,10 +198,11 @@ const handler = async (req: Request): Promise<Response> => {
         headers: { "Content-Type": "application/json", ...corsHeaders } 
       }
     );
-  } catch (error: any) {
-    console.error("[rotate-daily-challenges] Error:", error);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error("[rotate-daily-challenges] Error:", errorMessage);
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ success: false, error: errorMessage }),
       { 
         status: 500, 
         headers: { "Content-Type": "application/json", ...corsHeaders } 

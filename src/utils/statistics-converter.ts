@@ -29,7 +29,7 @@ export function convertStatistics(statistics: Json | null | undefined): PlayerSt
   
   // Handle object
   if (typeof statistics === 'object' && statistics !== null) {
-    return validateStatisticsObject(statistics, defaultStats);
+    return validateStatisticsObject(statistics as Record<string, unknown>, defaultStats);
   }
   
   // Handle other types (number, boolean, etc.)
@@ -37,7 +37,7 @@ export function convertStatistics(statistics: Json | null | undefined): PlayerSt
   return defaultStats;
 }
 
-function validateStatisticsObject(obj: any, defaultStats: PlayerStatistics): PlayerStatistics {
+function validateStatisticsObject(obj: Record<string, unknown> | null, defaultStats: PlayerStatistics): PlayerStatistics {
   if (!obj || typeof obj !== 'object') {
     return defaultStats;
   }

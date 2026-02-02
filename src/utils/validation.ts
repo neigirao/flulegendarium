@@ -1,4 +1,4 @@
-import { z, ZodError, ZodSchema } from 'zod';
+import { z, ZodError, ZodSchema, ZodRawShape } from 'zod';
 import { logger } from './logger';
 
 /**
@@ -136,7 +136,7 @@ export function isValid<T>(schema: ZodSchema<T>, data: unknown): boolean {
 /**
  * Valida dados com schema parcial (todos os campos opcionais)
  */
-export function validatePartial<T extends z.ZodObject<any>>(
+export function validatePartial<T extends z.ZodObject<ZodRawShape>>(
   schema: T,
   data: unknown,
   options: ValidationOptions = {}

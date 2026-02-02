@@ -1,10 +1,18 @@
 import * as Sentry from '@sentry/react';
 import { onCLS, onINP, onFCP, onLCP, onTTFB } from 'web-vitals';
 
-// Add testSentry to window for manual testing
+// Performance memory interface
+interface PerformanceWithMemory extends Performance {
+  memory?: {
+    usedJSHeapSize: number;
+    totalJSHeapSize: number;
+  };
+}
+
+// Extend Window for testSentry
 declare global {
   interface Window {
-    testSentry: () => void;
+    testSentry?: () => void;
   }
 }
 
@@ -97,8 +105,9 @@ export const initializeSentry = () => {
   });
   
   // Track memory usage
-  if ('memory' in performance) {
-    const memoryInfo = (performance as any).memory;
+  const perfWithMemory = performance as PerformanceWithMemory;
+  if (perfWithMemory.memory) {
+    const memoryInfo = perfWithMemory.memory;
     Sentry.setTag('memory.used', Math.round(memoryInfo.usedJSHeapSize / 1024 / 1024));
     Sentry.setTag('memory.total', Math.round(memoryInfo.totalJSHeapSize / 1024 / 1024));
   }
@@ -173,12 +182,12 @@ export const measurePerformance = {
     }
   },
   
-  measureFunction: <T extends (...args: any[]) => any>(
+  measureFunction: <T extends (...args: unknown[]) => unknown>(
     fn: T, 
     name: string,
     op: string = 'function'
   ): T => {
-    return ((...args: any[]) => {
+    return ((...args: Parameters<T>): ReturnType<T> => {
       return Sentry.startSpan({ name, op }, () => {
         try {
           const result = fn(...args);
@@ -192,10 +201,10 @@ export const measurePerformance = {
               .catch(error => {
                 Sentry.captureException(error);
                 throw error;
-              });
+              }) as ReturnType<T>;
           }
           
-          return result;
+          return result as ReturnType<T>;
         } catch (error) {
           Sentry.captureException(error);
           throw error;

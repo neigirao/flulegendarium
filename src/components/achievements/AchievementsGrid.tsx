@@ -7,7 +7,23 @@ import { AchievementProgressCard } from "./AchievementProgressCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Target, Timer, BookOpen, Star, User, Brain } from "lucide-react";
+import { Trophy, Target, Timer, BookOpen, Star, User, Brain, LucideIcon } from "lucide-react";
+
+interface GameStats {
+  totalGames: number;
+  totalCorrect: number;
+  totalAttempts: number;
+  accuracy: number;
+  bestStreak: number;
+  avgTime: number;
+  gamesPlayed: number;
+}
+
+interface CategoryInfo {
+  name: string;
+  icon: LucideIcon;
+  color: string;
+}
 
 export const AchievementsGrid = () => {
   const { user } = useAuth();
@@ -21,7 +37,7 @@ export const AchievementsGrid = () => {
   // Query para estatísticas do jogo para calcular progresso real
   const { data: gameStats } = useQuery({
     queryKey: ['user-game-stats', user?.id],
-    queryFn: async () => {
+    queryFn: async (): Promise<GameStats | null> => {
       if (!user) return null;
       
       const { data } = await supabase
@@ -53,7 +69,7 @@ export const AchievementsGrid = () => {
   });
 
   // Função para calcular progresso real baseado nas estatísticas
-  const calculateRealProgress = (achievementId: string) => {
+  const calculateRealProgress = (achievementId: string): number => {
     if (!gameStats) return 0;
 
     switch (achievementId) {
@@ -69,9 +85,10 @@ export const AchievementsGrid = () => {
       case 'accuracy_master':
         return gameStats.accuracy >= 80 ? 10 : Math.floor((gameStats.accuracy / 80) * 10);
       
-      case 'speed_demon':
+      case 'speed_demon': {
         const fastGames = gameStats.avgTime < 5000 ? 10 : 0;
         return fastGames;
+      }
       
       case 'games_10':
         return Math.min(gameStats.gamesPlayed, 10);
@@ -106,7 +123,7 @@ export const AchievementsGrid = () => {
     return groups;
   };
 
-  const getCategoryInfo = (category: string) => {
+  const getCategoryInfo = (category: string): CategoryInfo => {
     switch (category) {
       case 'skill': return { name: 'Habilidade', icon: Trophy, color: 'text-primary' };
       case 'streak': return { name: 'Sequência', icon: Target, color: 'text-secondary' };
