@@ -1,22 +1,39 @@
-import React, { ComponentType } from 'react';
-import { LazyLoad } from '@/components/LazyLoad';
+import React, { ComponentType, Suspense } from 'react';
 
-// Higher-order component for lazy loading
+interface LazyLoadFallbackProps {
+  fallback?: React.ReactNode;
+  children: React.ReactNode;
+}
+
+const LazyLoadWrapper = ({ fallback, children }: LazyLoadFallbackProps) => (
+  <Suspense fallback={fallback || <div className="animate-pulse bg-muted h-32 rounded-lg" />}>
+    {children}
+  </Suspense>
+);
+
+/**
+ * Higher-order component for lazy loading existing components.
+ * Wraps any component with a Suspense boundary.
+ */
 export function withLazyLoad<P extends object>(
   Component: ComponentType<P>,
   fallback?: React.ReactNode
 ) {
   const WrappedComponent = (props: P) => (
-    <LazyLoad fallback={fallback}>
-      <Component {...props} />
-    </LazyLoad>
+    <LazyLoadWrapper fallback={fallback}>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <Component {...(props as any)} />
+    </LazyLoadWrapper>
   );
   
-  WrappedComponent.displayName = `withLazyLoad(${Component.displayName || Component.name})`;
+  WrappedComponent.displayName = `withLazyLoad(${Component.displayName || Component.name || 'Component'})`;
   return WrappedComponent;
 }
 
-// Utility for creating lazy components with better error handling
+/**
+ * Utility for creating lazy-loaded components from dynamic imports.
+ * Provides a simplified API for React.lazy with automatic Suspense wrapping.
+ */
 export function createLazyComponent<P extends object>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
   fallback?: React.ReactNode
@@ -24,9 +41,10 @@ export function createLazyComponent<P extends object>(
   const LazyComponent = React.lazy(importFn);
   
   const WrappedComponent = (props: P) => (
-    <LazyLoad fallback={fallback}>
-      <LazyComponent {...props} />
-    </LazyLoad>
+    <LazyLoadWrapper fallback={fallback}>
+      {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+      <LazyComponent {...(props as any)} />
+    </LazyLoadWrapper>
   );
   
   WrappedComponent.displayName = 'LazyComponent';

@@ -180,10 +180,9 @@ export const EnhancedSEORouter = ({ children }: EnhancedSEORouterProps) => {
       />
       
       <StructuredData 
-        type={currentSEO.schema as any}
+        type={currentSEO.schema as 'Game' | 'WebSite' | 'Organization' | 'FAQ' | 'WebPage'}
         data={{
-          breadcrumbs: generateBreadcrumbSchema(),
-          currentRoute: location.pathname
+          path: location.pathname
         }}
       />
 
