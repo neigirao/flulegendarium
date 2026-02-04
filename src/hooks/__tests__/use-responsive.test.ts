@@ -138,8 +138,8 @@ describe('useResponsive', () => {
 
   it('should return default values when window is undefined', () => {
     const originalWindow = global.window;
-    // @ts-ignore
-    delete global.window;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (global as any).window = undefined;
 
     const { result } = renderHook(() => useResponsive());
     

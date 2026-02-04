@@ -7,7 +7,7 @@ export interface ErrorReport {
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   stack?: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   userAgent: string;
   url: string;
   userId?: string;
@@ -26,7 +26,7 @@ class ErrorReporter {
     severity: ErrorReport['severity'];
     message: string;
     stack?: string;
-    context?: Record<string, any>;
+    context?: Record<string, unknown>;
   }): string {
     const report: ErrorReport = {
       id: this.generateId(),
@@ -61,8 +61,8 @@ class ErrorReporter {
     });
 
     // Send to analytics if available
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'error_report', {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'error_report', {
         error_type: error.type,
         error_severity: error.severity,
         error_message: error.message,
@@ -87,7 +87,7 @@ class ErrorReporter {
   }
 
   // Convenience methods for different error types
-  reportJavaScriptError(error: Error, context?: Record<string, any>): string {
+  reportJavaScriptError(error: Error, context?: Record<string, unknown>): string {
     return this.report({
       type: 'javascript',
       severity: 'high',
@@ -97,7 +97,7 @@ class ErrorReporter {
     });
   }
 
-  reportNetworkError(message: string, context?: Record<string, any>): string {
+  reportNetworkError(message: string, context?: Record<string, unknown>): string {
     return this.report({
       type: 'network',
       severity: 'medium',
@@ -106,7 +106,7 @@ class ErrorReporter {
     });
   }
 
-  reportValidationError(message: string, context?: Record<string, any>): string {
+  reportValidationError(message: string, context?: Record<string, unknown>): string {
     return this.report({
       type: 'validation',
       severity: 'low',
@@ -115,7 +115,7 @@ class ErrorReporter {
     });
   }
 
-  reportUserActionError(message: string, context?: Record<string, any>): string {
+  reportUserActionError(message: string, context?: Record<string, unknown>): string {
     return this.report({
       type: 'user_action',
       severity: 'medium',
@@ -146,8 +146,7 @@ if (typeof window !== 'undefined') {
       severity: 'high',
       message: `Unhandled Promise Rejection: ${event.reason}`,
       context: {
-        reason: String(event.reason),
-        promise: event.promise
+        reason: String(event.reason)
       }
     });
   });

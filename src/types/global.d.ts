@@ -1,5 +1,9 @@
 import { Database } from '@/integrations/supabase/types';
 
+// Type for gtag config values
+type GtagConfigValue = string | number | boolean | undefined | null | Record<string, unknown>;
+type GtagConfig = Record<string, GtagConfigValue>;
+
 declare global {
   type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
   type Enums<T extends keyof Database['public']['Enums']> = Database['public']['Enums'][T];
@@ -9,16 +13,16 @@ declare global {
     gtag?: (
       command: 'config' | 'event' | 'exception' | 'page_view' | 'purchase' | 'refund' | 'select_content' | 'share' | 'sign_up' | 'timing_complete' | 'custom',
       targetId: string,
-      config?: any
+      config?: GtagConfig
     ) => void;
-    dataLayer?: any[];
+    dataLayer?: GtagConfig[];
   }
 
   // Declare gtag as global function
   declare function gtag(
     command: 'config' | 'event' | 'exception' | 'page_view' | 'purchase' | 'refund' | 'select_content' | 'share' | 'sign_up' | 'timing_complete' | 'custom',
     targetId: string,
-    config?: any
+    config?: GtagConfig
   ): void;
 
   // Scheduler API types
@@ -59,6 +63,49 @@ declare global {
   interface TouchEvent extends UIEvent {
     touches: TouchList;
     changedTouches: TouchList;
+  }
+
+  // Performance with memory extension
+  interface PerformanceWithMemory extends Performance {
+    memory?: {
+      usedJSHeapSize: number;
+      totalJSHeapSize: number;
+    };
+  }
+
+  // Navigator with connection extension
+  interface NavigatorWithConnection extends Navigator {
+    connection?: NetworkInformation;
+    mozConnection?: NetworkInformation;
+    webkitConnection?: NetworkInformation;
+    msMaxTouchPoints?: number;
+  }
+
+  interface NetworkInformation {
+    effectiveType?: string;
+    downlink?: number;
+    rtt?: number;
+    saveData?: boolean;
+  }
+
+  // Window with requestIdleCallback
+  interface Window {
+    requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
+    cancelIdleCallback?: (handle: number) => void;
+    orientation?: number;
+  }
+
+  interface IdleRequestCallback {
+    (deadline: IdleDeadline): void;
+  }
+
+  interface IdleDeadline {
+    didTimeout: boolean;
+    timeRemaining(): number;
+  }
+
+  interface IdleRequestOptions {
+    timeout?: number;
   }
 }
 

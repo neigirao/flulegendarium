@@ -20,9 +20,15 @@ describe('useIsMobile', () => {
   it('should return isMobile from useResponsive', async () => {
     const { useResponsive } = await import('../use-responsive');
     
-    (useResponsive as any).mockReturnValue({
+    vi.mocked(useResponsive).mockReturnValue({
       isMobile: false,
       isDesktop: true,
+      isXs: false,
+      isSm: false,
+      isMd: false,
+      isLg: true,
+      isXl: false,
+      isTablet: false,
     });
 
     const { result } = renderHook(() => useIsMobile());
@@ -32,9 +38,15 @@ describe('useIsMobile', () => {
   it('should return true when device is mobile', async () => {
     const { useResponsive } = await import('../use-responsive');
     
-    (useResponsive as any).mockReturnValue({
+    vi.mocked(useResponsive).mockReturnValue({
       isMobile: true,
       isDesktop: false,
+      isXs: true,
+      isSm: false,
+      isMd: false,
+      isLg: false,
+      isXl: false,
+      isTablet: false,
     });
 
     const { result } = renderHook(() => useIsMobile());

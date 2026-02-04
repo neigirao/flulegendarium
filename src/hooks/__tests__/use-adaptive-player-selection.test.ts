@@ -226,7 +226,7 @@ describe('useAdaptivePlayerSelection', () => {
       const { result } = renderHook(() => useAdaptivePlayerSelection());
 
       const selectedPlayer = result.current.selectPlayerByDifficulty(
-        null as any,
+        null as unknown as Player[],
         'medio'
       );
 

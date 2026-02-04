@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { User } from "@supabase/supabase-js";
 
 /**
  * Estado de UI do jogo (dialogs, tutoriais, formulários)
@@ -11,8 +12,8 @@ export interface UIGameState {
   
   // Tutorial
   showTutorial: boolean;
-  handleTutorialComplete: (user: any) => void;
-  handleSkipTutorial: (user: any) => void;
+  handleTutorialComplete: (user: User | null) => void;
+  handleSkipTutorial: (user: User | null) => void;
   
   // Game Status
   gameStarted: boolean;
@@ -76,7 +77,7 @@ export const useUIGameState = ({ hasLost }: UseUIGameStateProps): UIGameState =>
     selectRandomPlayer();
   }, []);
 
-  const handleTutorialComplete = useCallback((user: any) => {
+  const handleTutorialComplete = useCallback((user: User | null) => {
     setShowTutorial(false);
     if (user) {
       setGameStarted(true);
@@ -87,7 +88,7 @@ export const useUIGameState = ({ hasLost }: UseUIGameStateProps): UIGameState =>
     }
   }, []);
 
-  const handleSkipTutorial = useCallback((user: any) => {
+  const handleSkipTutorial = useCallback((user: User | null) => {
     setShowTutorial(false);
     if (user) {
       setGameStarted(true);

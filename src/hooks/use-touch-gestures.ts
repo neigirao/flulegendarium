@@ -28,17 +28,20 @@ interface UseTouchProps {
   disabled?: boolean;
 }
 
+interface TouchEventLike {
+  touches?: TouchList;
+  changedTouches?: TouchList;
+  clientX?: number;
+  clientY?: number;
+}
+
 export const useTouch = ({
   onSwipeLeft,
   onSwipeRight,
   onSwipeUp,
   onSwipeDown,
   onTap,
-  onDoubleTap,
-  onLongPress,
   threshold = 50,
-  longPressThreshold = 500,
-  doubleTapThreshold = 300,
   disabled = false
 }: UseTouchProps) => {
   const [gestureState, setGestureState] = useState<GestureState>({
@@ -48,33 +51,39 @@ export const useTouch = ({
   });
 
   const touchStart = useRef<TouchPoint | null>(null);
-  const lastTap = useRef<number>(0);
-  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const startTouch = useCallback((e: any) => {
+  const startTouch = useCallback((e: TouchEventLike) => {
     if (disabled) return;
     const touch = e.touches?.[0] || e;
     touchStart.current = {
-      x: touch.clientX,
-      y: touch.clientY,
+      x: touch.clientX || 0,
+      y: touch.clientY || 0,
       time: Date.now()
     };
   }, [disabled]);
 
-  const endTouch = useCallback((e: any) => {
+  const endTouch = useCallback((e: TouchEventLike) => {
     if (disabled || !touchStart.current) return;
     const touch = e.changedTouches?.[0] || e;
-    const deltaX = touch.clientX - touchStart.current.x;
-    const deltaY = touch.clientY - touchStart.current.y;
+    const deltaX = (touch.clientX || 0) - touchStart.current.x;
+    const deltaY = (touch.clientY || 0) - touchStart.current.y;
     const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 
     if (distance < 10) {
       onTap?.();
     } else if (distance >= threshold) {
       if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        deltaX > 0 ? onSwipeRight?.() : onSwipeLeft?.();
+        if (deltaX > 0) {
+          onSwipeRight?.();
+        } else {
+          onSwipeLeft?.();
+        }
       } else {
-        deltaY > 0 ? onSwipeDown?.() : onSwipeUp?.();
+        if (deltaY > 0) {
+          onSwipeDown?.();
+        } else {
+          onSwipeUp?.();
+        }
       }
     }
     touchStart.current = null;
