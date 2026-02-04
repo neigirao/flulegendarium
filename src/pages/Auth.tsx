@@ -31,7 +31,8 @@ const Auth = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (user && !loading) {
-      const from = (location.state as any)?.from?.pathname || '/selecionar-modo-jogo';
+      const state = location.state as { from?: { pathname?: string } } | null;
+      const from = state?.from?.pathname || '/selecionar-modo-jogo';
       navigate(from, { replace: true });
     }
   }, [user, loading, navigate, location.state]);

@@ -8,14 +8,14 @@ interface LogEntry {
   level: LogLevel;
   message: string;
   context?: string;
-  data?: any;
+  data?: unknown;
   timestamp: Date;
 }
 
 class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development';
 
-  private log(level: LogLevel, message: string, context?: string, data?: any) {
+  private log(level: LogLevel, message: string, context?: string, data?: unknown) {
     if (!this.isDevelopment && level === 'debug') {
       return; // Skip debug logs in production
     }
@@ -47,25 +47,25 @@ class Logger {
     }
   }
 
-  debug(message: string, context?: string, data?: any) {
+  debug(message: string, context?: string, data?: unknown) {
     this.log('debug', message, context, data);
   }
 
-  info(message: string, context?: string, data?: any) {
+  info(message: string, context?: string, data?: unknown) {
     this.log('info', message, context, data);
   }
 
-  warn(message: string, context?: string, data?: any) {
+  warn(message: string, context?: string, data?: unknown) {
     this.log('warn', message, context, data);
   }
 
-  error(message: string, context?: string, data?: any) {
+  error(message: string, context?: string, data?: unknown) {
     this.log('error', message, context, data);
   }
 
   // Game-specific logging methods
-  gameAction(action: string, playerName?: string, data?: any) {
-    this.debug(`Game: ${action}`, 'GAME', { playerName, ...data });
+  gameAction(action: string, playerName?: string, data?: unknown) {
+    this.debug(`Game: ${action}`, 'GAME', { playerName, ...(data as Record<string, unknown> | undefined) });
   }
 
   imageLoad(playerName: string, success: boolean, url?: string) {

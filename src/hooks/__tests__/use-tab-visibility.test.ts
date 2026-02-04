@@ -30,7 +30,7 @@ describe('useTabVisibility', () => {
     if (originalHidden) {
       Object.defineProperty(document, 'hidden', originalHidden);
     } else {
-      delete (document as any).hidden;
+      delete (document as unknown as Record<string, unknown>).hidden;
     }
   });
 

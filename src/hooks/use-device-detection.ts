@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 
 export interface DeviceInfo {
@@ -58,8 +57,9 @@ export function useDeviceDetection(): DeviceInfo {
     canvas.height = 1;
     const supportsWebP = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
 
-    // Connection type
-    const connection = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
+    // Connection type - use type assertion for Navigator extension
+    const nav = navigator as NavigatorWithConnection;
+    const connection = nav.connection || nav.mozConnection || nav.webkitConnection;
     const connectionType = connection?.effectiveType || 'unknown';
 
     return {

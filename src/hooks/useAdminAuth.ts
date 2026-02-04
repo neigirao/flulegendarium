@@ -87,8 +87,10 @@ export const useAdminAuth = () => {
         id: adminUser.id,
         email: `${username}@admin.local`,
         user_metadata: { username },
-        app_metadata: { role: 'admin' }
-      } as any;
+        app_metadata: { role: 'admin' },
+        aud: 'authenticated',
+        created_at: new Date().toISOString()
+      } as unknown as User;
 
       setIsAuthenticated(true);
       setAdminData({

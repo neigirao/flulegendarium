@@ -1,6 +1,6 @@
 import { logger } from '@/utils/logger';
 
-interface CacheEntry<T = any> {
+interface CacheEntry<T = unknown> {
   data: T;
   timestamp: number;
   accessCount: number;
@@ -104,23 +104,20 @@ export class UnifiedCacheManager {
   }
 
   // Preload data for expected usage
-  preload<T>(key: string, dataLoader: () => Promise<T>, ttl?: number): Promise<T> {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const cached = this.get<T>(key);
-        if (cached) {
-          resolve(cached);
-          return;
-        }
-
-        const data = await dataLoader();
-        this.set(key, data, ttl);
-        resolve(data);
-      } catch (error) {
-        logger.error(`Cache preload failed: ${key}`, 'CACHE', error as Error);
-        reject(error);
+  async preload<T>(key: string, dataLoader: () => Promise<T>, ttl?: number): Promise<T> {
+    try {
+      const cached = this.get<T>(key);
+      if (cached) {
+        return cached;
       }
-    });
+
+      const data = await dataLoader();
+      this.set(key, data, ttl);
+      return data;
+    } catch (error) {
+      logger.error(`Cache preload failed: ${key}`, 'CACHE', error as Error);
+      throw error;
+    }
   }
 
   // Get with automatic loading

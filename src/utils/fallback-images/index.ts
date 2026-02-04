@@ -8,6 +8,8 @@
  * 4. SVG inline (NUNCA FALHA - embutido no código)
  */
 
+import { getFallbackSvg } from './fluminenseSvg';
+
 export { 
   fluminenseJerseySvg, 
   playerSilhouetteSvg, 
@@ -23,7 +25,5 @@ export const DEFAULT_JERSEY_IMAGE = "/lovable-uploads/7df50b87-e220-4f5e-be35-e5
  * Usa SVG inline embutido no código
  */
 export const getGuaranteedFallback = (type: 'jersey' | 'player' = 'player'): string => {
-  // Importa dinamicamente para evitar dependência circular
-  const { getFallbackSvg } = require('./fluminenseSvg');
   return getFallbackSvg(type);
 };

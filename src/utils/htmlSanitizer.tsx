@@ -20,6 +20,7 @@ const sanitizerConfig = {
  * @param html - The HTML string to sanitize
  * @returns Sanitized HTML string safe for rendering
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const sanitizeHtml = (html: string): string => {
   if (!html) return '';
   
@@ -31,6 +32,7 @@ export const sanitizeHtml = (html: string): string => {
  * @param text - The text to sanitize
  * @returns Sanitized text string
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export const sanitizeText = (text: string): string => {
   if (!text) return '';
   

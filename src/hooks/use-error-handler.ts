@@ -32,8 +32,8 @@ export const useErrorHandler = (options: ErrorHandlerOptions = {}) => {
     }
 
     // Track analytics
-    if (trackAnalytics && typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'javascript_error', {
+    if (trackAnalytics && typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'javascript_error', {
         error_message: error.message,
         error_context: context || 'unknown',
         error_stack: error.stack

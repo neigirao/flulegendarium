@@ -1,4 +1,3 @@
-
 import { useEffect, useCallback } from 'react';
 import { logger } from '@/utils/logger';
 
@@ -14,8 +13,8 @@ export const useCoreWebVitals = () => {
     logger.info(`${metric.name}: ${metric.value}`, 'WEB_VITALS');
     
     // Send to analytics if available
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'web_vitals', {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'web_vitals', {
         event_category: 'Performance',
         event_label: metric.name,
         value: Math.round(metric.value),
@@ -54,8 +53,9 @@ export const useCoreWebVitals = () => {
           // FID - First Input Delay
           const fidObserver = new PerformanceObserver((list) => {
             const entries = list.getEntries();
-            entries.forEach((entry: any) => {
-              const fid = entry.processingStart - entry.startTime;
+            entries.forEach((entry) => {
+              const fidEntry = entry as PerformanceEventTiming;
+              const fid = fidEntry.processingStart - fidEntry.startTime;
               reportMetric({
                 name: 'FID',
                 value: fid,
@@ -75,13 +75,14 @@ export const useCoreWebVitals = () => {
           let clsValue = 0;
           const clsObserver = new PerformanceObserver((list) => {
             const entries = list.getEntries();
-            entries.forEach((entry: any) => {
-              if (!entry.hadRecentInput) {
-                clsValue += entry.value;
+            entries.forEach((entry) => {
+              const clsEntry = entry as LayoutShiftEntry;
+              if (!clsEntry.hadRecentInput) {
+                clsValue += clsEntry.value;
                 reportMetric({
                   name: 'CLS',
                   value: clsValue,
-                  delta: entry.value,
+                  delta: clsEntry.value,
                   id: `cls-${Date.now()}`
                 });
               }

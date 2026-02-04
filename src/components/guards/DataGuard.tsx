@@ -1,22 +1,26 @@
-
 import { ReactNode, useMemo } from 'react';
 import { validateApiResponse, validatePlayerData } from '@/utils/validation/dataValidators';
 import { LoadingCard } from '@/components/ui/loading-states';
 import { ErrorState } from '@/components/ui/error-states';
 
-interface DataGuardProps {
-  data: any;
+interface ValidationResult {
+  isValid: boolean;
+  error?: string;
+}
+
+interface DataGuardProps<T = unknown> {
+  data: T;
   loading?: boolean;
   error?: Error | null;
   children: ReactNode;
   expectedFields?: string[];
-  validator?: (data: any) => { isValid: boolean; error?: string };
+  validator?: (data: T) => ValidationResult;
   fallbackComponent?: ReactNode;
   loadingComponent?: ReactNode;
   emptyMessage?: string;
 }
 
-export const DataGuard = ({
+export const DataGuard = <T = unknown>({
   data,
   loading = false,
   error = null,
@@ -26,7 +30,7 @@ export const DataGuard = ({
   fallbackComponent,
   loadingComponent,
   emptyMessage = "Nenhum dado disponível"
-}: DataGuardProps) => {
+}: DataGuardProps<T>) => {
   
   const validationResult = useMemo(() => {
     if (loading || error || !data) return null;
@@ -91,18 +95,24 @@ export const DataGuard = ({
 };
 
 // Guard específico para dados de jogadores
+interface PlayerData {
+  id?: string;
+  name?: string;
+  [key: string]: unknown;
+}
+
 export const PlayerDataGuard = ({ 
   players, 
   loading, 
   error, 
   children 
 }: {
-  players: any[];
+  players: PlayerData[];
   loading: boolean;
   error: Error | null;
   children: ReactNode;
 }) => {
-  const validator = (data: any[]) => {
+  const validator = (data: PlayerData[]) => {
     if (!Array.isArray(data)) {
       return { isValid: false, error: 'Dados de jogadores devem ser um array' };
     }
