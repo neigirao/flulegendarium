@@ -1,385 +1,379 @@
 
-# Plano: Corrigir Erros de ESLint do E2E
+# Plano Completo: Correção de 215 Erros ESLint (161 errors + 54 warnings)
 
-## Resumo
-Este plano corrige **192 erros** e **52 warnings** identificados no log de lint. Os problemas principais são:
-- Uso excessivo de `any` (26 ocorrências)
-- HOCs/utilities em arquivos de componentes (3 warnings)
-- Declaração léxica em case block (1 erro)
-- useEffect com dependência faltante (1 warning)
-- Uso de `require()` no tailwind.config (1 erro)
-- Tipo `{}` ("empty object") problemático (1 erro)
+## Visão Geral
+
+Este plano corrige **todos os 215 problemas** identificados no log de lint do GitHub Actions. Os erros estão organizados em 6 categorias principais para implementação eficiente.
 
 ---
 
-## Fase 1: Tipos Fortes - Substituir `any` (26 correções)
+## Categoria 1: `@typescript-eslint/no-explicit-any` (123 erros)
 
-### 1.1 CriticalMeta.tsx (linha 115)
-**Problema**: `(window as any).scheduler`
-**Solução**: Criar interface para Scheduler API
+### 1.1 Tipos Globais - `src/types/global.d.ts` (3 erros)
+**Linhas**: 12, 14, 21
+
+**Solução**: Substituir `any` por tipos específicos para Google Analytics
 ```typescript
-interface SchedulerAPI {
-  postTask: (callback: () => void, options?: { priority: 'background' | 'user-visible' | 'user-blocking' }) => void;
-}
+// Tipo para config do gtag
+type GtagConfig = Record<string, string | number | boolean | undefined>;
 
-declare global {
-  interface Window {
-    scheduler?: SchedulerAPI;
-  }
-}
-
-// Uso:
-const scheduler = window.scheduler;
-```
-
-### 1.2 LazyComponents.tsx (linhas 39, 50)
-**Problema**: `<P extends {}>` e `React.forwardRef<any, P>`
-**Solução**: Usar `object` e `HTMLElement`
-```typescript
-export const withLazyPreload = <P extends object>(
-  importFn: () => Promise<{ default: React.ComponentType<P> }>,
-  preloadTrigger?: () => boolean
-) => {
-  const WrappedComponent = React.forwardRef<HTMLElement, P>((props, ref) => (
-    // ...
-  ));
-  return WrappedComponent;
-};
-```
-
-### 1.3 LazyLoad.tsx (linhas 61, 66)
-**Problema**: `ComponentType<any>` e `props: any`
-**Solução**: Usar tipos genéricos
-```typescript
-export const createLazyComponent = <P extends object>(
-  importFn: () => Promise<{ default: ComponentType<P> }>,
-  fallback?: React.ReactNode
-) => {
-  const LazyComponent = React.lazy(importFn);
-  const WrappedComponent = (props: P) => (
-    <LazyLoad fallback={fallback}>
-      <LazyComponent {...props} />
-    </LazyLoad>
-  );
-  WrappedComponent.displayName = 'LazyComponent';
-  return WrappedComponent;
-};
-```
-
-### 1.4 StructuredData.tsx (linhas 7, 12)
-**Problema**: `data?: any` e `structuredData: any`
-**Solução**: Criar interface para dados estruturados
-```typescript
-interface WebPageData {
-  title?: string;
-  description?: string;
-  path?: string;
-}
-
-interface StructuredDataProps {
-  type: 'Game' | 'WebSite' | 'Organization' | 'FAQ' | 'WebPage';
-  data?: WebPageData;
-}
-
-// No useEffect:
-let structuredData: Record<string, unknown> = {};
-```
-
-### 1.5 AchievementSystemProvider.tsx (linha 9)
-**Problema**: `getPlayerAchievements: () => any[]`
-**Solução**: Definir tipo de Achievement
-```typescript
-import { Achievement } from '@/types/achievements';
-
-interface AchievementContextType {
-  unlockAchievement: (achievementId: string, playerName?: string) => void;
-  checkProgressAchievements: (score: number, streak: number, timeBonus: number) => void;
-  getPlayerAchievements: () => Achievement[];
-  getTotalPoints: () => number;
+interface Window {
+  gtag?: (
+    command: 'config' | 'event' | ...,
+    targetId: string,
+    config?: GtagConfig
+  ) => void;
+  dataLayer?: GtagConfig[];
 }
 ```
 
-### 1.6 PlayerPerformanceAnalysis.tsx (linha 34)
-**Problema**: `players: any[]`
-**Solução**: Usar tipo Player existente
+### 1.2 Logger Utility - `src/utils/logger.ts` (7 erros)
+**Linhas**: 11, 18, 50, 54, 58, 62, 67
+
+**Solução**: Usar `unknown` para dados de log
 ```typescript
-import { Player } from '@/types/guess-game';
-
-const PlayerTable = memo(({ players, title, icon }: { 
-  players: Player[], 
-  title: string, 
-  icon: React.ReactNode 
-}) => (
-```
-
-### 1.7 PlayersManagement.tsx (linha 74)
-**Problema**: `difficulty_level: player.difficulty_level as any`
-**Solução**: Usar tipo DifficultyLevel
-```typescript
-import { DifficultyLevel } from '@/types/guess-game';
-
-difficulty_level: (player.difficulty_level as DifficultyLevel) || 'medio',
-```
-
-### 1.8 ScoreDistributionChart.tsx (linha 69)
-**Problema**: `props: any` no formatter
-**Solução**: Tipar props do Recharts
-```typescript
-interface TooltipPayload {
-  payload: { percent: string };
+interface LogEntry {
+  data?: unknown;
 }
 
-formatter={(value: number, name: string, props: TooltipPayload) => [
-  `${value} jogadores (${props.payload.percent}%)`,
-  'Quantidade'
-]}
+debug(message: string, context?: string, data?: unknown) { ... }
+info(message: string, context?: string, data?: unknown) { ... }
+// etc.
 ```
 
-### 1.9 sentry.ts (linhas 101, 176, 181)
-**Problema**: `(performance as any).memory` e funções genéricas
-**Solução**: Interfaces para Performance API e tipos genéricos corretos
+### 1.3 Error Reporting - `src/utils/errorReporting.ts` (8 erros)
+**Linhas**: 10, 29, 64, 65, 90, 100, 109, 118
+
+**Solução**: Usar `Record<string, unknown>` e tipagem adequada para window.gtag
+```typescript
+context?: Record<string, unknown>;
+
+// Para window.gtag - usar tipos globais já definidos
+if (typeof window !== 'undefined' && window.gtag) {
+  window.gtag('event', 'error_report', { ... });
+}
+```
+
+### 1.4 Auth Hook - `src/hooks/useAuth.tsx` (3 erros)
+**Linhas**: 9, 10, 12
+
+**Solução**: Criar tipos específicos para retornos do Supabase
+```typescript
+import { AuthError, AuthResponse } from '@supabase/supabase-js';
+
+interface AuthResult {
+  data: AuthResponse['data'] | null;
+  error: AuthError | null;
+}
+
+signIn: (email: string, password: string) => Promise<AuthResult>;
+```
+
+### 1.5 DataGuard Component - `src/components/guards/DataGuard.tsx` (4 erros)
+**Linhas**: 8, 13, 100, 105
+
+**Solução**: Usar genéricos para tipagem flexível
+```typescript
+interface DataGuardProps<T = unknown> {
+  data: T;
+  validator?: (data: T) => { isValid: boolean; error?: string };
+}
+
+interface PlayerDataGuardProps {
+  players: Record<string, unknown>[];
+}
+```
+
+### 1.6 Hooks com `any` (35+ erros)
+Arquivos afetados:
+- `use-ui-game-state.ts` (4 erros)
+- `use-core-web-vitals.ts` (4 erros)
+- `use-device-detection.ts` (3 erros)
+- `use-error-handler.ts` (2 erros)
+- `use-jersey-guess-game.ts` (2 erros)
+- `use-jerseys-data.ts` (2 erros)
+- `use-lcp-optimization.ts` (2 erros)
+- `use-live-events.ts` (1 erro)
+- `use-mobile-optimization.ts` (1 erro)
+- `use-orientation.ts` (2 erros)
+- `use-players-data.ts` (3 erros)
+- `use-route-prefetch.ts` (1 erro)
+- `use-touch-gestures.ts` (2 erros)
+- `useAdminAuth.ts` (1 erro)
+- `use-daily-challenges.ts` (1 erro)
+- `use-adaptive-guess-game.ts` (1 erro)
+
+**Solução padrão para eventos**:
+```typescript
+// Touch events
+const startTouch = useCallback((e: TouchEvent | MouseEvent) => {
+  const touch = 'touches' in e ? e.touches[0] : e;
+  // ...
+}, []);
+
+// Core Web Vitals
+interface PerformanceWithMemory extends Performance {
+  memory?: { usedJSHeapSize: number; totalJSHeapSize: number; };
+}
+```
+
+### 1.7 Components com `any` (25+ erros)
+Arquivos afetados:
+- `GameAnimations.tsx` (3 erros)
+- `PersonalDashboard.tsx` (1 erro)
+- `DecadeGameContainer.tsx` (1 erro)
+- `EnhancedErrorBoundary.tsx` (2 erros)
+- `GameErrorBoundary.tsx` (2 erros)
+- `RootErrorBoundary.tsx` (2 erros)
+- `SwipeGestureHandler.tsx` (2 erros)
+- `AdaptiveGameContainer.tsx` (4 erros)
+- `CoreWebVitalsOptimizer.tsx` (4 erros)
+- `CriticalImage.tsx` (2 erros)
+- `PerformanceBudgetMonitor.tsx` (1 erro)
+- `PWAInstallPrompt.tsx` (1 erro)
+- `PWAProvider.tsx` (2 erros)
+- `DynamicSEO.tsx` (1 erro)
+- `ShareSystem2.tsx` (1 erro)
+- `NewsArticleForm.tsx` (1 erro)
+- `NewsCategoriesManagement.tsx` (1 erro)
+- `NPSReport.tsx` (1 erro)
+
+**Solução para Error Boundaries**:
 ```typescript
 interface PerformanceWithMemory extends Performance {
-  memory?: {
-    usedJSHeapSize: number;
-    totalJSHeapSize: number;
-  };
+  memory?: { usedJSHeapSize: number; totalJSHeapSize: number; };
 }
 
-// linha 101
-const perfWithMemory = performance as PerformanceWithMemory;
-if (perfWithMemory.memory) {
-  const memoryInfo = perfWithMemory.memory;
-  // ...
-}
-
-// linhas 176-181
-measureFunction: <T extends (...args: unknown[]) => unknown>(
-  fn: T, 
-  name: string,
-  op: string = 'function'
-): T => {
-  return ((...args: Parameters<T>): ReturnType<T> => {
-    // ...
-  }) as T;
-}
+const perf = performance as PerformanceWithMemory;
+const memoryUsed = perf.memory?.usedJSHeapSize;
 ```
 
-### 1.10 statistics-converter.ts (linha 40)
-**Problema**: `obj: any`
-**Solução**: Usar tipo mais específico
+### 1.8 Services com `any` (8 erros)
+- `adminBusinessIntelligence.ts` (2 erros)
+- `decadePlayerService.ts` (1 erro)
+- `playerDataService.ts` (1 erro)
+
+### 1.9 Utils com `any` (20+ erros)
+- `cache/SWRCache.ts` (1 erro)
+- `cache/UnifiedCacheManager.ts` (1 erro)
+- `errorMessages.ts` (2 erros)
+- `performance/cacheOptimization.ts` (3 erros)
+- `performance/databaseOptimization.ts` (5 erros)
+- `performance/imageOptimizer.ts` (1 erro)
+- `secureErrorHandling.ts` (2 erros)
+
+### 1.10 Arquivos de Teste com `any` (30+ erros)
+Usar `as unknown as Type` para type assertions em testes:
 ```typescript
-function validateStatisticsObject(obj: Record<string, unknown> | null, defaultStats: PlayerStatistics): PlayerStatistics {
-```
+// Ao invés de:
+expect(fn(value as any)).toBe(result);
 
-### 1.11 validation.ts (linha 139)
-**Problema**: `z.ZodObject<any>`
-**Solução**: Usar ZodRawShape
-```typescript
-import { z, ZodRawShape } from 'zod';
-
-export function validatePartial<T extends z.ZodObject<ZodRawShape>>(
-```
-
-### 1.12 dataValidators.ts (linhas 7, 54, 88, 150, 162)
-**Problema**: Múltiplos `any` em interfaces e parâmetros
-**Solução**: Tipos específicos
-```typescript
-export interface ValidationResult<T = unknown> {
-  isValid: boolean;
-  error?: string;
-  sanitizedData?: T;
-}
-
-export const validatePlayerData = (player: Record<string, unknown>): ValidationResult => {
-
-export const validateApiResponse = (data: unknown, expectedFields: string[] = []): ValidationResult => {
-
-export const sanitizeString = (str: unknown): string => {
-
-export const validateNumber = (value: unknown, min?: number, max?: number): ValidationResult<number> => {
-```
-
-### 1.13 dataValidators-expanded.test.ts (linhas 345, 346, 350)
-**Problema**: Testes usando `as any`
-**Solução**: Usar `as unknown as tipo` para type assertions em testes
-```typescript
-it('should handle boolean input', () => {
-  expect(sanitizeString(true as unknown as string)).toBe('true');
-  expect(sanitizeString(false as unknown as string)).toBe('false');
-});
-
-it('should handle object input', () => {
-  expect(sanitizeString({} as unknown as string)).toBe('[object Object]');
-});
-```
-
-### 1.14 Edge Functions (rotate-daily-challenges e weekly-image-audit)
-**Problema**: `error: any` em catch blocks
-**Solução**: Tipar erro
-```typescript
-} catch (error: unknown) {
-  const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-  console.error("[rotate-daily-challenges] Error:", errorMessage);
-  return new Response(
-    JSON.stringify({ success: false, error: errorMessage }),
-    // ...
-  );
-}
-```
-
-Para `weekly-image-audit` linha 42:
-```typescript
-const auditPlayerImages = async (supabase: SupabaseClient): Promise<{
+// Usar:
+expect(fn(value as unknown as ExpectedType)).toBe(result);
 ```
 
 ---
 
-## Fase 2: Warnings de Fast Refresh (3 correções)
+## Categoria 2: `react-refresh/only-export-components` (35 warnings)
 
-### 2.1 LazyComponents.tsx (linha 39)
-**Problema**: HOC `withLazyPreload` exportado junto com componentes
-**Solução**: Mover HOC para arquivo separado
-- Criar `src/utils/lazy-preload.ts`
-- Mover `withLazyPreload` para o novo arquivo
-- Manter apenas componentes lazy no arquivo original
+### 2.1 Constantes exportadas com componentes
+**Arquivos afetados**:
+- `LazyComponents.tsx` (linha 39)
+- `LazyLoad.tsx` (linhas 45, 45)
+- `AchievementSystemProvider.tsx` (linhas 19, 177)
+- `DifficultySection.tsx` (linhas 2, 8, 16)
+- `OptimizedAnimations.tsx` (linha 341)
+- `LCPOptimizedImage.tsx` (linhas 185, 216)
+- `ChallengeSystem.tsx` (linhas 20, 30)
+- Vários arquivos UI
 
-### 2.2 LazyLoad.tsx (linhas 45, 60)
-**Problema**: `withLazyLoad` e `createLazyComponent` misturados com componentes
-**Solução**: Mover utilities para arquivo separado
-- Criar `src/utils/lazy-load-utils.ts`
-- Mover `withLazyLoad` e `createLazyComponent`
-- Manter apenas `LazyLoad` componente no arquivo original
+**Solução**: Extrair constantes/hooks para arquivos separados ou usar comentários ESLint para casos onde a extração não faz sentido (componentes UI do shadcn/ui):
+```typescript
+// Para shadcn/ui components, suprimir warning:
+// eslint-disable-next-line react-refresh/only-export-components
+export const buttonVariants = cva(...)
+```
 
-### 2.3 AchievementSystemProvider.tsx (linha 175)
-**Problema**: Hook `useAchievementSystem` exportado com Provider
-**Solução**: Mover hook para arquivo separado
-- Criar `src/hooks/use-achievement-system.ts`
-- Mover `useAchievementSystem` hook
-- Importar no Provider para manter compatibilidade
+### 2.2 Contextos exportados com Providers
+**Arquivos**: `AchievementSystemProvider.tsx`, `UXProvider.tsx`, `OnboardingProvider.tsx`
+
+**Solução**: Mover contextos para arquivos separados:
+- Criar `src/contexts/AchievementContext.ts`
+- Criar `src/contexts/UXContext.ts`
+- Criar `src/contexts/OnboardingContext.ts`
 
 ---
 
-## Fase 3: Outros Erros (3 correções)
+## Categoria 3: `react-hooks/exhaustive-deps` (15 warnings)
 
-### 3.1 AchievementsGrid.tsx (linha 73)
-**Problema**: `Unexpected lexical declaration in case block`
-**Solução**: Envolver case em bloco
-```typescript
-case 'speed_demon': {
-  const fastGames = gameStats.avgTime < 5000 ? 10 : 0;
-  return fastGames;
-}
-```
+### 3.1 Dependências faltantes
+**Arquivos afetados**:
+- `AchievementSystem.tsx` - falta `achievements`
+- `NewsArticleForm.tsx` - falta `fetchArticle`
+- `OptimizedAnimations.tsx` - falta `displayValue`
+- `PWAInstallPrompt.tsx` - falta `isMobile`
+- `DynamicSEO.tsx` - falta funções generate*
+- `PlayerCommentsSection.tsx` - falta `fetchComments`
+- `use-base-game-state.ts` - `finalConfig` deve ser useMemo
+- `use-adaptive-game-metrics.ts` - falta dependências
+- `use-adaptive-guess-game.ts` - falta dependências
+- `use-analytics.ts` - falta dependências
+- `use-decade-player-selection.ts` - dependência desnecessária
+- `use-jersey-guess-game.ts` - falta dependências
+- `use-news-articles.ts` - falta `fetchArticles`
+- `OnboardingProvider.tsx` - falta `completeOnboarding`
 
-### 3.2 AchievementSystem.tsx (linha 150)
-**Problema**: `useEffect has missing dependency: 'achievements'`
-**Solução**: Adicionar dependência ou usar callback
+**Solução padrão**:
 ```typescript
 // Opção 1: Adicionar dependência
-}, [currentScore, currentStreak, totalCorrectGuesses, toast, achievements]);
+useEffect(() => { ... }, [dep1, dep2, missingDep]);
 
-// Opção 2 (preferida): Usar functional update para evitar dependência
-setAchievements(prev => prev.map(achievement => {
-  // lógica usando prev ao invés de achievements externo
-}));
-```
+// Opção 2: Usar useCallback para funções
+const fetchData = useCallback(() => { ... }, []);
+useEffect(() => { fetchData(); }, [fetchData]);
 
-### 3.3 tailwind.config.ts (linha 184)
-**Problema**: `require()` proibido
-**Solução**: Usar import ESM
-```typescript
-import tailwindcssAnimate from "tailwindcss-animate";
-
-// No final:
-plugins: [tailwindcssAnimate],
+// Opção 3: Suprimir com justificativa
+// eslint-disable-next-line react-hooks/exhaustive-deps
+useEffect(() => { ... }, [intentionallyOmittedDep]);
 ```
 
 ---
 
-## Arquivos a Modificar
+## Categoria 4: `@typescript-eslint/no-empty-object-type` (2 erros)
 
-| Arquivo | Tipo de Mudança | Erros/Warnings |
-|---------|-----------------|----------------|
-| `src/components/CriticalMeta.tsx` | Tipar scheduler API | 1 erro |
-| `src/components/LazyComponents.tsx` | Tipar genéricos + extrair HOC | 2 erros, 1 warning |
-| `src/components/LazyLoad.tsx` | Tipar genéricos + extrair utils | 2 erros, 2 warnings |
-| `src/components/StructuredData.tsx` | Interfaces específicas | 2 erros |
-| `src/components/achievements/AchievementSystem.tsx` | Corrigir dependências | 1 warning |
-| `src/components/achievements/AchievementSystemProvider.tsx` | Tipar + extrair hook | 1 erro, 1 warning |
-| `src/components/achievements/AchievementsGrid.tsx` | Bloco no case | 1 erro |
-| `src/components/admin/PlayerPerformanceAnalysis.tsx` | Tipar Player | 1 erro |
-| `src/components/admin/PlayersManagement.tsx` | Tipar DifficultyLevel | 1 erro |
-| `src/components/admin/analytics/ScoreDistributionChart.tsx` | Tipar props Recharts | 1 erro |
-| `src/utils/sentry.ts` | Interfaces Performance + genéricos | 4 erros |
-| `src/utils/statistics-converter.ts` | Tipar objeto | 1 erro |
-| `src/utils/validation.ts` | ZodRawShape | 1 erro |
-| `src/utils/validation/dataValidators.ts` | ValidationResult genérico | 5 erros |
-| `src/utils/validation/__tests__/dataValidators-expanded.test.ts` | Type assertions corretas | 3 erros |
-| `supabase/functions/rotate-daily-challenges/index.ts` | Tipar catch error | 1 erro |
-| `supabase/functions/weekly-image-audit/index.ts` | Tipar supabase + catch | 2 erros |
-| `tailwind.config.ts` | Import ESM | 1 erro |
+### 4.1 `src/components/ui/command.tsx` (linha 24)
+```typescript
+// De:
+interface CommandDialogProps extends DialogProps {}
 
-**Novos arquivos a criar:**
-- `src/utils/lazy-preload.ts` (extraído de LazyComponents)
-- `src/utils/lazy-load-utils.ts` (extraído de LazyLoad)
-- `src/hooks/use-achievement-system.ts` (extraído de Provider)
-- `src/types/window.d.ts` (extensões globais de Window)
+// Para:
+type CommandDialogProps = DialogProps;
+```
+
+### 4.2 `src/components/ui/textarea.tsx` (linha 5)
+```typescript
+// De:
+export interface TextareaProps 
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+
+// Para:
+export type TextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+```
 
 ---
 
-## Detalhes Técnicos
+## Categoria 5: Outros Erros (8 erros)
 
-### Tipos Globais para Window Extensions
-Criar `src/types/window.d.ts`:
+### 5.1 `@typescript-eslint/no-require-imports` (1 erro)
+**Arquivo**: `src/utils/fallback-images/index.ts` (linha 27)
 ```typescript
-interface SchedulerAPI {
-  postTask: (
-    callback: () => void, 
-    options?: { priority: 'background' | 'user-visible' | 'user-blocking' }
-  ) => void;
-}
+// De:
+const { getFallbackSvg } = require('./fluminenseSvg');
 
-interface PerformanceWithMemory extends Performance {
-  memory?: {
-    usedJSHeapSize: number;
-    totalJSHeapSize: number;
-  };
-}
-
-declare global {
-  interface Window {
-    scheduler?: SchedulerAPI;
-    testSentry?: () => void;
-  }
-}
-
-export {};
+// Para:
+import { getFallbackSvg } from './fluminenseSvg';
 ```
 
-### ValidationResult Genérico
-O tipo `ValidationResult<T>` permite tipagem específica para cada validator:
-- `validateNumber` retorna `ValidationResult<number>`
-- `validatePlayerData` retorna `ValidationResult<Player>`
-- Mantém compatibilidade com código existente via default `T = unknown`
+### 5.2 `@typescript-eslint/ban-ts-comment` (3 erros)
+**Arquivos**: Testes usando `@ts-ignore`
+```typescript
+// De:
+// @ts-ignore
+
+// Para:
+// @ts-expect-error - [razão específica]
+```
+
+### 5.3 `@typescript-eslint/no-unused-expressions` (2 erros)
+**Arquivo**: `src/hooks/use-touch-gestures.ts` (linhas 75, 77)
+```typescript
+// De:
+deltaX > 0 ? onSwipeRight?.() : onSwipeLeft?.();
+
+// Para:
+if (deltaX > 0) {
+  onSwipeRight?.();
+} else {
+  onSwipeLeft?.();
+}
+```
+
+### 5.4 `no-async-promise-executor` (1 erro)
+**Arquivo**: `src/utils/cache/UnifiedCacheManager.ts` (linha 108)
+```typescript
+// De:
+return new Promise(async (resolve, reject) => { ... });
+
+// Para:
+async preload<T>(...): Promise<T> {
+  const cached = this.get<T>(key);
+  if (cached) return cached;
+  const data = await dataLoader();
+  this.set(key, data, ttl);
+  return data;
+}
+```
+
+### 5.5 `no-useless-escape` (1 erro)
+**Arquivo**: `src/utils/htmlSanitizer.tsx` (linha 13)
+```typescript
+// Remover escape desnecessário de '-' na regex
+```
+
+---
+
+## Categoria 6: Fast Refresh - Componentes em arquivos de utils
+
+### 6.1 `src/utils/lazy-load-utils.tsx` (linha 8)
+**Problema**: Componente `LazyLoadWrapper` definido em arquivo de utils
+
+**Solução**: Mover para arquivo de componente separado ou inline no HOC
+
+### 6.2 `src/utils/htmlSanitizer.tsx` (linhas 23, 34)
+**Problema**: Componentes exportados em arquivo de utils
+
+**Solução**: Mover componentes para `src/components/sanitizer/`
+
+---
+
+## Arquivos a Modificar (Total: ~70 arquivos)
+
+| Categoria | Quantidade | Prioridade |
+|-----------|------------|------------|
+| Tipos globais e utils core | 15 | Alta |
+| Hooks | 20 | Alta |
+| Componentes | 25 | Média |
+| Testes | 15 | Baixa |
+| UI shadcn (suprimir) | 10 | Baixa |
+
+---
+
+## Novos Arquivos a Criar
+
+1. `src/types/gtag.d.ts` - Tipos para Google Analytics
+2. `src/types/performance.d.ts` - Extensões de Performance API  
+3. `src/types/touch-events.d.ts` - Tipos para eventos touch simulados
+4. `src/contexts/AchievementContext.ts` - Contexto extraído
+5. `src/components/sanitizer/SafeHtml.tsx` - Componentes movidos
 
 ---
 
 ## Ordem de Implementação
 
-1. **Primeiro**: Criar arquivos de tipos (`window.d.ts`)
-2. **Segundo**: Corrigir validadores e utilities (base para outros)
-3. **Terceiro**: Extrair HOCs/hooks para arquivos separados
-4. **Quarto**: Corrigir componentes que dependem dos novos tipos
-5. **Quinto**: Edge functions e tailwind config
-6. **Último**: Rodar `npm run lint` para validar
+1. **Fase 1**: Criar tipos globais auxiliares (`gtag.d.ts`, `performance.d.ts`)
+2. **Fase 2**: Corrigir utils core (`logger.ts`, `errorReporting.ts`, `errorMessages.ts`)
+3. **Fase 3**: Corrigir hooks principais (20 arquivos)
+4. **Fase 4**: Corrigir componentes (25 arquivos)
+5. **Fase 5**: Suprimir warnings de shadcn/ui com comentários ESLint
+6. **Fase 6**: Corrigir testes com type assertions corretas
+7. **Fase 7**: Extrair contextos e componentes de arquivos de utils
 
 ---
 
 ## Resultado Esperado
 
 - **0 erros** de ESLint
-- **0 warnings** de Fast Refresh (componentes separados de utilities)
-- Possíveis warnings restantes: `react-hooks/exhaustive-deps` se optar por suprimir
-- Código mais seguro com tipagem forte
-- Melhor experiência de desenvolvimento com autocomplete
+- **~10 warnings** restantes (shadcn/ui - aceitáveis com supressão documentada)
+- Código com tipagem forte em todo o projeto
+- Conformidade total com React Fast Refresh
+- Build e testes E2E passando no GitHub Actions
