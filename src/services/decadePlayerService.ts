@@ -53,7 +53,7 @@ export const decadePlayerService = {
         achievements: Array.isArray(player.achievements) ? player.achievements : [],
         nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
         statistics: convertStatistics(player.statistics),
-        difficulty_level: player.difficulty_level as any || 'medio',
+        difficulty_level: (player.difficulty_level as DecadePlayer['difficulty_level']) || 'medio',
         difficulty_score: player.difficulty_score || 50,
         difficulty_confidence: player.difficulty_confidence || 0,
         total_attempts: player.total_attempts || 0,

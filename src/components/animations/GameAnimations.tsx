@@ -73,8 +73,11 @@ export const AnimatedContainer = ({
   
   return (
     <motion.div
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       initial={animation.initial as any}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       animate={animation.animate as any}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       exit={animation.exit as any}
       transition={{ ...animation.transition, delay }}
       className={className}

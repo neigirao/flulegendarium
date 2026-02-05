@@ -21,7 +21,7 @@ export function useOrientation(): OrientationState {
       };
     }
 
-    const angle = screen.orientation?.angle || (window as any).orientation || 0;
+    const angle = screen.orientation?.angle || (window as unknown as { orientation?: number }).orientation || 0;
     const isLandscape = Math.abs(angle) === 90;
     
     return {
@@ -36,7 +36,7 @@ export function useOrientation(): OrientationState {
     const handleOrientationChange = () => {
       // Small delay to ensure screen dimensions are updated
       setTimeout(() => {
-        const angle = screen.orientation?.angle || (window as any).orientation || 0;
+        const angle = screen.orientation?.angle || (window as unknown as { orientation?: number }).orientation || 0;
         const isLandscape = Math.abs(angle) === 90;
         
         setOrientation({

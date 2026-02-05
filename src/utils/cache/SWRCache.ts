@@ -104,7 +104,7 @@ function revalidateInBackground<T>(
   };
 
   if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(doRevalidate, { timeout: 5000 });
+    window.requestIdleCallback(doRevalidate, { timeout: 5000 });
   } else {
     setTimeout(doRevalidate, 100);
   }

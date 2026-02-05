@@ -142,7 +142,7 @@ export const dbPerformance = {
   },
 
   // Batch multiple queries efficiently
-  async batchQueries<T extends Record<string, () => Promise<any>>>(
+  async batchQueries<T extends Record<string, () => Promise<unknown>>>(
     queries: T
   ): Promise<{ [K in keyof T]: Awaited<ReturnType<T[K]>> }> {
     const queryEntries = Object.entries(queries);
@@ -156,7 +156,7 @@ export const dbPerformance = {
       const duration = performance.now() - startTime;
       console.log(`📊 Batch query completed in ${duration.toFixed(2)}ms`);
       
-      return Object.fromEntries(results) as any;
+      return Object.fromEntries(results) as { [K in keyof T]: Awaited<ReturnType<T[K]>> };
     } catch (error) {
       console.error('❌ Batch query failed:', error);
       throw error;
@@ -169,11 +169,11 @@ export const realtimeOptimization = {
   // Throttled real-time updates
   createThrottledSubscription(
     table: string,
-    callback: (payload: any) => void,
+    callback: (payload: unknown) => void,
     throttleMs = 1000
   ) {
     let lastUpdate = 0;
-    let pendingUpdate: any = null;
+    let pendingUpdate: unknown = null;
     
     return supabase
       .channel(`throttled_${table}`)
@@ -208,7 +208,7 @@ export const realtimeOptimization = {
   },
 
   // Optimized presence tracking
-  createOptimizedPresence(channelName: string, userInfo: any) {
+  createOptimizedPresence(channelName: string, userInfo: { id: string }) {
     return supabase
       .channel(channelName, {
         config: {

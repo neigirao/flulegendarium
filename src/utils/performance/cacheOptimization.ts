@@ -22,7 +22,7 @@ export const createOptimizedQueryClient = () => {
         // Force refresh on mount in iframe context
         refetchOnMount: inIframe ? 'always' : true,
         // Retry failed requests
-        retry: (failureCount, error: any) => {
+        retry: (failureCount, error: Error & { status?: number }) => {
           // Don't retry on 4xx errors
           if (error?.status >= 400 && error?.status < 500) {
             return false;
@@ -75,7 +75,7 @@ export const queryKeys = {
   players: {
     all: ['players'] as const,
     lists: () => [...queryKeys.players.all, 'list'] as const,
-    list: (filters: Record<string, any>) => [...queryKeys.players.lists(), filters] as const,
+    list: (filters: Record<string, unknown>) => [...queryKeys.players.lists(), filters] as const,
     details: () => [...queryKeys.players.all, 'detail'] as const,
     detail: (id: string) => [...queryKeys.players.details(), id] as const,
   },
@@ -89,7 +89,7 @@ export const queryKeys = {
   rankings: {
     all: ['rankings'] as const,
     global: () => [...queryKeys.rankings.all, 'global'] as const,
-    filtered: (filters: Record<string, any>) => [...queryKeys.rankings.all, 'filtered', filters] as const,
+    filtered: (filters: Record<string, unknown>) => [...queryKeys.rankings.all, 'filtered', filters] as const,
   },
   
   liveStats: {

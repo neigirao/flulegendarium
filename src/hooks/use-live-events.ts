@@ -10,7 +10,7 @@ interface LiveEvent {
   start_time: string;
   end_time?: string;
   is_active: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export const useLiveEvents = () => {

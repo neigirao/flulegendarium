@@ -54,7 +54,7 @@ function prefetchRoute(route: string): void {
   };
 
   if ('requestIdleCallback' in window) {
-    (window as any).requestIdleCallback(doPrefetch, { timeout: 3000 });
+    window.requestIdleCallback(doPrefetch, { timeout: 3000 });
   } else {
     setTimeout(doPrefetch, 200);
   }

@@ -50,7 +50,7 @@ export const useDailyChallenges = () => {
           const progressMap = progressData.reduce((acc, progress) => {
             acc[progress.challenge_id] = progress;
             return acc;
-          }, {} as Record<string, any>);
+          }, {} as Record<string, { current_progress?: number; is_completed?: boolean }>);
 
           challengesWithProgress = challengesData.map(challenge => ({
             ...challenge,

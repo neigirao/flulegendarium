@@ -110,17 +110,18 @@ export const CoreWebVitalsOptimizer = ({ children }: CoreWebVitalsOptimizerProps
     try {
       observerRef.current = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          if (entry.entryType === 'layout-shift' && !(entry as any).hadRecentInput) {
-            layoutShiftTracker.current += (entry as any).value;
+          const layoutEntry = entry as LayoutShiftEntry;
+          if (entry.entryType === 'layout-shift' && !layoutEntry.hadRecentInput) {
+            layoutShiftTracker.current += layoutEntry.value;
             
             // Report high layout shift values
-            if ((entry as any).value > 0.1) {
+            if (layoutEntry.value > 0.1) {
               console.warn('High layout shift detected:', entry);
               
               if (typeof window !== 'undefined' && window.gtag) {
                 window.gtag('event', 'web_vitals', {
                   name: 'CLS_high',
-                  value: Math.round((entry as any).value * 1000),
+                  value: Math.round(layoutEntry.value * 1000),
                   metric_id: 'cls-high'
                 });
               }

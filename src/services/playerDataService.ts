@@ -54,7 +54,7 @@ export const collectPlayerData = async (): Promise<Player[]> => {
     id: player.id,
     name: player.name,
     position: player.position,
-    image_url: getReliableImageUrl(player as any),
+    image_url: getReliableImageUrl(player as Parameters<typeof getReliableImageUrl>[0]),
     fun_fact: player.fun_fact,
     achievements: player.achievements,
     year_highlight: player.year_highlight,
