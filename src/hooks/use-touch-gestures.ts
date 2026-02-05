@@ -28,7 +28,7 @@ interface UseTouchProps {
   disabled?: boolean;
 }
 
-interface TouchEventLike {
+export interface TouchEventLike {
   touches?: TouchList;
   changedTouches?: TouchList;
   clientX?: number;

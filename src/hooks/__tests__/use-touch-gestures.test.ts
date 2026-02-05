@@ -1,6 +1,39 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useTouch, useTouchGestures } from '../use-touch-gestures';
+import { useTouch, useTouchGestures, TouchEventLike } from '../use-touch-gestures';
+
+// Helper to create mock touch event data with proper TouchEventLike typing
+const createMockTouchEvent = (
+  touches: { clientX: number; clientY: number }[], 
+  isEnd = false
+): TouchEventLike => {
+  const touchData = touches.map((t, i) => ({
+    ...t,
+    identifier: i,
+    target: document.body as EventTarget,
+    screenX: t.clientX,
+    screenY: t.clientY,
+    pageX: t.clientX,
+    pageY: t.clientY,
+    radiusX: 0,
+    radiusY: 0,
+    rotationAngle: 0,
+    force: 0
+  }));
+  
+  // Create a TouchList-like array with item method
+  const createTouchList = (items: typeof touchData) => {
+    const list = items as unknown as TouchList;
+    (list as unknown as { item: (index: number) => Touch | null }).item = (index: number) => items[index] as unknown as Touch || null;
+    (list as unknown as { length: number }).length = items.length;
+    return list;
+  };
+  
+  if (isEnd) {
+    return { changedTouches: createTouchList(touchData) };
+  }
+  return { touches: createTouchList(touchData) };
+};
 
 describe('useTouch', () => {
   it('should initialize with default gesture state', () => {
@@ -24,13 +57,8 @@ describe('useTouch', () => {
     const { result } = renderHook(() => useTouch({ onTap }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 100, clientY: 100 }]
-      });
-      
-      result.current.endTouch({
-        changedTouches: [{ clientX: 102, clientY: 102 }]
-      });
+      result.current.startTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }]));
+      result.current.endTouch(createMockTouchEvent([{ clientX: 102, clientY: 102 }], true));
     });
 
     expect(onTap).toHaveBeenCalled();
@@ -45,13 +73,8 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 100, clientY: 100 }]
-      });
-      
-      result.current.endTouch({
-        changedTouches: [{ clientX: 200, clientY: 100 }]
-      });
+      result.current.startTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }]));
+      result.current.endTouch(createMockTouchEvent([{ clientX: 200, clientY: 100 }], true));
     });
 
     expect(onSwipeRight).toHaveBeenCalled();
@@ -66,13 +89,8 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 200, clientY: 100 }]
-      });
-      
-      result.current.endTouch({
-        changedTouches: [{ clientX: 100, clientY: 100 }]
-      });
+      result.current.startTouch(createMockTouchEvent([{ clientX: 200, clientY: 100 }]));
+      result.current.endTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }], true));
     });
 
     expect(onSwipeLeft).toHaveBeenCalled();
@@ -87,13 +105,8 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 100, clientY: 200 }]
-      });
-      
-      result.current.endTouch({
-        changedTouches: [{ clientX: 100, clientY: 100 }]
-      });
+      result.current.startTouch(createMockTouchEvent([{ clientX: 100, clientY: 200 }]));
+      result.current.endTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }], true));
     });
 
     expect(onSwipeUp).toHaveBeenCalled();
@@ -108,13 +121,8 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 100, clientY: 100 }]
-      });
-      
-      result.current.endTouch({
-        changedTouches: [{ clientX: 100, clientY: 200 }]
-      });
+      result.current.startTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }]));
+      result.current.endTouch(createMockTouchEvent([{ clientX: 100, clientY: 200 }], true));
     });
 
     expect(onSwipeDown).toHaveBeenCalled();
@@ -131,13 +139,8 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 100, clientY: 100 }]
-      });
-      
-      result.current.endTouch({
-        changedTouches: [{ clientX: 200, clientY: 100 }]
-      });
+      result.current.startTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }]));
+      result.current.endTouch(createMockTouchEvent([{ clientX: 200, clientY: 100 }], true));
     });
 
     expect(onTap).not.toHaveBeenCalled();
@@ -155,14 +158,9 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 100, clientY: 100 }]
-      });
-      
+      result.current.startTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }]));
       // Move 30px - above tap threshold but below swipe threshold
-      result.current.endTouch({
-        changedTouches: [{ clientX: 130, clientY: 100 }]
-      });
+      result.current.endTouch(createMockTouchEvent([{ clientX: 130, clientY: 100 }], true));
     });
 
     expect(onSwipeRight).not.toHaveBeenCalled();
@@ -200,9 +198,7 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.endTouch({
-        changedTouches: [{ clientX: 200, clientY: 100 }]
-      });
+      result.current.endTouch(createMockTouchEvent([{ clientX: 200, clientY: 100 }], true));
     });
 
     expect(onTap).not.toHaveBeenCalled();
@@ -220,14 +216,9 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 100, clientY: 100 }]
-      });
-      
+      result.current.startTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }]));
       // Move more horizontally than vertically
-      result.current.endTouch({
-        changedTouches: [{ clientX: 200, clientY: 130 }]
-      });
+      result.current.endTouch(createMockTouchEvent([{ clientX: 200, clientY: 130 }], true));
     });
 
     expect(onSwipeRight).toHaveBeenCalled();
@@ -245,14 +236,9 @@ describe('useTouch', () => {
     }));
     
     act(() => {
-      result.current.startTouch({
-        touches: [{ clientX: 100, clientY: 100 }]
-      });
-      
+      result.current.startTouch(createMockTouchEvent([{ clientX: 100, clientY: 100 }]));
       // Move more vertically than horizontally
-      result.current.endTouch({
-        changedTouches: [{ clientX: 130, clientY: 200 }]
-      });
+      result.current.endTouch(createMockTouchEvent([{ clientX: 130, clientY: 200 }], true));
     });
 
     expect(onSwipeDown).toHaveBeenCalled();

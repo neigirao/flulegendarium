@@ -63,7 +63,7 @@ export class ImageOptimizer {
       // Configurar atributos de performance
       img.decoding = 'async';
       img.loading = priority === 'high' ? 'eager' : 'lazy';
-      (img as any).fetchPriority = priority;
+      (img as HTMLImageElement & { fetchPriority?: 'high' | 'low' }).fetchPriority = priority;
 
       img.onload = () => {
         // Adicionar ao cache com limpeza automática

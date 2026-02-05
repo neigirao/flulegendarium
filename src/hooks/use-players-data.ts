@@ -15,7 +15,7 @@ interface DatabasePlayer {
   fun_fact: string | null;
   achievements: string[] | null;
   nicknames: string[] | null;
-  statistics: any;
+  statistics: unknown;
   difficulty_level: string | null;
   difficulty_score: number | null;
   difficulty_confidence: number | null;
@@ -101,7 +101,7 @@ export const usePlayersData = () => {
       );
     },
     staleTime: 5 * 60 * 1000,
-    retry: (failureCount, error: any) => {
+    retry: (failureCount, error: Error & { status?: number }) => {
       // Don't retry on 4xx errors  
       if (error?.status >= 400 && error?.status < 500) {
         return false;
@@ -127,8 +127,8 @@ export const usePlayersData = () => {
         fun_fact: player.fun_fact || '',
         achievements: Array.isArray(player.achievements) ? player.achievements : [],
         nicknames: Array.isArray(player.nicknames) ? player.nicknames : [],
-        statistics: convertStatistics(player.statistics),
-        difficulty_level: player.difficulty_level as any || 'medio',
+        statistics: convertStatistics(player.statistics as Parameters<typeof convertStatistics>[0]),
+        difficulty_level: (player.difficulty_level as Player['difficulty_level']) || 'medio',
         difficulty_score: player.difficulty_score || 50,
         difficulty_confidence: player.difficulty_confidence || 0,
         total_attempts: player.total_attempts || 0,

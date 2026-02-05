@@ -96,7 +96,7 @@ export const adminBusinessIntelligence = {
         }
         
         return acc;
-      }, {} as Record<string, any>);
+      }, {} as Record<string, { total_games: number; recent_games: number; total_score: number; total_duration: number; accuracy: number; last_activity: Date }>);
 
       // Segmentar usuários baseado em comportamento
       const segments: UserSegment[] = [
@@ -167,7 +167,7 @@ export const adminBusinessIntelligence = {
       let totalAccuracySum = 0;
       
       // Classificar usuários em segmentos
-      Object.entries(userMetrics).forEach(([userId, metrics]: [string, any]) => {
+      Object.entries(userMetrics).forEach(([_userId, metrics]) => {
         const avgScore = metrics.total_score / metrics.total_games;
         const avgDuration = metrics.total_duration / metrics.total_games;
         const avgAccuracy = metrics.accuracy / metrics.total_games;

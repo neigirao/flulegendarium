@@ -5,7 +5,7 @@ export interface ErrorContext {
   component?: string;
   action?: string;
   userId?: string;
-  gameState?: any;
+  gameState?: Record<string, unknown>;
   timestamp?: string;
 }
 
@@ -248,7 +248,7 @@ export const logStructuredError = (error: DetailedError): void => {
   const logLevel = logMethods[error.severity];
   
   // Use type assertion to access console methods safely
-  const logMethod = (console as any)[logLevel];
+  const logMethod = console[logLevel as keyof typeof console] as ((message: string, data?: unknown) => void) | undefined;
   if (typeof logMethod === 'function') {
     logMethod(`🚨 [${error.code}] ${error.title}:`, {
       message: error.message,

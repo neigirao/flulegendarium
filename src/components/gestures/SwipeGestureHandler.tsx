@@ -70,20 +70,20 @@ export const SwipeGestureHandler: React.FC<SwipeGestureHandlerProps> = ({
     // Mouse Events (para desktop)
     const handleMouseDown = (e: MouseEvent) => {
       setIsPressed(true);
-      const touchEvent = {
+      const syntheticTouch = {
         touches: [{ clientX: e.clientX, clientY: e.clientY }],
         preventDefault: e.preventDefault.bind(e)
-      } as any;
-      startTouch(touchEvent);
+      } as unknown as TouchEvent;
+      startTouch(syntheticTouch);
     };
 
     const handleMouseUp = (e: MouseEvent) => {
       setIsPressed(false);
-      const touchEvent = {
+      const syntheticTouch = {
         changedTouches: [{ clientX: e.clientX, clientY: e.clientY }],
         preventDefault: e.preventDefault.bind(e)
-      } as any;
-      endTouch(touchEvent);
+      } as unknown as TouchEvent;
+      endTouch(syntheticTouch);
     };
 
     // Adicionar event listeners

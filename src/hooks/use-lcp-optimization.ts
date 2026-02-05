@@ -24,7 +24,7 @@ export const useLCPOptimization = () => {
             lcpMetrics.current = {
               value: lcp,
               rating,
-              element: (entry as any).element?.tagName
+              element: (entry as PerformanceEntry & { element?: HTMLElement }).element?.tagName
             };
             
             logger.info(`LCP: ${lcp.toFixed(2)}ms (${rating})`, 'LCP_OPTIMIZATION');
@@ -135,12 +135,13 @@ export const useLCPOptimization = () => {
     try {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1] as any;
+        const lastEntry = entries[entries.length - 1] as PerformanceEntry & { element?: HTMLElement; size?: number };
         
         if (lastEntry?.element) {
+          const el = lastEntry.element as HTMLImageElement;
           logger.debug('LCP Element', 'LCP_OPTIMIZATION', {
             tag: lastEntry.element.tagName,
-            src: lastEntry.element.src || lastEntry.element.currentSrc || 'N/A',
+            src: el.src || el.currentSrc || 'N/A',
             size: lastEntry.size
           });
         }

@@ -94,6 +94,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
       title: "Tempo Esgotado!",
       description: `Era ${yearsDisplay}. Sua pontuação final: ${score}`,
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentJersey, gameOver, score]);
 
   // Hooks
@@ -185,7 +186,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     // Try difficulty-based selection first
     let selectedJersey = selectJerseyByDifficulty(
       jerseys, 
-      currentDifficulty.level as any,
+      currentDifficulty.level as Jersey['difficulty_level'],
       usedJerseyIds.current
     );
     
@@ -280,7 +281,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
         isCorrect,
         yearDifference,
         pointsEarned: pointsEarned + bonus,
-        difficulty: currentDifficulty.level as any,
+        difficulty: currentDifficulty.level as JerseyGuessHistoryEntry['difficulty'],
         timeRemaining,
         options: currentOptions,
         selectedOption: selectedYear

@@ -238,7 +238,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     // 3. Garante que a dificuldade do banco seja respeitada sempre que possível
     const selectedPlayer = selectPlayerByDifficulty(
       players, 
-      currentDifficulty.level as any,
+      currentDifficulty.level as Player['difficulty_level'],
       usedPlayerIds.current
     );
     

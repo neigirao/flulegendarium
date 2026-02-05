@@ -89,7 +89,7 @@ export const useJerseysData = () => {
       }
     },
     staleTime: 5 * 60 * 1000,
-    retry: (failureCount, error: any) => {
+    retry: (failureCount, error: Error & { status?: number }) => {
       if (error?.status >= 400 && error?.status < 500) {
         return false;
       }
@@ -114,7 +114,7 @@ export const useJerseysData = () => {
       title: jersey.title,
       fun_fact: jersey.fun_fact,
       nicknames: Array.isArray(jersey.nicknames) ? jersey.nicknames : [],
-      difficulty_level: jersey.difficulty_level as any || 'medio',
+      difficulty_level: (jersey.difficulty_level as Jersey['difficulty_level']) || 'medio',
       difficulty_score: jersey.difficulty_score || 50,
       difficulty_confidence: jersey.difficulty_confidence || 0,
       total_attempts: jersey.total_attempts || 0,
