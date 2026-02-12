@@ -14,7 +14,7 @@ interface State {
   error: Error | null;
 }
 
-// Wrapper component to use hooks
+// eslint-disable-next-line react-refresh/only-export-components
 const GameErrorFallback = ({ onRetry, onGoBack }: { onRetry: () => void; onGoBack: () => void }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-flu-verde/20 to-white flex items-center justify-center p-4">
@@ -79,8 +79,8 @@ export class GameErrorBoundary extends Component<Props, State> {
     console.error('GameErrorBoundary caught an error:', error, errorInfo);
     
     // Track game errors for analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'game_error', {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'game_error', {
         error_message: error.message,
         component_stack: errorInfo.componentStack
       });

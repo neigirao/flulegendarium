@@ -57,7 +57,7 @@ export const PWAInstallPrompt = () => {
         logger.info('App já está instalado', 'PWAInstall');
         return true;
       }
-      if ((window.navigator as any).standalone === true) {
+      if ((window.navigator as unknown as { standalone?: boolean }).standalone === true) {
         logger.info('App já está instalado (iOS)', 'PWAInstall');
         return true;
       }
@@ -80,6 +80,7 @@ export const PWAInstallPrompt = () => {
       clearTimeout(showPromptTimer);
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleInstall = async () => {

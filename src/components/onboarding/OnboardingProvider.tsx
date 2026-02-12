@@ -68,6 +68,7 @@ export const OnboardingProvider = ({ children }: OnboardingProviderProps) => {
         completeOnboarding();
       }
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentStep]);
 
   const skipOnboarding = useCallback(() => {
@@ -113,6 +114,7 @@ export const OnboardingProvider = ({ children }: OnboardingProviderProps) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useOnboarding = () => {
   const context = useContext(OnboardingContext);
   if (context === undefined) {

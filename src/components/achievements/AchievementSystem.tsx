@@ -147,6 +147,7 @@ export const AchievementSystem = ({
     });
     
     setAchievements(updatedAchievements);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentScore, currentStreak, totalCorrectGuesses, toast]);
 
   return (

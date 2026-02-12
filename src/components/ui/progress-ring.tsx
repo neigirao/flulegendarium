@@ -159,4 +159,5 @@ const ProgressRing = React.forwardRef<HTMLDivElement, ProgressRingProps>(
 )
 ProgressRing.displayName = "ProgressRing"
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { ProgressRing, progressRingVariants }

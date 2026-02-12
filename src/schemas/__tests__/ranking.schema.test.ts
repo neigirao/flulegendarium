@@ -139,8 +139,8 @@ describe('CreateRankingEntrySchema', () => {
 
     const result = CreateRankingEntrySchema.parse(newEntry);
     expect(result.playerName).toBe('New Player');
-    expect((result as any).id).toBeUndefined();
-    expect((result as any).createdAt).toBeUndefined();
+    expect((result as unknown as Record<string, unknown>).id).toBeUndefined();
+    expect((result as unknown as Record<string, unknown>).createdAt).toBeUndefined();
   });
 
   it('should strip id if provided', () => {
@@ -151,7 +151,7 @@ describe('CreateRankingEntrySchema', () => {
     };
 
     const result = CreateRankingEntrySchema.parse(entryWithId);
-    expect((result as any).id).toBeUndefined();
+    expect((result as unknown as Record<string, unknown>).id).toBeUndefined();
   });
 });
 

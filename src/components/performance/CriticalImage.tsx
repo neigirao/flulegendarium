@@ -77,8 +77,8 @@ export const CriticalImage = memo(({
     // Report LCP if this is a candidate
     if (isLCPCandidate) {
       console.log('📊 LCP: Reporting successful load of critical image');
-      if (typeof window !== 'undefined' && (window as any).gtag) {
-        (window as any).gtag('event', 'lcp_image_loaded', {
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'lcp_image_loaded', {
           event_category: 'Performance',
           event_label: 'critical_image',
           value: performance.now()

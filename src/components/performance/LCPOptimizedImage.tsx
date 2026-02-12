@@ -182,6 +182,7 @@ LCPOptimizedImage.displayName = 'LCPOptimizedImage';
  * Preload critical images for LCP optimization
  * Call this in RootLayout or page components for hero images
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function preloadCriticalImage(
   src: string, 
   options: { width?: number; quality?: number } = {}
@@ -213,6 +214,7 @@ export function preloadCriticalImage(
 /**
  * Preload multiple images with priority ordering
  */
+// eslint-disable-next-line react-refresh/only-export-components
 export function preloadImageBatch(
   urls: string[],
   options: { priority?: 'high' | 'low'; maxConcurrent?: number } = {}

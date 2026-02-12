@@ -113,7 +113,7 @@ export const PerformanceBudgetMonitor = () => {
           
           const observer = new PerformanceObserver((list) => {
             for (const entry of list.getEntries()) {
-              const layoutShift = entry as any;
+              const layoutShift = entry as LayoutShiftEntry;
               if (!layoutShift.hadRecentInput) {
                 clsValue += layoutShift.value;
               }

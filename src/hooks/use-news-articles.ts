@@ -116,6 +116,7 @@ export const useNewsArticles = (filters: NewsFilters = {}) => {
 
   useEffect(() => {
     fetchArticles();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters.searchTerm, filters.categoryId, filters.page, filters.limit, filters.featured]);
 
   return {

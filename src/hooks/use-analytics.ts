@@ -55,6 +55,7 @@ export const useAnalytics = () => {
       window.removeEventListener('beforeunload', handleUnload);
       if (batchTimer) clearTimeout(batchTimer);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const trackPageView = (page: string) => {

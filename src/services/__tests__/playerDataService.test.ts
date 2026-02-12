@@ -264,7 +264,7 @@ describe('playerDataService', () => {
       }));
       vi.mocked(supabase.from).mockReturnValue({
         update: mockUpdate,
-      } as any);
+      } as unknown as ReturnType<typeof supabase.from>);
 
       await expect(updatePlayerImage('player-1', 'https://new-url.com/image.jpg')).resolves.not.toThrow();
     });
@@ -276,7 +276,7 @@ describe('playerDataService', () => {
         update: vi.fn(() => ({
           eq: vi.fn(() => Promise.resolve({ error: new Error('Update failed') })),
         })),
-      } as any);
+      } as unknown as ReturnType<typeof supabase.from>);
 
       await expect(updatePlayerImage('player-1', 'https://new-url.com/image.jpg')).rejects.toThrow();
     });
@@ -288,7 +288,7 @@ describe('playerDataService', () => {
       const mockUpdate = vi.fn(() => ({ eq: mockEq }));
       vi.mocked(supabase.from).mockReturnValue({
         update: mockUpdate,
-      } as any);
+      } as unknown as ReturnType<typeof supabase.from>);
 
       await updatePlayerImage('player-123', 'https://example.com/new.jpg');
 
@@ -302,7 +302,7 @@ describe('playerDataService', () => {
       const mockUpdate = vi.fn(() => ({ eq: mockEq }));
       vi.mocked(supabase.from).mockReturnValue({
         update: mockUpdate,
-      } as any);
+      } as unknown as ReturnType<typeof supabase.from>);
 
       await updatePlayerImage('player-xyz', 'https://example.com/new.jpg');
 
@@ -316,7 +316,7 @@ describe('playerDataService', () => {
       const mockUpdate = vi.fn(() => ({ eq: mockEq }));
       vi.mocked(supabase.from).mockReturnValue({
         update: mockUpdate,
-      } as any);
+      } as unknown as ReturnType<typeof supabase.from>);
 
       const newUrl = 'https://storage.example.com/players/new-image.png';
       await updatePlayerImage('player-1', newUrl);

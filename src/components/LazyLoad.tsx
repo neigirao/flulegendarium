@@ -41,5 +41,5 @@ export const LazyLoad: React.FC<LazyLoadProps> = ({
   );
 };
 
-// Re-export utilities from utils for backwards compatibility
+// eslint-disable-next-line react-refresh/only-export-components
 export { withLazyLoad, createLazyComponent } from '@/utils/lazy-load-utils.tsx';

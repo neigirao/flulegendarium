@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import type { DifficultyLevel } from "@/types/guess-game";
 import { useAdaptiveGuessGame, useSkipPlayer } from "@/hooks/game";
 import { usePlayersData } from "@/hooks/data";
 import { useAuth } from "@/hooks/auth";
@@ -375,7 +376,7 @@ const AdaptiveGameContainer = () => {
         
         <div className="mt-6 space-y-6">
           <AdaptiveDifficultyIndicator 
-            currentDifficulty={currentDifficulty.level as any}
+            currentDifficulty={currentDifficulty.level as DifficultyLevel}
             progress={difficultyProgress}
           />
 
@@ -385,7 +386,7 @@ const AdaptiveGameContainer = () => {
                 key={`${gameKey}-${currentPlayer.id}`}
                 player={currentPlayer}
                 onImageFixed={handleImageLoaded}
-                difficulty={currentDifficulty.level as any}
+                difficulty={currentDifficulty.level as DifficultyLevel}
               />
               
               {/* GuessForm com CoachMark */}
@@ -468,8 +469,8 @@ const AdaptiveGameContainer = () => {
         <AdaptiveProgressionNotification
           changeInfo={{
             direction: 'up',
-            newLevel: difficultyChangeInfo.newLevel as any,
-            oldLevel: difficultyChangeInfo.oldLevel as any,
+            newLevel: difficultyChangeInfo.newLevel as DifficultyLevel,
+            oldLevel: difficultyChangeInfo.oldLevel as DifficultyLevel,
             reason: difficultyChangeInfo.reason
           }}
           onClose={clearDifficultyChange}

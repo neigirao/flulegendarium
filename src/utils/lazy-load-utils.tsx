@@ -5,6 +5,7 @@ interface LazyLoadFallbackProps {
   children: React.ReactNode;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 const LazyLoadWrapper = ({ fallback, children }: LazyLoadFallbackProps) => (
   <Suspense fallback={fallback || <div className="animate-pulse bg-muted h-32 rounded-lg" />}>
     {children}

@@ -19,7 +19,7 @@ interface ShareSystem2Props {
   correctGuesses: number;
   gameMode?: string;
   streak?: number;
-  achievements?: any[];
+  achievements?: { id: string; name?: string; title?: string; icon?: string }[];
   playerName?: string;
 }
 

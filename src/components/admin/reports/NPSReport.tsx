@@ -56,7 +56,7 @@ export const NPSReport = ({ days = 30 }: NPSReportProps) => {
           };
         }
 
-        const ratings = feedbacks.map((f: any) => f.rating);
+        const ratings = feedbacks.map((f: { rating: number }) => f.rating);
         const promoters = ratings.filter(r => r >= 9).length;
         const passives = ratings.filter(r => r >= 7 && r <= 8).length;
         const detractors = ratings.filter(r => r <= 6).length;

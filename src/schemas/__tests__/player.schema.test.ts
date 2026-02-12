@@ -170,7 +170,7 @@ describe('CreatePlayerSchema', () => {
 
     const result = CreatePlayerSchema.parse(newPlayer);
     expect(result.name).toBe('Novo Jogador');
-    expect((result as any).id).toBeUndefined();
+    expect((result as unknown as Record<string, unknown>).id).toBeUndefined();
   });
 
   it('should omit tracking fields', () => {
@@ -184,8 +184,8 @@ describe('CreatePlayerSchema', () => {
     };
 
     const result = CreatePlayerSchema.parse(newPlayer);
-    expect((result as any).total_attempts).toBeUndefined();
-    expect((result as any).correct_attempts).toBeUndefined();
+    expect((result as unknown as Record<string, unknown>).total_attempts).toBeUndefined();
+    expect((result as unknown as Record<string, unknown>).correct_attempts).toBeUndefined();
   });
 });
 

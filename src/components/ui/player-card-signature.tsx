@@ -165,4 +165,5 @@ const PlayerCardSignature = React.forwardRef<HTMLDivElement, PlayerCardSignature
 )
 PlayerCardSignature.displayName = "PlayerCardSignature"
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { PlayerCardSignature, playerCardVariants }

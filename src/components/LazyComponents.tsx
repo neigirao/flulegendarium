@@ -35,5 +35,5 @@ export const LazyWrapper = ({ children, fallback }: LazyWrapperProps) => {
   );
 };
 
-// Re-export withLazyPreload from utils for backwards compatibility
+// eslint-disable-next-line react-refresh/only-export-components
 export { withLazyPreload } from '@/utils/lazy-preload.tsx';

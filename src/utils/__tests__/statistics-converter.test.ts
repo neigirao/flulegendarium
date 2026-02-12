@@ -98,25 +98,25 @@ describe('statistics-converter', () => {
 
     describe('invalid data types', () => {
       it('should return defaults for number input', () => {
-        const result = convertStatistics(42 as any);
+        const result = convertStatistics(42 as unknown as Parameters<typeof convertStatistics>[0]);
         
         expect(result).toEqual({ gols: 0, jogos: 0 });
       });
 
       it('should return defaults for boolean input', () => {
-        const result = convertStatistics(true as any);
+        const result = convertStatistics(true as unknown as Parameters<typeof convertStatistics>[0]);
         
         expect(result).toEqual({ gols: 0, jogos: 0 });
       });
 
       it('should return defaults for array input', () => {
-        const result = convertStatistics([1, 2, 3] as any);
+        const result = convertStatistics([1, 2, 3] as unknown as Parameters<typeof convertStatistics>[0]);
         
         expect(result).toEqual({ gols: 0, jogos: 0 });
       });
 
       it('should log warning for unexpected types', () => {
-        convertStatistics(42 as any);
+        convertStatistics(42 as unknown as Parameters<typeof convertStatistics>[0]);
         
         expect(console.warn).toHaveBeenCalled();
       });
@@ -197,7 +197,7 @@ describe('statistics-converter', () => {
 
     describe('type coercion', () => {
       it('should handle string numbers in gols', () => {
-        const stats = { gols: '50' as any, jogos: 100 };
+        const stats = { gols: '50' as unknown as number, jogos: 100 };
         const result = convertStatistics(stats);
         
         // String '50' is not typeof 'number', so it becomes 0
@@ -205,7 +205,7 @@ describe('statistics-converter', () => {
       });
 
       it('should handle string numbers in jogos', () => {
-        const stats = { gols: 50, jogos: '100' as any };
+        const stats = { gols: 50, jogos: '100' as unknown as number };
         const result = convertStatistics(stats);
         
         expect(result.jogos).toBe(0);

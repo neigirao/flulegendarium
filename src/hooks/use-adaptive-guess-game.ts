@@ -128,6 +128,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
 
     // Save game data
     saveGameData(score, currentDifficulty.level, currentDifficulty.multiplier);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentPlayer, gameOver, score, currentDifficulty]);
 
   // Hooks

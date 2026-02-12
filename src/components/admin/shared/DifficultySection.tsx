@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { BarChart3, HelpCircle } from "lucide-react";
 import { DifficultyLevel } from "@/types/guess-game";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DIFFICULTY_LEVELS = [
   { value: 'muito_facil' as DifficultyLevel, label: 'Muito Fácil', color: 'text-green-600', multiplier: '1x' },
   { value: 'facil' as DifficultyLevel, label: 'Fácil', color: 'text-blue-600', multiplier: '1.2x' },
@@ -13,6 +14,7 @@ export const DIFFICULTY_LEVELS = [
   { value: 'muito_dificil' as DifficultyLevel, label: 'Muito Difícil', color: 'text-red-600', multiplier: '3x' }
 ] as const;
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DIFFICULTY_LABELS: Record<DifficultyLevel, string> = {
   muito_facil: 'Muito Fácil',
   facil: 'Fácil',
