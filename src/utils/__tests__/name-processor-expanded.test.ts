@@ -168,7 +168,7 @@ describe('name-processor (expanded)', () => {
       // Actual database calls are mocked
       const { supabase } = await import('@/integrations/supabase/client');
       
-      (supabase.from as any).mockReturnValue({
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             single: vi.fn().mockResolvedValue({
@@ -188,7 +188,7 @@ describe('name-processor (expanded)', () => {
     it('should return confidence 0 on database error', async () => {
       const { supabase } = await import('@/integrations/supabase/client');
       
-      (supabase.from as any).mockReturnValue({
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             single: vi.fn().mockResolvedValue({
@@ -208,7 +208,7 @@ describe('name-processor (expanded)', () => {
     it('should return confidence 0.9 for name match', async () => {
       const { supabase } = await import('@/integrations/supabase/client');
       
-      (supabase.from as any).mockReturnValue({
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             single: vi.fn().mockResolvedValue({
@@ -228,7 +228,7 @@ describe('name-processor (expanded)', () => {
     it('should return confidence 0.85 for nickname match', async () => {
       const { supabase } = await import('@/integrations/supabase/client');
       
-      (supabase.from as any).mockReturnValue({
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             single: vi.fn().mockResolvedValue({
@@ -248,7 +248,7 @@ describe('name-processor (expanded)', () => {
     it('should handle empty nicknames array', async () => {
       const { supabase } = await import('@/integrations/supabase/client');
       
-      (supabase.from as any).mockReturnValue({
+      (supabase.from as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockReturnValue({
             single: vi.fn().mockResolvedValue({

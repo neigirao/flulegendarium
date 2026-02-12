@@ -143,13 +143,13 @@ describe('player-image utilities', () => {
 describe('URL validation', () => {
   describe('Edge cases', () => {
     it('should handle null URLs', () => {
-      expect(isProblematicDomain(null as any)).toBe(false);
-      expect(isUrlProblematic(null as any)).toBe(false);
+      expect(isProblematicDomain(null as unknown as string)).toBe(false);
+      expect(isUrlProblematic(null as unknown as string)).toBe(false);
     });
 
     it('should handle undefined URLs', () => {
-      expect(isProblematicDomain(undefined as any)).toBe(false);
-      expect(isUrlProblematic(undefined as any)).toBe(false);
+      expect(isProblematicDomain(undefined as unknown as string)).toBe(false);
+      expect(isUrlProblematic(undefined as unknown as string)).toBe(false);
     });
 
     it('should handle empty strings', () => {

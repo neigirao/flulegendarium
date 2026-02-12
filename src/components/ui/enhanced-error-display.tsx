@@ -195,6 +195,7 @@ export const EnhancedErrorDisplay = ({
 };
 
 // Hook para usar com as mensagens de erro aprimoradas
+// eslint-disable-next-line react-refresh/only-export-components
 export const useEnhancedError = () => {
   const [error, setError] = useState<DetailedError | null>(null);
 

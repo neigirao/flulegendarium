@@ -59,8 +59,8 @@ export class RootErrorBoundary extends Component<Props, State> {
     });
 
     // Track error for analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'app_crash', {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'app_crash', {
         error_message: error.message,
         error_id: this.state.errorId,
         error_stack: error.stack?.slice(0, 500),

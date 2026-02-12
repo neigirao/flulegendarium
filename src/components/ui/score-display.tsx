@@ -90,4 +90,5 @@ const ScoreDisplay = React.forwardRef<HTMLDivElement, ScoreDisplayProps>(
 )
 ScoreDisplay.displayName = "ScoreDisplay"
 
+// eslint-disable-next-line react-refresh/only-export-components
 export { ScoreDisplay, scoreDisplayVariants }

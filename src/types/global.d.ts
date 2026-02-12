@@ -25,13 +25,9 @@ declare global {
     config?: GtagConfig
   ): void;
 
-  // Scheduler API types
+  // Scheduler API types (override built-in to ensure compatibility)
   interface Scheduler {
     postTask(callback: () => void, options?: { priority?: 'user-blocking' | 'user-visible' | 'background' }): Promise<void>;
-  }
-
-  interface Window {
-    scheduler?: Scheduler;
   }
 
   // Web Vitals types
@@ -93,6 +89,7 @@ declare global {
     requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number;
     cancelIdleCallback?: (handle: number) => void;
     orientation?: number;
+    testSentry?: () => void;
   }
 
   interface IdleRequestCallback {

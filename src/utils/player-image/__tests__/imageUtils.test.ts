@@ -231,7 +231,7 @@ describe('imageUtils', () => {
       });
 
       it('should handle null image_url', () => {
-        const player = createMockPlayer('1', 'Test Player', null as any);
+        const player = createMockPlayer('1', 'Test Player', null as unknown as string);
 
         const result = getReliableImageUrl(player);
 
@@ -239,7 +239,7 @@ describe('imageUtils', () => {
       });
 
       it('should handle undefined image_url', () => {
-        const player = createMockPlayer('1', 'Test Player', undefined as any);
+        const player = createMockPlayer('1', 'Test Player', undefined as unknown as string);
 
         const result = getReliableImageUrl(player);
 

@@ -152,8 +152,8 @@ describe('htmlSanitizer', () => {
       });
 
       it('should handle null/undefined gracefully', () => {
-        expect(sanitizeHtml(null as any)).toBe('');
-        expect(sanitizeHtml(undefined as any)).toBe('');
+        expect(sanitizeHtml(null as unknown as string)).toBe('');
+        expect(sanitizeHtml(undefined as unknown as string)).toBe('');
       });
 
       it('should handle plain text without tags', () => {
@@ -236,8 +236,8 @@ describe('htmlSanitizer', () => {
     });
 
     it('should handle null/undefined', () => {
-      expect(sanitizeText(null as any)).toBe('');
-      expect(sanitizeText(undefined as any)).toBe('');
+      expect(sanitizeText(null as unknown as string)).toBe('');
+      expect(sanitizeText(undefined as unknown as string)).toBe('');
     });
 
     it('should preserve plain text', () => {

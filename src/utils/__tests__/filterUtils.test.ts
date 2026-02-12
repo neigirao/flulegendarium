@@ -79,8 +79,8 @@ describe('filterUtils', () => {
       });
 
       it('should handle null/undefined gracefully', () => {
-        expect(containsForbiddenWord(null as any)).toBe(false);
-        expect(containsForbiddenWord(undefined as any)).toBe(false);
+        expect(containsForbiddenWord(null as unknown as string)).toBe(false);
+        expect(containsForbiddenWord(undefined as unknown as string)).toBe(false);
       });
 
       it('should handle whitespace-only strings', () => {

@@ -143,9 +143,9 @@ export const NewsCategoriesManagement = () => {
 
       fetchCategories();
       handleCancelEdit();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving category:', error);
-      if (error.code === '23505') {
+      if (error instanceof Object && 'code' in error && error.code === '23505') {
         toast.error('Já existe uma categoria com este nome ou slug.');
       } else {
         toast.error('Erro ao salvar categoria');

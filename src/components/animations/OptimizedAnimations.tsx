@@ -219,6 +219,7 @@ export const AnimatedCounter: React.FC<AnimatedCounterProps> = ({
     };
 
     requestAnimationFrame(updateCounter);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, duration]);
 
   return <span className={className}>{displayValue}</span>;
@@ -337,7 +338,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   );
 };
 
-// Hook para animações baseadas em scroll
+// eslint-disable-next-line react-refresh/only-export-components
 export const useScrollAnimation = (threshold = 0.1) => {
   const [isVisible, setIsVisible] = useState(false);
 

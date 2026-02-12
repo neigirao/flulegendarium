@@ -573,7 +573,7 @@ export const DecadeGameContainer = () => {
               color: 'bg-flu-grena',
               icon: '🎯',
               multiplier: currentDifficulty.multiplier
-            } as any}
+            }}
           />
           
           {/* Skip Player Button */}

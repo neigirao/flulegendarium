@@ -25,6 +25,7 @@ export const useAdaptiveGameMetrics = () => {
     
     // Registrar início de partida adaptativa
     registerGameStart();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const registerGameStart = useCallback(async () => {
@@ -65,6 +66,7 @@ export const useAdaptiveGameMetrics = () => {
 
     // Salvar estatística de dificuldade
     saveDifficultyStats(playerId, playerName, difficultyLevel, guessTime, true);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const recordIncorrectGuess = useCallback((playerId: string, playerName: string, difficultyLevel: string, guessTime: number) => {
@@ -73,6 +75,7 @@ export const useAdaptiveGameMetrics = () => {
 
     // Salvar estatística de dificuldade
     saveDifficultyStats(playerId, playerName, difficultyLevel, guessTime, false);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const saveDifficultyStats = useCallback(async (

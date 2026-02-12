@@ -141,7 +141,7 @@ export const useDecadePlayerSelection = (selectedDecade: Decade | null) => {
 
   const handlePlayerImageFixed = useCallback(() => {
     // Image loaded successfully
-  }, [currentPlayer]);
+  }, []);
 
   return {
     availablePlayers,

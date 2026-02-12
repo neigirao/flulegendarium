@@ -16,6 +16,7 @@ interface AchievementContextType {
   getTotalPoints: () => number;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AchievementContext = createContext<AchievementContextType | undefined>(undefined);
 
 interface AchievementSystemProviderProps {
@@ -173,5 +174,5 @@ export const AchievementSystemProvider = ({ children }: AchievementSystemProvide
   );
 };
 
-// Re-export hook for backwards compatibility
+// eslint-disable-next-line react-refresh/only-export-components
 export { useAchievementSystem } from '@/hooks/use-achievement-system';

@@ -402,7 +402,7 @@ describe('achievementsService', () => {
 
       if (gteAchievement) {
         // Exactly at threshold should pass
-        const statsAtThreshold: any = {
+        const statsAtThreshold: { score: number; streak: number; gamesPlayed: number; accuracy: number; [key: string]: number } = {
           score: 0,
           streak: 0,
           gamesPlayed: 0,
@@ -478,7 +478,7 @@ describe('achievementsService', () => {
       );
 
       if (eqAchievement) {
-        const statsAtExact: any = {
+        const statsAtExact = {
           score: 0,
           streak: 0,
           gamesPlayed: 0,

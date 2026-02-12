@@ -56,8 +56,8 @@ export class EnhancedErrorBoundary extends Component<Props, State> {
     }
 
     // Track error in analytics
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', 'error_boundary_triggered', {
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'error_boundary_triggered', {
         error_message: error.message,
         error_level: level,
         component_stack: errorInfo.componentStack,

@@ -178,7 +178,7 @@ export const PersonalDashboard: React.FC = () => {
     };
   }, [gameHistory, achievements, rankingData, favoriteDecade]);
 
-  const processAchievements = (achievements: any[]): Achievement[] => {
+  const processAchievements = (achievements: { achievement_id: string; progress?: number | null; max_progress?: number | null; unlocked_at?: string }[]): Achievement[] => {
     const availableAchievements = [
       {
         id: 'first_game',
@@ -223,7 +223,7 @@ export const PersonalDashboard: React.FC = () => {
         ...achievement,
         progress: userAchievement?.progress || 0,
         unlocked: userAchievement?.progress >= achievement.maxProgress,
-        unlockedAt: userAchievement?.unlocked_at
+        unlockedAt: userAchievement?.unlocked_at ? new Date(userAchievement.unlocked_at) : undefined
       };
     });
   };

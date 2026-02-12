@@ -17,6 +17,7 @@ interface ChallengeData {
   timestamp: number;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const generateChallengeLink = (data: Omit<ChallengeData, 'timestamp'>): string => {
   const challengeData: ChallengeData = {
     ...data,
@@ -27,6 +28,7 @@ export const generateChallengeLink = (data: Omit<ChallengeData, 'timestamp'>): s
   return `${window.location.origin}/social?challenge=${encoded}`;
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const decodeChallengeLink = (encoded: string): ChallengeData | null => {
   try {
     return JSON.parse(atob(encoded));

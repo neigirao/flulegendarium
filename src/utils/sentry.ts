@@ -9,12 +9,7 @@ interface PerformanceWithMemory extends Performance {
   };
 }
 
-// Extend Window for testSentry
-declare global {
-  interface Window {
-    testSentry?: () => void;
-  }
-}
+// testSentry is declared on Window in global.d.ts
 
 // Initialize Sentry as early as possible in your application's lifecycle
 export const initializeSentry = () => {

@@ -77,8 +77,8 @@ describe('preloadUtils', () => {
     });
 
     it('should handle null/undefined', () => {
-      expect(() => preloadPlayerImages(null as any)).not.toThrow();
-      expect(() => preloadPlayerImages(undefined as any)).not.toThrow();
+      expect(() => preloadPlayerImages(null as unknown as Parameters<typeof preloadPlayerImages>[0])).not.toThrow();
+      expect(() => preloadPlayerImages(undefined as unknown as Parameters<typeof preloadPlayerImages>[0])).not.toThrow();
     });
 
     it('should log preloading message', () => {

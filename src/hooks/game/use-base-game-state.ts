@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 import { logger } from "@/utils/logger";
 
@@ -86,7 +86,8 @@ const DEFAULT_CONFIG: BaseGameConfig = {
  * ```
  */
 export const useBaseGameState = (config: Partial<BaseGameConfig> = {}): BaseGameState => {
-  const finalConfig = { ...DEFAULT_CONFIG, ...config };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const finalConfig = useMemo(() => ({ ...DEFAULT_CONFIG, ...config }), []);
   
   // Score State
   const [score, setScore] = useState(0);

@@ -1,6 +1,11 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { logger } from '@/utils/logger';
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt(): Promise<void>;
+  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
+}
+
 interface PWAContextType {
   isInstalled: boolean;
   isInstallable: boolean;
@@ -21,7 +26,7 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
   const [isInstallable, setIsInstallable] = useState(false);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [updateAvailable, setUpdateAvailable] = useState(false);
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     logger.debug('PWA Provider inicializando', 'PWA');
@@ -29,7 +34,7 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
     // Verificar se está instalado
     const checkInstallStatus = () => {
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-      const isIOS = (window.navigator as any).standalone === true;
+      const isIOS = (window.navigator as unknown as { standalone?: boolean }).standalone === true;
       setIsInstalled(isStandalone || isIOS);
       
       if (isStandalone || isIOS) {
@@ -48,7 +53,7 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
     const handleBeforeInstallPrompt = (e: Event) => {
       logger.info('beforeinstallprompt capturado', 'PWA');
       e.preventDefault();
-      setDeferredPrompt(e);
+      setDeferredPrompt(e as BeforeInstallPromptEvent);
       setIsInstallable(true);
     };
 
@@ -135,6 +140,7 @@ export const PWAProvider = ({ children }: PWAProviderProps) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const usePWA = () => {
   const context = useContext(PWAContext);
   if (!context) {

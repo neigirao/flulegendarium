@@ -72,6 +72,7 @@ export const UXProvider = ({ children }: UXProviderProps) => {
   );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useUX = () => {
   const context = useContext(UXContext);
   if (context === undefined) {

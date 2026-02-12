@@ -91,7 +91,7 @@ export const DynamicSEO = ({
 
   // Generate JSON-LD structured data
   useEffect(() => {
-    const structuredData: any = {
+    const structuredData: Record<string, unknown> = {
       "@context": "https://schema.org",
       "@type": "WebPage",
       "name": generateTitle(),
@@ -152,6 +152,7 @@ export const DynamicSEO = ({
         script.remove();
       }
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [player, gameMode, difficulty, location.pathname]);
 
   return (

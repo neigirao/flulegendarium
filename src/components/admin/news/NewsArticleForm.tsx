@@ -58,6 +58,7 @@ export const NewsArticleForm = ({ articleId, onSuccess, onCancel }: NewsArticleF
     if (articleId && articleId !== "new") {
       fetchArticle();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleId]);
 
   const fetchCategories = async () => {
@@ -164,9 +165,9 @@ export const NewsArticleForm = ({ articleId, onSuccess, onCancel }: NewsArticleF
       }
 
       onSuccess();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error saving article:', error);
-      if (error.code === '23505') {
+      if (error instanceof Object && 'code' in error && error.code === '23505') {
         toast.error('Já existe uma notícia com este slug. Tente um título diferente.');
       } else {
         toast.error('Erro ao salvar notícia');
