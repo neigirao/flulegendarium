@@ -152,9 +152,10 @@ test.describe('Gameplay - Quiz por Década', () => {
           
           // Confirmar dialog se aparecer
           await page.waitForTimeout(1000);
+          await closeAllOverlays(page);
           const confirmButton = page.getByRole('button', { name: /confirmar|sim/i });
           if (await confirmButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-            await confirmButton.click();
+            await confirmButton.click({ force: true });
           }
           
           // Verificar feedback
