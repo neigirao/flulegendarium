@@ -367,6 +367,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     adjustDifficulty,
     saveGameData,
     stopTimer,
+    startTimer,
     selectRandomPlayer,
     toast
   ]);
