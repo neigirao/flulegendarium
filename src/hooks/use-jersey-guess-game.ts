@@ -66,36 +66,37 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
   const lastGuessTimeRef = useRef<number>(0);
   const usedJerseyIds = useRef<Set<string>>(new Set());
 
-  // Handle time up
+  // Refs to hold latest values for handleTimeUp without causing re-renders
+  const scoreRef = useRef(score);
+  const currentJerseyRef = useRef(currentJersey);
+  const gameOverRef = useRef(gameOver);
+  const currentDifficultyRef = useRef(currentDifficulty);
+  scoreRef.current = score;
+  currentJerseyRef.current = currentJersey;
+  gameOverRef.current = gameOver;
+  currentDifficultyRef.current = currentDifficulty;
+
+  // Handle time up - uses refs to avoid exhaustive-deps issues
   const handleTimeUp = useCallback(() => {
-    if (!currentJersey || gameOver) return;
+    const jersey = currentJerseyRef.current;
+    if (!jersey || gameOverRef.current) return;
 
     logger.timer('Time up - jersey quiz mode');
     
     setGameOver(true);
     setHasLost(true);
     setShowResult(true);
-    stopTimer();
     
-    // Record stat
     const guessTime = Date.now() - lastGuessTimeRef.current;
-    jerseyService.recordDifficultyStat(
-      currentJersey.id,
-      guessTime,
-      99,
-      false
-    );
+    jerseyService.recordDifficultyStat(jersey.id, guessTime, 99, false);
 
-    adjustDifficulty(false);
-
-    const yearsDisplay = currentJersey.years.join(' ou ');
+    const yearsDisplay = jersey.years.join(' ou ');
     toast({
       variant: "destructive",
       title: "Tempo Esgotado!",
-      description: `Era ${yearsDisplay}. Sua pontuação final: ${score}`,
+      description: `Era ${yearsDisplay}. Sua pontuação final: ${scoreRef.current}`,
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentJersey, gameOver, score]);
+  }, [toast]);
 
   // Hooks
   const { selectJerseyByDifficulty, selectRandomJersey } = useJerseySelection();

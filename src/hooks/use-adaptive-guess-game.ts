@@ -106,30 +106,32 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
   // Rastrear jogadores já usados nesta partida
   const usedPlayerIds = useRef<Set<string>>(new Set());
 
-  // Define handleTimeUp before using it
+  // Refs to hold latest values for handleTimeUp without causing re-renders
+  const scoreRef = useRef(score);
+  const currentDifficultyRef = useRef(currentDifficulty);
+  const currentPlayerRef = useRef(currentPlayer);
+  const gameOverRef = useRef(gameOver);
+  scoreRef.current = score;
+  currentDifficultyRef.current = currentDifficulty;
+  currentPlayerRef.current = currentPlayer;
+  gameOverRef.current = gameOver;
+
+  // Handle time up - uses refs to avoid exhaustive-deps issues
   const handleTimeUp = useCallback(() => {
-    if (!currentPlayer || gameOver) return;
+    const player = currentPlayerRef.current;
+    if (!player || gameOverRef.current) return;
 
     logger.timer('Time up - adaptive mode');
     
     setGameOver(true);
     setHasLost(true);
-    stopTimer();
-    
-    const guessTime = Date.now() - lastGuessTimeRef.current;
-    recordIncorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
-    adjustDifficulty(false);
 
     toast({
       variant: "destructive",
       title: "Tempo Esgotado!",
-      description: `Era ${currentPlayer.name}. Sua pontuação final: ${score}`,
+      description: `Era ${player.name}. Sua pontuação final: ${scoreRef.current}`,
     });
-
-    // Save game data
-    saveGameData(score, currentDifficulty.level, currentDifficulty.multiplier);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPlayer, gameOver, score, currentDifficulty]);
+  }, [toast]);
 
   // Hooks
   const { selectPlayerByDifficulty } = useAdaptivePlayerSelection();
