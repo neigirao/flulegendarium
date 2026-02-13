@@ -3,6 +3,7 @@ import { motion, AnimatePresence, Variants } from "framer-motion";
 import { ReactNode } from "react";
 
 // Variantes de animação padronizadas para todos os jogos
+// eslint-disable-next-line react-refresh/only-export-components
 export const gameAnimationVariants = {
   // Fade in/out básico
   fadeIn: {
