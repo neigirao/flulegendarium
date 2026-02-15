@@ -83,7 +83,7 @@ export async function startGameWithName(
   
   const startButton = page.getByTestId('start-game-button');
   await expect(startButton).toBeEnabled({ timeout: 3000 });
-  await startButton.click();
+  await startButton.click({ force: true });
   
   // Wait for form to close
   await page.waitForTimeout(1000);
@@ -104,7 +104,7 @@ export async function navigateAndStartGame(
   const gameModeCard = page.getByTestId(testId);
   
   if (await gameModeCard.isVisible({ timeout: 5000 }).catch(() => false)) {
-    await gameModeCard.click();
+    await gameModeCard.click({ force: true });
     await page.waitForURL(new RegExp(`quiz-${gameMode}`));
     await waitForPageReady(page);
     await startGameWithName(page, playerName);

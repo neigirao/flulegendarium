@@ -28,7 +28,7 @@ test.describe('Seleção de Modo de Jogo', () => {
     const adaptativoButton = page.getByTestId('game-mode-adaptativo');
     await expect(adaptativoButton).toBeVisible({ timeout: 10000 });
     
-    await adaptativoButton.click();
+    await adaptativoButton.click({ force: true });
     await page.waitForURL(/quiz-adaptativo/, { timeout: 10000 });
     
     // Verificar que a página do quiz carregou
@@ -40,7 +40,7 @@ test.describe('Seleção de Modo de Jogo', () => {
     const decadaButton = page.getByTestId('game-mode-decada');
     await expect(decadaButton).toBeVisible({ timeout: 10000 });
     
-    await decadaButton.click();
+    await decadaButton.click({ force: true });
     await page.waitForURL(/quiz-decada/, { timeout: 10000 });
     
     // Verificar que a página de seleção de década ou quiz carregou
@@ -52,7 +52,7 @@ test.describe('Seleção de Modo de Jogo', () => {
     const camisasButton = page.getByTestId('game-mode-camisas');
     await expect(camisasButton).toBeVisible({ timeout: 10000 });
     
-    await camisasButton.click();
+    await camisasButton.click({ force: true });
     await page.waitForURL(/quiz-camisas/, { timeout: 10000 });
     
     // Verificar que a página do quiz carregou

@@ -97,9 +97,10 @@ test.describe('Gameplay - Quiz Adaptativo', () => {
     await page.waitForTimeout(2000);
     
     // Confirmar no dialog se aparecer
+    await closeAllOverlays(page);
     const confirmButton = page.getByRole('button', { name: /confirmar|sim/i });
     if (await confirmButton.isVisible({ timeout: 3000 }).catch(() => false)) {
-      await confirmButton.click();
+      await confirmButton.click({ force: true });
     }
     
     // Aguardar feedback

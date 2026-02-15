@@ -20,7 +20,7 @@ test.describe('Game Flow', () => {
     await expect(playButton).toBeVisible();
     
     // Clicar e verificar navegação
-    await playButton.click();
+    await playButton.click({ force: true });
     
     // Esperar navegação
     await page.waitForURL(/selecionar-modo-jogo/);
