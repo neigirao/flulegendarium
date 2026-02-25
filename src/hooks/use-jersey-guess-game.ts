@@ -5,7 +5,7 @@ import { useCleanTimer } from "./use-clean-timer";
 import { useToast } from "@/components/ui/use-toast";
 import { useTabVisibility } from "./use-tab-visibility";
 import { logger } from "@/utils/logger";
-import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 import { jerseyService } from "@/services/jerseyService";
 import { clearJerseyImageCache } from "@/utils/jersey-image/preloadUtils";
 import { clearJerseyImageUrlCache } from "@/utils/jersey-image/imageUtils";
@@ -56,7 +56,9 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
   const [showResult, setShowResult] = useState(false);
 
   // Adaptive difficulty state
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
+    getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
+  );
   const [difficultyProgress, setDifficultyProgress] = useState(0);
   const [correctSequence, setCorrectSequence] = useState(0);
   const [incorrectSequence, setIncorrectSequence] = useState(0);
@@ -380,7 +382,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     setGameOver(false);
     setHasLost(false);
     setAttempts(0);
-    setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
+    setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
     setDifficultyProgress(0);
     setCorrectSequence(0);
     setIncorrectSequence(0);
