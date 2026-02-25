@@ -1,89 +1,60 @@
 
+# Plano: Corrigir inicializacao de dificuldade que ignora INITIAL_LEVEL
 
-# Plano: Corrigir 403 nas imagens de camisas e jogo sempre iniciar com a mesma camisa
+## Problema
 
-## Problemas Identificados
+A mudanca anterior alterou `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` para `'medio'`, porem o hook `use-jersey-guess-game.ts` **nao usa essa constante**. Ele hardcoda `DIFFICULTY_LEVELS[0]` em dois lugares:
 
-### 1. Erro 403 nas imagens de camisas (render/image)
+- **Linha 59** (estado inicial): `useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
+- **Linha 383** (reset): `setCurrentDifficulty(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
 
-O `supabaseTransforms.ts` converte URLs de `/storage/v1/object/public/` para `/storage/v1/render/image/public/` para aplicar transformacoes (resize, webp, quality). Porem, o endpoint `/render/image/` requer o plano Pro do Supabase. No plano Free, retorna **403 Forbidden** para TODAS as imagens de camisas, nao apenas a de 2025.
-
-Isso afeta: `JerseyImage.tsx`, `UnifiedPlayerImage.tsx`, `LCPOptimizedImage.tsx`, `use-critical-image-preload.ts`.
-
-### 2. Jogo sempre comeca com a mesma camisa (terceira de 2025)
-
-A configuracao `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` define o nivel inicial como `'muito_facil'`. A distribuicao no banco e:
-
-- `muito_facil`: **1 camisa** (terceira 2025 - be1b6d54)
-- `facil`: 3 camisas
-- `medio`: 184 camisas
-- `dificil`: 1 camisa
-- `muito_dificil`: 0 camisas
-
-Como so existe 1 camisa `muito_facil`, o jogo sempre seleciona ela primeiro.
-
-### 3. Verificacao de outros casos
-
-Todas as 189 camisas com URLs do Supabase Storage sofrem o mesmo 403 ao usar o endpoint de transforms. O problema e sistematico, nao isolado.
-
----
+Como so existe 1 camisa com `difficulty_level = 'muito_facil'`, o jogo sempre seleciona a mesma camisa (terceira de 2025).
 
 ## Solucao
 
-### Mudanca 1: Desabilitar Image Transforms (retornar URL original)
+**Arquivo: `src/hooks/use-jersey-guess-game.ts`**
 
-**Arquivo: `src/utils/image/supabaseTransforms.ts`**
+1. Importar `DIFFICULTY_PROGRESSION` e `getDifficultyConfig`
+2. Criar constante para o nivel inicial correto usando `getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)`
+3. Substituir `DIFFICULTY_LEVELS[0]` nas linhas 59 e 383 pela constante do nivel inicial
 
-Alterar `getTransformedImageUrl` para retornar a URL original sem modificacao. O endpoint `/render/image/` nao esta disponivel no plano atual. Isso remove o 403 de todas as imagens.
+### Mudanca no import (linha 8)
 
+De:
 ```typescript
-export function getTransformedImageUrl(
-  url: string,
-  options: TransformOptions = {}
-): string {
-  // Image transforms require Supabase Pro plan
-  // Return original URL to avoid 403 errors
-  return url;
-}
+import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
+Para:
+```typescript
+import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 ```
 
-Igualmente, `getResponsiveSrcSet` deve retornar `undefined` (sem srcset) ja que nao ha transforms:
+### Mudanca na inicializacao (linha 59)
 
+De:
 ```typescript
-export function getResponsiveSrcSet(
-  url: string,
-  sizes: number[] = [320, 640, 960, 1280]
-): string | undefined {
-  // Transforms not available - no srcset
-  return undefined;
-}
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
+  getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
+);
 ```
 
-### Mudanca 2: Iniciar jogo no nivel 'medio'
+### Mudanca no reset (linha 383)
 
-**Arquivo: `src/config/difficulty-levels.ts`**
-
-Alterar `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` de `'muito_facil'` para `'medio'`, onde existem 184 camisas disponiveis, garantindo variedade a cada partida.
-
+De:
 ```typescript
-export const DIFFICULTY_PROGRESSION = {
-  CORRECT_THRESHOLD: 3,
-  INCORRECT_THRESHOLD: 2,
-  INITIAL_LEVEL: 'medio' as DifficultyLevel
-} as const;
+setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
 ```
-
-### Mudanca 3: Fallback no hook de selecao para evitar repeticao
-
-**Arquivo: `src/hooks/use-jersey-guess-game.ts`** (linhas ~188-197)
-
-Quando `selectJerseyByDifficulty` retorna null (sem camisas na dificuldade), o fallback `selectRandomJersey` ja existe. Nenhuma mudanca necessaria aqui apos corrigir o nivel inicial.
-
----
+Para:
+```typescript
+setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
+```
 
 ## Impacto
 
-- **403 eliminado**: Todas as imagens de camisas (189) carregarao diretamente do Storage sem passar pelo endpoint de transforms
-- **Variedade garantida**: Com 184 camisas no nivel medio, a probabilidade de repetir a mesma camisa inicial cai de 100% para ~0.5%
-- **Trade-off**: Imagens nao serao otimizadas (sem resize/webp server-side), mas carregarao corretamente. Quando/se o plano for atualizado para Pro, basta reverter a mudanca 1
-
+- O jogo passara a iniciar no nivel `medio` (184 camisas disponiveis) em vez de `muito_facil` (1 camisa)
+- O reset tambem usara o nivel correto
+- Qualquer mudanca futura em `INITIAL_LEVEL` sera refletida automaticamente
