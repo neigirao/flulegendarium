@@ -27,35 +27,9 @@ export function getTransformedImageUrl(
   url: string,
   options: TransformOptions = {}
 ): string {
-  if (!url || !isSupabaseStorageUrl(url)) {
-    return url;
-  }
-
-  const {
-    width,
-    height,
-    quality = 80,
-    format = 'webp',
-    resize = 'cover'
-  } = options;
-
-  // Build transform URL using Supabase Storage API
-  // Pattern: /storage/v1/render/image/public/{bucket}/{path}?width=X&height=Y
-  const transformedUrl = url.replace(
-    '/storage/v1/object/public/',
-    '/storage/v1/render/image/public/'
-  );
-
-  const params = new URLSearchParams();
-  
-  if (width) params.set('width', width.toString());
-  if (height) params.set('height', height.toString());
-  params.set('quality', quality.toString());
-  params.set('format', format);
-  params.set('resize', resize);
-
-  const separator = transformedUrl.includes('?') ? '&' : '?';
-  return `${transformedUrl}${separator}${params.toString()}`;
+  // Image transforms require Supabase Pro plan
+  // Return original URL to avoid 403 errors on /render/image/ endpoint
+  return url;
 }
 
 /**
@@ -64,20 +38,9 @@ export function getTransformedImageUrl(
 export function getResponsiveSrcSet(
   url: string,
   sizes: number[] = [320, 640, 960, 1280]
-): string {
-  if (!isSupabaseStorageUrl(url)) {
-    return url;
-  }
-
-  return sizes
-    .map(size => {
-      const transformedUrl = getTransformedImageUrl(url, { 
-        width: size, 
-        quality: size <= 640 ? 70 : 80 
-      });
-      return `${transformedUrl} ${size}w`;
-    })
-    .join(', ');
+): string | undefined {
+  // Transforms not available on current Supabase plan - no srcset
+  return undefined;
 }
 
 /**

@@ -190,5 +190,5 @@ export const DIFFICULTY_PROGRESSION = {
   /** Erros consecutivos necessários para descer de nível */
   INCORRECT_THRESHOLD: 2,
   /** Nível inicial para novos jogadores */
-  INITIAL_LEVEL: 'muito_facil' as DifficultyLevel
+  INITIAL_LEVEL: 'medio' as DifficultyLevel
 } as const;
