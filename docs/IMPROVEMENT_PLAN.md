@@ -274,10 +274,6 @@ Semana 7-10:  Fase 3 (Retenção)
               - Dashboard Analytics
               - Onboarding
 
-Semana 11-14: Fase 4 (Monetização)
-              - Sistema de vidas
-              - Loja de cosméticos
-              - Integração pagamentos
 ```
 
 ---
