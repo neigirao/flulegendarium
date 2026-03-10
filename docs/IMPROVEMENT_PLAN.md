@@ -251,51 +251,6 @@ Impacto: Alto (ativação de novos usuários)
 
 ---
 
-## 🎯 Fase 4: Monetização (8-12 semanas)
-
-### 4.1 Freemium Model
-**Problema:** Única receita é doação voluntária  
-**Solução:** Modelo freemium com vidas/energia
-
-```
-Estrutura:
-- 5 vidas gratuitas por dia
-- Espera de 30min para regenerar vida
-- Opção de assistir ad para vida extra
-- Premium: vidas ilimitadas + sem ads
-
-Arquivos a criar:
-- src/components/monetization/LivesSystem.tsx
-- src/components/monetization/AdRewardModal.tsx
-- src/hooks/use-lives-system.ts
-- src/services/monetizationService.ts
-
-Estimativa: 24h
-Impacto: Muito Alto (receita recorrente)
-```
-
-### 4.2 Cosmetics Store
-**Problema:** Sem personalização, sem motivo para gastar  
-**Solução:** Loja de itens cosméticos
-
-```
-Itens:
-- Temas de interface (cores do Flu, retrô, etc)
-- Molduras para avatar
-- Efeitos de acerto (confetti especial, sons)
-- Títulos exclusivos
-
-Arquivos a criar:
-- src/components/store/CosmeticsStore.tsx
-- src/components/store/ThemePreview.tsx
-- src/hooks/use-user-cosmetics.ts
-
-Estimativa: 20h
-Impacto: Médio (receita + engajamento)
-```
-
----
-
 ## 📅 Cronograma Consolidado
 
 ```
