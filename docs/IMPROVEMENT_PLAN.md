@@ -265,7 +265,6 @@ Semana 3-4:   Fase 2A (Testes)
               - Testes componentes
 
 Semana 5-6:   Fase 2B (UX/Design)
-              - Controles do usuário
               - Acessibilidade WCAG
               - Otimização LCP
 
