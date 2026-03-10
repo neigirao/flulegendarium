@@ -114,28 +114,7 @@ Estimativa: 16h
 Impacto: Alto (confiabilidade)
 ```
 
-### 2.2 UX - Controle do Usuário (H3)
-**Problema:** Impossível pular jogador ou desfazer  
-**Solução:** Adicionar ações de controle
-
-```
-Funcionalidades:
-1. Botão "Pular" (penalidade: -50 pontos, máx 3 por jogo)
-2. Sistema de "Undo" para último palpite (1 por jogo)
-
-Arquivos a criar:
-- src/components/guess-game/GameControls.tsx
-- src/hooks/use-game-controls.ts
-
-Arquivos a modificar:
-- src/hooks/use-adaptive-guess-game.ts
-- src/components/guess-game/AdaptiveGameContainer.tsx
-
-Estimativa: 6h
-Impacto: Alto (reduz abandono)
-```
-
-### 2.3 Design - Acessibilidade
+### 2.2 Design - Acessibilidade
 **Problema:** Contraste insuficiente, falta de aria-labels  
 **Solução:** Audit e correção WCAG 2.1 AA
 
@@ -272,51 +251,6 @@ Impacto: Alto (ativação de novos usuários)
 
 ---
 
-## 🎯 Fase 4: Monetização (8-12 semanas)
-
-### 4.1 Freemium Model
-**Problema:** Única receita é doação voluntária  
-**Solução:** Modelo freemium com vidas/energia
-
-```
-Estrutura:
-- 5 vidas gratuitas por dia
-- Espera de 30min para regenerar vida
-- Opção de assistir ad para vida extra
-- Premium: vidas ilimitadas + sem ads
-
-Arquivos a criar:
-- src/components/monetization/LivesSystem.tsx
-- src/components/monetization/AdRewardModal.tsx
-- src/hooks/use-lives-system.ts
-- src/services/monetizationService.ts
-
-Estimativa: 24h
-Impacto: Muito Alto (receita recorrente)
-```
-
-### 4.2 Cosmetics Store
-**Problema:** Sem personalização, sem motivo para gastar  
-**Solução:** Loja de itens cosméticos
-
-```
-Itens:
-- Temas de interface (cores do Flu, retrô, etc)
-- Molduras para avatar
-- Efeitos de acerto (confetti especial, sons)
-- Títulos exclusivos
-
-Arquivos a criar:
-- src/components/store/CosmeticsStore.tsx
-- src/components/store/ThemePreview.tsx
-- src/hooks/use-user-cosmetics.ts
-
-Estimativa: 20h
-Impacto: Médio (receita + engajamento)
-```
-
----
-
 ## 📅 Cronograma Consolidado
 
 ```
@@ -331,7 +265,6 @@ Semana 3-4:   Fase 2A (Testes)
               - Testes componentes
 
 Semana 5-6:   Fase 2B (UX/Design)
-              - Controles do usuário
               - Acessibilidade WCAG
               - Otimização LCP
 
@@ -341,10 +274,6 @@ Semana 7-10:  Fase 3 (Retenção)
               - Dashboard Analytics
               - Onboarding
 
-Semana 11-14: Fase 4 (Monetização)
-              - Sistema de vidas
-              - Loja de cosméticos
-              - Integração pagamentos
 ```
 
 ---
