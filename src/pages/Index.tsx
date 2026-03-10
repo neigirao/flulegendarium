@@ -115,11 +115,15 @@ const Index = () => {
               Gratuito • Jogue sem cadastro • 188+ jogadores • 50+ camisas históricas
             </p>
 
-            {/* Game Modes Preview */}
-            <GameModesPreview />
+            {/* Game Modes Preview - below fold, deferred rendering */}
+            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}>
+              <GameModesPreview />
+            </section>
 
-            {/* Hall da Fama Section */}
-            <GameTypeRankings />
+            {/* Hall da Fama Section - below fold, deferred rendering */}
+            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 800px' }}>
+              <GameTypeRankings />
+            </section>
 
             {/* Como Funciona */}
             <div className="mb-16">
