@@ -126,7 +126,7 @@ const Index = () => {
             </section>
 
             {/* Como Funciona */}
-            <div className="mb-16">
+            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
               <div className="text-center mb-12">
                 <h2 className="text-display-title text-primary-foreground mb-4">Como funciona o Quiz?</h2>
                 <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto font-body">
