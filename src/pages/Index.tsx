@@ -115,14 +115,18 @@ const Index = () => {
               Gratuito • Jogue sem cadastro • 188+ jogadores • 50+ camisas históricas
             </p>
 
-            {/* Game Modes Preview */}
-            <GameModesPreview />
+            {/* Game Modes Preview - below fold, deferred rendering */}
+            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}>
+              <GameModesPreview />
+            </section>
 
-            {/* Hall da Fama Section */}
-            <GameTypeRankings />
+            {/* Hall da Fama Section - below fold, deferred rendering */}
+            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 800px' }}>
+              <GameTypeRankings />
+            </section>
 
             {/* Como Funciona */}
-            <div className="mb-16">
+            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
               <div className="text-center mb-12">
                 <h2 className="text-display-title text-primary-foreground mb-4">Como funciona o Quiz?</h2>
                 <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto font-body">
@@ -168,7 +172,7 @@ const Index = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Instagram Section */}
             <div className="max-w-lg mx-auto">
