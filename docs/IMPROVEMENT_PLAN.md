@@ -114,28 +114,7 @@ Estimativa: 16h
 Impacto: Alto (confiabilidade)
 ```
 
-### 2.2 UX - Controle do Usuário (H3)
-**Problema:** Impossível pular jogador ou desfazer  
-**Solução:** Adicionar ações de controle
-
-```
-Funcionalidades:
-1. Botão "Pular" (penalidade: -50 pontos, máx 3 por jogo)
-2. Sistema de "Undo" para último palpite (1 por jogo)
-
-Arquivos a criar:
-- src/components/guess-game/GameControls.tsx
-- src/hooks/use-game-controls.ts
-
-Arquivos a modificar:
-- src/hooks/use-adaptive-guess-game.ts
-- src/components/guess-game/AdaptiveGameContainer.tsx
-
-Estimativa: 6h
-Impacto: Alto (reduz abandono)
-```
-
-### 2.3 Design - Acessibilidade
+### 2.2 Design - Acessibilidade
 **Problema:** Contraste insuficiente, falta de aria-labels  
 **Solução:** Audit e correção WCAG 2.1 AA
 
