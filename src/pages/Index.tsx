@@ -172,7 +172,7 @@ const Index = () => {
                   </p>
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Instagram Section */}
             <div className="max-w-lg mx-auto">
