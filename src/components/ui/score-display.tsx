@@ -73,6 +73,9 @@ const ScoreDisplay = React.forwardRef<HTMLDivElement, ScoreDisplayProps>(
     return (
       <div
         ref={ref}
+        role="status"
+        aria-live="polite"
+        aria-label={`Pontuação: ${displayValue}`}
         className={cn(scoreDisplayVariants({ variant, size, animated, className }))}
         {...props}
       >
