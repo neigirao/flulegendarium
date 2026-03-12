@@ -45,7 +45,7 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
   title,
   subtitle,
   icon,
-  iconColor = "bg-flu-grena",
+  iconColor = "bg-primary",
   isLoading,
   loadingMessage = "Carregando...",
   hasPlayers,
