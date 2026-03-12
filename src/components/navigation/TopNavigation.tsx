@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
-import { Shield, HelpCircle, User, Menu, Heart, Trophy } from "lucide-react";
+import { Shield, HelpCircle, User, Menu, Heart, Trophy, Landmark } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useLinkPrefetch } from "@/hooks/use-route-prefetch";
 
@@ -37,6 +37,12 @@ export const TopNavigation = () => {
       route: '/faq',
       onClick: () => navigate('/faq'),
       icon: HelpCircle,
+    },
+    {
+      label: "Jogos do Flu",
+      href: 'https://jogodoflu.com/',
+      icon: Landmark,
+      external: true,
     },
     {
       label: "Admin",
@@ -89,17 +95,32 @@ export const TopNavigation = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-2">
             {navigationItems.map((item) => (
-              <Button
-                key={item.label}
-                variant="ghost"
-                size="sm"
-                onClick={item.onClick}
-                onMouseEnter={() => handlePrefetch(item.route)}
-                className="text-primary hover:bg-secondary/10 hover:text-secondary transition-colors touch-target"
-              >
-                <item.icon className="h-4 w-4 mr-2" />
-                {item.label}
-              </Button>
+              item.external ? (
+                <Button
+                  key={item.label}
+                  variant="ghost"
+                  size="sm"
+                  asChild
+                  className="text-primary hover:bg-secondary/10 hover:text-secondary transition-colors touch-target"
+                >
+                  <a href={item.href} target="_blank" rel="noopener noreferrer">
+                    <item.icon className="h-4 w-4 mr-2" />
+                    {item.label}
+                  </a>
+                </Button>
+              ) : (
+                <Button
+                  key={item.label}
+                  variant="ghost"
+                  size="sm"
+                  onClick={item.onClick}
+                  onMouseEnter={() => handlePrefetch(item.route)}
+                  className="text-primary hover:bg-secondary/10 hover:text-secondary transition-colors touch-target"
+                >
+                  <item.icon className="h-4 w-4 mr-2" />
+                  {item.label}
+                </Button>
+              )
             ))}
             
             <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-secondary/20">
@@ -137,15 +158,34 @@ export const TopNavigation = () => {
                   </div>
                   
                   {navigationItems.map((item) => (
-                    <Button
-                      key={item.label}
-                      variant="ghost"
-                      onClick={() => handleNavigation(item.onClick)}
-                      className="justify-start text-primary hover:bg-secondary/10 hover:text-secondary touch-target-lg"
-                    >
-                      <item.icon className="h-5 w-5 mr-3" />
-                      {item.label}
-                    </Button>
+                    item.external ? (
+                      <Button
+                        key={item.label}
+                        variant="ghost"
+                        asChild
+                        className="justify-start text-primary hover:bg-secondary/10 hover:text-secondary touch-target-lg"
+                      >
+                        <a
+                          href={item.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setIsOpen(false)}
+                        >
+                          <item.icon className="h-5 w-5 mr-3" />
+                          {item.label}
+                        </a>
+                      </Button>
+                    ) : (
+                      <Button
+                        key={item.label}
+                        variant="ghost"
+                        onClick={() => handleNavigation(item.onClick)}
+                        className="justify-start text-primary hover:bg-secondary/10 hover:text-secondary touch-target-lg"
+                      >
+                        <item.icon className="h-5 w-5 mr-3" />
+                        {item.label}
+                      </Button>
+                    )
                   ))}
                 </div>
               </SheetContent>
