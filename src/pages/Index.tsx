@@ -30,7 +30,7 @@ const Index = () => {
   }, [onMouseEnter]);
   
   const handleStartGame = () => {
-    window.location.href = '/selecionar-modo-jogo';
+    navigate('/selecionar-modo-jogo');
   };
 
   const handleLoginClick = () => {
@@ -70,7 +70,7 @@ const Index = () => {
                 onMouseEnter={handlePrefetchGameMode}
                 onTouchStart={handlePrefetchGameMode}
                 size="lg"
-                className="text-xl px-12 py-6 shadow-xl hover:shadow-2xl bg-primary hover:bg-primary/90 text-primary-foreground touch-target-xl font-display tracking-wide animate-pulse hover:animate-none"
+                className="text-xl px-12 py-6 shadow-xl hover:shadow-2xl bg-primary hover:bg-primary/90 text-primary-foreground touch-target-xl font-display tracking-wide hover:scale-105 transition-transform"
                 data-testid="play-button"
               >
                 <Rocket className="w-6 h-6 mr-2" />

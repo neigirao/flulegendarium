@@ -16,8 +16,6 @@ interface GameHeaderProps {
 }
 
 export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveMode, timeRemaining, gameActive }: GameHeaderProps) => {
-  console.log('🎮 GameHeader - Score recebido e exibindo:', score);
-  
   const getScoreVariant = () => {
     if (score >= 50) return "legendary";
     if (score >= 30) return "excellent";
@@ -29,26 +27,27 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
   const variant = getScoreVariant();
 
   const scoreStyles = {
-    legendary: "bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600 text-white shadow-purple-300 animate-pulse",
-    excellent: "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-green-300",
-    good: "bg-gradient-to-r from-blue-500 to-cyan-600 text-white shadow-blue-300",
-    positive: "bg-gradient-to-r from-flu-grena to-flu-grena/90 text-white shadow-flu-grena/30",
-    zero: "bg-white/90 text-flu-grena border-2 border-flu-grena/30"
+    legendary: "bg-gradient-to-r from-accent via-destructive to-accent text-accent-foreground shadow-accent/30 animate-pulse",
+    excellent: "bg-gradient-to-r from-success to-success/80 text-success-foreground shadow-success/30",
+    good: "bg-gradient-to-r from-info to-info/80 text-info-foreground shadow-info/30",
+    positive: "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-primary/30",
+    zero: "bg-card/90 text-primary border-2 border-primary/30"
   };
   
   return (
     <header className="w-full">
       {/* Background decorativo */}
-      <div className="absolute inset-0 bg-gradient-to-r from-flu-verde/5 via-transparent to-flu-grena/5 rounded-2xl pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 via-transparent to-primary/5 rounded-2xl pointer-events-none"></div>
       
       <div className="relative flex items-center justify-between p-3 sm:p-4 md:p-6 gap-3 sm:gap-4">
         
         {/* Botão Voltar otimizado para mobile */}
         <Link
           to="/"
-          className="group flex items-center text-flu-grena hover:text-flu-grena/80 transition-all duration-200 shrink-0"
+          aria-label="Voltar para a página inicial"
+          className="group flex items-center text-primary hover:text-primary/80 transition-all duration-200 shrink-0"
         >
-          <div className="flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-2 rounded-xl bg-white/80 hover:bg-white/95 border border-flu-grena/20 hover:border-flu-grena/40 transition-all duration-200 hover:shadow-lg backdrop-blur-sm">
+          <div className="flex items-center gap-2 sm:gap-3 px-3 py-2 sm:px-4 sm:py-2 rounded-xl bg-card/80 hover:bg-card/95 border border-primary/20 hover:border-primary/40 transition-all duration-200 hover:shadow-lg backdrop-blur-sm">
             <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform duration-200" />
             <span className="hidden xs:inline text-sm sm:text-base font-medium">Voltar</span>
             <span className="xs:hidden text-xs font-medium">Menu</span>
@@ -60,6 +59,9 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
           {/* Score */}
           <div 
             data-testid="score-display"
+            role="status"
+            aria-live="polite"
+            aria-label={`Pontuação: ${score} ${score === 1 ? 'ponto' : 'pontos'}`}
             className={cn(
             "relative px-4 py-3 sm:px-6 sm:py-4 md:px-8 md:py-4 rounded-xl sm:rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 cursor-default",
             "text-center border backdrop-blur-sm min-w-[120px] sm:min-w-[160px] md:min-w-[180px]",
@@ -67,7 +69,7 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
           )}>
             {/* Indicador de modo adaptativo */}
             {isAdaptiveMode && (
-              <div className="absolute -top-2 -left-2 bg-gradient-to-r from-flu-verde to-flu-grena text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+              <div className="absolute -top-2 -left-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
                 <Brain className="w-3 h-3" />
                 <span className="hidden sm:inline">ADAPTATIVO</span>
                 <span className="sm:hidden">AI</span>
@@ -76,7 +78,7 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
 
             {/* Efeito de brilho para scores altos */}
             {score >= 30 && (
-              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"></div>
+              <div className="absolute inset-0 rounded-xl sm:rounded-2xl bg-gradient-to-r from-transparent via-card/20 to-transparent animate-shimmer"></div>
             )}
             
             <div className="relative z-10 flex items-center justify-center gap-1 sm:gap-2">
@@ -97,19 +99,19 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
 
             {/* Badge de achievement responsivo */}
             {score >= 50 && (
-              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg animate-bounce">
+              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-warning text-warning-foreground text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg animate-bounce">
                 <span className="hidden sm:inline">LENDA!</span>
                 <span className="sm:hidden">🏆</span>
               </div>
             )}
             {score >= 30 && score < 50 && (
-              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-green-400 text-green-900 text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg">
+              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-success text-success-foreground text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg">
                 <span className="hidden sm:inline">EXPERT!</span>
                 <span className="sm:hidden">⭐</span>
               </div>
             )}
             {score >= 15 && score < 30 && (
-              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-blue-400 text-blue-900 text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg">
+              <div className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 bg-info text-info-foreground text-xs font-bold px-1 py-0.5 sm:px-2 sm:py-1 rounded-full shadow-lg">
                 <span className="hidden sm:inline">BOM!</span>
                 <span className="sm:hidden">👍</span>
               </div>
@@ -120,7 +122,7 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
           {timeRemaining !== undefined && (
             <div data-testid="timer-display" className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-lg">
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-flu-grena" />
+                <Clock className="w-4 h-4 text-primary" />
                 <span className="text-sm font-medium text-muted-foreground">Tempo</span>
               </div>
               <GameTimer 
@@ -135,13 +137,14 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
         {/* Controles à direita otimizados */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           <GameRulesTooltip />
-          <div 
+          <button 
             className="p-2 rounded-full bg-card/70 hover:bg-card/90 border border-border hover:border-border/80 transition-colors cursor-pointer opacity-60 hover:opacity-80 backdrop-blur-sm"
             onClick={onDebugClick}
+            aria-label="Informações de Debug"
             title="Informações de Debug"
           >
             <Info className="w-3 h-3 sm:w-4 sm:h-4 text-muted-foreground" />
-          </div>
+          </button>
         </div>
       </div>
     </header>

@@ -139,21 +139,22 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
         break;
     }
 
-    // Remove existing structured data script
-    const existingScript = document.querySelector('script[type="application/ld+json"]');
+    // Remove only our own structured data script (identified by data-structured attribute)
+    const existingScript = document.querySelector('script[type="application/ld+json"][data-structured]');
     if (existingScript) {
       existingScript.remove();
     }
 
-    // Add new structured data script
+    // Add new structured data script with identifier
     const script = document.createElement('script');
     script.type = 'application/ld+json';
+    script.setAttribute('data-structured', type);
     script.textContent = JSON.stringify(structuredData);
     document.head.appendChild(script);
 
     return () => {
-      // Cleanup on unmount
-      const scriptToRemove = document.querySelector('script[type="application/ld+json"]');
+      // Cleanup only our own script on unmount
+      const scriptToRemove = document.querySelector(`script[type="application/ld+json"][data-structured="${type}"]`);
       if (scriptToRemove) {
         scriptToRemove.remove();
       }
