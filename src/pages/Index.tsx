@@ -30,7 +30,7 @@ const Index = () => {
   }, [onMouseEnter]);
   
   const handleStartGame = () => {
-    window.location.href = '/selecionar-modo-jogo';
+    navigate('/selecionar-modo-jogo');
   };
 
   const handleLoginClick = () => {
