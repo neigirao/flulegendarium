@@ -101,6 +101,7 @@ function App() {
                             } 
                           />
                           
+                          <Route path="/estatisticas" element={<LazyEstatisticasPublicas />} />
                           <Route path="/social" element={<LazySocialPage />} />
                           <Route path="/perfil" element={<LazyProfilePage />} />
                           <Route path="/desafios" element={<LazyDailyChallengesPage />} />

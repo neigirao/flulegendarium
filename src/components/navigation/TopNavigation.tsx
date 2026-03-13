@@ -27,6 +27,12 @@ export const TopNavigation = () => {
       icon: Trophy,
     }] : []),
     {
+      label: "Estatísticas",
+      route: '/estatisticas',
+      onClick: () => navigate('/estatisticas'),
+      icon: BarChart3,
+    },
+    {
       label: "Doações",
       route: '/doacoes',
       onClick: () => navigate('/doacoes'),

@@ -13,9 +13,8 @@ const EstatisticasPublicas = () => {
   return (
     <>
       <DynamicSEO
-        title="Estatísticas | Lendas do Flu"
-        description="Veja as estatísticas globais do quiz Lendas do Flu: jogadores mais difíceis, rankings, distribuição de dificuldade e curiosidades."
-        path="/estatisticas"
+        customTitle="Estatísticas | Lendas do Flu"
+        customDescription="Veja as estatísticas globais do quiz Lendas do Flu: jogadores mais difíceis, rankings, distribuição de dificuldade e curiosidades."
       />
       <TopNavigation />
       <main className="min-h-screen bg-background pt-20 pb-12 px-4">
