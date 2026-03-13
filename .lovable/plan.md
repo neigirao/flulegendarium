@@ -1,60 +1,87 @@
+# Plano: Pagina Publica de Estatisticas + Melhorias de Dados
 
-# Plano: Corrigir inicializacao de dificuldade que ignora INITIAL_LEVEL
+## Analise dos Dados Atuais (como especialista de dados)
 
-## Problema
+### O que existe hoje
 
-A mudanca anterior alterou `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` para `'medio'`, porem o hook `use-jersey-guess-game.ts` **nao usa essa constante**. Ele hardcoda `DIFFICULTY_LEVELS[0]` em dois lugares:
+- **360 rankings** salvos, **90 jogadores unicos**, **428 tentativas**, **64 sessoes**
+- **196 jogadores** no banco, **189 camisas**
+- Dados de dificuldade ja recalculados: 82 facil, 81 muito_facil, 16 dificil, 11 muito_dificil, 6 medio
+- Ultimo ranking salvo: 10/fev/2026 (1 mes sem atividade recente)
+- Top scorer: "Pretinha dog tricolor" com 2680 pts
 
-- **Linha 59** (estado inicial): `useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
-- **Linha 383** (reset): `setCurrentDifficulty(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
+### Problemas identificados
 
-Como so existe 1 camisa com `difficulty_level = 'muito_facil'`, o jogo sempre seleciona a mesma camisa (terceira de 2025).
+1. **Dados fragmentados**: rankings em `rankings` + `jersey_game_rankings` + `card_game_rankings` — nao ha visao unificada
+2. **Metricas de engajamento ausentes**: nao ha taxa de retorno, distribuicao de scores, ou tendencias temporais visiveis ao publico
+3. **PersonalDashboard so para logados**: estatisticas pessoais requerem auth, mas dados agregados poderiam ser publicos
+4. **Jogadores mais dificeis/faceis**: dados existem (`player_difficulty_stats`) mas nao sao exibidos para o publico
+5. **Nenhuma pagina de estatisticas globais**: tudo esta escondido no admin ou no dashboard pessoal
 
-## Solucao
+---
 
-**Arquivo: `src/hooks/use-jersey-guess-game.ts`**
+## Proposta: Pagina `/estatisticas` publica
 
-1. Importar `DIFFICULTY_PROGRESSION` e `getDifficultyConfig`
-2. Criar constante para o nivel inicial correto usando `getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)`
-3. Substituir `DIFFICULTY_LEVELS[0]` nas linhas 59 e 383 pela constante do nivel inicial
+Uma pagina acessivel a todos com dados agregados do jogo, dividida em secoes:
 
-### Mudanca no import (linha 8)
+### Secao 1 — Numeros Gerais (hero cards)
 
-De:
-```typescript
-import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
-```
-Para:
-```typescript
-import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
-```
+- Total de partidas jogadas (360)
+- Jogadores unicos (90)
+- Acertos totais
+- Jogadores no banco de dados (196) sem mostrar a foto dele
+- Camisas no acervo (189) mas sem mostrar a imagem dela
 
-### Mudanca na inicializacao (linha 59)
+### Secao 2 — Jogadores Mais Conhecidos vs Mais Dificeis
 
-De:
-```typescript
-const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
-```
-Para:
-```typescript
-const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
-  getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
-);
-```
+- Top 10 jogadores com maior taxa de acerto (os "lendas faceis") - sem mostrar a foto
+- Top 10 jogadores com menor taxa de acerto (os "lendas dificeis") -  sem mostrar a foto
+- Dados vindos da tabela `players` (campos `total_attempts`, `correct_attempts`)
 
-### Mudanca no reset (linha 383)
+### Secao 3 — Hall da Fama Expandido
 
-De:
-```typescript
-setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
-```
-Para:
-```typescript
-setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
-```
+- Top 10 por modo de jogo (ja existe no Home, mas versao expandida com mais dados: media, total de jogos, melhor score)
+- Jogadores mais dedicados (mais partidas jogadas)
 
-## Impacto
+### Secao 4 — Distribuicao de Dificuldade
 
-- O jogo passara a iniciar no nivel `medio` (184 camisas disponiveis) em vez de `muito_facil` (1 camisa)
-- O reset tambem usara o nivel correto
-- Qualquer mudanca futura em `INITIAL_LEVEL` sera refletida automaticamente
+- Grafico de pizza/barra mostrando quantos jogadores em cada nivel de dificuldade
+- Dados ja disponiveis: 82 facil, 81 muito_facil, 16 dificil, etc.
+
+### Secao 5 — Curiosidades
+
+- Jogador mais adivinhado (Henrique Dourado: 97 tentativas)
+- Jogador com 100% de acerto (Washington, Roni, Higor Leite)
+- Maior pontuacao ja registrada (2680 pts)
+
+---
+
+## Implementacao Tecnica
+
+### Arquivos a criar
+
+1. `**src/pages/EstatisticasPublicas.tsx**` — pagina principal com todas as secoes
+2. `**src/components/stats/GlobalStatsCards.tsx**` — cards de numeros gerais
+3. `**src/components/stats/DifficultyDistribution.tsx**` — grafico com Recharts (ja instalado)
+4. `**src/components/stats/HardestPlayers.tsx**` — tabela jogadores mais dificeis/faceis
+5. `**src/components/stats/TopPlayersExpanded.tsx**` — ranking expandido
+
+### Arquivos a editar
+
+- **Roteamento**: adicionar `/estatisticas` no router
+- `**TopNavigation.tsx**`: adicionar link "Estatisticas" na navegacao
+
+### Queries necessarias (todas publicas, sem RLS issues)
+
+- `players`: SELECT publico (ja tem policy)
+- `rankings`: SELECT publico (ja tem policy)
+- `jersey_game_rankings`: SELECT publico (ja tem policy)
+- `game_attempts`: SELECT publico (ja tem policy)
+
+Nenhuma migracao de banco necessaria — todos os dados ja estao acessiveis via RLS existente.
+
+### Stack
+
+- Recharts para graficos (ja instalado)
+- Framer Motion para animacoes de entrada
+- Queries com `staleTime: 10min` (dados mudam pouco)
