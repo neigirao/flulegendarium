@@ -84,3 +84,9 @@ export const LazyJerseyQuizPage = createLazyComponent(
   () => import('@/pages/JerseyQuizPage'),
   React.createElement(PerformanceSkeleton, { height: 600 })
 );
+
+// Statistics Module
+export const LazyEstatisticasPublicas = createLazyComponent(
+  () => import('@/pages/EstatisticasPublicas'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);

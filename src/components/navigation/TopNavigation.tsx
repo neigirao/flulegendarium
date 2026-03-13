@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
-import { Shield, HelpCircle, User, Menu, Heart, Trophy, Landmark } from "lucide-react";
+import { Shield, HelpCircle, User, Menu, Heart, Trophy, Landmark, BarChart3 } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useLinkPrefetch } from "@/hooks/use-route-prefetch";
 
@@ -26,6 +26,12 @@ export const TopNavigation = () => {
       onClick: () => navigate('/conquistas'),
       icon: Trophy,
     }] : []),
+    {
+      label: "Estatísticas",
+      route: '/estatisticas',
+      onClick: () => navigate('/estatisticas'),
+      icon: BarChart3,
+    },
     {
       label: "Doações",
       route: '/doacoes',

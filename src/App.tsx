@@ -36,7 +36,8 @@ import {
   LazyResetPassword,
   LazyProfilePage,
   LazyDailyChallengesPage,
-  LazyJerseyQuizPage
+  LazyJerseyQuizPage,
+  LazyEstatisticasPublicas
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
@@ -100,6 +101,7 @@ function App() {
                             } 
                           />
                           
+                          <Route path="/estatisticas" element={<LazyEstatisticasPublicas />} />
                           <Route path="/social" element={<LazySocialPage />} />
                           <Route path="/perfil" element={<LazyProfilePage />} />
                           <Route path="/desafios" element={<LazyDailyChallengesPage />} />
