@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, LabelList } from "recharts";
 import { BarChart3 } from "lucide-react";
 
 const DIFFICULTY_COLORS: Record<string, string> = {
@@ -37,11 +37,14 @@ export const DifficultyDistribution = () => {
         counts[level] = (counts[level] || 0) + 1;
       });
 
+      const total = players.length || 1;
+
       return Object.entries(DIFFICULTY_LABELS).map(([key, label]) => ({
         name: label,
         key,
         count: counts[key] || 0,
         color: DIFFICULTY_COLORS[key],
+        pct: `${Math.round(((counts[key] || 0) / total) * 100)}%`,
       }));
     },
     staleTime: 10 * 60 * 1000,
@@ -54,13 +57,16 @@ export const DifficultyDistribution = () => {
           <BarChart3 className="h-5 w-5 text-primary" />
           Distribuição de Dificuldade dos Jogadores
         </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          A maioria das lendas é facilmente reconhecida — mas algumas desafiam até os mais dedicados
+        </p>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <div className="h-64 bg-muted animate-pulse rounded" />
         ) : (
           <ResponsiveContainer width="100%" height={280}>
-            <BarChart data={data} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+            <BarChart data={data} margin={{ top: 20, right: 20, bottom: 5, left: 0 }}>
               <XAxis
                 dataKey="name"
                 tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
@@ -79,9 +85,13 @@ export const DifficultyDistribution = () => {
                   borderRadius: "8px",
                   color: "hsl(var(--foreground))",
                 }}
-                formatter={(value: number) => [`${value} jogadores`, "Quantidade"]}
+                formatter={(value: number, _: string, props: any) => [
+                  `${value} jogadores (${props.payload.pct})`,
+                  "Quantidade",
+                ]}
               />
               <Bar dataKey="count" radius={[6, 6, 0, 0]}>
+                <LabelList dataKey="pct" position="top" style={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} />
                 {data?.map((entry, i) => (
                   <Cell key={i} fill={entry.color} />
                 ))}
