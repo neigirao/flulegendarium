@@ -27,7 +27,7 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
   const variant = getScoreVariant();
 
   const scoreStyles = {
-    legendary: "bg-gradient-to-r from-accent via-destructive to-accent text-accent-foreground shadow-accent/30 animate-pulse",
+    legendary: "bg-gradient-to-r from-accent via-destructive to-accent text-accent-foreground shadow-accent/30",
     excellent: "bg-gradient-to-r from-success to-success/80 text-success-foreground shadow-success/30",
     good: "bg-gradient-to-r from-info to-info/80 text-info-foreground shadow-info/30",
     positive: "bg-gradient-to-r from-primary to-primary/90 text-primary-foreground shadow-primary/30",

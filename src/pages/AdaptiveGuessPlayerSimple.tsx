@@ -1,7 +1,6 @@
-
 import React, { Suspense, lazy } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { SEOHead } from "@/components/SEOHead";
+import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 
@@ -10,11 +9,10 @@ const AdaptiveGameContainer = lazy(() => import("@/components/guess-game/Adaptiv
 const AdaptiveGuessPlayerSimple = () => {
   return (
     <>
-      <SEOHead 
-        title="Quiz Adaptativo - Lendas do Flu | Dificuldade que se Adapta a Você"
-        description="🎯 Modo adaptativo que ajusta a dificuldade conforme seu desempenho! Evolua gradualmente e domine as lendas do Fluminense."
-        keywords="quiz adaptativo fluminense, dificuldade progressiva, quiz inteligente tricolor"
-        url="https://flulegendarium.lovable.app/quiz-adaptativo"
+      <DynamicSEO
+        gameMode="adaptive"
+        customTitle="Quiz Adaptativo - Dificuldade Inteligente | Lendas do Flu"
+        customDescription="🎯 Modo adaptativo que ajusta a dificuldade conforme seu desempenho! Evolua gradualmente e domine as lendas do Fluminense."
       />
       <RootLayout>
         <GameErrorBoundary>

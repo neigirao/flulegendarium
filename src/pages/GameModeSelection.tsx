@@ -226,7 +226,7 @@ const GameModeSelection = () => {
                 {/* Quiz das Camisas */}
                 <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative h-full">
                   <div className="absolute top-3 right-3">
-                    <span className="bg-warning text-warning-foreground text-xs px-2 py-0.5 rounded-full font-bold">NOVO</span>
+                    <span className="bg-warning text-warning-foreground text-xs px-2 py-0.5 rounded-full font-bold">POPULAR</span>
                   </div>
                   
                   <div className="text-center mb-4">

@@ -187,7 +187,7 @@ Teste seus conhecimentos: ${window.location.origin}
                 </div>
                 
                 <div className="mt-4 text-xs text-muted-foreground">
-                  flulegendarium.lovable.app
+                  lendasdoflu.com
                 </div>
               </div>
             </FluCard>
