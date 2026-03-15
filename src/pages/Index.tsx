@@ -1,15 +1,17 @@
 import React, { useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Rocket, Instagram, User, LogIn } from "lucide-react";
+import { Rocket, Instagram, User, LogIn, BarChart3, ChevronRight } from "lucide-react";
 import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { GameTypeRankings } from "@/components/home/GameTypeRankings";
 import { GameModesPreview } from "@/components/home/GameModesPreview";
 import { useLinkPrefetch, useRoutePrefetch } from "@/hooks/use-route-prefetch";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const { user } = useAuth();
@@ -17,13 +19,45 @@ const Index = () => {
   const { trackPageView, trackAuthPromptShown } = useFunnelAnalytics();
   const { onMouseEnter } = useLinkPrefetch();
   
-  // Prefetch likely next routes automatically
   useRoutePrefetch();
 
-  // Track page view on mount
   useEffect(() => {
     trackPageView('home');
   }, [trackPageView]);
+
+  // Dynamic counts
+  const { data: playerCount } = useQuery({
+    queryKey: ['player-count'],
+    queryFn: async () => {
+      const { count } = await supabase.from('players').select('*', { count: 'exact', head: true });
+      return count || 0;
+    },
+    staleTime: 30 * 60 * 1000,
+  });
+
+  const { data: jerseyCount } = useQuery({
+    queryKey: ['jersey-count'],
+    queryFn: async () => {
+      const { count } = await supabase.from('jerseys').select('*', { count: 'exact', head: true });
+      return count || 0;
+    },
+    staleTime: 30 * 60 * 1000,
+  });
+
+  // Today's players count
+  const { data: todayPlayers } = useQuery({
+    queryKey: ['today-players'],
+    queryFn: async () => {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const { count } = await supabase
+        .from('game_starts')
+        .select('*', { count: 'exact', head: true })
+        .gte('started_at', today.toISOString());
+      return count || 0;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   const handlePrefetchGameMode = useCallback(() => {
     onMouseEnter('/selecionar-modo-jogo');
@@ -48,7 +82,6 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">
         <TopNavigation />
         
-        {/* Main Content */}
         <div className="pt-24 min-h-screen safe-area-top">
           {/* Hero Section */}
           <section className="container mx-auto px-4 pt-16 pb-8 text-center">
@@ -56,11 +89,10 @@ const Index = () => {
               LENDAS DO FLU
             </h1>
             <p className="text-display-subtitle text-primary-foreground/90 mb-4 font-display">
-              O Quiz Definitivo do Fluminense
+              De Castilho a Cano — Você Conhece Todas as Lendas?
             </p>
             <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto font-body">
-              3 modos de jogo: Jogadores, Décadas e Camisas Históricas!
-              Teste seus conhecimentos sobre os ídolos e uniformes tricolores.
+              Das Laranjeiras ao Maracanã: 3 modos de quiz para provar que você é um verdadeiro tricolor.
             </p>
 
             {/* Main CTA Button */}
@@ -111,16 +143,44 @@ const Index = () => {
               </p>
             )}
 
-            <p className="text-primary-foreground/70 text-sm mb-12">
-              Gratuito • Jogue sem cadastro • 188+ jogadores • 50+ camisas históricas
+            <p className="text-primary-foreground/70 text-sm mb-4">
+              Gratuito • Jogue sem cadastro • {playerCount || '188'}+ jogadores • {jerseyCount || '50'}+ camisas históricas
             </p>
 
-            {/* Game Modes Preview - below fold, deferred rendering */}
+            {/* Live counter */}
+            {todayPlayers !== undefined && todayPlayers > 0 && (
+              <p className="text-primary-foreground/60 text-xs mb-12">
+                🔴 {todayPlayers} {todayPlayers === 1 ? 'tricolor jogou' : 'tricolores jogaram'} hoje
+              </p>
+            )}
+            {(todayPlayers === undefined || todayPlayers === 0) && <div className="mb-12" />}
+
+            {/* Game Modes Preview */}
             <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}>
               <GameModesPreview />
             </section>
 
-            {/* Hall da Fama Section - below fold, deferred rendering */}
+            {/* Stats Banner */}
+            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 100px' }}>
+              <div className="max-w-2xl mx-auto mb-12">
+                <Link to="/estatisticas" className="group">
+                  <Card className="bg-card/10 backdrop-blur-sm border-border/20 hover:bg-card/20 transition-all duration-300 hover:scale-[1.02]">
+                    <CardContent className="p-4 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <BarChart3 className="w-6 h-6 text-primary-foreground/80" />
+                        <div className="text-left">
+                          <p className="text-primary-foreground font-display text-sm">O Flu em Números</p>
+                          <p className="text-primary-foreground/60 text-xs">Rankings, curiosidades e estatísticas da comunidade</p>
+                        </div>
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-primary-foreground/60 group-hover:translate-x-1 transition-transform" />
+                    </CardContent>
+                  </Card>
+                </Link>
+              </div>
+            </section>
+
+            {/* Hall da Fama */}
             <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 800px' }}>
               <GameTypeRankings />
             </section>
@@ -134,8 +194,7 @@ const Index = () => {
                 </p>
               </div>
 
-              {/* Game Instructions */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-8">
                 <div className="text-center group">
                   <div className="bg-card/10 backdrop-blur-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:bg-card/20 transition-all duration-300 border border-border/20">
                     <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-secondary-foreground font-bold text-lg">
@@ -144,7 +203,7 @@ const Index = () => {
                   </div>
                   <h3 className="text-display-sm text-primary-foreground mb-4">Veja a Foto</h3>
                   <p className="text-primary-foreground/80 leading-relaxed font-body">
-                    Uma foto de um jogador do Fluminense aparece na tela. Pode ser atual ou histórico!
+                    Uma foto de um ídolo do Fluminense aparece na tela — de Castilho a Cano, passando por todas as eras!
                   </p>
                 </div>
 
@@ -156,7 +215,7 @@ const Index = () => {
                   </div>
                   <h3 className="text-display-sm text-primary-foreground mb-4">Digite o Nome</h3>
                   <p className="text-primary-foreground/80 leading-relaxed font-body">
-                    Digite o nome do jogador. Pode usar apelidos ou nome completo - nosso sistema é inteligente!
+                    Digite o nome do jogador. Pode usar apelidos ou nome completo — nosso sistema é inteligente!
                   </p>
                 </div>
 
@@ -171,6 +230,19 @@ const Index = () => {
                     Acertou? Ganhe pontos e continue! O jogo fica mais difícil conforme você evolui.
                   </p>
                 </div>
+              </div>
+
+              {/* CTA after Como Funciona */}
+              <div className="text-center mb-12">
+                <Button
+                  onClick={handleStartGame}
+                  onMouseEnter={handlePrefetchGameMode}
+                  size="lg"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-display tracking-wide hover:scale-105 transition-transform"
+                >
+                  <Rocket className="w-5 h-5 mr-2" />
+                  QUERO JOGAR!
+                </Button>
               </div>
             </section>
 

@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { SEOHead } from "@/components/SEOHead";
+import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 
@@ -9,11 +9,10 @@ const DecadeGameContainer = lazy(() => import("@/components/decade-game/DecadeGa
 const DecadeGuessPlayerSimple = () => {
   return (
     <>
-      <SEOHead 
-        title="Quiz por Década - Lendas do Flu | Teste Seu Conhecimento por Era"
-        description="🗓️ Escolha uma década e teste seus conhecimentos sobre as lendas do Fluminense! De 1950 até os dias atuais."
-        keywords="quiz década fluminense, história tricolor, jogadores por época"
-        url="https://flulegendarium.lovable.app/quiz-decada"
+      <DynamicSEO
+        gameMode="decade"
+        customTitle="Quiz por Década - Jogadores de Cada Era do Fluminense | Lendas do Flu"
+        customDescription="🗓️ Escolha uma década e teste seus conhecimentos sobre as lendas do Fluminense! Dos anos 60 até os dias atuais."
       />
       <RootLayout>
         <GameErrorBoundary>

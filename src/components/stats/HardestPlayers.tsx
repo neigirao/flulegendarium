@@ -103,7 +103,7 @@ export const HardestPlayers = () => {
         data?.easiest || [],
         "Lendas Mais Conhecidas",
         TrendingUp,
-        "text-green-500"
+        "text-success"
       )}
       {renderTable(
         data?.hardest || [],

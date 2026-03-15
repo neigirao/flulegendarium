@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { SEOHead } from "@/components/SEOHead";
+import { DynamicSEO } from "@/components/seo/DynamicSEO";
 import { GameModeCard } from "@/components/GameModeCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,11 +42,9 @@ const GameModeSelection = () => {
 
   return (
     <>
-      <SEOHead 
-        title="Escolha seu Modo de Jogo - Lendas do Flu"
-        description="🎮 Escolha entre diferentes modos de jogo: Quiz Adaptativo ou Quiz por Década. Teste seus conhecimentos sobre o Fluminense!"
-        keywords="modos de jogo fluminense, quiz adaptativo, quiz por década, tricolor"
-        url="https://flulegendarium.lovable.app/selecionar-modo-jogo"
+      <DynamicSEO
+        customTitle="Escolha seu Modo de Jogo - Quiz de Jogadores e Camisas | Lendas do Flu"
+        customDescription="🎮 3 modos de quiz: Adaptativo, Por Década e Camisas Históricas. Teste seus conhecimentos sobre os ídolos do Fluminense!"
       />
       <RootLayout>
         <div data-testid="game-mode-page" className="min-h-screen bg-gradient-to-br from-secondary via-primary/80 to-secondary/90 relative overflow-hidden bg-tricolor-vertical-border">
@@ -228,7 +226,7 @@ const GameModeSelection = () => {
                 {/* Quiz das Camisas */}
                 <div className="bg-card/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl relative h-full">
                   <div className="absolute top-3 right-3">
-                    <span className="bg-warning text-warning-foreground text-xs px-2 py-0.5 rounded-full font-bold">NOVO</span>
+                    <span className="bg-warning text-warning-foreground text-xs px-2 py-0.5 rounded-full font-bold">POPULAR</span>
                   </div>
                   
                   <div className="text-center mb-4">
