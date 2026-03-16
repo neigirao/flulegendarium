@@ -164,16 +164,26 @@ export const ImageGuard = memo(({
 
   // Imagem carregada - SEMPRE mostra imagem, NUNCA erro
   return (
-    <img
-      key={`${imageSrc}-loaded`}
-      src={imageSrc}
-      alt={alt}
-      className={className}
-      loading={priority ? "eager" : "lazy"}
-      decoding="async"
-      onError={handleError}
-      data-testid="image-guard"
-    />
+    <div className={`relative ${className}`}>
+      <img
+        key={`${imageSrc}-loaded`}
+        src={imageSrc}
+        alt={alt}
+        className={className}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        onError={handleError}
+        data-testid="image-guard"
+      />
+      {currentFallbackLevel >= 1 && itemName && (
+        <ImageFeedbackButton
+          itemName={itemName}
+          itemType={imageType}
+          imageUrl={typeof src === 'string' ? src : null}
+          itemId={itemId}
+        />
+      )}
+    </div>
   );
 });
 

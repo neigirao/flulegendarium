@@ -265,6 +265,12 @@ export const UnifiedPlayerImage = memo(({
                 <span className="text-xs font-bold text-primary">FLU</span>
               </div>
               <p className="text-sm text-center">Usando escudo do Fluminense</p>
+              <ImageFeedbackButton
+                itemName={player.name}
+                itemType="player"
+                imageUrl={originalSrcRef.current}
+                itemId={player.id}
+              />
             </div>
           )}
         </div>
