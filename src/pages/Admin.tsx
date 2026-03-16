@@ -10,6 +10,7 @@ import { ReportsOverview } from "@/components/admin/reports/ReportsOverview";
 import { BusinessIntelligenceDashboard } from "@/components/admin/bi/BusinessIntelligenceDashboard";
 import { ImageAuditDashboard } from "@/components/admin/images/ImageAuditDashboard";
 import { JerseyImageAuditDashboard } from "@/components/admin/images/JerseyImageAuditDashboard";
+import { ImageFeedbackReport } from "@/components/admin/reports/ImageFeedbackReport";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, BarChart3, UserPlus, Users, FileText, Eye, UserCheck, Brain, Image, Shirt } from "lucide-react";
