@@ -7,6 +7,7 @@ import { getTransformedImageUrl, isSupabaseStorageUrl, getResponsiveSrcSet } fro
 import { getReliableJerseyImageUrl, jerseyDefaultImage } from '@/utils/jersey-image/imageUtils';
 import { reportJerseyImageProblem } from '@/utils/jersey-image/problemTracking';
 import { logger } from '@/utils/logger';
+import { ImageFeedbackButton } from '@/components/image-feedback/ImageFeedbackButton';
 
 interface JerseyImageProps {
   jersey: Jersey;
@@ -174,6 +175,12 @@ export const JerseyImage = ({
                   className="w-24 h-24 mx-auto mb-2 opacity-50"
                 />
                 <p className="text-sm">Imagem não disponível</p>
+                <ImageFeedbackButton
+                  itemName={`Camisa ${jersey.years.join('/')}`}
+                  itemType="jersey"
+                  imageUrl={jersey.image_url}
+                  itemId={jersey.id}
+                />
               </div>
             </div>
           ) : (inView || priority) && currentSrc && (
