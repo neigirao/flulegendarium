@@ -44,7 +44,9 @@ export const ImageGuard = memo(({
   onError,
   onLoad,
   priority = false,
-  imageType = 'player'
+  imageType = 'player',
+  itemName,
+  itemId
 }: ImageGuardProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentFallbackLevel, setCurrentFallbackLevel] = useState(0);
