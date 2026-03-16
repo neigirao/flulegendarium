@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { defaultImage, MAX_IMAGE_RETRIES, SUPABASE_STORAGE_URL } from '@/utils/player-image/constants';
 import { reportImageError } from '@/services/imageReportService';
 import { logger } from '@/utils/logger';
+import { ImageFeedbackButton } from '@/components/image-feedback/ImageFeedbackButton';
 import { 
   getTransformedImageUrl, 
   isSupabaseStorageUrl, 
@@ -264,6 +265,12 @@ export const UnifiedPlayerImage = memo(({
                 <span className="text-xs font-bold text-primary">FLU</span>
               </div>
               <p className="text-sm text-center">Usando escudo do Fluminense</p>
+              <ImageFeedbackButton
+                itemName={player.name}
+                itemType="player"
+                imageUrl={originalSrcRef.current}
+                itemId={player.id}
+              />
             </div>
           )}
         </div>

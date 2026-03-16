@@ -1,66 +1,60 @@
 
+# Plano: Corrigir inicializacao de dificuldade que ignora INITIAL_LEVEL
 
-# Plano: Botao de Feedback de Imagem + Relatorio Admin
+## Problema
 
-## Resumo
+A mudanca anterior alterou `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` para `'medio'`, porem o hook `use-jersey-guess-game.ts` **nao usa essa constante**. Ele hardcoda `DIFFICULTY_LEVELS[0]` em dois lugares:
 
-Adicionar um botao discreto no `UnifiedPlayerImage` e no `ImageGuard` que aparece quando a imagem falha (estado de erro ou fallback). O usuario clica, confirma o report, e os dados sao salvos na tabela `image_error_reports` (ja existente). No admin, criar uma nova aba com relatorio desses reports.
+- **Linha 59** (estado inicial): `useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
+- **Linha 383** (reset): `setCurrentDifficulty(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
 
-## Componentes
+Como so existe 1 camisa com `difficulty_level = 'muito_facil'`, o jogo sempre seleciona a mesma camisa (terceira de 2025).
 
-### 1. `src/components/image-feedback/ImageFeedbackButton.tsx` (NOVO)
+## Solucao
 
-Botao pequeno com icone de flag/alerta que:
-- Recebe props: `itemName`, `itemType` ('player' | 'jersey'), `imageUrl`, `itemId?`
-- Ao clicar, abre um mini popover/toast confirmando "Reportar imagem com problema?"
-- Salva na tabela `image_error_reports` com `error_type: 'user_report'` e `player_name` = nome do jogador/camisa
-- Usa `reportedImages` Set do `imageReportService` para evitar reports duplicados
-- Feedback visual: toast de sucesso apos envio
+**Arquivo: `src/hooks/use-jersey-guess-game.ts`**
 
-### 2. Integracao nos componentes de imagem
+1. Importar `DIFFICULTY_PROGRESSION` e `getDifficultyConfig`
+2. Criar constante para o nivel inicial correto usando `getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)`
+3. Substituir `DIFFICULTY_LEVELS[0]` nas linhas 59 e 383 pela constante do nivel inicial
 
-**`UnifiedPlayerImage.tsx`**: Adicionar `ImageFeedbackButton` visivel quando `imageStatus === 'error'` ou quando esta em fallback (retryCount > 0 e loaded). Passa `player.name`, `player.id`, `currentSrc`.
+### Mudanca no import (linha 8)
 
-**`ImageGuard.tsx`**: Adicionar prop opcional `itemName` e `itemId`. Quando `currentFallbackLevel >= 1` (usando fallback), mostrar o botao. Usado para camisas no jersey quiz.
+De:
+```typescript
+import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
+Para:
+```typescript
+import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
 
-### 3. `src/components/admin/reports/ImageFeedbackReport.tsx` (NOVO)
+### Mudanca na inicializacao (linha 59)
 
-Tabela no admin mostrando:
-- Nome do jogador/camisa
-- URL original
-- Tipo de erro
-- Data do report
-- Status (resolvido/pendente)
-- Botao para marcar como resolvido
-- Query: `supabase.from('image_error_reports').select('*').order('created_at', { ascending: false })`
+De:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
+  getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
+);
+```
 
-### 4. `src/pages/Admin.tsx`
+### Mudanca no reset (linha 383)
 
-Adicionar o `ImageFeedbackReport` dentro da aba "Imagens" (`image-audit` tab), como terceira secao apos as auditorias existentes.
+De:
+```typescript
+setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
+```
 
-### 5. `src/services/imageReportService.ts`
+## Impacto
 
-Adicionar funcao `reportUserImageFeedback(itemName, itemType, imageUrl, itemId?)` que insere com `error_type: 'user_report'`.
-
-## Tabela existente — sem migracao
-
-A tabela `image_error_reports` ja tem todos os campos necessarios:
-- `player_name` (text, required) — armazena nome do jogador ou camisa
-- `original_url` (text, nullable) — URL da imagem
-- `error_type` (text, default 'load_error') — usaremos 'user_report'
-- `resolved` (boolean, default false)
-- `device_info` (jsonb)
-
-RLS ja permite INSERT publico (`With Check: true`) e SELECT para admins.
-
-## Arquivos
-
-| Acao | Arquivo |
-|------|---------|
-| Criar | `src/components/image-feedback/ImageFeedbackButton.tsx` |
-| Criar | `src/components/admin/reports/ImageFeedbackReport.tsx` |
-| Editar | `src/components/player-image/UnifiedPlayerImage.tsx` |
-| Editar | `src/components/guards/ImageGuard.tsx` |
-| Editar | `src/services/imageReportService.ts` |
-| Editar | `src/pages/Admin.tsx` |
-
+- O jogo passara a iniciar no nivel `medio` (184 camisas disponiveis) em vez de `muito_facil` (1 camisa)
+- O reset tambem usara o nivel correto
+- Qualquer mudanca futura em `INITIAL_LEVEL` sera refletida automaticamente

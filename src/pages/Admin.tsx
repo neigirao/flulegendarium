@@ -10,6 +10,7 @@ import { ReportsOverview } from "@/components/admin/reports/ReportsOverview";
 import { BusinessIntelligenceDashboard } from "@/components/admin/bi/BusinessIntelligenceDashboard";
 import { ImageAuditDashboard } from "@/components/admin/images/ImageAuditDashboard";
 import { JerseyImageAuditDashboard } from "@/components/admin/images/JerseyImageAuditDashboard";
+import { ImageFeedbackReport } from "@/components/admin/reports/ImageFeedbackReport";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, BarChart3, UserPlus, Users, FileText, Eye, UserCheck, Brain, Image, Shirt } from "lucide-react";
@@ -106,6 +107,10 @@ export default function Admin() {
           <TabsContent value="image-audit">
             <div className="bg-white rounded-lg shadow p-6 space-y-8">
               <div>
+                <h2 className="text-xl font-bold text-flu-grena mb-4">Reports de Imagens (Usuários)</h2>
+                <ImageFeedbackReport />
+              </div>
+              <div className="border-t pt-8">
                 <h2 className="text-xl font-bold text-flu-grena mb-4">Auditoria de Imagens - Jogadores</h2>
                 <ImageAuditDashboard />
               </div>

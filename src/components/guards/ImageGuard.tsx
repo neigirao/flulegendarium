@@ -9,6 +9,7 @@ import {
 } from '@/utils/player-image/problematicUrls';
 import { logger } from '@/utils/logger';
 import { playerSilhouetteSvg, fluminenseJerseySvg } from '@/utils/fallback-images/fluminenseSvg';
+import { ImageFeedbackButton } from '@/components/image-feedback/ImageFeedbackButton';
 
 interface ImageGuardProps {
   src: string | null | undefined;
@@ -20,6 +21,10 @@ interface ImageGuardProps {
   priority?: boolean;
   /** Tipo de imagem para fallback apropriado */
   imageType?: 'player' | 'jersey';
+  /** Nome do item para feedback */
+  itemName?: string;
+  /** ID do item para feedback */
+  itemId?: string;
 }
 
 /**
@@ -39,7 +44,9 @@ export const ImageGuard = memo(({
   onError,
   onLoad,
   priority = false,
-  imageType = 'player'
+  imageType = 'player',
+  itemName,
+  itemId
 }: ImageGuardProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentFallbackLevel, setCurrentFallbackLevel] = useState(0);
@@ -157,16 +164,26 @@ export const ImageGuard = memo(({
 
   // Imagem carregada - SEMPRE mostra imagem, NUNCA erro
   return (
-    <img
-      key={`${imageSrc}-loaded`}
-      src={imageSrc}
-      alt={alt}
-      className={className}
-      loading={priority ? "eager" : "lazy"}
-      decoding="async"
-      onError={handleError}
-      data-testid="image-guard"
-    />
+    <div className={`relative ${className}`}>
+      <img
+        key={`${imageSrc}-loaded`}
+        src={imageSrc}
+        alt={alt}
+        className={className}
+        loading={priority ? "eager" : "lazy"}
+        decoding="async"
+        onError={handleError}
+        data-testid="image-guard"
+      />
+      {currentFallbackLevel >= 1 && itemName && (
+        <ImageFeedbackButton
+          itemName={itemName}
+          itemType={imageType}
+          imageUrl={typeof src === 'string' ? src : null}
+          itemId={itemId}
+        />
+      )}
+    </div>
   );
 });
 

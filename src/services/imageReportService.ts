@@ -86,3 +86,47 @@ export const clearReportCache = (): void => {
 export const isImageReported = (playerId: string, imageUrl: string): boolean => {
   return reportedImages.has(`${playerId}-${imageUrl}`);
 };
+
+/**
+ * Report de feedback do usuário (botão de flag)
+ */
+export const reportUserImageFeedback = async (
+  itemName: string,
+  itemType: 'player' | 'jersey',
+  imageUrl: string | null,
+  itemId?: string
+): Promise<void> => {
+  const cacheKey = `${itemId || itemName}-${imageUrl}`;
+  
+  if (reportedImages.has(cacheKey)) {
+    logger.debug('Imagem já reportada pelo usuário nesta sessão', 'IMAGE_FEEDBACK');
+    return;
+  }
+
+  const deviceInfo = {
+    userAgent: navigator.userAgent,
+    viewport: { width: window.innerWidth, height: window.innerHeight },
+    connection: (navigator as Navigator & { connection?: { effectiveType?: string } })
+      .connection?.effectiveType,
+    itemType,
+  };
+
+  const { error } = await supabase
+    .from('image_error_reports')
+    .insert({
+      player_id: itemType === 'player' && itemId ? itemId : null,
+      player_name: `[${itemType}] ${itemName}`,
+      original_url: imageUrl,
+      error_type: 'user_report',
+      retry_count: 0,
+      device_info: deviceInfo,
+    });
+
+  if (error) {
+    logger.error('Erro ao salvar feedback de imagem', 'IMAGE_FEEDBACK', { error });
+    throw error;
+  }
+
+  reportedImages.add(cacheKey);
+  logger.info('Feedback de imagem salvo', 'IMAGE_FEEDBACK', { itemName, itemType });
+};
