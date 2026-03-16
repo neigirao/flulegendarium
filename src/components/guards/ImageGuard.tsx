@@ -9,6 +9,7 @@ import {
 } from '@/utils/player-image/problematicUrls';
 import { logger } from '@/utils/logger';
 import { playerSilhouetteSvg, fluminenseJerseySvg } from '@/utils/fallback-images/fluminenseSvg';
+import { ImageFeedbackButton } from '@/components/image-feedback/ImageFeedbackButton';
 
 interface ImageGuardProps {
   src: string | null | undefined;
@@ -20,6 +21,10 @@ interface ImageGuardProps {
   priority?: boolean;
   /** Tipo de imagem para fallback apropriado */
   imageType?: 'player' | 'jersey';
+  /** Nome do item para feedback */
+  itemName?: string;
+  /** ID do item para feedback */
+  itemId?: string;
 }
 
 /**
