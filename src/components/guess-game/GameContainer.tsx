@@ -5,6 +5,7 @@ import { GuessForm } from "./GuessForm";
 import { Player, GameProgressInfo, DifficultyLevelInfo } from "@/types/guess-game";
 import { DifficultyIndicator } from "./DifficultyIndicator";
 import { GameTimer } from "./GameTimer";
+import { ImageFeedbackButton } from "@/components/image-feedback/ImageFeedbackButton";
 import { Clock } from "lucide-react";
 
 interface GameContainerProps {

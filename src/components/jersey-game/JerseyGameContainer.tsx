@@ -443,6 +443,17 @@ const JerseyGameContainer = () => {
                       disabled={gameOver || isProcessingGuess || !isTimerRunning || showResult}
                     />
                   </div>
+                  
+                  {/* Report Problem Button */}
+                  <div className="flex justify-center">
+                    <ImageFeedbackButton
+                      itemName={`Camisa ${currentJersey.years.join('/')}`}
+                      itemType="jersey"
+                      imageUrl={currentJersey.image_url}
+                      itemId={currentJersey.id}
+                      onReportSent={() => resetGame()}
+                    />
+                  </div>
                 </div>
               </CoachMark>
             </div>
