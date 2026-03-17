@@ -30,6 +30,7 @@ interface GameContainerProps {
   playerChangeCount: number;
   gameProgress?: GameProgressInfo;
   currentDifficulty?: DifficultyLevelInfo | null;
+  onReportProblem?: () => void;
 }
 
 export const GameContainer = ({
