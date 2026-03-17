@@ -5,6 +5,7 @@ import { usePlayersData } from "@/hooks/data";
 import { useAuth } from "@/hooks/auth";
 import { useGameKeyboardShortcuts } from "@/hooks/use-game-keyboard-shortcuts";
 import { BaseGameContainer } from "./BaseGameContainer";
+import { ImageFeedbackButton } from "@/components/image-feedback/ImageFeedbackButton";
 import { GameHeader } from "./GameHeader";
 import { AdaptiveDifficultyIndicator } from "./AdaptiveDifficultyIndicator";
 import { AdaptivePlayerImage } from "./AdaptivePlayerImage";
