@@ -175,14 +175,6 @@ export const ImageGuard = memo(({
         onError={handleError}
         data-testid="image-guard"
       />
-      {currentFallbackLevel >= 1 && itemName && (
-        <ImageFeedbackButton
-          itemName={itemName}
-          itemType={imageType}
-          imageUrl={typeof src === 'string' ? src : null}
-          itemId={itemId}
-        />
-      )}
     </div>
   );
 });

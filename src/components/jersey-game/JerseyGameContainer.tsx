@@ -15,6 +15,7 @@ import { AdaptiveDifficultyIndicator } from "@/components/guess-game/AdaptiveDif
 import { AdaptiveProgressionNotification } from "@/components/guess-game/AdaptiveProgressionNotification";
 import { DebugInfo } from "@/components/guess-game/DebugInfo";
 import { JerseyImage } from "./JerseyImage";
+import { ImageFeedbackButton } from "@/components/image-feedback/ImageFeedbackButton";
 import { JerseyYearOptions } from "./JerseyYearOptions";
 import { KeyboardShortcutsHint } from "@/components/game/KeyboardShortcutsHint";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";

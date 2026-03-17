@@ -268,15 +268,6 @@ export const UnifiedPlayerImage = memo(({
             </div>
           )}
 
-          {/* Feedback button - visible when loaded or error */}
-          {(imageStatus === 'loaded' || imageStatus === 'error') && (
-            <ImageFeedbackButton
-              itemName={player.name}
-              itemType="player"
-              imageUrl={originalSrcRef.current}
-              itemId={player.id}
-            />
-          )}
         </div>
 
         {/* Difficulty indicator */}
