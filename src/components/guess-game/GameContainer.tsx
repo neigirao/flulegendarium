@@ -5,6 +5,7 @@ import { GuessForm } from "./GuessForm";
 import { Player, GameProgressInfo, DifficultyLevelInfo } from "@/types/guess-game";
 import { DifficultyIndicator } from "./DifficultyIndicator";
 import { GameTimer } from "./GameTimer";
+import { ImageFeedbackButton } from "@/components/image-feedback/ImageFeedbackButton";
 import { Clock } from "lucide-react";
 
 interface GameContainerProps {
@@ -29,6 +30,7 @@ interface GameContainerProps {
   playerChangeCount: number;
   gameProgress?: GameProgressInfo;
   currentDifficulty?: DifficultyLevelInfo | null;
+  onReportProblem?: () => void;
 }
 
 export const GameContainer = ({
@@ -52,7 +54,8 @@ export const GameContainer = ({
   forceRefresh,
   playerChangeCount,
   gameProgress,
-  currentDifficulty
+  currentDifficulty,
+  onReportProblem
 }: GameContainerProps) => {
 
   if (!currentPlayer) {
@@ -155,6 +158,19 @@ export const GameContainer = ({
               isProcessing={isProcessingGuess}
             />
           </div>
+          
+          {/* Report Problem Button */}
+          {onReportProblem && (
+            <div className="flex justify-center mb-4">
+              <ImageFeedbackButton
+                itemName={currentPlayer.name}
+                itemType="player"
+                imageUrl={currentPlayer.image_url}
+                itemId={currentPlayer.id}
+                onReportSent={onReportProblem}
+              />
+            </div>
+          )}
         </div>
       </div>
 

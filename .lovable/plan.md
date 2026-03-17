@@ -1,51 +1,60 @@
 
+# Plano: Corrigir inicializacao de dificuldade que ignora INITIAL_LEVEL
 
-# Plano: Botao "Tive um problema" abaixo do input de resposta
+## Problema
 
-## Resumo
+A mudanca anterior alterou `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` para `'medio'`, porem o hook `use-jersey-guess-game.ts` **nao usa essa constante**. Ele hardcoda `DIFFICULTY_LEVELS[0]` em dois lugares:
 
-Substituir o botao de flag nas imagens por um botao de texto "Tive um problema" posicionado abaixo do campo de resposta (GuessForm no quiz de jogadores, JerseyYearOptions no quiz de camisas). Ao clicar, o report e salvo, o usuario recebe um agradecimento, e o jogo e encerrado (gameOver). No admin, a secao existente `ImageFeedbackReport` ja funciona para exibir os reports.
+- **Linha 59** (estado inicial): `useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
+- **Linha 383** (reset): `setCurrentDifficulty(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
 
-## Mudancas
+Como so existe 1 camisa com `difficulty_level = 'muito_facil'`, o jogo sempre seleciona a mesma camisa (terceira de 2025).
 
-### 1. Refatorar `ImageFeedbackButton.tsx`
+## Solucao
 
-- Remover o estilo de icone/flag absoluto
-- Novo visual: botao de texto discreto com "Tive um problema"
-- Ao clicar e confirmar: salvar report, mostrar toast de agradecimento, chamar callback `onReportSent` (novo prop)
-- Nova prop `onReportSent: () => void` para que o container do jogo encerre a partida
+**Arquivo: `src/hooks/use-jersey-guess-game.ts`**
 
-### 2. Remover `ImageFeedbackButton` dos componentes de imagem
+1. Importar `DIFFICULTY_PROGRESSION` e `getDifficultyConfig`
+2. Criar constante para o nivel inicial correto usando `getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)`
+3. Substituir `DIFFICULTY_LEVELS[0]` nas linhas 59 e 383 pela constante do nivel inicial
 
-- **`UnifiedPlayerImage.tsx`**: remover o `ImageFeedbackButton` (linhas 271-278)
-- **`ImageGuard.tsx`**: remover o `ImageFeedbackButton` (linhas 178-185)
-- **`JerseyImage.tsx`**: remover o `ImageFeedbackButton` do estado de erro
+### Mudanca no import (linha 8)
 
-### 3. Adicionar botao no `AdaptiveGameContainer.tsx`
+De:
+```typescript
+import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
+Para:
+```typescript
+import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
 
-- Importar `ImageFeedbackButton`
-- Posicionar abaixo do `SkipPlayerButton` (apos linha 416)
-- Passar `itemName={currentPlayer.name}`, `itemType="player"`, `imageUrl={currentPlayer.image_url}`, `itemId={currentPlayer.id}`
-- `onReportSent={() => resetScore()}` — encerra o jogo (resetScore forca gameOver)
+### Mudanca na inicializacao (linha 59)
 
-### 4. Adicionar botao no `JerseyGameContainer.tsx`
+De:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
+  getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
+);
+```
 
-- Posicionar abaixo do `SkipPlayerButton` (apos linha 444)
-- Passar `itemName={"Camisa " + currentJersey.years.join('/')}`, `itemType="jersey"`, `imageUrl={currentJersey.image_url}`, `itemId={currentJersey.id}`
-- `onReportSent` encerra o jogo da mesma forma
+### Mudanca no reset (linha 383)
 
-### 5. Verificar se existe `GameContainer.tsx` (modo classico)
+De:
+```typescript
+setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
+```
 
-- Se o modo classico tambem tem imagem+input, adicionar la tambem
+## Impacto
 
-## Arquivos
-
-| Acao | Arquivo |
-|------|---------|
-| Editar | `src/components/image-feedback/ImageFeedbackButton.tsx` |
-| Editar | `src/components/player-image/UnifiedPlayerImage.tsx` |
-| Editar | `src/components/guards/ImageGuard.tsx` |
-| Editar | `src/components/jersey-game/JerseyImage.tsx` |
-| Editar | `src/components/guess-game/AdaptiveGameContainer.tsx` |
-| Editar | `src/components/jersey-game/JerseyGameContainer.tsx` |
-
+- O jogo passara a iniciar no nivel `medio` (184 camisas disponiveis) em vez de `muito_facil` (1 camisa)
+- O reset tambem usara o nivel correto
+- Qualquer mudanca futura em `INITIAL_LEVEL` sera refletida automaticamente

@@ -5,6 +5,7 @@ import { usePlayersData } from "@/hooks/data";
 import { useAuth } from "@/hooks/auth";
 import { useGameKeyboardShortcuts } from "@/hooks/use-game-keyboard-shortcuts";
 import { BaseGameContainer } from "./BaseGameContainer";
+import { ImageFeedbackButton } from "@/components/image-feedback/ImageFeedbackButton";
 import { GameHeader } from "./GameHeader";
 import { AdaptiveDifficultyIndicator } from "./AdaptiveDifficultyIndicator";
 import { AdaptivePlayerImage } from "./AdaptivePlayerImage";
@@ -403,17 +404,28 @@ const AdaptiveGameContainer = () => {
                     isProcessing={isProcessingGuess}
                   />
                   
-                  {/* Skip Player Button */}
-                  <div className="flex justify-center">
-                    <SkipPlayerButton
-                      onSkip={handleSkipPlayer}
-                      skipsUsed={skipsUsed}
-                      maxSkips={maxSkips}
-                      canSkip={canSkip}
-                      skipPenalty={skipPenalty}
-                      disabled={gameOver || isProcessingGuess || !isTimerRunning}
-                    />
-                  </div>
+                   {/* Skip Player Button */}
+                   <div className="flex justify-center">
+                     <SkipPlayerButton
+                       onSkip={handleSkipPlayer}
+                       skipsUsed={skipsUsed}
+                       maxSkips={maxSkips}
+                       canSkip={canSkip}
+                       skipPenalty={skipPenalty}
+                       disabled={gameOver || isProcessingGuess || !isTimerRunning}
+                     />
+                   </div>
+                   
+                   {/* Report Problem Button */}
+                   <div className="flex justify-center">
+                     <ImageFeedbackButton
+                       itemName={currentPlayer.name}
+                       itemType="player"
+                       imageUrl={currentPlayer.image_url}
+                       itemId={currentPlayer.id}
+                       onReportSent={() => resetScore()}
+                     />
+                   </div>
                 </div>
               </CoachMark>
             </div>

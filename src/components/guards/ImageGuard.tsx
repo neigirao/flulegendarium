@@ -9,7 +9,7 @@ import {
 } from '@/utils/player-image/problematicUrls';
 import { logger } from '@/utils/logger';
 import { playerSilhouetteSvg, fluminenseJerseySvg } from '@/utils/fallback-images/fluminenseSvg';
-import { ImageFeedbackButton } from '@/components/image-feedback/ImageFeedbackButton';
+
 
 interface ImageGuardProps {
   src: string | null | undefined;
@@ -175,14 +175,6 @@ export const ImageGuard = memo(({
         onError={handleError}
         data-testid="image-guard"
       />
-      {currentFallbackLevel >= 1 && itemName && (
-        <ImageFeedbackButton
-          itemName={itemName}
-          itemType={imageType}
-          imageUrl={typeof src === 'string' ? src : null}
-          itemId={itemId}
-        />
-      )}
     </div>
   );
 });
