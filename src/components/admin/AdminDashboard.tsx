@@ -6,7 +6,8 @@ import { NewsManagement } from "./news/NewsManagement";
 import { useAdminStats } from "@/hooks/use-admin-stats";
 import { memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Newspaper } from "lucide-react";
+import { BarChart3, Newspaper, Shirt } from "lucide-react";
+import { JerseyStatsOverview } from "./stats/JerseyStatsOverview";
 
 export const AdminDashboard = memo(() => {
   const {
