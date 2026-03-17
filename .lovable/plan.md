@@ -1,22 +1,60 @@
 
-
-# Plano: Mostrar botão de feedback de imagem sempre no quiz
+# Plano: Corrigir inicializacao de dificuldade que ignora INITIAL_LEVEL
 
 ## Problema
 
-O `ImageFeedbackButton` só aparece dentro do bloco `imageStatus === 'error'` no `UnifiedPlayerImage.tsx` (linha 262). Se a imagem carrega (mesmo sendo a errada ou de baixa qualidade), o botão nunca é exibido. O usuário precisa poder reportar imagens incorretas mesmo quando elas carregam.
+A mudanca anterior alterou `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` para `'medio'`, porem o hook `use-jersey-guess-game.ts` **nao usa essa constante**. Ele hardcoda `DIFFICULTY_LEVELS[0]` em dois lugares:
 
-## Correção
+- **Linha 59** (estado inicial): `useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
+- **Linha 383** (reset): `setCurrentDifficulty(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
 
-**`src/components/player-image/UnifiedPlayerImage.tsx`**:
-- Mover o `ImageFeedbackButton` para fora do bloco de erro, posicionado no canto inferior direito do container da imagem
-- Mostrar o botão sempre que `imageStatus === 'loaded'` OU `imageStatus === 'error'`
-- Usar `position: absolute` sobre a imagem (já é o estilo do botão)
+Como so existe 1 camisa com `difficulty_level = 'muito_facil'`, o jogo sempre seleciona a mesma camisa (terceira de 2025).
 
-**`src/components/guess-game/AdaptivePlayerImage.tsx`**:
-- Verificar se o container tem `position: relative` para o botão absolute funcionar (já tem)
+## Solucao
 
-## Escopo
+**Arquivo: `src/hooks/use-jersey-guess-game.ts`**
 
-1 arquivo editado: `UnifiedPlayerImage.tsx` — mover o `ImageFeedbackButton` para dentro do container da imagem (div linha 221-276), visível quando `loaded` ou `error`.
+1. Importar `DIFFICULTY_PROGRESSION` e `getDifficultyConfig`
+2. Criar constante para o nivel inicial correto usando `getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)`
+3. Substituir `DIFFICULTY_LEVELS[0]` nas linhas 59 e 383 pela constante do nivel inicial
 
+### Mudanca no import (linha 8)
+
+De:
+```typescript
+import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
+Para:
+```typescript
+import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
+
+### Mudanca na inicializacao (linha 59)
+
+De:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
+  getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
+);
+```
+
+### Mudanca no reset (linha 383)
+
+De:
+```typescript
+setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
+```
+
+## Impacto
+
+- O jogo passara a iniciar no nivel `medio` (184 camisas disponiveis) em vez de `muito_facil` (1 camisa)
+- O reset tambem usara o nivel correto
+- Qualquer mudanca futura em `INITIAL_LEVEL` sera refletida automaticamente
