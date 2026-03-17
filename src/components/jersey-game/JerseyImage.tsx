@@ -7,7 +7,7 @@ import { getTransformedImageUrl, isSupabaseStorageUrl, getResponsiveSrcSet } fro
 import { getReliableJerseyImageUrl, jerseyDefaultImage } from '@/utils/jersey-image/imageUtils';
 import { reportJerseyImageProblem } from '@/utils/jersey-image/problemTracking';
 import { logger } from '@/utils/logger';
-import { ImageFeedbackButton } from '@/components/image-feedback/ImageFeedbackButton';
+
 
 interface JerseyImageProps {
   jersey: Jersey;
