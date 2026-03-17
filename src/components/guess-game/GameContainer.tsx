@@ -158,6 +158,19 @@ export const GameContainer = ({
               isProcessing={isProcessingGuess}
             />
           </div>
+          
+          {/* Report Problem Button */}
+          {onReportProblem && (
+            <div className="flex justify-center mb-4">
+              <ImageFeedbackButton
+                itemName={currentPlayer.name}
+                itemType="player"
+                imageUrl={currentPlayer.image_url}
+                itemId={currentPlayer.id}
+                onReportSent={onReportProblem}
+              />
+            </div>
+          )}
         </div>
       </div>
 
