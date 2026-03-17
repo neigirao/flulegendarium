@@ -6,7 +6,8 @@ import { NewsManagement } from "./news/NewsManagement";
 import { useAdminStats } from "@/hooks/use-admin-stats";
 import { memo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BarChart3, Newspaper } from "lucide-react";
+import { BarChart3, Newspaper, Shirt } from "lucide-react";
+import { JerseyStatsOverview } from "./stats/JerseyStatsOverview";
 
 export const AdminDashboard = memo(() => {
   const {
@@ -39,10 +40,14 @@ export const AdminDashboard = memo(() => {
 
   return (
     <Tabs defaultValue="stats" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-2 max-w-md">
+      <TabsList className="grid w-full grid-cols-3 max-w-lg">
         <TabsTrigger value="stats" className="flex items-center gap-2">
           <BarChart3 size={16} />
           Estatísticas
+        </TabsTrigger>
+        <TabsTrigger value="jerseys" className="flex items-center gap-2">
+          <Shirt size={16} />
+          Camisas
         </TabsTrigger>
         <TabsTrigger value="news" className="flex items-center gap-2">
           <Newspaper size={16} />
@@ -66,6 +71,10 @@ export const AdminDashboard = memo(() => {
           <PlayerRankingCard players={playerRanking} />
           <ProgressStatsCard stats={progressStats} />
         </div>
+      </TabsContent>
+
+      <TabsContent value="jerseys">
+        <JerseyStatsOverview />
       </TabsContent>
 
       <TabsContent value="news">

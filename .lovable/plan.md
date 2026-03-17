@@ -1,71 +1,60 @@
 
+# Plano: Corrigir inicializacao de dificuldade que ignora INITIAL_LEVEL
 
-# Plano: Estatisticas de Camisas na Pagina Publica e no Admin
+## Problema
 
-## Contexto
+A mudanca anterior alterou `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` para `'medio'`, porem o hook `use-jersey-guess-game.ts` **nao usa essa constante**. Ele hardcoda `DIFFICULTY_LEVELS[0]` em dois lugares:
 
-A pagina publica `/estatisticas` e o admin dashboard tem relatorios ricos para o quiz de jogadores (dificuldade, decada, curiosidades, rankings, score distribution, etc.), mas nada especifico para o quiz de camisas. As tabelas `jerseys`, `jersey_game_rankings`, `jersey_game_sessions` e `jersey_difficulty_stats` ja tem dados reais.
+- **Linha 59** (estado inicial): `useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
+- **Linha 383** (reset): `setCurrentDifficulty(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
 
-## Pagina Publica — Novos Componentes
+Como so existe 1 camisa com `difficulty_level = 'muito_facil'`, o jogo sempre seleciona a mesma camisa (terceira de 2025).
 
-### 1. `src/components/stats/JerseyStatsCards.tsx`
-Cards hero resumo do quiz de camisas:
-- Total de camisas no acervo (query: `jerseys` count)
-- Partidas de camisas jogadas (`jersey_game_rankings` count)
-- Taxa de acerto global (`jersey_difficulty_stats` is_correct true vs total)
-- Maior pontuacao (`jersey_game_rankings` max score)
+## Solucao
 
-### 2. `src/components/stats/HardestJerseys.tsx`
-Duas listas lado a lado (mesmo layout do `HardestPlayers`):
-- **Camisas Mais Reconhecidas**: jerseys com maior taxa de acerto (filtra `total_attempts > 2`)
-- **Camisas Mais Dificeis**: jerseys com menor taxa de acerto
-- Dados: `jerseys` table campos `total_attempts`, `correct_attempts`, `years`, `type`
-- Exibe: anos da camisa, tipo (Principal/Visitante), taxa de acerto, tentativas
+**Arquivo: `src/hooks/use-jersey-guess-game.ts`**
 
-### 3. `src/components/stats/JerseyDecadeDistribution.tsx`
-Grafico de barras horizontal (igual `DecadeDistribution`) mostrando quantas camisas existem por decada.
-- Dados: campo `decades` da tabela `jerseys`
+1. Importar `DIFFICULTY_PROGRESSION` e `getDifficultyConfig`
+2. Criar constante para o nivel inicial correto usando `getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)`
+3. Substituir `DIFFICULTY_LEVELS[0]` nas linhas 59 e 383 pela constante do nivel inicial
 
-### 4. `src/components/stats/JerseyScoreDistribution.tsx`
-Grafico de barras (igual `ScoreDistribution`) com distribuicao de scores do quiz de camisas.
-- Dados: `jersey_game_rankings.score`
+### Mudanca no import (linha 8)
 
-### 5. `src/components/stats/JerseyCuriosidades.tsx`
-Cards de curiosidades:
-- Camisa mais adivinhada (maior `total_attempts` com alto acerto)
-- Camisa mais dificil (menor taxa com tentativas suficientes)
-- Maior pontuacao e nome do jogador
-- Maior sequencia (`jersey_game_rankings.max_streak`)
-- Fabricante mais presente (`jerseys.manufacturer` count)
+De:
+```typescript
+import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
+Para:
+```typescript
+import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
 
-### 6. Integracao na pagina `EstatisticasPublicas.tsx`
-Adicionar nova secao "Quiz das Camisas" com SectionHeader, contendo os componentes acima. Posicionar apos a secao "Como os Tricolores Jogam" para dar visibilidade.
+### Mudanca na inicializacao (linha 59)
 
-## Admin — Nova aba de Estatisticas de Camisas
+De:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
+  getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
+);
+```
 
-### 7. `src/components/admin/stats/JerseyStatsOverview.tsx`
-Dashboard admin com:
-- Cards: total camisas, partidas jogadas, taxa de acerto, jogadores unicos
-- Tabela: top 10 camisas mais dificeis com taxa de acerto, tentativas, tempo medio
-- Tabela: top 10 camisas mais faceis
-- Grafico: distribuicao de dificuldade das camisas (muito_facil a muito_dificil)
-- Dados: `jerseys`, `jersey_game_rankings`, `jersey_difficulty_stats`
+### Mudanca no reset (linha 383)
 
-### 8. Integracao no `AdminDashboard.tsx`
-Adicionar terceira aba "Camisas" (alem de Estatisticas e Noticias) com icone `Shirt`, renderizando `JerseyStatsOverview`.
+De:
+```typescript
+setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
+```
 
-## Arquivos
+## Impacto
 
-| Acao   | Arquivo |
-|--------|---------|
-| Criar  | `src/components/stats/JerseyStatsCards.tsx` |
-| Criar  | `src/components/stats/HardestJerseys.tsx` |
-| Criar  | `src/components/stats/JerseyDecadeDistribution.tsx` |
-| Criar  | `src/components/stats/JerseyScoreDistribution.tsx` |
-| Criar  | `src/components/stats/JerseyCuriosidades.tsx` |
-| Criar  | `src/components/admin/stats/JerseyStatsOverview.tsx` |
-| Editar | `src/pages/EstatisticasPublicas.tsx` |
-| Editar | `src/components/admin/AdminDashboard.tsx` |
-
-Sem migracoes de banco. Todos os dados vem de tabelas existentes.
-
+- O jogo passara a iniciar no nivel `medio` (184 camisas disponiveis) em vez de `muito_facil` (1 camisa)
+- O reset tambem usara o nivel correto
+- Qualquer mudanca futura em `INITIAL_LEVEL` sera refletida automaticamente

@@ -10,6 +10,11 @@ import { PlayerBehaviorStats } from "@/components/stats/PlayerBehaviorStats";
 import { MonthlyGrowthChart } from "@/components/stats/MonthlyGrowthChart";
 import { DecadeDistribution } from "@/components/stats/DecadeDistribution";
 import { ScoreDistribution } from "@/components/stats/ScoreDistribution";
+import { JerseyStatsCards } from "@/components/stats/JerseyStatsCards";
+import { HardestJerseys } from "@/components/stats/HardestJerseys";
+import { JerseyDecadeDistribution } from "@/components/stats/JerseyDecadeDistribution";
+import { JerseyScoreDistribution } from "@/components/stats/JerseyScoreDistribution";
+import { JerseyCuriosidades } from "@/components/stats/JerseyCuriosidades";
 import { motion } from "framer-motion";
 import { BarChart3, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -117,9 +122,23 @@ const EstatisticasPublicas = () => {
             <Curiosidades />
           </motion.section>
 
+          {/* Jersey Quiz Stats */}
+          <motion.section aria-label="Quiz das Camisas" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}>
+            <SectionHeader emoji="👕" title="Quiz das Camisas" subtitle="Números e curiosidades do quiz de camisas históricas" />
+            <div className="space-y-8">
+              <JerseyStatsCards />
+              <JerseyCuriosidades />
+              <div className="grid md:grid-cols-2 gap-6">
+                <JerseyDecadeDistribution />
+                <JerseyScoreDistribution />
+              </div>
+              <HardestJerseys />
+            </div>
+          </motion.section>
+
           {/* 3-9: Below fold — lazy render */}
           <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 400px' }}>
-            <motion.div aria-label="Comportamento dos jogadores" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}>
+            <motion.div aria-label="Comportamento dos jogadores" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3}>
               <SectionHeader
                 emoji="🎮"
                 title="Como os Tricolores Jogam"
