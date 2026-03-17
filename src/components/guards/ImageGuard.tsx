@@ -9,7 +9,7 @@ import {
 } from '@/utils/player-image/problematicUrls';
 import { logger } from '@/utils/logger';
 import { playerSilhouetteSvg, fluminenseJerseySvg } from '@/utils/fallback-images/fluminenseSvg';
-import { ImageFeedbackButton } from '@/components/image-feedback/ImageFeedbackButton';
+
 
 interface ImageGuardProps {
   src: string | null | undefined;
