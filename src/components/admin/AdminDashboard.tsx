@@ -40,10 +40,14 @@ export const AdminDashboard = memo(() => {
 
   return (
     <Tabs defaultValue="stats" className="space-y-6">
-      <TabsList className="grid w-full grid-cols-2 max-w-md">
+      <TabsList className="grid w-full grid-cols-3 max-w-lg">
         <TabsTrigger value="stats" className="flex items-center gap-2">
           <BarChart3 size={16} />
           Estatísticas
+        </TabsTrigger>
+        <TabsTrigger value="jerseys" className="flex items-center gap-2">
+          <Shirt size={16} />
+          Camisas
         </TabsTrigger>
         <TabsTrigger value="news" className="flex items-center gap-2">
           <Newspaper size={16} />
