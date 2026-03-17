@@ -73,6 +73,10 @@ export const AdminDashboard = memo(() => {
         </div>
       </TabsContent>
 
+      <TabsContent value="jerseys">
+        <JerseyStatsOverview />
+      </TabsContent>
+
       <TabsContent value="news">
         <NewsManagement />
       </TabsContent>
