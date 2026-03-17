@@ -5,14 +5,38 @@ import { supabase } from "@/integrations/supabase/client";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { motion } from "framer-motion";
 import { Shirt } from "lucide-react";
+import { DECADES_INFO } from "@/data/decades";
 
 const DECADE_COLORS: Record<string, string> = {
-  "1970": "hsl(45, 93%, 47%)",
-  "1980": "hsl(25, 95%, 53%)",
-  "1990": "hsl(0, 84%, 60%)",
-  "2000": "hsl(217, 91%, 60%)",
-  "2010": "hsl(142, 76%, 36%)",
-  "2020": "hsl(271, 91%, 65%)",
+  "1970s": "hsl(45, 93%, 47%)",
+  "1980s": "hsl(25, 95%, 53%)",
+  "1990s": "hsl(0, 84%, 60%)",
+  "2000s": "hsl(217, 91%, 60%)",
+  "2010s": "hsl(142, 76%, 36%)",
+  "2020s": "hsl(271, 91%, 65%)",
+};
+
+const normalizeDecade = (value: string): string | null => {
+  const cleaned = value.trim();
+  const normalized = cleaned.toLowerCase();
+  const yearMatch = normalized.match(/\d{4}/);
+
+  if (yearMatch) {
+    const decade = Math.floor(Number(yearMatch[0]) / 10) * 10;
+    return `${decade}s`;
+  }
+
+  const decadeMatch = normalized.match(/\d{3}0s?/);
+  if (decadeMatch) {
+    return `${decadeMatch[0].replace("s", "")}s`;
+  }
+
+  const decadeLabelMatch = normalized.match(/anos\s*(\d{2})/);
+  if (decadeLabelMatch) {
+    return `19${decadeLabelMatch[1]}s`;
+  }
+
+  return null;
 };
 
 export const JerseyDecadeDistribution = () => {
@@ -26,18 +50,20 @@ export const JerseyDecadeDistribution = () => {
       const counts: Record<string, number> = {};
       jerseys.forEach((j) => {
         (j.decades || []).forEach((d: string) => {
-          counts[d] = (counts[d] || 0) + 1;
+          const normalizedDecade = normalizeDecade(d);
+          if (!normalizedDecade || !(normalizedDecade in DECADES_INFO)) return;
+
+          counts[normalizedDecade] = (counts[normalizedDecade] || 0) + 1;
         });
       });
 
-      const chartData = Object.entries(counts)
-        .map(([key, count]) => ({
+      const chartData = Object.keys(DECADES_INFO)
+        .map((key) => ({
           key,
-          name: `${key}s`,
-          count,
+          name: DECADES_INFO[key as keyof typeof DECADES_INFO].label,
+          count: counts[key] || 0,
           color: DECADE_COLORS[key] || "hsl(var(--primary))",
         }))
-        .sort((a, b) => a.key.localeCompare(b.key))
         .filter((d) => d.count > 0);
 
       const bestDecade = chartData.reduce(
