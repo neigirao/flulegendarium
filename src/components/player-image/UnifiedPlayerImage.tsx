@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 import { defaultImage, MAX_IMAGE_RETRIES, SUPABASE_STORAGE_URL } from '@/utils/player-image/constants';
 import { reportImageError } from '@/services/imageReportService';
 import { logger } from '@/utils/logger';
-import { ImageFeedbackButton } from '@/components/image-feedback/ImageFeedbackButton';
+
 import { 
   getTransformedImageUrl, 
   isSupabaseStorageUrl, 
