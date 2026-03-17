@@ -54,7 +54,8 @@ export const GameContainer = ({
   forceRefresh,
   playerChangeCount,
   gameProgress,
-  currentDifficulty
+  currentDifficulty,
+  onReportProblem
 }: GameContainerProps) => {
 
   if (!currentPlayer) {
