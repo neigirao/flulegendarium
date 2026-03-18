@@ -1,7 +1,6 @@
 
 import { ArrowLeft, Info, Trophy, Star, Brain, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
-import { GameRulesTooltip } from "./GameRulesTooltip";
 import { cn } from "@/lib/utils";
 import { DifficultyLevel } from "@/types/guess-game";
 import { GameTimer } from "./GameTimer";
