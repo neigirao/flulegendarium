@@ -444,16 +444,18 @@ const JerseyGameContainer = () => {
                     />
                   </div>
                   
-                  {/* Report Problem Button */}
-                  <div className="flex justify-center">
-                    <ImageFeedbackButton
-                      itemName={`Camisa ${currentJersey.years.join('/')}`}
-                      itemType="jersey"
-                      imageUrl={currentJersey.image_url}
-                      itemId={currentJersey.id}
-                      onReportSent={() => resetGame()}
-                    />
-                  </div>
+                  {/* Report Problem Button - hide when game is over */}
+                  {!gameOver && (
+                    <div className="flex justify-center">
+                      <ImageFeedbackButton
+                        itemName={`Camisa ${currentJersey.years.join('/')}`}
+                        itemType="jersey"
+                        imageUrl={currentJersey.image_url}
+                        itemId={currentJersey.id}
+                        onReportSent={() => resetGame()}
+                      />
+                    </div>
+                  )}
                 </div>
               </CoachMark>
             </div>

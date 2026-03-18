@@ -416,16 +416,18 @@ const AdaptiveGameContainer = () => {
                      />
                    </div>
                    
-                   {/* Report Problem Button */}
-                   <div className="flex justify-center">
-                     <ImageFeedbackButton
-                       itemName={currentPlayer.name}
-                       itemType="player"
-                       imageUrl={currentPlayer.image_url}
-                       itemId={currentPlayer.id}
-                       onReportSent={() => resetScore()}
-                     />
-                   </div>
+                   {/* Report Problem Button - hide when game is over */}
+                   {!gameOver && (
+                     <div className="flex justify-center">
+                       <ImageFeedbackButton
+                         itemName={currentPlayer.name}
+                         itemType="player"
+                         imageUrl={currentPlayer.image_url}
+                         itemId={currentPlayer.id}
+                         onReportSent={() => resetScore()}
+                       />
+                     </div>
+                   )}
                 </div>
               </CoachMark>
             </div>

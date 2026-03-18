@@ -244,7 +244,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
       />
       
       <Dialog open={open} onOpenChange={handleGoHome}>
-        <DialogContent data-testid="game-over-dialog" className="sm:max-w-md max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
+        <DialogContent data-testid="game-over-dialog" className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
