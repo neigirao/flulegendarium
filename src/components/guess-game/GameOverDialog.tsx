@@ -12,7 +12,7 @@ import { Trophy, RotateCcw, Home, Star, Award } from "lucide-react";
 import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
 import { ChallengeResult } from "@/components/social/ChallengeResult";
-import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
+
 import { PersonalRecordConfetti } from "@/components/rewards/PersonalRecordConfetti";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
