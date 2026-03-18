@@ -397,7 +397,7 @@ const AdaptiveGameContainer = () => {
                 description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!"
                 position="top"
               >
-                <div className="space-y-3">
+                <div className="flex flex-col items-center space-y-3 w-full">
                   <GuessForm
                     onSubmitGuess={handleGuess}
                     disabled={gameOver || isProcessingGuess}
