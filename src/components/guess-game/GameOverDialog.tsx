@@ -12,7 +12,7 @@ import { Trophy, RotateCcw, Home, Star, Award } from "lucide-react";
 import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
 import { ChallengeResult } from "@/components/social/ChallengeResult";
-import { QuickFeedbackButton } from "@/components/feedback/QuickFeedbackButton";
+
 import { PersonalRecordConfetti } from "@/components/rewards/PersonalRecordConfetti";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -244,7 +244,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
       />
       
       <Dialog open={open} onOpenChange={handleGoHome}>
-        <DialogContent data-testid="game-over-dialog" className="sm:max-w-md max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
+        <DialogContent data-testid="game-over-dialog" className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -399,14 +399,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                       </Button>
                     </motion.div>
 
-                    {/* Feedback Button */}
-                    <QuickFeedbackButton
-                      gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
-                      playerName={playerName}
-                      variant="ghost"
-                      size="sm"
-                      className="w-full"
-                    />
                   </motion.div>
                 </motion.div>
               )}

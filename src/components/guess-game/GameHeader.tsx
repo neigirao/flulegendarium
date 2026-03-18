@@ -1,7 +1,6 @@
 
 import { ArrowLeft, Info, Trophy, Star, Brain, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
-import { GameRulesTooltip } from "./GameRulesTooltip";
 import { cn } from "@/lib/utils";
 import { DifficultyLevel } from "@/types/guess-game";
 import { GameTimer } from "./GameTimer";
@@ -136,7 +135,6 @@ export const GameHeader = ({ score, onDebugClick, currentDifficulty, isAdaptiveM
         
         {/* Controles à direita otimizados */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          <GameRulesTooltip />
           <button 
             className="p-2 rounded-full bg-card/70 hover:bg-card/90 border border-border hover:border-border/80 transition-colors cursor-pointer opacity-60 hover:opacity-80 backdrop-blur-sm"
             onClick={onDebugClick}

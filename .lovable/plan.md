@@ -1,45 +1,60 @@
 
+# Plano: Corrigir inicializacao de dificuldade que ignora INITIAL_LEVEL
 
-# Plano: Corrigir 5 problemas de layout e UX nos jogos
+## Problema
 
-## Problemas identificados
+A mudanca anterior alterou `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` para `'medio'`, porem o hook `use-jersey-guess-game.ts` **nao usa essa constante**. Ele hardcoda `DIFFICULTY_LEVELS[0]` em dois lugares:
 
-1. **Tooltip quebrando layout** — `GameRulesTooltip` no `GameHeader.tsx` (linha 139)
-2. **Anos da camisa desalinhados** — `JerseyYearOptions.tsx` botões não centralizados no container
-3. **Dois botões de feedback no game over** — `QuickFeedbackButton` no `GameOverDialog.tsx` (linha 403) + `ImageFeedbackButton` visível no container por trás
-4. **X de fechar não funciona** — Provavelmente o `GameOverDialog` com `onClose={() => {}}` (no-op) conflita com interação
-5. **Campo de nome do jogador desalinhado** — `GuessForm` no `AdaptiveGameContainer.tsx` precisa centralização
-6. **Build error** — `weekly-image-audit/index.ts` linha 3: `@deno-types="npm:resend@4.0.0"` causa erro de resolução
+- **Linha 59** (estado inicial): `useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
+- **Linha 383** (reset): `setCurrentDifficulty(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
 
-## Correções
+Como so existe 1 camisa com `difficulty_level = 'muito_facil'`, o jogo sempre seleciona a mesma camisa (terceira de 2025).
 
-### 1. Remover `GameRulesTooltip` do `GameHeader.tsx`
-- Remover import e uso na linha 139
+## Solucao
 
-### 2. Centralizar `JerseyYearOptions.tsx`
-- O container `div` com `flex justify-center gap-3` já está ok, mas os botões têm `w-20 sm:w-24` fixo. Adicionar `items-center` e garantir que o wrapper pai tenha `text-center` e `flex flex-col items-center`
+**Arquivo: `src/hooks/use-jersey-guess-game.ts`**
 
-### 3. Remover `QuickFeedbackButton` do `GameOverDialog.tsx`
-- Remover linhas 402-409 (o `QuickFeedbackButton`) — manter apenas o `ImageFeedbackButton` que está nos containers de jogo
-- Também esconder o `ImageFeedbackButton` quando `gameOver` é true nos containers, pois o jogo já acabou
+1. Importar `DIFFICULTY_PROGRESSION` e `getDifficultyConfig`
+2. Criar constante para o nivel inicial correto usando `getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)`
+3. Substituir `DIFFICULTY_LEVELS[0]` nas linhas 59 e 383 pela constante do nivel inicial
 
-### 4. Corrigir X de fechar no `GameOverDialog`
-- O `onOpenChange` chama `handleGoHome` que navega para home — isso funciona. Mas se o problema é que o X não fecha, pode ser que `onPointerDownOutside={(e) => e.preventDefault()}` junto com `onClose={() => {}}` cria conflito. Garantir que o Dialog permita fechar via X
+### Mudanca no import (linha 8)
 
-### 5. Centralizar `GuessForm` no `AdaptiveGameContainer.tsx`
-- Envolver o `GuessForm` e botões em `div` com `flex flex-col items-center` para centralizar
+De:
+```typescript
+import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
+Para:
+```typescript
+import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
+```
 
-### 6. Corrigir build error
-- Remover a linha `// @deno-types="npm:resend@4.0.0"` do `weekly-image-audit/index.ts` (o import via esm.sh já resolve os tipos)
+### Mudanca na inicializacao (linha 59)
 
-## Arquivos
+De:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
+  getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
+);
+```
 
-| Ação | Arquivo |
-|------|---------|
-| Editar | `src/components/guess-game/GameHeader.tsx` — remover GameRulesTooltip |
-| Editar | `src/components/jersey-game/JerseyYearOptions.tsx` — melhorar centralização |
-| Editar | `src/components/guess-game/GameOverDialog.tsx` — remover QuickFeedbackButton |
-| Editar | `src/components/guess-game/AdaptiveGameContainer.tsx` — centralizar form, esconder feedback quando gameOver |
-| Editar | `src/components/jersey-game/JerseyGameContainer.tsx` — esconder feedback quando gameOver |
-| Editar | `supabase/functions/weekly-image-audit/index.ts` — remover @deno-types |
+### Mudanca no reset (linha 383)
 
+De:
+```typescript
+setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
+```
+Para:
+```typescript
+setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
+```
+
+## Impacto
+
+- O jogo passara a iniciar no nivel `medio` (184 camisas disponiveis) em vez de `muito_facil` (1 camisa)
+- O reset tambem usara o nivel correto
+- Qualquer mudanca futura em `INITIAL_LEVEL` sera refletida automaticamente

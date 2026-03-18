@@ -397,7 +397,7 @@ const AdaptiveGameContainer = () => {
                 description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!"
                 position="top"
               >
-                <div className="space-y-3">
+                <div className="flex flex-col items-center space-y-3 w-full">
                   <GuessForm
                     onSubmitGuess={handleGuess}
                     disabled={gameOver || isProcessingGuess}
@@ -416,16 +416,18 @@ const AdaptiveGameContainer = () => {
                      />
                    </div>
                    
-                   {/* Report Problem Button */}
-                   <div className="flex justify-center">
-                     <ImageFeedbackButton
-                       itemName={currentPlayer.name}
-                       itemType="player"
-                       imageUrl={currentPlayer.image_url}
-                       itemId={currentPlayer.id}
-                       onReportSent={() => resetScore()}
-                     />
-                   </div>
+                   {/* Report Problem Button - hide when game is over */}
+                   {!gameOver && (
+                     <div className="flex justify-center">
+                       <ImageFeedbackButton
+                         itemName={currentPlayer.name}
+                         itemType="player"
+                         imageUrl={currentPlayer.image_url}
+                         itemId={currentPlayer.id}
+                         onReportSent={() => resetScore()}
+                       />
+                     </div>
+                   )}
                 </div>
               </CoachMark>
             </div>

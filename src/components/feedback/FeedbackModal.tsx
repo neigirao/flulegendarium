@@ -82,8 +82,13 @@ export const FeedbackModal = ({ trigger, isOpen, onClose, onOpenChange, gameMode
     </Button>
   );
 
+  const handleOpenChange = (open: boolean) => {
+    onOpenChange?.(open);
+    if (!open) onClose?.();
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         {trigger || defaultTrigger}
       </DialogTrigger>
