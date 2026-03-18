@@ -399,14 +399,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                       </Button>
                     </motion.div>
 
-                    {/* Feedback Button */}
-                    <QuickFeedbackButton
-                      gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
-                      playerName={playerName}
-                      variant="ghost"
-                      size="sm"
-                      className="w-full"
-                    />
                   </motion.div>
                 </motion.div>
               )}
