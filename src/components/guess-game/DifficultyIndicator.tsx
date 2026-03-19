@@ -3,7 +3,6 @@ import { memo } from 'react';
 import { DifficultyLevelInfo, GameProgressInfo } from '@/types/guess-game';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface DifficultyIndicatorProps {
   currentDifficulty: DifficultyLevelInfo | null;
@@ -25,26 +24,13 @@ export const DifficultyIndicator = memo(({
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Badge 
-              variant="outline" 
-              className={`${currentDifficulty.color} border-current px-3 py-1`}
-            >
-              <span className="mr-1">{currentDifficulty.icon}</span>
-              {currentDifficulty.label}
-            </Badge>
-          </TooltipTrigger>
-          <TooltipContent>
-            <div className="text-sm">
-              <p><strong>Multiplicador:</strong> {currentDifficulty.multiplier}x</p>
-              <p><strong>Rodada:</strong> {gameProgress.currentRound}</p>
-              <p><strong>Sequência:</strong> {gameProgress.currentStreak}</p>
-            </div>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <Badge 
+        variant="outline" 
+        className={`${currentDifficulty.color} border-current px-3 py-1`}
+      >
+        <span className="mr-1">{currentDifficulty.icon}</span>
+        {currentDifficulty.label}
+      </Badge>
 
       {gameProgress.currentStreak < gameProgress.nextDifficultyThreshold && (
         <div className="flex items-center gap-2 min-w-0 flex-1">
