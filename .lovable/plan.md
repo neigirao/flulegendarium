@@ -1,60 +1,35 @@
 
-# Plano: Corrigir inicializacao de dificuldade que ignora INITIAL_LEVEL
 
-## Problema
+# Plano: Corrigir tooltip restante e alinhamentos nos jogos
 
-A mudanca anterior alterou `DIFFICULTY_PROGRESSION.INITIAL_LEVEL` para `'medio'`, porem o hook `use-jersey-guess-game.ts` **nao usa essa constante**. Ele hardcoda `DIFFICULTY_LEVELS[0]` em dois lugares:
+## Problemas
 
-- **Linha 59** (estado inicial): `useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
-- **Linha 383** (reset): `setCurrentDifficulty(DIFFICULTY_LEVELS[0])` -- sempre `muito_facil`
+1. **Tooltip ainda existe**: O arquivo `GameRulesTooltip.tsx` continua no projeto (não é importado, mas pode causar confusão). Mais importante: `DifficultyIndicator.tsx` (usado no modo clássico `GameContainer.tsx`) tem um tooltip que pode quebrar layout.
 
-Como so existe 1 camisa com `difficulty_level = 'muito_facil'`, o jogo sempre seleciona a mesma camisa (terceira de 2025).
+2. **Anos da camisa desalinhados**: O wrapper em `JerseyGameContainer.tsx` linha 422 usa `space-y-3` sem centralização explícita — precisa `flex flex-col items-center`.
 
-## Solucao
+3. **Input do jogador desalinhado**: Já tem `flex flex-col items-center` no `AdaptiveGameContainer` (linha 400), mas o `GameContainer.tsx` clássico (linha 154) envolve o `GuessForm` em `div className="mb-6"` sem centralização.
 
-**Arquivo: `src/hooks/use-jersey-guess-game.ts`**
+## Correções
 
-1. Importar `DIFFICULTY_PROGRESSION` e `getDifficultyConfig`
-2. Criar constante para o nivel inicial correto usando `getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)`
-3. Substituir `DIFFICULTY_LEVELS[0]` nas linhas 59 e 383 pela constante do nivel inicial
+### 1. Deletar `GameRulesTooltip.tsx`
+Arquivo órfão — remover completamente.
 
-### Mudanca no import (linha 8)
+### 2. Remover tooltip do `DifficultyIndicator.tsx`
+Substituir o `TooltipProvider/Tooltip/TooltipTrigger/TooltipContent` por um Badge simples sem tooltip, mantendo a mesma aparência visual.
 
-De:
-```typescript
-import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
-```
-Para:
-```typescript
-import { DIFFICULTY_LEVELS, DIFFICULTY_PROGRESSION, getDifficultyConfig, type DifficultyLevelConfig } from "@/config/difficulty-levels";
-```
+### 3. Centralizar wrapper dos anos em `JerseyGameContainer.tsx`
+Linha 422: mudar `<div className="space-y-3">` para `<div className="flex flex-col items-center space-y-3 w-full">`.
 
-### Mudanca na inicializacao (linha 59)
+### 4. Centralizar input em `GameContainer.tsx` (modo clássico)
+Linha 154: mudar `<div className="mb-6">` para `<div className="mb-6 flex flex-col items-center">`.
 
-De:
-```typescript
-const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
-```
-Para:
-```typescript
-const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(
-  getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL)
-);
-```
+## Arquivos
 
-### Mudanca no reset (linha 383)
+| Ação | Arquivo |
+|------|---------|
+| Deletar | `src/components/guess-game/GameRulesTooltip.tsx` |
+| Editar | `src/components/guess-game/DifficultyIndicator.tsx` |
+| Editar | `src/components/jersey-game/JerseyGameContainer.tsx` |
+| Editar | `src/components/guess-game/GameContainer.tsx` |
 
-De:
-```typescript
-setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
-```
-Para:
-```typescript
-setCurrentDifficulty(getDifficultyConfig(DIFFICULTY_PROGRESSION.INITIAL_LEVEL));
-```
-
-## Impacto
-
-- O jogo passara a iniciar no nivel `medio` (184 camisas disponiveis) em vez de `muito_facil` (1 camisa)
-- O reset tambem usara o nivel correto
-- Qualquer mudanca futura em `INITIAL_LEVEL` sera refletida automaticamente
