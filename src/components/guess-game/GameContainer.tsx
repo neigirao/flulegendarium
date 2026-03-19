@@ -151,7 +151,7 @@ export const GameContainer = ({
           </div>
 
           {/* Campo de Input */}
-          <div className="mb-6">
+          <div className="mb-6 flex flex-col items-center">
             <GuessForm
               onSubmitGuess={handleGuess}
               disabled={isProcessingGuess || gameOver}

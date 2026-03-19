@@ -419,7 +419,7 @@ const JerseyGameContainer = () => {
                 description="Selecione uma das opções abaixo. Cada camisa foi usada em um ano específico!"
                 position="top"
               >
-                <div className="space-y-3">
+                <div className="flex flex-col items-center space-y-3 w-full">
                   {currentOptions.length > 0 && (
                     <JerseyYearOptions
                       options={currentOptions}
