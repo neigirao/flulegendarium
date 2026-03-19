@@ -82,7 +82,7 @@ const Index = () => {
       <div className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">
         <TopNavigation />
         
-        <div className="pt-24 min-h-screen safe-area-top">
+        <div className="pt-24 min-h-screen safe-area-top" style={{ containIntrinsicSize: '0 800px', contentVisibility: 'visible' }}>
           {/* Hero Section */}
           <section className="container mx-auto px-4 pt-16 pb-8 text-center">
             <h1 className="text-display-hero text-primary-foreground mb-6 drop-shadow-lg">

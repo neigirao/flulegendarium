@@ -420,7 +420,7 @@ const JerseyGameContainer = () => {
                 position="top"
               >
                 <div className="flex flex-col items-center space-y-3 w-full">
-                  {currentOptions.length > 0 && (
+                  {currentOptions.length > 0 && !gameOver && (
                     <JerseyYearOptions
                       options={currentOptions}
                       onSelectOption={handleSelectOption}
