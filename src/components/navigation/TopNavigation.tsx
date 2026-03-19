@@ -79,7 +79,7 @@ export const TopNavigation = () => {
           >
             <div className="w-10 h-10 flex items-center justify-center">
               <img 
-                src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.png" 
+                src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp" 
                 alt="Lendas do Flu Logo" 
                 width="40"
                 height="40"
@@ -152,7 +152,7 @@ export const TopNavigation = () => {
                   <div className="flex items-center space-x-3 pb-4 border-b border-secondary/20">
                     <div className="w-12 h-12 flex items-center justify-center">
                       <img 
-                        src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.png" 
+                        src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp" 
                         alt="Lendas do Flu Logo" 
                         className="w-12 h-12 object-contain"
                       />
