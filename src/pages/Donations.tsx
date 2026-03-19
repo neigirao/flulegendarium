@@ -40,7 +40,7 @@ const Donations = () => {
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center space-x-3 mb-6">
               <img 
-                src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.png" 
+                src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp" 
                 alt="Lendas do Flu Logo" 
                 className="w-16 h-16 object-contain"
               />
