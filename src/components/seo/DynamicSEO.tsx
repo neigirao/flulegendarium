@@ -1,16 +1,15 @@
 import { useEffect } from 'react';
 import { SEOHead } from '@/components/SEOHead';
 import { useLocation } from 'react-router-dom';
-
-interface Player {
-  id: string;
-  name: string;
-  position: string;
-  image_url: string;
-  fun_fact?: string;
-}
+import type { Player } from '@/types/guess-game';
 
 interface DynamicSEOProps {
+  player?: Pick<Player, 'id' | 'name' | 'position' | 'image_url'> & { fun_fact?: string };
+  gameMode?: string;
+  difficulty?: string;
+  customTitle?: string;
+  customDescription?: string;
+}
   player?: Player;
   gameMode?: string;
   difficulty?: string;
