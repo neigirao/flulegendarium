@@ -10,12 +10,6 @@ interface DynamicSEOProps {
   customTitle?: string;
   customDescription?: string;
 }
-  player?: Player;
-  gameMode?: string;
-  difficulty?: string;
-  customTitle?: string;
-  customDescription?: string;
-}
 
 export const DynamicSEO = ({ 
   player, 
