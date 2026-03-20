@@ -43,7 +43,7 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
           "@type": "Game",
           "name": "Lendas do Flu - Quiz dos Ídolos Tricolores",
           "description": "Jogo interativo onde você precisa adivinhar jogadores lendários do Fluminense através de suas fotos",
-          "url": `${CANONICAL_DOMAIN}/jogar`,
+          "url": `${CANONICAL_DOMAIN}/selecionar-modo-jogo`,
           "genre": ["Quiz", "Sports", "Educational"],
           "gameItem": "Conhecimento sobre Fluminense",
           "numberOfPlayers": "1",
