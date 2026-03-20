@@ -26,11 +26,6 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
           "name": "Lendas do Flu",
           "description": "Teste seus conhecimentos sobre os ídolos tricolores do Fluminense",
           "url": `${CANONICAL_DOMAIN}/`,
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": `${CANONICAL_DOMAIN}/search?q={search_term_string}`,
-            "query-input": "required name=search_term_string"
-          },
           "publisher": {
             "@type": "Organization",
             "name": "Lendas do Flu",
