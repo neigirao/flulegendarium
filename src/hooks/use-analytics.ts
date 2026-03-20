@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { logger } from '@/utils/logger';
 
 interface AnalyticsEvent {
@@ -10,15 +10,15 @@ interface AnalyticsEvent {
 
 // Optimized analytics with performance considerations
 export const useAnalytics = () => {
-  // Queue events to batch send them
-  const eventQueue: AnalyticsEvent[] = [];
-  let batchTimer: NodeJS.Timeout | null = null;
+  const eventQueueRef = useRef<AnalyticsEvent[]>([]);
+  const batchTimerRef = useRef<NodeJS.Timeout | null>(null);
   
-  const flushEvents = () => {
-    if (eventQueue.length === 0) return;
+  const flushEvents = useCallback(() => {
+    const queue = eventQueueRef.current;
+    if (queue.length === 0) return;
     
     // Send batched events
-    eventQueue.forEach(event => {
+    queue.forEach(event => {
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', event.action, {
           event_category: event.category,
@@ -29,20 +29,20 @@ export const useAnalytics = () => {
     });
     
     // Clear queue
-    eventQueue.length = 0;
-  };
+    eventQueueRef.current = [];
+  }, []);
   
-  const trackEvent = ({ action, category, label, value }: AnalyticsEvent) => {
+  const trackEvent = useCallback(({ action, category, label, value }: AnalyticsEvent) => {
     // Add to queue instead of sending immediately
-    eventQueue.push({ action, category, label, value });
+    eventQueueRef.current.push({ action, category, label, value });
     
     // Batch events every 2 seconds
-    if (batchTimer) clearTimeout(batchTimer);
-    batchTimer = setTimeout(flushEvents, 2000);
+    if (batchTimerRef.current) clearTimeout(batchTimerRef.current);
+    batchTimerRef.current = setTimeout(flushEvents, 2000);
     
     // Log for development
     logger.debug('Analytics Event Queued', 'ANALYTICS', { action, category, label, value });
-  };
+  }, [flushEvents]);
   
   // Flush events on page unload
   useEffect(() => {
@@ -53,13 +53,11 @@ export const useAnalytics = () => {
     window.addEventListener('beforeunload', handleUnload);
     return () => {
       window.removeEventListener('beforeunload', handleUnload);
-      if (batchTimer) clearTimeout(batchTimer);
+      if (batchTimerRef.current) clearTimeout(batchTimerRef.current);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [flushEvents]);
 
-  const trackPageView = (page: string) => {
-    // Use requestIdleCallback for non-critical analytics
+  const trackPageView = useCallback((page: string) => {
     if ('requestIdleCallback' in window) {
       requestIdleCallback(() => {
         if (typeof window !== 'undefined' && window.gtag) {
@@ -69,7 +67,6 @@ export const useAnalytics = () => {
         }
       });
     } else {
-      // Fallback for browsers without requestIdleCallback
       setTimeout(() => {
         if (typeof window !== 'undefined' && window.gtag) {
           window.gtag('config', 'G-X2VE77MEYC', {
@@ -78,98 +75,48 @@ export const useAnalytics = () => {
         }
       }, 100);
     }
-  };
+  }, []);
 
-  const trackGameStart = (mode: string) => {
-    trackEvent({
-      action: 'game_start',
-      category: 'Game',
-      label: mode,
-    });
-  };
+  const trackGameStart = useCallback((mode: string) => {
+    trackEvent({ action: 'game_start', category: 'Game', label: mode });
+  }, [trackEvent]);
 
-  const trackGameEnd = (score: number, correctGuesses: number) => {
-    trackEvent({
-      action: 'game_end',
-      category: 'Game',
-      label: 'score',
-      value: score,
-    });
-    
-    trackEvent({
-      action: 'game_end',
-      category: 'Game',
-      label: 'correct_guesses',
-      value: correctGuesses,
-    });
-  };
+  const trackGameEnd = useCallback((score: number, correctGuesses: number) => {
+    trackEvent({ action: 'game_end', category: 'Game', label: 'score', value: score });
+    trackEvent({ action: 'game_end', category: 'Game', label: 'correct_guesses', value: correctGuesses });
+  }, [trackEvent]);
 
-  const trackCorrectGuess = (playerName: string) => {
-    trackEvent({
-      action: 'correct_guess',
-      category: 'Game',
-      label: playerName,
-    });
-  };
+  const trackCorrectGuess = useCallback((playerName: string) => {
+    trackEvent({ action: 'correct_guess', category: 'Game', label: playerName });
+  }, [trackEvent]);
 
-  const trackIncorrectGuess = (playerName: string, userGuess: string) => {
-    trackEvent({
-      action: 'incorrect_guess',
-      category: 'Game',
-      label: `${playerName} - guessed: ${userGuess}`,
-    });
-  };
+  const trackIncorrectGuess = useCallback((playerName: string, userGuess: string) => {
+    trackEvent({ action: 'incorrect_guess', category: 'Game', label: `${playerName} - guessed: ${userGuess}` });
+  }, [trackEvent]);
 
-  const trackAchievementUnlocked = (achievementName: string) => {
-    trackEvent({
-      action: 'achievement_unlocked',
-      category: 'Achievements',
-      label: achievementName,
-    });
-  };
+  const trackAchievementUnlocked = useCallback((achievementName: string) => {
+    trackEvent({ action: 'achievement_unlocked', category: 'Achievements', label: achievementName });
+  }, [trackEvent]);
 
-  const trackSocialShare = (platform: string, score: number) => {
-    trackEvent({
-      action: 'social_share',
-      category: 'Social',
-      label: platform,
-      value: score,
-    });
-  };
+  const trackSocialShare = useCallback((platform: string, score: number) => {
+    trackEvent({ action: 'social_share', category: 'Social', label: platform, value: score });
+  }, [trackEvent]);
 
-  // Funnel tracking events
-  const trackSignupStart = () => {
-    trackEvent({
-      action: 'signup_start',
-      category: 'Funnel',
-      label: 'registration_initiated',
-    });
-  };
+  const trackSignupStart = useCallback(() => {
+    trackEvent({ action: 'signup_start', category: 'Funnel', label: 'registration_initiated' });
+  }, [trackEvent]);
 
-  const trackSignupComplete = (method: string = 'email') => {
-    trackEvent({
-      action: 'signup_complete',
-      category: 'Funnel',
-      label: method,
-    });
-  };
+  const trackSignupComplete = useCallback((method: string = 'email') => {
+    trackEvent({ action: 'signup_complete', category: 'Funnel', label: method });
+  }, [trackEvent]);
 
-  const trackDifficultyChange = (fromLevel: string, toLevel: string) => {
-    trackEvent({
-      action: 'difficulty_change',
-      category: 'Game',
-      label: `${fromLevel}_to_${toLevel}`,
-    });
-  };
+  const trackDifficultyChange = useCallback((fromLevel: string, toLevel: string) => {
+    trackEvent({ action: 'difficulty_change', category: 'Game', label: `${fromLevel}_to_${toLevel}` });
+  }, [trackEvent]);
 
-  const trackSessionDuration = (durationSeconds: number, gameMode: string) => {
-    trackEvent({
-      action: 'session_duration',
-      category: 'Engagement',
-      label: gameMode,
-      value: durationSeconds,
-    });
-  };
+  const trackSessionDuration = useCallback((durationSeconds: number, gameMode: string) => {
+    trackEvent({ action: 'session_duration', category: 'Engagement', label: gameMode, value: durationSeconds });
+  }, [trackEvent]);
 
   return {
     trackEvent,

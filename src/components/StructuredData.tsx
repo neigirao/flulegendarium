@@ -26,11 +26,6 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
           "name": "Lendas do Flu",
           "description": "Teste seus conhecimentos sobre os ídolos tricolores do Fluminense",
           "url": `${CANONICAL_DOMAIN}/`,
-          "potentialAction": {
-            "@type": "SearchAction",
-            "target": `${CANONICAL_DOMAIN}/search?q={search_term_string}`,
-            "query-input": "required name=search_term_string"
-          },
           "publisher": {
             "@type": "Organization",
             "name": "Lendas do Flu",
@@ -48,7 +43,7 @@ export const StructuredData = ({ type, data }: StructuredDataProps) => {
           "@type": "Game",
           "name": "Lendas do Flu - Quiz dos Ídolos Tricolores",
           "description": "Jogo interativo onde você precisa adivinhar jogadores lendários do Fluminense através de suas fotos",
-          "url": `${CANONICAL_DOMAIN}/jogar`,
+          "url": `${CANONICAL_DOMAIN}/selecionar-modo-jogo`,
           "genre": ["Quiz", "Sports", "Educational"],
           "gameItem": "Conhecimento sobre Fluminense",
           "numberOfPlayers": "1",

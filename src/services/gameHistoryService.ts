@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 export interface GameHistory {
   id?: string;
@@ -17,7 +18,7 @@ export interface GameHistory {
 }
 
 export const saveGameHistory = async (history: Omit<GameHistory, 'id' | 'created_at'>): Promise<GameHistory> => {
-  console.log('💾 GameHistoryService: Attempting to save history:', history);
+  logger.debug('Attempting to save history', 'GameHistoryService', history);
   
   try {
     const { data, error } = await supabase
@@ -27,20 +28,20 @@ export const saveGameHistory = async (history: Omit<GameHistory, 'id' | 'created
       .single();
 
     if (error) {
-      console.error('❌ GameHistoryService: Error saving game history:', error);
+      logger.error('Error saving game history', 'GameHistoryService', error);
       throw error;
     }
 
-    console.log('✅ GameHistoryService: Game history saved successfully:', data);
+    logger.debug('Game history saved successfully', 'GameHistoryService', data);
     return data as GameHistory;
   } catch (error) {
-    console.error('❌ GameHistoryService: Exception while saving:', error);
+    logger.error('Exception while saving', 'GameHistoryService', error);
     throw error;
   }
 };
 
 export const getUserGameHistory = async (userId: string, limit: number = 10, gameMode?: 'classic' | 'adaptive'): Promise<GameHistory[]> => {
-  console.log('📖 GameHistoryService: Fetching history for user:', userId, 'gameMode:', gameMode);
+  logger.debug('Fetching history for user', 'GameHistoryService', { userId, gameMode });
   
   try {
     let query = supabase
@@ -57,20 +58,20 @@ export const getUserGameHistory = async (userId: string, limit: number = 10, gam
     const { data, error } = await query;
 
     if (error) {
-      console.error('❌ GameHistoryService: Error fetching game history:', error);
+      logger.error('Error fetching game history', 'GameHistoryService', error);
       throw error;
     }
 
-    console.log('✅ GameHistoryService: Fetched history:', data?.length || 0, 'records');
+    logger.debug('Fetched history', 'GameHistoryService', { count: data?.length || 0 });
     return (data || []) as GameHistory[];
   } catch (error) {
-    console.error('❌ GameHistoryService: Exception while fetching:', error);
+    logger.error('Exception while fetching', 'GameHistoryService', error);
     throw error;
   }
 };
 
 export const getUserStats = async (userId: string, gameMode?: 'classic' | 'adaptive') => {
-  console.log('📊 GameHistoryService: Calculating stats for user:', userId, 'gameMode:', gameMode);
+  logger.debug('Calculating stats for user', 'GameHistoryService', { userId, gameMode });
   
   try {
     let query = supabase
@@ -85,12 +86,12 @@ export const getUserStats = async (userId: string, gameMode?: 'classic' | 'adapt
     const { data, error } = await query;
 
     if (error) {
-      console.error('❌ GameHistoryService: Error fetching user stats:', error);
+      logger.error('Error fetching user stats', 'GameHistoryService', error);
       throw error;
     }
 
     if (!data || data.length === 0) {
-      console.log('⚠️ GameHistoryService: No data found for user:', userId);
+      logger.debug('No data found for user', 'GameHistoryService', { userId });
       return {
         totalGames: 0,
         bestScore: 0,
@@ -112,7 +113,6 @@ export const getUserStats = async (userId: string, gameMode?: 'classic' | 'adapt
     const accuracyRate = totalAttempts > 0 ? (totalCorrectGuesses / totalAttempts) * 100 : 0;
     const maxStreak = Math.max(...data.map(game => game.max_streak || 0));
     
-    // Count games by mode
     const adaptiveGames = data.filter(game => game.game_mode === 'adaptive').length;
     const classicGames = data.filter(game => game.game_mode === 'classic' || !game.game_mode).length;
 
@@ -128,10 +128,10 @@ export const getUserStats = async (userId: string, gameMode?: 'classic' | 'adapt
       classicGames
     };
 
-    console.log('✅ GameHistoryService: Calculated stats:', stats);
+    logger.debug('Calculated stats', 'GameHistoryService', stats);
     return stats;
   } catch (error) {
-    console.error('❌ GameHistoryService: Exception while calculating stats:', error);
+    logger.error('Exception while calculating stats', 'GameHistoryService', error);
     throw error;
   }
 };
