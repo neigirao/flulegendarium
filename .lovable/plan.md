@@ -1,40 +1,35 @@
 
+# Auditoria Completa — Progresso
 
-# Itens Pendentes dos Planos Anteriores
+## Concluídos
 
-## Status Atual
+| # | Item | Status |
+|---|------|--------|
+| 1 | Fix `useAnalytics` eventQueue → `useRef` | ✅ Feito |
+| 2 | Atualizar preload de imagem (PNG → WebP) | ✅ Feito |
+| 3 | Remover SearchAction do StructuredData | ✅ Feito |
+| 4 | Remover meta tags `article:*` do index.html | ✅ Feito |
+| 5 | Corrigir URL do Game StructuredData (/jogar → /selecionar-modo-jogo) | ✅ Feito |
+| 6 | Mover third-party scripts para `requestIdleCallback` | ✅ Feito |
+| 7 | Remover polling de 60s e push notification do ServiceWorker | ✅ Feito |
+| 8 | Substituir console.log por logger no gameHistoryService | ✅ Feito |
+| 9 | Remover interface local Player do DynamicSEO (usar tipo canônico) | ✅ Feito |
+| 10 | Confirmar existência de sitemap.xml e robots.txt | ✅ Já existiam |
 
-Dos 6 itens recomendados no relatório de auditoria, 4 foram concluídos:
+## Pendentes
 
-| Item | Status |
-|------|--------|
-| Reduzir CLS (containIntrinsicSize) | Feito |
-| Converter hero PNG para WebP | Feito |
-| Ocultar botões de ano no game over | Feito |
-| Comportamento do X no GameOverDialog | Feito |
-| **Lazy-load framer-motion** | **Pendente** |
-| **PWA prompt menos intrusivo** | **Pendente** |
+### P1 — Engenharia e Performance
+- Unificar JSON-LD em componente único (SEOHead + DynamicSEO + StructuredData → SEOManager)
+- Consolidar hooks de analytics (5 → 2)
+- Criar RPC `get_home_stats()` para unificar queries da home
 
-## Itens Pendentes
+### P2 — UX e Design
+- Unificar GameContainers (3 → 1 com composição)
+- Adicionar indicador de progresso claro nos jogos
+- Adicionar visual na hero section
 
-### 1. PWA prompt — atrasar de 2s para 8s
-Atualmente o `PWAInstallPrompt.tsx` exibe após 2 segundos. Isso compete com o CTA principal "Começar a Jogar". Mudar o `setTimeout` de 2000 para 8000ms.
-
-- **Arquivo**: `src/components/pwa/PWAInstallPrompt.tsx` (linha 68)
-- **Mudança**: `setTimeout(..., 2000)` → `setTimeout(..., 8000)`
-
-### 2. Lazy-load Sentry
-O Sentry (203KB) é importado sincronamente em `main.tsx` antes do render. Pode ser carregado de forma assíncrona após o primeiro render usando `requestIdleCallback` ou `setTimeout`.
-
-- **Arquivo**: `src/main.tsx` — mover `initializeSentry()` para dentro de um `requestIdleCallback` ou `setTimeout(..., 0)` após o `root.render()`
-
-### 3. Lazy-load framer-motion (prioridade baixa)
-Framer-motion (82KB) é usado em vários componentes. Lazy-loading completo exigiria refatorar imports em muitos arquivos — impacto alto, benefício moderado. Recomendo não priorizar agora.
-
-## Plano de Implementação
-
-1. Atrasar PWA prompt para 8 segundos — 1 linha
-2. Lazy-load Sentry após render — mover `initializeSentry()` para depois do `root.render()` com `requestIdleCallback`
-
-Tempo estimado: ~2 minutos.
-
+### P3 — Dívida Técnica
+- Consolidar tipo Player em todos os arquivos restantes
+- Substituir console.log por logger nos demais services
+- Migrar aggregation de dados admin para server-side (RPC)
+- Aumentar cobertura de testes
