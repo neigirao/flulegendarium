@@ -72,7 +72,7 @@ export const PWAInstallPrompt = () => {
       } else if (!isMobile) {
         logger.debug('Não exibindo para desktop', 'PWAInstall');
       }
-    }, 2000);
+    }, 8000);
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
