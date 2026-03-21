@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { DynamicSEO } from "@/components/seo/DynamicSEO";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { GameModeCard } from "@/components/GameModeCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,9 +42,10 @@ const GameModeSelection = () => {
 
   return (
     <>
-      <DynamicSEO
-        customTitle="Escolha seu Modo de Jogo - Quiz de Jogadores e Camisas | Lendas do Flu"
-        customDescription="🎮 3 modos de quiz: Adaptativo, Por Década e Camisas Históricas. Teste seus conhecimentos sobre os ídolos do Fluminense!"
+      <SEOManager
+        title="Escolha seu Modo de Jogo - Quiz de Jogadores e Camisas | Lendas do Flu"
+        description="🎮 3 modos de quiz: Adaptativo, Por Década e Camisas Históricas. Teste seus conhecimentos sobre os ídolos do Fluminense!"
+        schema="Game"
       />
       <RootLayout>
         <div data-testid="game-mode-page" className="min-h-screen bg-gradient-to-br from-secondary via-primary/80 to-secondary/90 relative overflow-hidden bg-tricolor-vertical-border">

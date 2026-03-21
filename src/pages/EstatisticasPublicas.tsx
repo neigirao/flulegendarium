@@ -1,6 +1,6 @@
 import React from "react";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
-import { DynamicSEO } from "@/components/seo/DynamicSEO";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { GlobalStatsCards } from "@/components/stats/GlobalStatsCards";
 import { HardestPlayers } from "@/components/stats/HardestPlayers";
 import { TopPlayersExpanded } from "@/components/stats/TopPlayersExpanded";
@@ -71,9 +71,9 @@ const EstatisticasPublicas = () => {
 
   return (
     <>
-      <DynamicSEO
-        customTitle="O Flu em Números: Estatísticas, Rankings e Curiosidades do Quiz | Lendas do Flu"
-        customDescription="📊 Descubra como a comunidade tricolor joga: rankings, jogadores mais difíceis, distribuição por década, curiosidades e muito mais."
+      <SEOManager
+        title="O Flu em Números: Estatísticas, Rankings e Curiosidades do Quiz | Lendas do Flu"
+        description="📊 Descubra como a comunidade tricolor joga: rankings, jogadores mais difíceis, distribuição por década, curiosidades e muito mais."
       />
       <TopNavigation />
       <main className="min-h-screen bg-background pt-20 pb-16 px-4">

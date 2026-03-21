@@ -9,7 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { RootLayout } from '@/components/RootLayout';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOManager } from '@/components/seo/SEOManager';
 import { ArrowLeft, Mail, Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -139,7 +139,7 @@ const Auth = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Login - Lendas do Flu"
         description="Entre na sua conta para salvar seu progresso e competir no ranking global dos Lendas do Flu!"
       />

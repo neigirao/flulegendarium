@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { SEOHead } from "@/components/SEOHead";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { NewsHero } from "@/components/news/NewsHero";
 import { NewsGrid } from "@/components/news/NewsGrid";
 import { NewsSidebar } from "@/components/news/NewsSidebar";
@@ -44,11 +44,10 @@ const NewsPortal = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Portal de Notícias - Lendas do Flu | Notícias do Tricolor"
         description="🗞️ Fique por dentro das últimas notícias sobre o Fluminense Football Club. Notícias do time principal, base, história e muito mais!"
         keywords="notícias fluminense, portal tricolor, fluminense fc, notícias flu"
-        url="https://lendasdoflu.com/noticias"
       />
       <RootLayout>
         <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">

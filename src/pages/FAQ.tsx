@@ -1,4 +1,4 @@
-import { SEOHead } from "@/components/SEOHead";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -223,11 +223,11 @@ const faqData = [
 export default function FAQ() {
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="FAQ - Perguntas Frequentes | Lendas do Flu"
         description="Tire suas dúvidas sobre o Lendas do Flu. Encontre respostas para as perguntas mais comuns sobre como jogar, ranking, pontuação e muito mais."
         keywords="faq lendas do flu, perguntas frequentes fluminense, ajuda quiz tricolor, dúvidas jogo fluminense"
-        url="https://lendasdoflu.com/faq"
+        schema="FAQ"
       />
       
       <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">

@@ -25,7 +25,7 @@ import { useEnhancedAnalytics } from "@/hooks/analytics";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { useChallengeProgress } from "@/hooks/use-challenge-progress";
 import { useGuessHistory } from "@/hooks/use-guess-history";
-import { DynamicSEO } from "@/components/seo/DynamicSEO";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
 import { useGameToasts } from "@/hooks/use-game-toasts";
 import { CoachMark, useOnboarding } from "@/components/onboarding";
@@ -352,9 +352,10 @@ const JerseyGameContainer = () => {
 
   return (
     <>
-      <DynamicSEO 
-        gameMode="jersey"
-        difficulty={currentDifficulty.label}
+      <SEOManager 
+        title={`Quiz das Camisas - ${currentDifficulty.label} | Lendas do Flu`}
+        description="Veja a camisa histórica do Fluminense e escolha o ano correto!"
+        schema="Game"
       />
       
       {/* Debug Info - only in dev */}

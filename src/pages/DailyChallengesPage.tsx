@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RootLayout } from '@/components/RootLayout';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOManager } from '@/components/seo/SEOManager';
 import { TopNavigation } from '@/components/navigation/TopNavigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,7 +47,7 @@ const DailyChallengesPage = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Desafios Diários - Lendas do Flu"
         description="Complete desafios diários e ganhe pontos extras no Lendas do Flu!"
       />

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { RootLayout } from '@/components/RootLayout';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOManager } from '@/components/seo/SEOManager';
 import { AchievementsGrid } from '@/components/achievements/AchievementsGrid';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -32,7 +32,7 @@ const Conquistas = () => {
   if (!user) {
     return (
       <RootLayout>
-        <SEOHead 
+        <SEOManager 
           title="Conquistas - Lendas do Flu"
           description="Desbloqueie conquistas jogando Lendas do Flu e mostre seu conhecimento tricolor!"
         />
@@ -59,7 +59,7 @@ const Conquistas = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Minhas Conquistas - Lendas do Flu"
         description="Veja suas conquistas desbloqueadas no Lendas do Flu e acompanhe seu progresso!"
       />

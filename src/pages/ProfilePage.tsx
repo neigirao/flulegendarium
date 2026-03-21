@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RootLayout } from '@/components/RootLayout';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOManager } from '@/components/seo/SEOManager';
 import { TopNavigation } from '@/components/navigation/TopNavigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -70,7 +70,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Meu Perfil - Lendas do Flu"
         description="Veja suas estatísticas, histórico de desafios e evolução no ranking semanal."
       />

@@ -9,7 +9,7 @@ import { GuessHistoryPanel } from '@/components/guess-game/GuessHistoryPanel';
 import { SkipPlayerButton } from '@/components/guess-game/SkipPlayerButton';
 import { AdaptiveProgressionNotification } from '@/components/guess-game/AdaptiveProgressionNotification';
 import { DebugInfo } from '@/components/guess-game/DebugInfo';
-import { DynamicSEO } from '@/components/seo/DynamicSEO';
+import { SEOManager } from '@/components/seo/SEOManager';
 import { KeyboardShortcutsHint } from '@/components/game/KeyboardShortcutsHint';
 import { 
   useDecadePlayerSelection, 
@@ -461,10 +461,10 @@ export const DecadeGameContainer = () => {
 
   return (
     <>
-      {/* DynamicSEO for this game mode */}
-      <DynamicSEO 
-        gameMode="decade"
-        difficulty={currentDifficulty.label}
+      <SEOManager 
+        title={`Quiz por Década - ${currentDifficulty.label} | Lendas do Flu`}
+        description="Explore as diferentes eras do Fluminense! Quiz organizado por décadas."
+        schema="Game"
       />
       
       {/* Debug Info - only in dev */}

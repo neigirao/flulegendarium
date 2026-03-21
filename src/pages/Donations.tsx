@@ -2,7 +2,7 @@ import React from 'react';
 import { Heart, Smartphone, Users, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FluCard, FluCardHeader, FluCardContent } from '@/components/ui/flu-card';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOManager } from '@/components/seo/SEOManager';
 
 const Donations = () => {
   const donationValues = [
@@ -27,10 +27,10 @@ const Donations = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary via-primary/80 to-secondary bg-tricolor-vertical-border">
-      <SEOHead 
+      <SEOManager 
         title="Doações - Lendas do Flu"
         description="Apoie o desenvolvimento do Lendas do Flu e ajude a manter o jogo funcionando"
-        canonical="/doacoes"
+        canonical="https://lendasdoflu.com/doacoes"
       />
       
       <div className="container mx-auto px-4 py-8 pt-24 safe-area-top safe-area-bottom">

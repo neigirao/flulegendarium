@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { RootLayout } from "@/components/RootLayout";
-import { SEOHead } from "@/components/SEOHead";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsArticle as NewsArticleType } from "@/types/news";
 import { Button } from "@/components/ui/button";
@@ -130,7 +130,7 @@ const NewsArticle = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title={`${article.title} - Portal de Notícias | Lendas do Flu`}
         description={article.summary || article.content.substring(0, 160)}
         keywords={`${article.category?.name || 'notícias'}, fluminense, tricolor, ${article.title}`}
