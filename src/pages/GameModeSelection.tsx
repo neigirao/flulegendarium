@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { DynamicSEO } from "@/components/seo/DynamicSEO";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { GameModeCard } from "@/components/GameModeCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
