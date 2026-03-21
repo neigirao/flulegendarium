@@ -345,7 +345,6 @@ const AdaptiveGameContainer = () => {
         title={`Quiz Adaptativo - ${currentDifficulty.label} | Lendas do Flu`}
         description="Quiz inteligente que se adapta ao seu nível! Adivinhe jogadores lendários do Fluminense."
         schema="Game"
-        player={currentPlayer}
       />
       
       <BaseGameContainer
