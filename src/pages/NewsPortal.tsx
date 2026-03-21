@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { SEOHead } from "@/components/SEOHead";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { NewsHero } from "@/components/news/NewsHero";
 import { NewsGrid } from "@/components/news/NewsGrid";
 import { NewsSidebar } from "@/components/news/NewsSidebar";
