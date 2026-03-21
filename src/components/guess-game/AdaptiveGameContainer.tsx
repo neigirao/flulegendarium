@@ -25,7 +25,7 @@ import { useEnhancedAnalytics } from "@/hooks/analytics";
 import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
 import { useChallengeProgress } from "@/hooks/use-challenge-progress";
 import { useGuessHistory } from "@/hooks/use-guess-history";
-import { DynamicSEO } from "@/components/seo/DynamicSEO";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { useMobileOptimization } from "@/hooks/mobile";
 import { useUX } from "@/components/ux/UXProvider";
 import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
