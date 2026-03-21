@@ -74,9 +74,10 @@ const Index = () => {
 
   return (
     <>
-      <DynamicSEO 
-        customTitle="Lendas do Flu | Quiz de Jogadores e Camisas Históricas do Fluminense"
-        customDescription="🏆 3 modos de quiz: Jogadores, Por Década e Camisas Históricas! Teste seus conhecimentos sobre os ídolos e uniformes tricolores."
+      <SEOManager 
+        title="Lendas do Flu | Quiz de Jogadores e Camisas Históricas do Fluminense"
+        description="🏆 3 modos de quiz: Jogadores, Por Década e Camisas Históricas! Teste seus conhecimentos sobre os ídolos e uniformes tricolores."
+        schema="WebSite"
       />
       
       <div className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">

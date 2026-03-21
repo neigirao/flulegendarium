@@ -139,7 +139,7 @@ const Auth = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Login - Lendas do Flu"
         description="Entre na sua conta para salvar seu progresso e competir no ranking global dos Lendas do Flu!"
       />

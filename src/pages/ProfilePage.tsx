@@ -70,7 +70,7 @@ const ProfilePage = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Meu Perfil - Lendas do Flu"
         description="Veja suas estatísticas, histórico de desafios e evolução no ranking semanal."
       />

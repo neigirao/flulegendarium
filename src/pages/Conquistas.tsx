@@ -59,7 +59,7 @@ const Conquistas = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Minhas Conquistas - Lendas do Flu"
         description="Veja suas conquistas desbloqueadas no Lendas do Flu e acompanhe seu progresso!"
       />

@@ -9,12 +9,11 @@ const JerseyGameContainer = lazy(() => import("@/components/jersey-game/JerseyGa
 const JerseyQuizPage = () => {
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Quiz das Camisas - Adivinhe o Ano | Lendas do Flu"
         description="🎽 Veja a camisa histórica do Fluminense e escolha entre 3 opções qual é o ano correto! Teste seu conhecimento sobre os uniformes tricolores."
         keywords="quiz camisas fluminense, uniformes históricos tricolor, camisas antigas flu, adivinhar ano camisa, quiz múltipla escolha"
-        url="https://lendasdoflu.com/quiz-camisas"
-        canonical="https://lendasdoflu.com/quiz-camisas"
+        schema="Game"
       />
       <RootLayout>
         <GameErrorBoundary>

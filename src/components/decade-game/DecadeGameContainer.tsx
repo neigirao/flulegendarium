@@ -461,10 +461,10 @@ export const DecadeGameContainer = () => {
 
   return (
     <>
-      {/* DynamicSEO for this game mode */}
-      <DynamicSEO 
-        gameMode="decade"
-        difficulty={currentDifficulty.label}
+      <SEOManager 
+        title={`Quiz por Década - ${currentDifficulty.label} | Lendas do Flu`}
+        description="Explore as diferentes eras do Fluminense! Quiz organizado por décadas."
+        schema="Game"
       />
       
       {/* Debug Info - only in dev */}

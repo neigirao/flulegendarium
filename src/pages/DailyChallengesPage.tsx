@@ -47,7 +47,7 @@ const DailyChallengesPage = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Desafios Diários - Lendas do Flu"
         description="Complete desafios diários e ganhe pontos extras no Lendas do Flu!"
       />

@@ -9,10 +9,10 @@ const AdaptiveGameContainer = lazy(() => import("@/components/guess-game/Adaptiv
 const AdaptiveGuessPlayerSimple = () => {
   return (
     <>
-      <DynamicSEO
-        gameMode="adaptive"
-        customTitle="Quiz Adaptativo - Dificuldade Inteligente | Lendas do Flu"
-        customDescription="🎯 Modo adaptativo que ajusta a dificuldade conforme seu desempenho! Evolua gradualmente e domine as lendas do Fluminense."
+      <SEOManager
+        title="Quiz Adaptativo - Dificuldade Inteligente | Lendas do Flu"
+        description="🎯 Modo adaptativo que ajusta a dificuldade conforme seu desempenho! Evolua gradualmente e domine as lendas do Fluminense."
+        schema="Game"
       />
       <RootLayout>
         <GameErrorBoundary>

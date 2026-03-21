@@ -9,10 +9,10 @@ const DecadeGameContainer = lazy(() => import("@/components/decade-game/DecadeGa
 const DecadeGuessPlayerSimple = () => {
   return (
     <>
-      <DynamicSEO
-        gameMode="decade"
-        customTitle="Quiz por Década - Jogadores de Cada Era do Fluminense | Lendas do Flu"
-        customDescription="🗓️ Escolha uma década e teste seus conhecimentos sobre as lendas do Fluminense! Dos anos 60 até os dias atuais."
+      <SEOManager
+        title="Quiz por Década - Jogadores de Cada Era do Fluminense | Lendas do Flu"
+        description="🗓️ Escolha uma década e teste seus conhecimentos sobre as lendas do Fluminense! Dos anos 60 até os dias atuais."
+        schema="Game"
       />
       <RootLayout>
         <GameErrorBoundary>

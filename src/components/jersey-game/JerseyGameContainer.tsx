@@ -352,9 +352,10 @@ const JerseyGameContainer = () => {
 
   return (
     <>
-      <DynamicSEO 
-        gameMode="jersey"
-        difficulty={currentDifficulty.label}
+      <SEOManager 
+        title={`Quiz das Camisas - ${currentDifficulty.label} | Lendas do Flu`}
+        description="Veja a camisa histórica do Fluminense e escolha o ano correto!"
+        schema="Game"
       />
       
       {/* Debug Info - only in dev */}

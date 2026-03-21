@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { SEOHead } from '@/components/SEOHead';
-import { StructuredData } from '@/components/StructuredData';
+import { useLocation } from 'react-router-dom';
+import { SEOManager } from '@/components/seo/SEOManager';
 
 interface EnhancedSEORouterProps {
   children: React.ReactNode;
@@ -13,112 +12,78 @@ const SEO_ROUTES = {
     title: 'Lendas do Flu - Quiz Tricolor dos Ídolos do Fluminense',
     description: '3 modos de quiz: Jogadores, Por Década e Camisas Históricas! Teste seus conhecimentos sobre os ídolos e uniformes tricolores.',
     keywords: 'quiz fluminense, teste tricolor, jogadores fluminense, ídolos flu, quiz futebol, fluminense história, camisas históricas',
-    schema: 'WebSite'
+    schema: 'WebSite' as const
   },
   '/quiz-adaptativo': {
     title: 'Quiz Adaptativo - Adivinhe o Jogador do Fluminense',
     description: 'Quiz inteligente que se adapta ao seu nível! Adivinhe jogadores lendários do Fluminense em diferentes níveis de dificuldade.',
     keywords: 'quiz adaptativo fluminense, adivinhe jogador, teste inteligente tricolor, dificuldade progressiva',
-    schema: 'Game'
+    schema: 'Game' as const
   },
   '/quiz-decada': {
     title: 'Quiz por Década - Eras Douradas do Fluminense',
     description: 'Explore as diferentes eras do Fluminense! Quiz organizado por décadas com os maiores ídolos de cada período tricolor.',
     keywords: 'fluminense por década, história tricolor, jogadores anos 80 90 2000, eras douradas flu',
-    schema: 'Game'
+    schema: 'Game' as const
   },
   '/quiz-camisas': {
     title: 'Quiz das Camisas - Adivinhe o Ano dos Uniformes Históricos',
     description: 'Veja a camisa histórica do Fluminense e escolha entre 3 opções qual é o ano correto! Teste seu conhecimento sobre os uniformes tricolores.',
     keywords: 'quiz camisas fluminense, uniformes históricos tricolor, camisas antigas flu, adivinhar ano camisa',
-    schema: 'Game'
+    schema: 'Game' as const
   },
   '/selecionar-modo-jogo': {
     title: 'Modos de Jogo - Escolha seu Desafio Tricolor',
     description: 'Escolha entre 3 modos: Quiz Adaptativo, Por Década ou Camisas Históricas. Diferentes desafios para testar seu conhecimento tricolor!',
     keywords: 'modos jogo fluminense, escolher quiz tricolor, desafio flu, tipos quiz futebol',
-    schema: 'Game'
+    schema: 'Game' as const
   },
   '/faq': {
     title: 'Perguntas Frequentes - Como Jogar o Quiz do Fluminense',
     description: 'Tire suas dúvidas sobre o jogo! Regras, pontuação e dicas para dominar o quiz dos ídolos tricolores.',
     keywords: 'como jogar quiz fluminense, regras jogo tricolor, dúvidas flu, ajuda quiz',
-    schema: 'FAQ'
+    schema: 'FAQ' as const
   },
   '/conquistas': {
     title: 'Conquistas - Desbloqueie Achievements no Quiz do Fluminense',
     description: 'Desbloqueie conquistas especiais jogando o quiz do Fluminense. Mostre seu conhecimento tricolor e colecione todos os badges!',
     keywords: 'conquistas fluminense, achievements quiz, badges tricolor, medalhas flu',
-    schema: 'WebPage'
+    schema: 'WebPage' as const
   },
   '/perfil': {
     title: 'Meu Perfil - Estatísticas e Histórico no Quiz do Fluminense',
     description: 'Acompanhe suas estatísticas, histórico de jogos e conquistas no quiz do Fluminense.',
     keywords: 'perfil fluminense, estatísticas quiz, histórico jogos tricolor',
-    schema: 'WebPage'
+    schema: 'WebPage' as const
   },
   '/doacoes': {
     title: 'Apoie o Projeto - Doações para Lendas do Flu',
     description: 'Ajude a manter o quiz das lendas do Fluminense no ar! Sua contribuição faz a diferença.',
     keywords: 'doar fluminense, apoiar lendas do flu, contribuir quiz tricolor',
-    schema: 'WebPage'
+    schema: 'WebPage' as const
   },
   '/noticias': {
     title: 'Notícias do Fluminense - Portal Tricolor Atualizado',
     description: 'Últimas notícias, análises e curiosidades sobre o Fluminense. Fique por dentro de tudo sobre o time tricolor.',
     keywords: 'notícias fluminense, portal tricolor, análises flu, curiosidades fluminense',
-    schema: 'NewsPortal'
+    schema: 'WebPage' as const
   }
 };
 
 export const EnhancedSEORouter = ({ children }: EnhancedSEORouterProps) => {
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Get current route SEO data
   const currentSEO = SEO_ROUTES[location.pathname as keyof typeof SEO_ROUTES] || SEO_ROUTES['/'];
-
-  // Generate breadcrumb schema
-  const generateBreadcrumbSchema = () => {
-    const pathSegments = location.pathname.split('/').filter(Boolean);
-    const breadcrumbs = [
-      { name: 'Início', url: 'https://lendasdoflu.com/' }
-    ];
-
-    let currentPath = '';
-    pathSegments.forEach((segment, index) => {
-      currentPath += `/${segment}`;
-      const routeData = SEO_ROUTES[currentPath as keyof typeof SEO_ROUTES];
-      if (routeData) {
-        breadcrumbs.push({
-          name: routeData.title.split(' - ')[0],
-          url: `https://lendasdoflu.com${currentPath}`
-        });
-      }
-    });
-
-    return {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": breadcrumbs.map((breadcrumb, index) => ({
-        "@type": "ListItem",
-        "position": index + 1,
-        "name": breadcrumb.name,
-        "item": breadcrumb.url
-      }))
-    };
-  };
 
   // Track route changes for performance
   useEffect(() => {
     const startTime = performance.now();
     
-    // Mark route change in performance timeline
     if (performance.mark) {
       performance.mark(`route-change-${location.pathname}`);
     }
 
-    // Cleanup function to measure route change time
     return () => {
       const endTime = performance.now();
       const routeChangeTime = endTime - startTime;
@@ -127,7 +92,6 @@ export const EnhancedSEORouter = ({ children }: EnhancedSEORouterProps) => {
         console.warn(`Slow route change to ${location.pathname}: ${routeChangeTime.toFixed(2)}ms`);
       }
 
-      // Send to analytics if available
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'page_view', {
           page_title: currentSEO.title,
@@ -156,7 +120,6 @@ export const EnhancedSEORouter = ({ children }: EnhancedSEORouterProps) => {
         break;
     }
 
-    // Preload with low priority after a delay
     const preloadTimer = setTimeout(() => {
       preloadRoutes.forEach(route => {
         const link = document.createElement('link');
@@ -171,29 +134,12 @@ export const EnhancedSEORouter = ({ children }: EnhancedSEORouterProps) => {
 
   return (
     <>
-      <SEOHead
+      <SEOManager
         title={currentSEO.title}
         description={currentSEO.description}
         keywords={currentSEO.keywords}
-        canonical={`https://lendasdoflu.com${location.pathname}`}
-        url={`https://lendasdoflu.com${location.pathname}`}
+        schema={currentSEO.schema}
       />
-      
-      <StructuredData 
-        type={currentSEO.schema as 'Game' | 'WebSite' | 'Organization' | 'FAQ' | 'WebPage'}
-        data={{
-          path: location.pathname
-        }}
-      />
-
-      {/* Inject breadcrumb JSON-LD */}
-      <script 
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateBreadcrumbSchema())
-        }}
-      />
-
       {children}
     </>
   );
