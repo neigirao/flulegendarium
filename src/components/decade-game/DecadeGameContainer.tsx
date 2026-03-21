@@ -9,7 +9,7 @@ import { GuessHistoryPanel } from '@/components/guess-game/GuessHistoryPanel';
 import { SkipPlayerButton } from '@/components/guess-game/SkipPlayerButton';
 import { AdaptiveProgressionNotification } from '@/components/guess-game/AdaptiveProgressionNotification';
 import { DebugInfo } from '@/components/guess-game/DebugInfo';
-import { DynamicSEO } from '@/components/seo/DynamicSEO';
+import { SEOManager } from '@/components/seo/SEOManager';
 import { KeyboardShortcutsHint } from '@/components/game/KeyboardShortcutsHint';
 import { 
   useDecadePlayerSelection, 
