@@ -32,7 +32,7 @@ const Conquistas = () => {
   if (!user) {
     return (
       <RootLayout>
-        <SEOHead 
+        <SEOManager 
           title="Conquistas - Lendas do Flu"
           description="Desbloqueie conquistas jogando Lendas do Flu e mostre seu conhecimento tricolor!"
         />
