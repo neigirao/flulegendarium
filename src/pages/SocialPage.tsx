@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { RootLayout } from '@/components/RootLayout';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOManager } from '@/components/seo/SEOManager';
 import { TopNavigation } from '@/components/navigation/TopNavigation';
 import { Button } from '@/components/ui/button';
 import { useNavigate, useSearchParams } from 'react-router-dom';
