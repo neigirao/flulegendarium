@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from "react";
 import { RootLayout } from "@/components/RootLayout";
-import { DynamicSEO } from "@/components/seo/DynamicSEO";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 
