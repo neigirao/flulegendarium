@@ -1,6 +1,6 @@
 import React from "react";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
-import { DynamicSEO } from "@/components/seo/DynamicSEO";
+import { SEOManager } from "@/components/seo/SEOManager";
 import { GlobalStatsCards } from "@/components/stats/GlobalStatsCards";
 import { HardestPlayers } from "@/components/stats/HardestPlayers";
 import { TopPlayersExpanded } from "@/components/stats/TopPlayersExpanded";
