@@ -2,7 +2,7 @@ import React from 'react';
 import { Heart, Smartphone, Users, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { FluCard, FluCardHeader, FluCardContent } from '@/components/ui/flu-card';
-import { SEOHead } from '@/components/SEOHead';
+import { SEOManager } from '@/components/seo/SEOManager';
 
 const Donations = () => {
   const donationValues = [
