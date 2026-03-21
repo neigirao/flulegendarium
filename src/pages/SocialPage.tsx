@@ -60,7 +60,7 @@ const SocialPage = () => {
 
   return (
     <>
-      <SEOHead 
+      <SEOManager 
         title="Social - Lendas do Flu"
         description="Interaja com outros fãs do Fluminense, veja o ranking semanal e desafie seus amigos!"
       />
