@@ -31,7 +31,7 @@ export const BusinessIntelligenceDashboard = () => {
     isLoadingCohorts,
     isLoadingOperational,
     isLoadingBusiness
-  } = useBusinessIntelligence(period);
+  } = useAdminAnalytics(period);
 
   return (
     <div className="space-y-6">

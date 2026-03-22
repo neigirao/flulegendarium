@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { trackPageView, trackAuthPromptShown } = useFunnelAnalytics();
+  const { trackFunnelPageView: trackPageView, trackAuthPromptShown } = useAnalytics();
   const { onMouseEnter } = useLinkPrefetch();
   
   useRoutePrefetch();

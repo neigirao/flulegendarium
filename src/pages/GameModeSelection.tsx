@@ -15,7 +15,7 @@ import { TimerSelector } from "@/components/game-settings/TimerSelector";
 const GameModeSelection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { trackPageView, trackGameModeClick, trackAuthPromptShown } = useFunnelAnalytics();
+  const { trackFunnelPageView: trackPageView, trackGameModeClick, trackAuthPromptShown } = useAnalytics();
   const { isOnboardingActive, goToStep } = useOnboarding();
 
   // Track page view on mount
