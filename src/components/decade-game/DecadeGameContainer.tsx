@@ -25,7 +25,7 @@ import { useGameKeyboardShortcuts } from '@/hooks/use-game-keyboard-shortcuts';
 import { useAchievementSystem } from '@/components/achievements/AchievementSystemProvider';
 import { AchievementNotification } from '@/components/achievements/AchievementNotification';
 import { useAchievementNotifications } from '@/hooks/use-achievement-notifications';
-import { useFunnelAnalytics } from '@/hooks/use-funnel-analytics';
+import { useAnalytics } from '@/hooks/analytics';
 import { useChallengeProgress } from '@/hooks/use-challenge-progress';
 import { useGuessHistory } from '@/hooks/use-guess-history';
 import { Decade } from '@/types/decade-game';
