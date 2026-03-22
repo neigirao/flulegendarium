@@ -16,10 +16,12 @@
 | 9 | Remover interface local Player do DynamicSEO (usar tipo canônico) | ✅ Feito |
 | 10 | Confirmar existência de sitemap.xml e robots.txt | ✅ Já existiam |
 
+| 11 | Unificar JSON-LD em SEOManager único | ✅ Feito |
+| 12 | Confirmar sitemap.xml e robots.txt existentes | ✅ Já existiam |
+
 ## Pendentes
 
 ### P1 — Engenharia e Performance
-- Unificar JSON-LD em componente único (SEOHead + DynamicSEO + StructuredData → SEOManager)
 - Consolidar hooks de analytics (5 → 2)
 - Criar RPC `get_home_stats()` para unificar queries da home
 
