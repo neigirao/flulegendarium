@@ -18,11 +18,11 @@
 
 | 11 | Unificar JSON-LD em SEOManager único | ✅ Feito |
 | 12 | Confirmar sitemap.xml e robots.txt existentes | ✅ Já existiam |
+| 13 | Consolidar hooks de analytics (5 → 2) | ✅ Feito |
 
 ## Pendentes
 
 ### P1 — Engenharia e Performance
-- Consolidar hooks de analytics (5 → 2)
 - Criar RPC `get_home_stats()` para unificar queries da home
 
 ### P2 — UX e Design

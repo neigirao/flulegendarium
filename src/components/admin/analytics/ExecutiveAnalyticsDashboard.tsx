@@ -1,4 +1,4 @@
-import { useExecutiveAnalytics } from "@/hooks/use-executive-analytics";
+import { useAdminAnalytics } from "@/hooks/analytics";
 import { FunnelVisualization } from "./FunnelVisualization";
 import { FunnelTrendChart } from "./FunnelTrendChart";
 import { RetentionMetricsCard } from "./RetentionMetricsCard";
@@ -29,7 +29,7 @@ export const ExecutiveAnalyticsDashboard = () => {
     isLoadingHeatmap,
     isLoadingDifficulty,
     isLoadingScores
-  } = useExecutiveAnalytics(period);
+  } = useAdminAnalytics(period);
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ['executive-funnel', period] });

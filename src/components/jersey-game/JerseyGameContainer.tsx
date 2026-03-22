@@ -21,8 +21,7 @@ import { KeyboardShortcutsHint } from "@/components/game/KeyboardShortcutsHint";
 import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { AchievementNotification } from "@/components/achievements/AchievementNotification";
 import { useAchievementNotifications } from "@/hooks/use-achievement-notifications";
-import { useEnhancedAnalytics } from "@/hooks/analytics";
-import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
+import { useAnalytics } from "@/hooks/analytics";
 import { useChallengeProgress } from "@/hooks/use-challenge-progress";
 import { useGuessHistory } from "@/hooks/use-guess-history";
 import { SEOManager } from "@/components/seo/SEOManager";
@@ -61,8 +60,7 @@ const JerseyGameContainer = () => {
   
   // Track previously unlocked achievements
   const previousAchievementsRef = useRef<string[]>([]);
-  const analytics = useEnhancedAnalytics();
-  const funnel = useFunnelAnalytics();
+  const analytics = useAnalytics();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
   const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
   const { history, addEntry, clearHistory, getStats } = useGuessHistory();
@@ -115,16 +113,16 @@ const JerseyGameContainer = () => {
 
   const startGameForPlayer = useCallback(() => {
     if (!hasTrackedGameStart.current) {
-      funnel.trackGameStart('jersey', currentDifficulty.level);
+      analytics.trackFunnelGameStart('jersey', currentDifficulty.level);
       hasTrackedGameStart.current = true;
     }
     startGameForJersey();
-  }, [startGameForJersey, funnel, currentDifficulty.level]);
+  }, [startGameForJersey, analytics, currentDifficulty.level]);
 
   // Wrapped handleOptionSelect with funnel tracking
   const handleSelectOption = useCallback((year: number) => {
     if (!hasTrackedFirstGuess.current) {
-      funnel.trackFirstGuess('jersey');
+      analytics.trackFirstGuess('jersey');
       hasTrackedFirstGuess.current = true;
     }
     
@@ -133,11 +131,11 @@ const JerseyGameContainer = () => {
     }
     
     handleOptionSelect(year);
-  }, [handleOptionSelect, funnel, isStepActive, nextStep]);
+  }, [handleOptionSelect, analytics, isStepActive, nextStep]);
 
   useEffect(() => {
     if (gameOver && !prevGameOverRef.current) {
-      funnel.trackGameCompleted(score, gamesPlayed, 'adaptive');
+      analytics.trackGameCompleted(score, gamesPlayed, 'adaptive');
       onGameCompleted(score);
       
       if (currentJersey && guessHistory.length > 0) {
@@ -153,7 +151,7 @@ const JerseyGameContainer = () => {
       }
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, funnel, onGameCompleted, currentJersey, guessHistory, addEntry, currentDifficulty, timeRemaining]);
+  }, [gameOver, score, gamesPlayed, analytics, onGameCompleted, currentJersey, guessHistory, addEntry, currentDifficulty, timeRemaining]);
 
   // Track correct guesses
   const prevStreakRef = useRef(currentStreak);
@@ -162,7 +160,7 @@ const JerseyGameContainer = () => {
     if (currentStreak > prevStreakRef.current && currentJersey && guessHistory.length > 0) {
       const latestGuess = guessHistory[guessHistory.length - 1];
       
-      funnel.trackGuessResult(true, gamesPlayed);
+      analytics.trackGuessResult(true, gamesPlayed);
       onCorrectGuess();
       onStreakAchieved(currentStreak);
       
@@ -193,7 +191,7 @@ const JerseyGameContainer = () => {
       previousAchievementsRef.current = currentIds;
     }
     prevStreakRef.current = currentStreak;
-  }, [currentStreak, guessHistory, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentJersey, addEntry, currentDifficulty, timeRemaining]);
+  }, [currentStreak, guessHistory, gamesPlayed, analytics, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentJersey, addEntry, currentDifficulty, timeRemaining]);
 
   // Reset tracking refs, history, and skips when game resets
   useEffect(() => {

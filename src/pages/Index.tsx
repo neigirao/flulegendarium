@@ -6,7 +6,7 @@ import { SEOManager } from "@/components/seo/SEOManager";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { useAuth } from "@/hooks/useAuth";
 import { Link, useNavigate } from "react-router-dom";
-import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
+import { useAnalytics } from "@/hooks/analytics";
 import { GameTypeRankings } from "@/components/home/GameTypeRankings";
 import { GameModesPreview } from "@/components/home/GameModesPreview";
 import { useLinkPrefetch, useRoutePrefetch } from "@/hooks/use-route-prefetch";
@@ -16,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { trackPageView, trackAuthPromptShown } = useFunnelAnalytics();
+  const { trackFunnelPageView: trackPageView, trackAuthPromptShown } = useAnalytics();
   const { onMouseEnter } = useLinkPrefetch();
   
   useRoutePrefetch();

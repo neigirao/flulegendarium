@@ -5,7 +5,7 @@ import { OperationalDashboard } from "./OperationalDashboard";
 import { ExecutiveAnalyticsDashboard } from "../analytics/ExecutiveAnalyticsDashboard";
 import { PeriodSelector } from "../shared/PeriodSelector";
 import { useReportPeriod } from "@/hooks/use-report-period";
-import { useBusinessIntelligence } from "@/hooks/use-business-intelligence";
+import { useAdminAnalytics } from "@/hooks/analytics";
 import { 
   Users, 
   Calendar, 
@@ -31,7 +31,7 @@ export const BusinessIntelligenceDashboard = () => {
     isLoadingCohorts,
     isLoadingOperational,
     isLoadingBusiness
-  } = useBusinessIntelligence(period);
+  } = useAdminAnalytics(period);
 
   return (
     <div className="space-y-6">
