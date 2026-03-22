@@ -113,16 +113,16 @@ const JerseyGameContainer = () => {
 
   const startGameForPlayer = useCallback(() => {
     if (!hasTrackedGameStart.current) {
-      funnel.trackGameStart('jersey', currentDifficulty.level);
+      analytics.trackFunnelGameStart('jersey', currentDifficulty.level);
       hasTrackedGameStart.current = true;
     }
     startGameForJersey();
-  }, [startGameForJersey, funnel, currentDifficulty.level]);
+  }, [startGameForJersey, analytics, currentDifficulty.level]);
 
   // Wrapped handleOptionSelect with funnel tracking
   const handleSelectOption = useCallback((year: number) => {
     if (!hasTrackedFirstGuess.current) {
-      funnel.trackFirstGuess('jersey');
+      analytics.trackFirstGuess('jersey');
       hasTrackedFirstGuess.current = true;
     }
     
@@ -131,11 +131,11 @@ const JerseyGameContainer = () => {
     }
     
     handleOptionSelect(year);
-  }, [handleOptionSelect, funnel, isStepActive, nextStep]);
+  }, [handleOptionSelect, analytics, isStepActive, nextStep]);
 
   useEffect(() => {
     if (gameOver && !prevGameOverRef.current) {
-      funnel.trackGameCompleted(score, gamesPlayed, 'adaptive');
+      analytics.trackGameCompleted(score, gamesPlayed, 'adaptive');
       onGameCompleted(score);
       
       if (currentJersey && guessHistory.length > 0) {
@@ -151,7 +151,7 @@ const JerseyGameContainer = () => {
       }
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, funnel, onGameCompleted, currentJersey, guessHistory, addEntry, currentDifficulty, timeRemaining]);
+  }, [gameOver, score, gamesPlayed, analytics, onGameCompleted, currentJersey, guessHistory, addEntry, currentDifficulty, timeRemaining]);
 
   // Track correct guesses
   const prevStreakRef = useRef(currentStreak);
@@ -160,7 +160,7 @@ const JerseyGameContainer = () => {
     if (currentStreak > prevStreakRef.current && currentJersey && guessHistory.length > 0) {
       const latestGuess = guessHistory[guessHistory.length - 1];
       
-      funnel.trackGuessResult(true, gamesPlayed);
+      analytics.trackGuessResult(true, gamesPlayed);
       onCorrectGuess();
       onStreakAchieved(currentStreak);
       
@@ -191,7 +191,7 @@ const JerseyGameContainer = () => {
       previousAchievementsRef.current = currentIds;
     }
     prevStreakRef.current = currentStreak;
-  }, [currentStreak, guessHistory, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentJersey, addEntry, currentDifficulty, timeRemaining]);
+  }, [currentStreak, guessHistory, gamesPlayed, analytics, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentJersey, addEntry, currentDifficulty, timeRemaining]);
 
   // Reset tracking refs, history, and skips when game resets
   useEffect(() => {

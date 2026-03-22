@@ -125,11 +125,11 @@ const AdaptiveGameContainer = () => {
   // Wrapped startGameForPlayer with funnel tracking
   const startGameForPlayer = useCallback(() => {
     if (!hasTrackedGameStart.current) {
-      funnel.trackGameStart('adaptive', currentDifficulty.level);
+      analytics.trackFunnelGameStart('adaptive', currentDifficulty.level);
       hasTrackedGameStart.current = true;
     }
     originalStartGame();
-  }, [originalStartGame, funnel, currentDifficulty.level]);
+  }, [originalStartGame, analytics, currentDifficulty.level]);
 
   // Track last guess for history
   const lastGuessRef = useRef<string>('');
@@ -138,7 +138,7 @@ const AdaptiveGameContainer = () => {
   const handleGuess = useCallback((guess: string) => {
     // Track first guess
     if (!hasTrackedFirstGuess.current) {
-      funnel.trackFirstGuess('adaptive');
+      analytics.trackFirstGuess('adaptive');
       hasTrackedFirstGuess.current = true;
     }
     
@@ -152,12 +152,12 @@ const AdaptiveGameContainer = () => {
     
     // Track guess (result will be determined by game state change)
     originalHandleGuess(guess);
-  }, [originalHandleGuess, funnel, isStepActive, nextStep]);
+  }, [originalHandleGuess, analytics, isStepActive, nextStep]);
 
   // Track game completion when gameOver changes
   useEffect(() => {
     if (gameOver && !prevGameOverRef.current) {
-      funnel.trackGameCompleted(score, gamesPlayed, 'adaptive');
+      analytics.trackGameCompleted(score, gamesPlayed, 'adaptive');
       // Update daily challenge progress
       onGameCompleted(score);
       
@@ -174,7 +174,7 @@ const AdaptiveGameContainer = () => {
       }
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, funnel, onGameCompleted, currentPlayer, addEntry, currentDifficulty.label, timeRemaining]);
+  }, [gameOver, score, gamesPlayed, analytics, onGameCompleted, currentPlayer, addEntry, currentDifficulty.label, timeRemaining]);
 
   // Track correct/incorrect guesses based on streak changes
   const prevStreakRef = useRef(currentStreak);
@@ -183,7 +183,7 @@ const AdaptiveGameContainer = () => {
   useEffect(() => {
     // Correct guess detected
     if (currentStreak > prevStreakRef.current && currentPlayer) {
-      funnel.trackGuessResult(true, gamesPlayed);
+      analytics.trackGuessResult(true, gamesPlayed);
       // Update daily challenge progress for correct guess
       onCorrectGuess();
       // Update streak challenges
@@ -218,7 +218,7 @@ const AdaptiveGameContainer = () => {
     }
     prevStreakRef.current = currentStreak;
     prevGamesPlayedRef.current = gamesPlayed;
-  }, [currentStreak, gamesPlayed, funnel, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
+  }, [currentStreak, gamesPlayed, analytics, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
 
   // Reset tracking refs, history, and skips when game resets
   useEffect(() => {

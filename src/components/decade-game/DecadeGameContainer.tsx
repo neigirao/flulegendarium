@@ -179,7 +179,7 @@ export const DecadeGameContainer = () => {
   // Wrapped handleGuess with funnel tracking and onboarding
   const handleGuess = useCallback((guess: string) => {
     if (!hasTrackedFirstGuess.current && selectedDecade) {
-      funnel.trackFirstGuess(`decade_${selectedDecade}`);
+      analytics.trackFirstGuess(`decade_${selectedDecade}`);
       hasTrackedFirstGuess.current = true;
     }
     
@@ -192,20 +192,20 @@ export const DecadeGameContainer = () => {
     lastGuessRef.current = guess;
     
     originalHandleGuess(guess);
-  }, [originalHandleGuess, funnel, selectedDecade, isStepActive, nextStep]);
+  }, [originalHandleGuess, analytics, selectedDecade, isStepActive, nextStep]);
 
   // Track game start when timer starts
   useEffect(() => {
     if (isTimerRunning && !hasTrackedGameStart.current && selectedDecade) {
-      funnel.trackGameStart(`decade_${selectedDecade}`, currentDifficulty.level);
+      analytics.trackFunnelGameStart(`decade_${selectedDecade}`, currentDifficulty.level);
       hasTrackedGameStart.current = true;
     }
-  }, [isTimerRunning, selectedDecade, funnel, currentDifficulty.level]);
+  }, [isTimerRunning, selectedDecade, analytics, currentDifficulty.level]);
 
   // Track game completion when gameOver changes
   useEffect(() => {
     if (gameOver && !prevGameOverRef.current && selectedDecade) {
-      funnel.trackGameCompleted(score, gamesPlayed, `decade_${selectedDecade}`);
+      analytics.trackGameCompleted(score, gamesPlayed, `decade_${selectedDecade}`);
       onGameCompleted(score);
       
       // Add failed guess to history (timeout or wrong)
@@ -221,12 +221,12 @@ export const DecadeGameContainer = () => {
       }
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, selectedDecade, funnel, onGameCompleted, currentPlayer, addEntry, currentDifficulty.label, timeRemaining]);
+  }, [gameOver, score, gamesPlayed, selectedDecade, analytics, onGameCompleted, currentPlayer, addEntry, currentDifficulty.label, timeRemaining]);
 
   // Track correct guesses based on streak changes
   useEffect(() => {
     if (currentStreak > prevStreakRef.current && currentPlayer) {
-      funnel.trackGuessResult(true, gamesPlayed);
+      analytics.trackGuessResult(true, gamesPlayed);
       onCorrectGuess();
       onStreakAchieved(currentStreak);
       
@@ -258,7 +258,7 @@ export const DecadeGameContainer = () => {
       previousAchievementsRef.current = currentIds;
     }
     prevStreakRef.current = currentStreak;
-  }, [currentStreak, gamesPlayed, funnel, getPlayerAchievements, queueNotification, onCorrectGuess, onStreakAchieved, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
+  }, [currentStreak, gamesPlayed, analytics, getPlayerAchievements, queueNotification, onCorrectGuess, onStreakAchieved, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
 
   // Track difficulty changes and trigger notification
   const prevDifficultyRef = useRef(currentDifficulty.level);
