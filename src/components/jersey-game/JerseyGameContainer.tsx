@@ -60,8 +60,7 @@ const JerseyGameContainer = () => {
   
   // Track previously unlocked achievements
   const previousAchievementsRef = useRef<string[]>([]);
-  const analytics = useEnhancedAnalytics();
-  const funnel = useFunnelAnalytics();
+  const analytics = useAnalytics();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
   const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
   const { history, addEntry, clearHistory, getStats } = useGuessHistory();

@@ -1,4 +1,4 @@
-import { useExecutiveAnalytics } from "@/hooks/use-executive-analytics";
+import { useAdminAnalytics } from "@/hooks/analytics";
 import { FunnelVisualization } from "./FunnelVisualization";
 import { FunnelTrendChart } from "./FunnelTrendChart";
 import { RetentionMetricsCard } from "./RetentionMetricsCard";

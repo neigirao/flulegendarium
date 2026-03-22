@@ -61,8 +61,7 @@ const AdaptiveGameContainer = () => {
   
   // Track previously unlocked achievements to detect new ones
   const previousAchievementsRef = useRef<string[]>([]);
-  const analytics = useEnhancedAnalytics();
-  const funnel = useFunnelAnalytics();
+  const analytics = useAnalytics();
   const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
   const { showContextualFeedback } = useUX();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();

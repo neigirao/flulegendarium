@@ -51,7 +51,7 @@ export const DecadeGameContainer = () => {
   const { getPlayerAchievements } = useAchievementSystem();
   const { currentNotification, queueNotification, dismissNotification } = useAchievementNotifications();
   const gameToasts = useGameToasts();
-  const funnel = useFunnelAnalytics();
+  const analytics = useAnalytics();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
   const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
   const { history, addEntry, clearHistory, getStats } = useGuessHistory();

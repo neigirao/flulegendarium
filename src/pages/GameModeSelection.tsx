@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, LogIn, Trophy, Star, Settings, Shirt } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { useFunnelAnalytics } from "@/hooks/use-funnel-analytics";
+import { useAnalytics } from "@/hooks/analytics";
 import { CoachMark, useOnboarding } from "@/components/onboarding";
 import { DailyChallengeWidget } from "@/components/challenges";
 import { TimerSelector } from "@/components/game-settings/TimerSelector";

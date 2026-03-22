@@ -1,10 +1,10 @@
 /**
  * Analytics Hooks - Barrel Export
  * 
- * Centraliza todos os hooks relacionados a analytics e tracking.
+ * Consolidated: useAnalytics (client) + useAdminAnalytics (admin dashboards)
  * 
  * @module hooks/analytics
  */
 
 export { useAnalytics } from '../use-analytics';
-export { useEnhancedAnalytics } from '../use-enhanced-analytics';
+export { useAdminAnalytics } from '../use-admin-analytics';
