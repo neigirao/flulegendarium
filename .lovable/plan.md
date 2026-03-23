@@ -1,37 +1,65 @@
 
-# Auditoria Completa — Progresso
 
-## Concluídos
+# Criar RPC `get_home_stats()` e Unificar Queries da Home
 
-| # | Item | Status |
-|---|------|--------|
-| 1 | Fix `useAnalytics` eventQueue → `useRef` | ✅ Feito |
-| 2 | Atualizar preload de imagem (PNG → WebP) | ✅ Feito |
-| 3 | Remover SearchAction do StructuredData | ✅ Feito |
-| 4 | Remover meta tags `article:*` do index.html | ✅ Feito |
-| 5 | Corrigir URL do Game StructuredData (/jogar → /selecionar-modo-jogo) | ✅ Feito |
-| 6 | Mover third-party scripts para `requestIdleCallback` | ✅ Feito |
-| 7 | Remover polling de 60s e push notification do ServiceWorker | ✅ Feito |
-| 8 | Substituir console.log por logger no gameHistoryService | ✅ Feito |
-| 9 | Remover interface local Player do DynamicSEO (usar tipo canônico) | ✅ Feito |
-| 10 | Confirmar existência de sitemap.xml e robots.txt | ✅ Já existiam |
+## Objetivo
+Substituir as 3 queries individuais na página inicial (`player-count`, `jersey-count`, `today-players`) por uma única chamada RPC, reduzindo latência e número de conexões.
 
-| 11 | Unificar JSON-LD em SEOManager único | ✅ Feito |
-| 12 | Confirmar sitemap.xml e robots.txt existentes | ✅ Já existiam |
-| 13 | Consolidar hooks de analytics (5 → 2) | ✅ Feito |
+## Mudanças
 
-## Pendentes
+### 1. Migration SQL — Nova função `get_home_stats()`
 
-### P1 — Engenharia e Performance
-- Criar RPC `get_home_stats()` para unificar queries da home
+Criar migration `supabase/migrations/20260323180000_create_get_home_stats_rpc.sql`:
 
-### P2 — UX e Design
-- Unificar GameContainers (3 → 1 com composição)
-- Adicionar indicador de progresso claro nos jogos
-- Adicionar visual na hero section
+```sql
+CREATE OR REPLACE FUNCTION public.get_home_stats()
+RETURNS json
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT json_build_object(
+    'player_count', (SELECT count(*) FROM public.players),
+    'jersey_count', (SELECT count(*) FROM public.jerseys),
+    'today_players', (
+      SELECT count(*) FROM public.game_starts
+      WHERE started_at >= date_trunc('day', now() AT TIME ZONE 'UTC')
+    )
+  );
+$$;
+$$
+```
 
-### P3 — Dívida Técnica
-- Consolidar tipo Player em todos os arquivos restantes
-- Substituir console.log por logger nos demais services
-- Migrar aggregation de dados admin para server-side (RPC)
-- Aumentar cobertura de testes
+A função retorna `{ player_count, jersey_count, today_players }` em uma única query.
+
+### 2. Atualizar `src/pages/Index.tsx`
+
+Substituir os 3 `useQuery` separados por um único:
+
+```typescript
+const { data: homeStats } = useQuery({
+  queryKey: ['home-stats'],
+  queryFn: async () => {
+    const { data, error } = await supabase.rpc('get_home_stats');
+    if (error) throw error;
+    return data as { player_count: number; jersey_count: number; today_players: number };
+  },
+  staleTime: 5 * 60 * 1000,
+});
+```
+
+Depois, atualizar as referências:
+- `playerCount` → `homeStats?.player_count`
+- `jerseyCount` → `homeStats?.jersey_count`
+- `todayPlayers` → `homeStats?.today_players`
+
+### 3. Atualizar `.lovable/plan.md`
+
+Marcar item P1.9 (get_home_stats RPC) como concluído.
+
+## Impacto
+- **3 requests HTTP → 1** na carga inicial da home
+- Sem breaking changes — mesmos dados exibidos
+- `staleTime` de 5 minutos (usa o menor dos 3 anteriores)
+
