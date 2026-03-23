@@ -1746,6 +1746,7 @@ export type Database = {
       can_user_open_pack: { Args: { user_uuid: string }; Returns: boolean }
       cleanup_expired_notifications: { Args: never; Returns: undefined }
       get_current_user_role: { Args: never; Returns: string }
+      get_home_stats: { Args: never; Returns: Json }
       get_next_pack_opening_date: {
         Args: { user_uuid: string }
         Returns: string

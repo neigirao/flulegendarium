@@ -23,7 +23,7 @@
 ## Pendentes
 
 ### P1 — Engenharia e Performance
-- Criar RPC `get_home_stats()` para unificar queries da home
+- ~~Criar RPC `get_home_stats()` para unificar queries da home~~ ✅ Feito
 
 ### P2 — UX e Design
 - Unificar GameContainers (3 → 1 com composição)
