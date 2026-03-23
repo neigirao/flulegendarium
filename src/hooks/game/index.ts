@@ -28,3 +28,7 @@ export { useJerseyGuessGame } from '../use-jersey-guess-game';
 
 // Skip Player hook
 export { useSkipPlayer } from './use-skip-player';
+
+// Game Orchestration hook
+export { useGameOrchestration } from './use-game-orchestration';
+export type { GameOrchestrationConfig } from './use-game-orchestration';
