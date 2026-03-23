@@ -1,37 +1,110 @@
 
-# Auditoria Completa — Progresso
 
-## Concluídos
+# Unificar GameContainers via Hook de Orquestração
 
-| # | Item | Status |
-|---|------|--------|
-| 1 | Fix `useAnalytics` eventQueue → `useRef` | ✅ Feito |
-| 2 | Atualizar preload de imagem (PNG → WebP) | ✅ Feito |
-| 3 | Remover SearchAction do StructuredData | ✅ Feito |
-| 4 | Remover meta tags `article:*` do index.html | ✅ Feito |
-| 5 | Corrigir URL do Game StructuredData (/jogar → /selecionar-modo-jogo) | ✅ Feito |
-| 6 | Mover third-party scripts para `requestIdleCallback` | ✅ Feito |
-| 7 | Remover polling de 60s e push notification do ServiceWorker | ✅ Feito |
-| 8 | Substituir console.log por logger no gameHistoryService | ✅ Feito |
-| 9 | Remover interface local Player do DynamicSEO (usar tipo canônico) | ✅ Feito |
-| 10 | Confirmar existência de sitemap.xml e robots.txt | ✅ Já existiam |
+## Problema
+Os 3 containers de página (AdaptiveGameContainer 500L, DecadeGameContainer 630L, JerseyGameContainer 520L) compartilham ~80% de lógica duplicada: analytics, achievements, guest name, devtools detection, onboarding, timer coordination, guess history, difficulty notifications.
 
-| 11 | Unificar JSON-LD em SEOManager único | ✅ Feito |
-| 12 | Confirmar sitemap.xml e robots.txt existentes | ✅ Já existiam |
-| 13 | Consolidar hooks de analytics (5 → 2) | ✅ Feito |
+## Estratégia
+Extrair toda a lógica compartilhada para um hook `useGameOrchestration`, manter `BaseGameContainer` como shell de layout, deletar `GameContainer` (presentacional), e reduzir cada container de página para ~100-150 linhas.
 
-## Pendentes
+## Mudanças
 
-### P1 — Engenharia e Performance
-- ~~Criar RPC `get_home_stats()` para unificar queries da home~~ ✅ Feito
+### 1. Criar `src/hooks/game/use-game-orchestration.ts` (~200 linhas)
 
-### P2 — UX e Design
-- Unificar GameContainers (3 → 1 com composição)
-- Adicionar indicador de progresso claro nos jogos
-- Adicionar visual na hero section
+Hook que encapsula toda a lógica repetida nos 3 containers:
 
-### P3 — Dívida Técnica
-- Consolidar tipo Player em todos os arquivos restantes
-- Substituir console.log por logger nos demais services
-- Migrar aggregation de dados admin para server-side (RPC)
-- Aumentar cobertura de testes
+- **Estado compartilhado**: `guestName`, `showGuestNameForm`, `canStartTimer`, `imageLoaded`, `showDebug`, `difficultyChangeInfo`
+- **Analytics tracking**: page view, first guess, game start, game completion, guess results (parametrizado por `gameMode`)
+- **Achievement tracking**: detecção de novos desbloqueios, fila de notificações
+- **DevTools detection**: encerra jogo se detectado
+- **Onboarding coordination**: steps de name-input, timer-explanation, first-guess
+- **Timer start coordination**: só inicia quando nome + imagem + tutorial OK
+- **Guest name form**: submit + cancel handlers
+- **Guess history**: addEntry para correto/incorreto
+- **Skip player**: wrapper do useSkipPlayer
+- **Keyboard shortcuts**: wrapper do useGameKeyboardShortcuts
+- **Reset tracking**: limpa refs quando jogo reseta
+
+Recebe config:
+```typescript
+interface GameOrchestrationConfig {
+  gameMode: string;                    // 'adaptive' | 'decade_1990s' | 'jersey'
+  pagePath: string;                    // '/quiz-adaptativo'
+  currentItem: { id: string; name: string; image_url: string } | null;
+  gameOver: boolean;
+  score: number;
+  gamesPlayed: number;
+  currentStreak: number;
+  currentDifficulty: { level: string; label: string; multiplier: number };
+  difficultyProgress: number;
+  isTimerRunning: boolean;
+  isProcessingGuess: boolean;
+  timeRemaining: number;
+  startGame: () => void;
+  resetGame: () => void;
+  selectNext: () => void;
+  onImageFixed?: () => void;
+  dataReady: boolean;                  // players/jerseys loaded
+  dataCount: number;
+  clearImageCache: () => void;
+  preloadNext?: () => void;
+}
+```
+
+Retorna:
+```typescript
+interface GameOrchestration {
+  // State
+  guestName: string;
+  showGuestNameForm: boolean;
+  showDebug: boolean;
+  imageLoaded: boolean;
+  difficultyChangeInfo: DifficultyChangeInfo | null;
+  // Handlers
+  handleGuestNameSubmit: (name: string) => void;
+  handleImageLoaded: () => void;
+  handleSkipPlayer: () => void;
+  handleClearDifficultyNotification: () => void;
+  wrapGuess: (originalGuess: (g: string) => void) => (g: string) => void;
+  setShowDebug: (v: boolean) => void;
+  // Skip state
+  skipsUsed: number; maxSkips: number; canSkip: boolean; skipPenalty: number;
+  // Keyboard
+  shortcuts: any[];
+  // Achievements
+  currentNotification: any; dismissNotification: () => void;
+  unlockedAchievementIds: string[];
+  // Guest form cancel
+  onGuestCancel: () => void;
+}
+```
+
+### 2. Simplificar `AdaptiveGameContainer.tsx` (~150 linhas)
+- Usar `useGameOrchestration` para toda a lógica compartilhada
+- Manter apenas: `useAdaptiveGuessGame`, UI específica (AdaptivePlayerImage, GuessForm, AdaptiveDifficultyIndicator)
+
+### 3. Simplificar `DecadeGameContainer.tsx` (~200 linhas)
+- Usar `useGameOrchestration` para toda a lógica compartilhada
+- Manter apenas: hooks de década, seleção de década, UI inline (sem `GameContainer`)
+- **Deletar** importação de `GameContainer`, inline o `UnifiedPlayerImage` + `GuessForm` direto
+
+### 4. Simplificar `JerseyGameContainer.tsx` (~150 linhas)
+- Usar `useGameOrchestration` para toda a lógica compartilhada
+- Manter apenas: `useJerseyGuessGame`, UI específica (JerseyImage, JerseyYearOptions)
+
+### 5. Deletar `src/components/guess-game/GameContainer.tsx`
+- Componente presentacional usado só pelo DecadeGameContainer, será substituído por UI inline
+
+### 6. Atualizar `src/components/guess-game/index.ts`
+- Remover export de `GameContainer`
+
+### 7. Atualizar `.lovable/plan.md`
+- Marcar unificação dos GameContainers como concluída
+
+## Impacto
+- **~1100 linhas duplicadas eliminadas** entre os 3 containers
+- Um único ponto de manutenção para analytics, achievements, devtools, onboarding
+- `BaseGameContainer` permanece intacto como shell de layout
+- Nenhuma mudança visual ou funcional para o usuário
+
