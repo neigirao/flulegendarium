@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useCallback } from "react";
 import type { DifficultyLevel } from "@/types/guess-game";
-import { useAdaptiveGuessGame, useSkipPlayer } from "@/hooks/game";
+import { useAdaptiveGuessGame } from "@/hooks/game";
+import { useGameOrchestration } from "@/hooks/game";
 import { usePlayersData } from "@/hooks/data";
-import { useAuth } from "@/hooks/auth";
-import { useGameKeyboardShortcuts } from "@/hooks/use-game-keyboard-shortcuts";
 import { BaseGameContainer } from "./BaseGameContainer";
 import { ImageFeedbackButton } from "@/components/image-feedback/ImageFeedbackButton";
 import { GameHeader } from "./GameHeader";
@@ -18,333 +17,60 @@ import { DebugInfo } from "./DebugInfo";
 import { ErrorDisplay } from "./ErrorDisplay";
 import { GuessHistoryPanel } from "./GuessHistoryPanel";
 import { KeyboardShortcutsHint } from "@/components/game/KeyboardShortcutsHint";
-import { useAchievementSystem } from "@/components/achievements/AchievementSystemProvider";
 import { AchievementNotification } from "@/components/achievements/AchievementNotification";
-import { useAchievementNotifications } from "@/hooks/use-achievement-notifications";
-import { useAnalytics } from "@/hooks/analytics";
-import { useChallengeProgress } from "@/hooks/use-challenge-progress";
-import { useGuessHistory } from "@/hooks/use-guess-history";
 import { SEOManager } from "@/components/seo/SEOManager";
-import { useMobileOptimization } from "@/hooks/mobile";
-import { useUX } from "@/components/ux/UXProvider";
-import { useDevToolsDetection } from "@/hooks/use-devtools-detection";
-import { useGameToasts } from "@/hooks/use-game-toasts";
 import { clearAllImageCache } from "@/utils/player-image/cache";
-import { preloadNextPlayer, prepareNextBatch } from "@/utils/player-image/preloadUtils";
-import { CoachMark, useOnboarding } from "@/components/onboarding";
-import { ACHIEVEMENTS } from "@/types/achievements";
-import { 
-  AnimatedContainer, 
-  PlayerTransition, 
-  StreakIndicator 
-} from "@/components/animations/GameAnimations";
+import { prepareNextBatch } from "@/utils/player-image/preloadUtils";
+import { CoachMark } from "@/components/onboarding";
 
 const AdaptiveGameContainer = () => {
-  const [showDebug, setShowDebug] = useState(false);
-  const [guestName, setGuestName] = useState<string>("");
-  const [showGuestNameForm, setShowGuestNameForm] = useState(false);
-  const [canStartTimer, setCanStartTimer] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const gameToasts = useGameToasts();
-  
-  // Tracking state
-  const hasTrackedFirstGuess = useRef(false);
-  const hasTrackedGameStart = useRef(false);
-  const prevGameOverRef = useRef(false);
-  
-  const { user } = useAuth();
   const { players, isLoading, playersError } = usePlayersData();
-  
-  // Achievement hooks
-  const { checkProgressAchievements, getPlayerAchievements } = useAchievementSystem();
-  const { currentNotification, queueNotification, dismissNotification } = useAchievementNotifications();
-  
-  // Track previously unlocked achievements to detect new ones
-  const previousAchievementsRef = useRef<string[]>([]);
-  const analytics = useAnalytics();
-  const { viewportInfo, getTouchTargetSize } = useMobileOptimization();
-  const { showContextualFeedback } = useUX();
-  const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
-  const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
-  const { history, addEntry, clearHistory, getStats } = useGuessHistory();
+
   const {
-    currentPlayer,
-    gameKey,
-    currentDifficulty,
-    difficultyProgress,
-    attempts,
-    score,
-    gameOver,
-    timeRemaining,
-    handleGuess: originalHandleGuess,
-    selectRandomPlayer,
-    forceRefresh,
-    handlePlayerImageFixed,
-    isProcessingGuess,
-    hasLost,
-    startGameForPlayer: originalStartGame,
-    isTimerRunning,
-    resetScore,
-    gamesPlayed,
-    currentStreak,
-    maxStreak,
-    difficultyChangeInfo,
-    clearDifficultyChange,
+    currentPlayer, gameKey, currentDifficulty, difficultyProgress,
+    score, gameOver, timeRemaining,
+    handleGuess: originalHandleGuess, selectRandomPlayer,
+    handlePlayerImageFixed, isProcessingGuess,
+    startGameForPlayer, isTimerRunning, resetScore,
+    gamesPlayed, currentStreak, maxStreak,
+    difficultyChangeInfo: adaptiveDiffChange, clearDifficultyChange,
     saveToRanking
   } = useAdaptiveGuessGame(players);
 
-  // Skip player hook
-  const {
-    skipsUsed,
-    maxSkips,
-    canSkip,
-    skipPenalty,
-    handleSkip: performSkip,
-    resetSkips,
-  } = useSkipPlayer({
-    maxSkips: 1,
-    skipPenalty: 100,
-    onSkip: () => {
-      // Aplica penalidade e pula para próximo jogador
-      if (score >= skipPenalty) {
-        // Score é gerenciado internamente, apenas seleciona próximo jogador
-      }
-      selectRandomPlayer();
-    }
+  const orch = useGameOrchestration({
+    gameMode: 'adaptive',
+    pagePath: '/quiz-adaptativo',
+    currentItem: currentPlayer ? { id: currentPlayer.id, name: currentPlayer.name, image_url: currentPlayer.image_url } : null,
+    gameOver, score, gamesPlayed, currentStreak,
+    currentDifficulty, difficultyProgress,
+    isTimerRunning, isProcessingGuess, timeRemaining,
+    startGame: startGameForPlayer,
+    resetGame: resetScore,
+    selectNext: selectRandomPlayer,
+    dataReady: !!(players && players.length > 0),
+    clearImageCache: clearAllImageCache,
   });
 
-  // Wrap skip handler to apply penalty
-  const handleSkipPlayer = useCallback(() => {
-    if (performSkip()) {
-      // Penalidade será aplicada subtraindo do score
-      // Como addScore só adiciona, vamos usar uma abordagem diferente
-      // A penalidade é informativa, o jogador perde a oportunidade de pontuar
-    }
-  }, [performSkip]);
-
-  // Wrapped startGameForPlayer with funnel tracking
-  const startGameForPlayer = useCallback(() => {
-    if (!hasTrackedGameStart.current) {
-      analytics.trackFunnelGameStart('adaptive', currentDifficulty.level);
-      hasTrackedGameStart.current = true;
-    }
-    originalStartGame();
-  }, [originalStartGame, analytics, currentDifficulty.level]);
-
-  // Track last guess for history
-  const lastGuessRef = useRef<string>('');
-
-  // Wrapped handleGuess with funnel tracking and onboarding
-  const handleGuess = useCallback((guess: string) => {
-    // Track first guess
-    if (!hasTrackedFirstGuess.current) {
-      analytics.trackFirstGuess('adaptive');
-      hasTrackedFirstGuess.current = true;
-    }
-    
-    // Avançar onboarding após primeiro palpite
-    if (isStepActive('first-guess')) {
-      nextStep();
-    }
-    
-    // Store guess for history tracking
-    lastGuessRef.current = guess;
-    
-    // Track guess (result will be determined by game state change)
-    originalHandleGuess(guess);
-  }, [originalHandleGuess, analytics, isStepActive, nextStep]);
-
-  // Track game completion when gameOver changes
-  useEffect(() => {
-    if (gameOver && !prevGameOverRef.current) {
-      analytics.trackGameCompleted(score, gamesPlayed, 'adaptive');
-      // Update daily challenge progress
-      onGameCompleted(score);
-      
-      // Add failed guess to history (timeout or wrong)
-      if (currentPlayer && lastGuessRef.current) {
-        addEntry({
-          playerName: currentPlayer.name,
-          playerImageUrl: currentPlayer.image_url,
-          guess: lastGuessRef.current,
-          isCorrect: false,
-          difficulty: currentDifficulty.label,
-          timeRemaining: timeRemaining,
-        });
-      }
-    }
-    prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, analytics, onGameCompleted, currentPlayer, addEntry, currentDifficulty.label, timeRemaining]);
-
-  // Track correct/incorrect guesses based on streak changes
-  const prevStreakRef = useRef(currentStreak);
-  const prevGamesPlayedRef = useRef(gamesPlayed);
-  
-  useEffect(() => {
-    // Correct guess detected
-    if (currentStreak > prevStreakRef.current && currentPlayer) {
-      analytics.trackGuessResult(true, gamesPlayed);
-      // Update daily challenge progress for correct guess
-      onCorrectGuess();
-      // Update streak challenges
-      onStreakAchieved(currentStreak);
-      
-      // Add correct guess to history
-      addEntry({
-        playerName: currentPlayer.name,
-        playerImageUrl: currentPlayer.image_url,
-        guess: lastGuessRef.current,
-        isCorrect: true,
-        difficulty: currentDifficulty.label,
-        pointsEarned: Math.floor(5 * (currentDifficulty.multiplier || 1)),
-        timeRemaining: timeRemaining,
-      });
-      
-      // Check for newly unlocked achievements and queue notifications
-      const currentAchievements = getPlayerAchievements();
-      const currentIds = currentAchievements.map(a => a.id);
-      const newlyUnlocked = currentIds.filter(id => !previousAchievementsRef.current.includes(id));
-      
-      if (newlyUnlocked.length > 0) {
-        newlyUnlocked.forEach(achievementId => {
-          const achievement = ACHIEVEMENTS.find(a => a.id === achievementId);
-          if (achievement) {
-            queueNotification(achievement);
-          }
-        });
-      }
-      
-      previousAchievementsRef.current = currentIds;
-    }
-    prevStreakRef.current = currentStreak;
-    prevGamesPlayedRef.current = gamesPlayed;
-  }, [currentStreak, gamesPlayed, analytics, onCorrectGuess, onStreakAchieved, getPlayerAchievements, queueNotification, currentPlayer, addEntry, currentDifficulty, timeRemaining]);
-
-  // Reset tracking refs, history, and skips when game resets
-  useEffect(() => {
-    if (!gameOver && gamesPlayed === 0) {
-      hasTrackedFirstGuess.current = false;
-      hasTrackedGameStart.current = false;
-      clearHistory();
-      resetSkips();
-    }
-  }, [gameOver, gamesPlayed, clearHistory, resetSkips]);
-
-  // Ativar step de primeiro palpite quando imagem carregar
-  useEffect(() => {
-    if (isOnboardingActive && imageLoaded && isTimerRunning && !isStepActive('first-guess') && !isStepActive('timer-explanation')) {
-      goToStep('first-guess');
-    }
-  }, [isOnboardingActive, imageLoaded, isTimerRunning, goToStep, isStepActive]);
-
-  // Detecção de DevTools - encerra o jogo se detectado
-  const handleDevToolsDetected = useCallback(() => {
-    if (!gameOver) {
-      gameToasts.showDevToolsDetected();
-      // O jogo será encerrado através do resetScore que força gameOver
-      resetScore();
-    }
-  }, [gameOver, gameToasts, resetScore]);
-
-  useDevToolsDetection(handleDevToolsDetected, !gameOver);
-
-  // Reset completo de estados ao montar o componente
-  useEffect(() => {
-    setImageLoaded(false);
-    setCanStartTimer(false);
-    clearAllImageCache();
-    
-    return () => {
-      setImageLoaded(false);
-      setCanStartTimer(false);
-    };
-  }, []);
-
-  useEffect(() => {
-    // Se não estiver autenticado e não tiver nome de convidado, mostrar formulário
-    if (!user && !guestName && !showGuestNameForm && players && players.length > 0) {
-      setShowGuestNameForm(true);
-      // Ativar step de input de nome no onboarding
-      if (isOnboardingActive) {
-        goToStep('name-input');
-      }
-    }
-    
-    // Track page view
-    analytics.trackPageView('/quiz-adaptativo');
-    analytics.trackUserEngagement('page_view', 'adaptive_game');
-  }, [analytics, user, guestName, showGuestNameForm, players, isOnboardingActive, goToStep]);
-
-  const handleGuestNameSubmit = (name: string) => {
-    setGuestName(name);
-    setShowGuestNameForm(false);
-    setCanStartTimer(true);
-    
-    // Avançar para próximo step do onboarding
-    if (isStepActive('name-input')) {
-      nextStep();
-    }
-  };
+  const handleGuess = orch.wrapGuess(originalHandleGuess);
 
   const handleImageLoaded = useCallback(() => {
-    setImageLoaded(true);
+    orch.handleImageLoaded();
     handlePlayerImageFixed();
-    
-    // Pré-carregar próximo lote de jogadores em background
     if (players && currentPlayer) {
       prepareNextBatch(players, currentPlayer, 2);
     }
-  }, [handlePlayerImageFixed, players, currentPlayer]);
+  }, [orch, handlePlayerImageFixed, players, currentPlayer]);
 
-  // Iniciar timer somente quando nome foi salvo E imagem carregada E tutorial fechado
-  const tutorialCompleted = !isOnboardingActive;
-  
-  useEffect(() => {
-    if (canStartTimer && imageLoaded && currentPlayer && !gameOver && !isTimerRunning && tutorialCompleted) {
-      startGameForPlayer();
-    }
-  }, [canStartTimer, imageLoaded, currentPlayer, gameOver, isTimerRunning, startGameForPlayer, tutorialCompleted]);
-
-  // Resetar imageLoaded quando trocar de jogador
-  useEffect(() => {
-    setImageLoaded(false);
-  }, [currentPlayer]);
-
-  // Setar canStartTimer para usuários autenticados
-  useEffect(() => {
-    if (user) {
-      setCanStartTimer(true);
-    }
-  }, [user]);
-
-  // Keyboard shortcuts (Esc to skip, R to restart)
-  const { shortcuts } = useGameKeyboardShortcuts({
-    onSkip: canSkip ? handleSkipPlayer : undefined,
-    onRestart: resetScore,
-    disabled: !isTimerRunning,
-    gameOver,
-    isProcessing: isProcessingGuess,
-  });
-
-  if (playersError) {
-    return <ErrorDisplay error={playersError} />;
-  }
-
-  const debugContent = showDebug ? (
-    <DebugInfo
-      show={true}
-      imageUrl={currentPlayer?.image_url}
-    />
-  ) : null;
+  if (playersError) return <ErrorDisplay error={playersError} />;
 
   return (
     <>
-      <SEOManager 
+      <SEOManager
         title={`Quiz Adaptativo - ${currentDifficulty.label} | Lendas do Flu`}
         description="Quiz inteligente que se adapta ao seu nível! Adivinhe jogadores lendários do Fluminense."
         schema="Game"
       />
-      
+
       <BaseGameContainer
         title="Quiz Adaptativo"
         subtitle="Dificuldade automática baseada no seu desempenho"
@@ -354,146 +80,62 @@ const AdaptiveGameContainer = () => {
         hasPlayers={!!(players && players.length > 0)}
         emptyStateMessage="Nenhum jogador encontrado para o quiz"
         playerCount={players?.length}
-        showDebug={showDebug}
-        debugContent={debugContent}
+        showDebug={orch.showDebug}
+        debugContent={orch.showDebug ? <DebugInfo show imageUrl={currentPlayer?.image_url} /> : null}
       >
-        {/* Timer com CoachMark */}
-        <CoachMark
-          step="timer-explanation"
-          title="Fique de Olho no Tempo!"
-          description="Você tem 15 segundos para adivinhar. Respostas rápidas valem mais pontos!"
-          position="bottom"
-        >
-          <GameHeader 
-            score={score} 
-            onDebugClick={() => setShowDebug(!showDebug)}
-            isAdaptiveMode={true}
-            timeRemaining={timeRemaining}
-            gameActive={!gameOver && isTimerRunning}
-          />
+        <CoachMark step="timer-explanation" title="Fique de Olho no Tempo!" description="Você tem 15 segundos para adivinhar. Respostas rápidas valem mais pontos!" position="bottom">
+          <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} isAdaptiveMode timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} />
         </CoachMark>
-        
+
         <div className="mt-6 space-y-6">
-          <AdaptiveDifficultyIndicator 
-            currentDifficulty={currentDifficulty.level as DifficultyLevel}
-            progress={difficultyProgress}
-          />
+          <AdaptiveDifficultyIndicator currentDifficulty={currentDifficulty.level as DifficultyLevel} progress={difficultyProgress} />
 
           {currentPlayer && (
             <div className="relative">
-              <AdaptivePlayerImage
-                key={`${gameKey}-${currentPlayer.id}`}
-                player={currentPlayer}
-                onImageFixed={handleImageLoaded}
-                difficulty={currentDifficulty.level as DifficultyLevel}
-              />
-              
-              {/* GuessForm com CoachMark */}
-              <CoachMark
-                step="first-guess"
-                title="Faça seu Palpite!"
-                description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!"
-                position="top"
-              >
+              <AdaptivePlayerImage key={`${gameKey}-${currentPlayer.id}`} player={currentPlayer} onImageFixed={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
+
+              <CoachMark step="first-guess" title="Faça seu Palpite!" description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!" position="top">
                 <div className="flex flex-col items-center space-y-3 w-full">
-                  <GuessForm
-                    onSubmitGuess={handleGuess}
-                    disabled={gameOver || isProcessingGuess}
-                    isProcessing={isProcessingGuess}
-                  />
-                  
-                   {/* Skip Player Button */}
-                   <div className="flex justify-center">
-                     <SkipPlayerButton
-                       onSkip={handleSkipPlayer}
-                       skipsUsed={skipsUsed}
-                       maxSkips={maxSkips}
-                       canSkip={canSkip}
-                       skipPenalty={skipPenalty}
-                       disabled={gameOver || isProcessingGuess || !isTimerRunning}
-                     />
-                   </div>
-                   
-                   {/* Report Problem Button - hide when game is over */}
-                   {!gameOver && (
-                     <div className="flex justify-center">
-                       <ImageFeedbackButton
-                         itemName={currentPlayer.name}
-                         itemType="player"
-                         imageUrl={currentPlayer.image_url}
-                         itemId={currentPlayer.id}
-                         onReportSent={() => resetScore()}
-                       />
-                     </div>
-                   )}
+                  <GuessForm onSubmitGuess={handleGuess} disabled={gameOver || isProcessingGuess} isProcessing={isProcessingGuess} />
+                  <div className="flex justify-center">
+                    <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning} />
+                  </div>
+                  {!gameOver && (
+                    <div className="flex justify-center">
+                      <ImageFeedbackButton itemName={currentPlayer.name} itemType="player" imageUrl={currentPlayer.image_url} itemId={currentPlayer.id} onReportSent={() => resetScore()} />
+                    </div>
+                  )}
                 </div>
               </CoachMark>
             </div>
           )}
-          
-          {/* Guess History Panel */}
-          {history.length > 0 && (
-            <GuessHistoryPanel
-              history={history}
-              stats={getStats()}
-              compact
-              className="mt-4"
-            />
-          )}
-          
-          {/* Keyboard Shortcuts Hint */}
-          <KeyboardShortcutsHint 
-            shortcuts={shortcuts} 
-            show={!showGuestNameForm && currentPlayer !== null}
-            className="mt-4"
-          />
+
+          {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact className="mt-4" />}
+          <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} className="mt-4" />
         </div>
       </BaseGameContainer>
 
-      <GameOverDialog
-        open={gameOver}
-        onClose={() => {}}
-        playerName={currentPlayer?.name || ''}
-        score={score}
-        onResetScore={resetScore}
-        isAuthenticated={!!user}
-        onSaveToRanking={saveToRanking}
-        gameMode="adaptive"
-        difficultyLevel={currentDifficulty.label}
-        unlockedAchievementIds={getPlayerAchievements().map(a => a.id)}
-      />
+      <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentPlayer?.name || ''} score={score} onResetScore={resetScore} isAuthenticated={!!orch.user} onSaveToRanking={saveToRanking} gameMode="adaptive" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} />
 
-      {/* GuestNameForm com CoachMark */}
-      {showGuestNameForm && (
-        <CoachMark
-          step="name-input"
-          title="Qual seu Nome?"
-          description="Informe seu nome para começar. Ele aparecerá no ranking se você pontuar!"
-          position="bottom"
-        >
-          <GuestNameForm
-            onNameSubmitted={handleGuestNameSubmit}
-            onCancel={() => window.history.back()}
-          />
+      {orch.showGuestNameForm && (
+        <CoachMark step="name-input" title="Qual seu Nome?" description="Informe seu nome para começar. Ele aparecerá no ranking se você pontuar!" position="bottom">
+          <GuestNameForm onNameSubmitted={orch.handleGuestNameSubmit} onCancel={orch.onGuestCancel} />
         </CoachMark>
       )}
-      {difficultyChangeInfo && (
+
+      {(adaptiveDiffChange || orch.difficultyChangeInfo) && (
         <AdaptiveProgressionNotification
           changeInfo={{
             direction: 'up',
-            newLevel: difficultyChangeInfo.newLevel as DifficultyLevel,
-            oldLevel: difficultyChangeInfo.oldLevel as DifficultyLevel,
-            reason: difficultyChangeInfo.reason
+            newLevel: (adaptiveDiffChange?.newLevel || orch.difficultyChangeInfo?.newLevel) as DifficultyLevel,
+            oldLevel: (adaptiveDiffChange?.oldLevel || orch.difficultyChangeInfo?.oldLevel) as DifficultyLevel,
+            reason: (adaptiveDiffChange?.reason || orch.difficultyChangeInfo?.reason) || '',
           }}
-          onClose={clearDifficultyChange}
+          onClose={adaptiveDiffChange ? clearDifficultyChange : orch.handleClearDifficultyNotification}
         />
       )}
 
-      {/* Achievement Notification - shows during gameplay */}
-      <AchievementNotification
-        achievement={currentNotification}
-        onClose={dismissNotification}
-      />
+      <AchievementNotification achievement={orch.currentNotification} onClose={orch.dismissNotification} />
     </>
   );
 };
