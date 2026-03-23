@@ -11,7 +11,7 @@ import { useDevToolsDetection } from '@/hooks/use-devtools-detection';
 import { useGameToasts } from '@/hooks/use-game-toasts';
 import { CoachMark, useOnboarding } from '@/components/onboarding';
 import { ACHIEVEMENTS } from '@/types/achievements';
-import type { DifficultyChangeInfo } from '@/types/guess-game';
+import type { DifficultyChangeInfo, DifficultyLevel } from '@/types/guess-game';
 
 export interface GameOrchestrationConfig {
   gameMode: string;
