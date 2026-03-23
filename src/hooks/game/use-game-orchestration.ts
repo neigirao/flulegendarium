@@ -154,8 +154,8 @@ export const useGameOrchestration = (config: GameOrchestrationConfig) => {
   useEffect(() => {
     if (currentDifficulty.level !== prevDifficultyRef.current && gamesPlayed > 0) {
       setDifficultyChangeInfo({
-        oldLevel: prevDifficultyRef.current,
-        newLevel: currentDifficulty.level,
+        oldLevel: prevDifficultyRef.current as DifficultyLevel,
+        newLevel: currentDifficulty.level as DifficultyLevel,
         direction: currentDifficulty.level > prevDifficultyRef.current ? 'up' : 'down',
         reason: currentDifficulty.multiplier > 1 ? 'Sequência de acertos' : 'Ajuste automático',
       });
