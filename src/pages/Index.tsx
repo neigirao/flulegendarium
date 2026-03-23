@@ -25,39 +25,20 @@ const Index = () => {
     trackPageView('home');
   }, [trackPageView]);
 
-  // Dynamic counts
-  const { data: playerCount } = useQuery({
-    queryKey: ['player-count'],
+  // Unified home stats RPC
+  const { data: homeStats } = useQuery({
+    queryKey: ['home-stats'],
     queryFn: async () => {
-      const { count } = await supabase.from('players').select('*', { count: 'exact', head: true });
-      return count || 0;
-    },
-    staleTime: 30 * 60 * 1000,
-  });
-
-  const { data: jerseyCount } = useQuery({
-    queryKey: ['jersey-count'],
-    queryFn: async () => {
-      const { count } = await supabase.from('jerseys').select('*', { count: 'exact', head: true });
-      return count || 0;
-    },
-    staleTime: 30 * 60 * 1000,
-  });
-
-  // Today's players count
-  const { data: todayPlayers } = useQuery({
-    queryKey: ['today-players'],
-    queryFn: async () => {
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const { count } = await supabase
-        .from('game_starts')
-        .select('*', { count: 'exact', head: true })
-        .gte('started_at', today.toISOString());
-      return count || 0;
+      const { data, error } = await supabase.rpc('get_home_stats');
+      if (error) throw error;
+      return data as { player_count: number; jersey_count: number; today_players: number };
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  const playerCount = homeStats?.player_count;
+  const jerseyCount = homeStats?.jersey_count;
+  const todayPlayers = homeStats?.today_players;
 
   const handlePrefetchGameMode = useCallback(() => {
     onMouseEnter('/selecionar-modo-jogo');
