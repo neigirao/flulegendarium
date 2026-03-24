@@ -1,57 +1,59 @@
+# Redesign Visual dos Jogos de Adivinhação
 
+## Regras Confirmadas (mantidas intactas)
 
-# Redesign da Página "Selecionar Modo de Jogo"
+- Primeiro erro = Game Over imediato
+- Sem dicas
+- Timer de 45s
+- Diálogo de confirmação antes do palpite
+- Campo de texto livre (sem autocomplete)
+- Skip com penalidade
+- Dificuldade adaptativa
+- Paridade entre 3 modos
+- Pontuação por velocidade
 
-## Visão Geral
-Refazer a página `/selecionar-modo-jogo` seguindo o layout da imagem: fundo claro/bege, cards empilhados verticalmente com ícones SVG customizados e borda dourada, mantendo banner de login e seletor de timer.
+## Mudanças Visuais (baseadas no layout)
 
-## Mudanças
+### 1. Timer Circular (`GameTimer.tsx`)
 
-### 1. Background e estrutura geral
-- Substituir o gradiente escuro tricolor por fundo **off-white/bege** (`#F5F0E8` ou similar)
-- Adicionar marca d'água sutil do escudo do Flu em opacidade baixa como background decorativo
-- Remover os stripes diagonais atuais
+Substituir o timer retangular por um **timer circular com anel SVG animado** (como na imagem). O anel verde diminui conforme o tempo passa, ficando vermelho nos últimos 5 segundos. O tempo fica centralizado dentro do círculo.
 
-### 2. Cards de modo de jogo — layout vertical
-- Trocar o grid `grid-cols-3` por layout vertical (`flex flex-col`, `max-w-xl mx-auto`)
-- Cada card terá layout **horizontal**: ícone à esquerda, texto + botão à direita
-- Borda arredondada com **borda dourada/grená** sutil (como na imagem)
-- Fundo branco com sombra suave
-- Badge "NOVO!" no Quiz das Camisas (substituindo "POPULAR")
+### 2. Indicador de Combo Visual (`ComboIndicator.tsx` — novo)
 
-### 3. Ícones SVG customizados
-- Criar 3 ícones SVG inline:
-  - **Quiz Adaptativo**: cérebro estilizado (referência Brain do layout)
-  - **Quiz por Década**: calendário com grid (referência Calendar do layout)
-  - **Quiz das Camisas**: camisa/jersey (referência Shirt do layout)
-- Cada ícone em um container circular com fundo bege e borda dourada
+Criar componente que exibe o streak atual como "🔥 Nx Combo" ao lado do timer. Puramente decorativo — mostra `currentStreak` sem afetar pontuação. Aparece quando streak >= 2.
 
-### 4. Título
-- "ESCOLHA SEU MODO DE JOGO" em tipografia bold/display, cor grená escura
-- Sem o ícone de escudo/? que existe hoje
+### 3. Score Card Redesenhado (`GameHeader.tsx`)
 
-### 5. Elementos mantidos
-- **Banner de login** (para usuários não autenticados) — adaptar cores para fundo claro
-- **TimerSelector** compact no header — adaptar cores para fundo claro
-- **Botão Voltar** — adaptar para cores do tema claro
-- Lógica de analytics, onboarding (CoachMark), data-testid
+Redesenhar o card de score no estilo da imagem: fundo translúcido com label "SCORE:" acima do número e ícone de estrela. Layout horizontal: Score à esquerda, Timer circular no centro, Combo à direita.
 
-### 6. Elementos removidos
-- Widget de desafios diários
-- Seção de dicas para tricolores
-- Welcome message para usuários logados
-- Lista de features em cada card (bullet points)
+### 4. Card da Imagem do Jogador (`AdaptivePlayerImage.tsx`)
 
-### 7. Textos dos cards (como na imagem)
-- Cada card terá: título bold, descrição curta (1-2 linhas), botão "Jogar agora" em grená
+Borda com gradiente verde/vermelho (tricolor) e cantos arredondados. Glow sutil verde ao redor do card. Manter os filtros de dificuldade existentes.
 
-### Componentes afetados
-- `src/pages/GameModeSelection.tsx` — rewrite completo do JSX
-- Nenhum componente novo necessário (SVGs inline no próprio arquivo)
+### 5. Barra de Dificuldade Vertical (`AdaptiveDifficultyIndicator.tsx`)
 
-### Cores adaptadas para tema claro
-- Textos: grená escuro (`#722F37` ou `var(--primary)`)
-- Cards: branco com borda dourada (`#C4A265`)
-- Botões "Jogar agora": fundo grená, texto branco
-- Banner login: fundo amarelo claro com borda dourada
+Substituir o indicador horizontal por uma **barra vertical** à direita da imagem, com 5 segmentos coloridos (verde claro → verde escuro) e label "DIFFICULTY: N/5".
 
+### 6. Background e Layout Geral
+
+- Background: gradiente escuro (dark teal/green) — já existe no page wrapper, ajustar tons
+- Botão "Voltar" no canto superior direito 
+- Título "Lendas do Flu" + subtítulo do modo centralizado no topo
+
+### 7. Aplicar aos 3 Modos
+
+Como os 3 containers usam `BaseGameContainer` + `GameHeader`, as mudanças se propagam automaticamente. Componentes específicos (como a barra de dificuldade vertical) serão adaptados por modo:
+
+- **Adaptativo**: barra de dificuldade vertical
+- **Década**: badge da década selecionada
+- **Camisas**: adaptação equivalente
+
+### Componentes Afetados
+
+- `GameTimer.tsx` — timer circular SVG
+- `GameHeader.tsx` — novo layout (score + timer + combo)
+- `AdaptivePlayerImage.tsx` — borda tricolor com glow
+- `AdaptiveDifficultyIndicator.tsx` — barra vertical
+- `BaseGameContainer.tsx` — ajustes de layout
+- Novo: `ComboIndicator.tsx` — indicador de streak visual
+- Pages: `AdaptiveGuessPlayerSimple.tsx`, `DecadeGuessPlayerSimple.tsx` — ajuste de background
