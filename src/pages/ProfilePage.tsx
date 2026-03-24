@@ -254,8 +254,8 @@ const ProfilePage = () => {
                                   variant={challenge.status === 'completed' ? 'default' : 'secondary'}
                                   className={challenge.status === 'completed' 
                                     ? (challenge.challenger_score > (challenge.challenged_score || 0) 
-                                      ? 'bg-green-500' 
-                                      : 'bg-red-500')
+                                      ? 'bg-success text-success-foreground' 
+                                      : 'bg-error text-error-foreground')
                                     : ''
                                   }
                                 >
