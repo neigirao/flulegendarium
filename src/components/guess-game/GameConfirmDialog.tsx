@@ -46,7 +46,7 @@ export const GameConfirmDialog = ({
           </AlertDialogCancel>
           <AlertDialogAction 
             onClick={onConfirm}
-            className={variant === "destructive" ? "bg-red-600 hover:bg-red-700" : "bg-primary hover:bg-primary/90"}
+            className={variant === "destructive" ? "bg-destructive hover:bg-destructive/90" : "bg-primary hover:bg-primary/90"}
           >
             {confirmText}
           </AlertDialogAction>

@@ -32,7 +32,7 @@ const tutorialSteps = [
         <p>O sistema monitora seu desempenho em tempo real:</p>
         <ul className="space-y-2 text-sm">
           <li className="flex items-center gap-2">
-            <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+            <span className="w-2 h-2 bg-success rounded-full"></span>
             <strong>Acertando muito?</strong> Dificuldade aumenta
           </li>
           <li className="flex items-center gap-2">
@@ -55,7 +55,7 @@ const tutorialSteps = [
         <p>Existem 5 níveis adaptativos:</p>
         <div className="grid grid-cols-1 gap-2 text-sm">
           <div className="flex items-center gap-2 p-2 bg-green-50 rounded">
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-success rounded-full"></div>
             <span><strong>Muito Fácil:</strong> Ídolos mais conhecidos</span>
           </div>
           <div className="flex items-center gap-2 p-2 bg-blue-50 rounded">
@@ -71,7 +71,7 @@ const tutorialSteps = [
             <span><strong>Difícil:</strong> Lendas menos conhecidas</span>
           </div>
           <div className="flex items-center gap-2 p-2 bg-red-50 rounded">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+            <div className="w-3 h-3 bg-destructive rounded-full"></div>
             <span><strong>Muito Difícil:</strong> Para verdadeiros experts</span>
           </div>
         </div>
