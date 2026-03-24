@@ -223,9 +223,6 @@ export const JerseyImage = ({
         <p className="text-lg text-muted-foreground">
           De que ano é essa camisa?
         </p>
-        <p className="text-sm text-muted-foreground/80 mt-1">
-          Digite o ano exato para mais pontos!
-        </p>
       </div>
     </div>
   );

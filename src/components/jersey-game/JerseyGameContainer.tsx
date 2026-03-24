@@ -139,8 +139,8 @@ const JerseyGameContainer = () => {
             </div>
           )}
 
-          {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact className="mt-4" />}
-          <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentJersey !== null} className="mt-4" />
+          {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact />}
+          <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentJersey !== null} />
         </div>
       </BaseGameContainer>
 
