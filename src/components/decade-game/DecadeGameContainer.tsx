@@ -178,11 +178,7 @@ export const DecadeGameContainer = () => {
         playerCount={availablePlayers.length}
         onReset={handleResetGame} showReset
       >
-        <CoachMark step="timer-explanation" title="Fique de Olho no Tempo!" description="Você tem 60 segundos neste modo. Acerte o máximo de jogadores que conseguir!" position="bottom">
-          <div data-testid="timer-display" className="text-center text-display-subtitle text-primary mb-4">⏱️ {timeRemaining}s</div>
-        </CoachMark>
-
-        <div data-testid="score-display" className="text-center text-lg font-bold text-primary mb-4">Pontos: {score}</div>
+        <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} maxTime={60} />
 
         <CoachMark step="first-guess" title="Faça seu Palpite!" description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!" position="top">
           {currentPlayer && (

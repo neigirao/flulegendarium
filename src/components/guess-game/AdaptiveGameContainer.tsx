@@ -87,15 +87,14 @@ const AdaptiveGameContainer = () => {
           <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
         </CoachMark>
 
-        <div className="mt-6 space-y-6">
-          <AdaptiveDifficultyIndicator currentDifficulty={currentDifficulty.level as DifficultyLevel} progress={difficultyProgress} />
-
+        <div className="mt-4 space-y-4">
           {currentPlayer && (
-            <div className="relative">
+            <div className="relative flex justify-center gap-3">
               <AdaptivePlayerImage key={`${gameKey}-${currentPlayer.id}`} player={currentPlayer} onImageFixed={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
+              <AdaptiveDifficultyIndicator currentDifficulty={currentDifficulty.level as DifficultyLevel} progress={difficultyProgress} vertical />
 
               <CoachMark step="first-guess" title="Faça seu Palpite!" description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!" position="top">
-                <div className="flex flex-col items-center space-y-3 w-full">
+                <div className="flex flex-col items-center space-y-3 w-full mt-4">
                   <GuessForm onSubmitGuess={handleGuess} disabled={gameOver || isProcessingGuess} isProcessing={isProcessingGuess} />
                   <div className="flex justify-center">
                     <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning} />
