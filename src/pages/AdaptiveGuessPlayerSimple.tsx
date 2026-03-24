@@ -16,7 +16,7 @@ const AdaptiveGuessPlayerSimple = () => {
       />
       <RootLayout>
         <GameErrorBoundary>
-          <div data-testid="quiz-adaptativo-page" className="min-h-screen bg-gradient-to-br from-secondary via-neutral-700 to-primary bg-tricolor-vertical-border">
+          <div data-testid="quiz-adaptativo-page" className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, hsl(var(--game-bg-from)), hsl(var(--game-bg-via)), hsl(var(--game-bg-to)))' }}>
             <TopNavigation />
             <div className="pt-24 safe-area-top safe-area-bottom">
               <Suspense fallback={

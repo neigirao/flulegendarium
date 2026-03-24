@@ -83,6 +83,11 @@
     --difficulty-hard: 27 96% 61%;
     --difficulty-very-hard: 0 84% 60%;
     
+    /* Game Background */
+    --game-bg-from: 160 30% 8%;
+    --game-bg-via: 159 40% 12%;
+    --game-bg-to: 160 25% 10%;
+    
     --radius: 0.75rem;
     
     /* Tricolor Stripe Pattern */
