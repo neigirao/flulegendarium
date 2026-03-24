@@ -15,7 +15,7 @@ const SEO_ROUTES = {
     schema: 'WebSite' as const
   },
   '/quiz-adaptativo': {
-    title: 'Quiz Adaptativo - Adivinhe o Jogador do Fluminense',
+    title: 'Advinhe o Jogador - Adivinhe o Jogador do Fluminense',
     description: 'Quiz inteligente que se adapta ao seu nível! Adivinhe jogadores lendários do Fluminense em diferentes níveis de dificuldade.',
     keywords: 'quiz adaptativo fluminense, adivinhe jogador, teste inteligente tricolor, dificuldade progressiva',
     schema: 'Game' as const
@@ -34,7 +34,7 @@ const SEO_ROUTES = {
   },
   '/selecionar-modo-jogo': {
     title: 'Modos de Jogo - Escolha seu Desafio Tricolor',
-    description: 'Escolha entre 3 modos: Quiz Adaptativo, Por Década ou Camisas Históricas. Diferentes desafios para testar seu conhecimento tricolor!',
+    description: 'Escolha entre 3 modos: Advinhe o Jogador, Por Década ou Camisas Históricas. Diferentes desafios para testar seu conhecimento tricolor!',
     keywords: 'modos jogo fluminense, escolher quiz tricolor, desafio flu, tipos quiz futebol',
     schema: 'Game' as const
   },
