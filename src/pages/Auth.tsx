@@ -130,7 +130,7 @@ const Auth = () => {
   if (loading) {
     return (
       <RootLayout>
-        <div className="min-h-screen flex items-center justify-center bg-tricolor-vertical-border safe-area-top safe-area-bottom">
+        <div className="min-h-screen flex items-center justify-center page-warm safe-area-top safe-area-bottom">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
         </div>
       </RootLayout>
