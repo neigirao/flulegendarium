@@ -55,7 +55,7 @@ export const DecadeSelectionPage = ({
           {decades.map((decade) => (
             <Card 
               key={decade.id}
-              className="group hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+              className="group hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-[1.02]"
               onClick={() => onDecadeSelect(decade.id)}
             >
               <CardHeader className="text-center">

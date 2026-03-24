@@ -40,7 +40,7 @@ export const GameHeader = ({ score, onDebugClick, timeRemaining, gameActive, cur
         <div className="flex items-center gap-1.5 sm:gap-2">
           <ComboIndicator streak={currentStreak} />
           <button
-            className="p-1.5 sm:p-2 rounded-full bg-card/10 hover:bg-card/20 border border-border/20 transition-colors backdrop-blur-sm touch-target"
+            className="p-1.5 sm:p-2 rounded-full bg-card hover:bg-accent border border-border shadow-sm transition-colors touch-target"
             onClick={onDebugClick}
             aria-label="Debug"
           >

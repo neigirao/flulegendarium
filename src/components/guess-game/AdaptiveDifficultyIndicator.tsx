@@ -34,7 +34,7 @@ export const AdaptiveDifficultyIndicator = ({
 
   if (!vertical) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card/10 border border-border/20 backdrop-blur-sm">
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card border border-border shadow-sm">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nível</span>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
