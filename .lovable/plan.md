@@ -1,59 +1,26 @@
-# Redesign Visual dos Jogos de Adivinhação
+# Retrofit Visual Completo — Lendas do Flu
 
-## Regras Confirmadas (mantidas intactas)
+## Status: ✅ Implementado
 
-- Primeiro erro = Game Over imediato
-- Sem dicas
-- Timer de 45s
-- Diálogo de confirmação antes do palpite
-- Campo de texto livre (sem autocomplete)
-- Skip com penalidade
-- Dificuldade adaptativa
-- Paridade entre 3 modos
-- Pontuação por velocidade
+### Mudanças Realizadas
 
-## Mudanças Visuais (baseadas no layout)
+1. **CSS Global**: Adicionados tokens `--background-warm` e `--gold-accent`, classe `.page-warm`
+2. **Tailwind Config**: Adicionadas cores `background-warm` e `gold`
+3. **Home (Index.tsx)**: Background escuro → warm off-white, textos para tokens semânticos
+4. **GameModeSelection**: Redesign completo — fundo claro, cards verticais com SVG customizados
+5. **Donations**: Gradiente escuro → warm off-white, cards brancos
+6. **FAQ**: Background warm adicionado
+7. **Auth**: Background warm adicionado
+8. **SocialPage**: Background warm adicionado
+9. **ProfilePage**: Background warm + fix `bg-green-500`/`bg-red-500` → `bg-success`/`bg-error`
+10. **Conquistas**: Background warm + eliminados `text-flu-grena`, `bg-flu-grena`, `text-gray-600`
+11. **EstatisticasPublicas**: `bg-background` → `page-warm`
+12. **DailyChallengesPage**: Background warm
+13. **NewsPortal**: Background warm
+14. **NotFound**: Background warm + `text-flu-grena`/`bg-flu-verde`/`bg-flu-grena` → tokens semânticos
+15. **GameModesPreview**: Cards glass → cards sólidos brancos com sombra
+16. **GameTypeRankings**: Cards glass → cards sólidos brancos com sombra
 
-### 1. Timer Circular (`GameTimer.tsx`)
-
-Substituir o timer retangular por um **timer circular com anel SVG animado** (como na imagem). O anel verde diminui conforme o tempo passa, ficando vermelho nos últimos 5 segundos. O tempo fica centralizado dentro do círculo.
-
-### 2. Indicador de Combo Visual (`ComboIndicator.tsx` — novo)
-
-Criar componente que exibe o streak atual como "🔥 Nx Combo" ao lado do timer. Puramente decorativo — mostra `currentStreak` sem afetar pontuação. Aparece quando streak >= 2.
-
-### 3. Score Card Redesenhado (`GameHeader.tsx`)
-
-Redesenhar o card de score no estilo da imagem: fundo translúcido com label "SCORE:" acima do número e ícone de estrela. Layout horizontal: Score à esquerda, Timer circular no centro, Combo à direita.
-
-### 4. Card da Imagem do Jogador (`AdaptivePlayerImage.tsx`)
-
-Borda com gradiente verde/vermelho (tricolor) e cantos arredondados. Glow sutil verde ao redor do card. Manter os filtros de dificuldade existentes.
-
-### 5. Barra de Dificuldade Vertical (`AdaptiveDifficultyIndicator.tsx`)
-
-Substituir o indicador horizontal por uma **barra vertical** à direita da imagem, com 5 segmentos coloridos (verde claro → verde escuro) e label "DIFFICULTY: N/5".
-
-### 6. Background e Layout Geral
-
-- Background: gradiente escuro (dark teal/green) — já existe no page wrapper, ajustar tons
-- Botão "Voltar" no canto superior direito 
-- Título "Lendas do Flu" + subtítulo do modo centralizado no topo
-
-### 7. Aplicar aos 3 Modos
-
-Como os 3 containers usam `BaseGameContainer` + `GameHeader`, as mudanças se propagam automaticamente. Componentes específicos (como a barra de dificuldade vertical) serão adaptados por modo:
-
-- **Adaptativo**: barra de dificuldade vertical
-- **Década**: badge da década selecionada
-- **Camisas**: adaptação equivalente
-
-### Componentes Afetados
-
-- `GameTimer.tsx` — timer circular SVG
-- `GameHeader.tsx` — novo layout (score + timer + combo)
-- `AdaptivePlayerImage.tsx` — borda tricolor com glow
-- `AdaptiveDifficultyIndicator.tsx` — barra vertical
-- `BaseGameContainer.tsx` — ajustes de layout
-- Novo: `ComboIndicator.tsx` — indicador de streak visual
-- Pages: `AdaptiveGuessPlayerSimple.tsx`, `DecadeGuessPlayerSimple.tsx` — ajuste de background
+### Princípio Mantido: Dois Temas
+- **Tema Escuro**: Páginas de quiz (gameplay imersivo) — dark teal gradient mantido
+- **Tema Claro**: Todas as demais páginas — fundo off-white quente (`page-warm`)
