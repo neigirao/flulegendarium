@@ -241,10 +241,18 @@ export const useGameOrchestration = (config: GameOrchestrationConfig) => {
     }
   }, [canStartTimer, imageLoaded, currentItem, gameOver, isTimerRunning, startGame, tutorialCompleted]);
 
-  // Reset imageLoaded when item changes
+  // Reset imageLoaded when item changes (by ID, not reference)
+  const prevItemIdRef = useRef<string | null>(null);
   useEffect(() => {
-    setImageLoaded(false);
-  }, [currentItem]);
+    const itemId = currentItem?.id ?? null;
+    if (itemId !== prevItemIdRef.current) {
+      prevItemIdRef.current = itemId;
+      if (prevItemIdRef.current !== null) {
+        // Only reset for subsequent items, not the first load
+        setImageLoaded(false);
+      }
+    }
+  }, [currentItem?.id]);
 
   // Set canStartTimer for authenticated users
   useEffect(() => {
