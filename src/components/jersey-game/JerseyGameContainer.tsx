@@ -105,7 +105,7 @@ const JerseyGameContainer = () => {
           <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
         </CoachMark>
 
-        <div className="mt-4 space-y-4">
+        <div className="mt-6 space-y-6">
           <div className="flex justify-center items-start gap-3">
             {currentJersey && (
               <JerseyImage key={`${gameKey}-${currentJersey.id}`} jersey={currentJersey} onImageLoaded={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
