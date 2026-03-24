@@ -83,35 +83,33 @@ const AdaptiveGameContainer = () => {
         showDebug={orch.showDebug}
         debugContent={orch.showDebug ? <DebugInfo show imageUrl={currentPlayer?.image_url} /> : null}
       >
-        <CoachMark step="timer-explanation" title="Fique de Olho no Tempo!" description="Você tem 15 segundos para adivinhar. Respostas rápidas valem mais pontos!" position="bottom">
-          <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
-        </CoachMark>
+        <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
 
-        <div className="mt-4 space-y-4">
-          {currentPlayer && (
-            <div className="relative flex justify-center gap-3">
+        {currentPlayer && (
+          <div className="mt-4 space-y-4">
+            {/* Image + vertical difficulty bar side by side */}
+            <div className="flex justify-center items-start gap-3">
               <AdaptivePlayerImage key={`${gameKey}-${currentPlayer.id}`} player={currentPlayer} onImageFixed={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
               <AdaptiveDifficultyIndicator currentDifficulty={currentDifficulty.level as DifficultyLevel} progress={difficultyProgress} vertical />
-
-              <CoachMark step="first-guess" title="Faça seu Palpite!" description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!" position="top">
-                <div className="flex flex-col items-center space-y-3 w-full mt-4">
-                  <GuessForm onSubmitGuess={handleGuess} disabled={gameOver || isProcessingGuess} isProcessing={isProcessingGuess} />
-                  <div className="flex justify-center">
-                    <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning} />
-                  </div>
-                  {!gameOver && (
-                    <div className="flex justify-center">
-                      <ImageFeedbackButton itemName={currentPlayer.name} itemType="player" imageUrl={currentPlayer.image_url} itemId={currentPlayer.id} onReportSent={() => resetScore()} />
-                    </div>
-                  )}
-                </div>
-              </CoachMark>
             </div>
-          )}
 
-          {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact className="mt-4" />}
-          <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} className="mt-4" />
-        </div>
+            {/* Form controls below image */}
+            <div className="flex flex-col items-center space-y-3 w-full max-w-sm mx-auto">
+              <GuessForm onSubmitGuess={handleGuess} disabled={gameOver || isProcessingGuess} isProcessing={isProcessingGuess} />
+              <div className="flex justify-center">
+                <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning} />
+              </div>
+              {!gameOver && (
+                <div className="flex justify-center">
+                  <ImageFeedbackButton itemName={currentPlayer.name} itemType="player" imageUrl={currentPlayer.image_url} itemId={currentPlayer.id} onReportSent={() => resetScore()} />
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact className="mt-4" />}
+        <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} className="mt-4" />
       </BaseGameContainer>
 
       <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentPlayer?.name || ''} score={score} onResetScore={resetScore} isAuthenticated={!!orch.user} onSaveToRanking={saveToRanking} gameMode="adaptive" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} />

@@ -2,7 +2,6 @@
 import React from "react";
 import { Player, DifficultyLevel } from "@/types/guess-game";
 import { UnifiedPlayerImage } from "@/components/player-image/UnifiedPlayerImage";
-import { cn } from "@/lib/utils";
 
 interface AdaptivePlayerImageProps {
   player: Player;
@@ -27,10 +26,10 @@ export const AdaptivePlayerImage = ({
 
   return (
     <div className="flex flex-col items-center">
-      {/* Tricolor gradient border wrapper */}
-      <div className="relative p-[3px] rounded-2xl bg-gradient-to-br from-primary via-accent to-secondary shadow-[0_0_20px_hsl(var(--secondary)/0.25)]">
+      {/* Tricolor gradient border */}
+      <div className="relative p-[3px] rounded-2xl bg-gradient-to-br from-primary via-accent to-secondary shadow-[0_0_24px_hsl(var(--secondary)/0.2)]">
         <div
-          className="relative rounded-[13px] overflow-hidden bg-card w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96"
+          className="relative rounded-[13px] overflow-hidden bg-card w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80"
           style={{ filter: effects.filter }}
         >
           <UnifiedPlayerImage
@@ -41,10 +40,6 @@ export const AdaptivePlayerImage = ({
           />
         </div>
       </div>
-
-      <p className="mt-3 text-sm text-muted-foreground text-center">
-        Quem é este jogador?
-      </p>
     </div>
   );
 };

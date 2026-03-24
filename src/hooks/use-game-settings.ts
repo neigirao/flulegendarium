@@ -10,7 +10,7 @@ export interface GameSettings {
 }
 
 const DEFAULT_SETTINGS: GameSettings = {
-  timerDuration: 30,
+  timerDuration: 45,
 };
 
 export const TIMER_OPTIONS: { value: TimerDuration; label: string; description: string }[] = [
