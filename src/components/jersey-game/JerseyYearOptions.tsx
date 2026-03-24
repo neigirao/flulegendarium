@@ -56,7 +56,7 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
       return cn(
         'relative flex items-center justify-center',
         'text-xl sm:text-2xl font-bold',
-        'w-20 sm:w-24 h-14 sm:h-16',
+        'w-24 sm:w-28 h-16 sm:h-[4.5rem]',
         'rounded-xl border-2',
         'bg-secondary/20 text-secondary border-secondary',
         'ring-2 ring-secondary ring-offset-2 ring-offset-background'
