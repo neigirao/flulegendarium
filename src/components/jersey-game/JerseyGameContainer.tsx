@@ -102,7 +102,7 @@ const JerseyGameContainer = () => {
         playerCount={jerseys?.length}
       >
         <CoachMark step="timer-explanation" title="Fique de Olho no Tempo!" description="Você tem tempo limitado para escolher. Respostas rápidas valem mais pontos!" position="bottom">
-          <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} isAdaptiveMode timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} />
+          <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
         </CoachMark>
 
         <div className="mt-6 space-y-6">
