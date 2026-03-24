@@ -34,7 +34,7 @@ export const GameModesPreview = () => {
   const gameModes = [
     {
       id: "adaptive",
-      title: "Quiz Adaptativo",
+      title: "Advinhe o Jogador",
       description: "Veja a foto e digite o nome. A dificuldade aumenta conforme você acerta!",
       icon: Brain,
       badge: playerCount > 0 ? `${playerCount}+ jogadores` : "188+ jogadores",

@@ -134,7 +134,7 @@ export const ANALYTICS_CONFIG = {
 export const GAME_MODES = {
   ADAPTIVE: {
     id: 'adaptive',
-    name: 'Quiz Adaptativo',
+    name: 'Advinhe o Jogador',
     description: 'Dificuldade ajusta automaticamente baseado no seu desempenho',
     path: '/quiz-adaptativo',
     icon: '🎯'

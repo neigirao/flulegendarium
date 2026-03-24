@@ -68,7 +68,7 @@ const GameModeSelection = () => {
   const gameModes = [
     {
       id: 'adaptive',
-      title: 'Quiz Adaptativo',
+      title: 'Advinhe o Jogador',
       description: 'Sistema inteligente que se adapta ao seu nível. Acerte para aumentar a dificuldade!',
       icon: BrainIcon,
       path: '/quiz-adaptativo',
@@ -223,7 +223,7 @@ const GameModeSelection = () => {
                       key={gm.id}
                       step="game-mode-selection"
                       title="Escolha um Modo de Jogo"
-                      description="O Quiz Adaptativo ajusta a dificuldade conforme você joga. Recomendamos começar por aqui!"
+                      description="O modo Advinhe o Jogador ajusta a dificuldade conforme você joga. Recomendamos começar por aqui!"
                       position="top"
                     >
                       {cardContent}
