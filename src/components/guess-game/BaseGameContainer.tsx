@@ -43,17 +43,17 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
 }) => {
   return (
     <ResponsiveContainer variant="game" maxWidth="xl">
-      {/* Header: title centered, back button right */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="w-20" /> {/* Spacer for centering */}
+      {/* Header: title centered, controls right */}
+      <div className="flex items-center justify-between mb-5">
+        <div className="w-20" />
         
         <div className="flex flex-col items-center text-center">
-          <h1 className="text-display-sm text-foreground font-display tracking-wide">
-            {icon && <span className="mr-1">{icon}</span>}
-            Lendas do Flu
+          <h1 className="text-display-sm text-accent-foreground font-display tracking-wide flex items-center gap-1.5">
+            {icon && <span>{icon}</span>}
+            <span className="text-foreground">LENDAS DO FLU</span>
           </h1>
           {(title || subtitle) && (
-            <p className="text-xs text-muted-foreground font-medium mt-0.5">
+            <p className="text-xs text-muted-foreground/80 font-medium mt-0.5 max-w-xs">
               {title}{subtitle ? ` • ${subtitle}` : ''}
             </p>
           )}
@@ -61,14 +61,14 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
 
         <div className="flex items-center gap-1 w-20 justify-end">
           {onReset && showReset && (
-            <Button variant="ghost" size="sm" onClick={onReset} className="text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" onClick={onReset} className="text-muted-foreground hover:text-foreground h-8 w-8 p-0">
               <RotateCcw className="w-3.5 h-3.5" />
             </Button>
           )}
           {onBack && (
-            <Button variant="ghost" size="sm" onClick={onBack} className="text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              <span className="text-xs">{backLabel}</span>
+            <Button variant="ghost" size="sm" onClick={onBack} className="text-muted-foreground hover:text-foreground text-xs gap-1">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              {backLabel}
             </Button>
           )}
         </div>
