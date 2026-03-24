@@ -180,31 +180,29 @@ export const DecadeGameContainer = () => {
       >
         <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} maxTime={60} />
 
-        <CoachMark step="first-guess" title="Faça seu Palpite!" description="Digite o nome do jogador que você vê na imagem. Você pode digitar apelidos também!" position="top">
-          {currentPlayer && (
-            <div className="space-y-4">
-              <div className="aspect-[4/3] bg-muted rounded-2xl overflow-hidden border-4 border-secondary p-2">
-                <div className="w-full h-full rounded-xl overflow-hidden">
+        {currentPlayer && (
+          <div className="mt-4 space-y-4">
+            <div className="flex justify-center">
+              <div className="relative p-[3px] rounded-2xl bg-gradient-to-br from-primary via-accent to-secondary shadow-[0_0_24px_hsl(var(--secondary)/0.2)]">
+                <div className="relative rounded-[13px] overflow-hidden bg-card w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80">
                   <UnifiedPlayerImage key={`${currentPlayer.id}-${gameKey}`} player={currentPlayer} onImageLoaded={handleImageFixed} priority />
                 </div>
               </div>
+            </div>
 
-              <div className="flex flex-col items-center">
-                <GuessForm onSubmitGuess={handleGuess} disabled={isProcessingGuess || gameOver} isProcessing={isProcessingGuess} />
-              </div>
-
+            <div className="flex flex-col items-center space-y-3 w-full max-w-sm mx-auto">
+              <GuessForm onSubmitGuess={handleGuess} disabled={isProcessingGuess || gameOver} isProcessing={isProcessingGuess} />
               <div className="flex justify-center">
                 <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning} />
               </div>
-
               {!gameOver && (
                 <div className="flex justify-center">
                   <ImageFeedbackButton itemName={currentPlayer.name} itemType="player" imageUrl={currentPlayer.image_url} itemId={currentPlayer.id} onReportSent={handleResetGame} />
                 </div>
               )}
             </div>
-          )}
-        </CoachMark>
+          </div>
+        )}
 
         {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact className="mt-4" />}
         <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} className="mt-4" />

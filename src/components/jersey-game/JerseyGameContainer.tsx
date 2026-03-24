@@ -105,38 +105,37 @@ const JerseyGameContainer = () => {
           <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
         </CoachMark>
 
-        <div className="mt-6 space-y-6">
-          <AdaptiveDifficultyIndicator currentDifficulty={currentDifficulty.level as DifficultyLevel} progress={difficultyProgress} />
+        <div className="mt-4 space-y-4">
+          <div className="flex justify-center items-start gap-3">
+            {currentJersey && (
+              <JerseyImage key={`${gameKey}-${currentJersey.id}`} jersey={currentJersey} onImageLoaded={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
+            )}
+            <AdaptiveDifficultyIndicator currentDifficulty={currentDifficulty.level as DifficultyLevel} progress={difficultyProgress} vertical />
+          </div>
 
           {currentJersey && (
-            <div className="relative space-y-6">
-              <JerseyImage key={`${gameKey}-${currentJersey.id}`} jersey={currentJersey} onImageLoaded={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
+            <div className="flex flex-col items-center space-y-3 w-full max-w-sm mx-auto">
+              {currentOptions.length > 0 && !gameOver && (
+                <JerseyYearOptions
+                  options={currentOptions}
+                  onSelectOption={handleSelectOption}
+                  disabled={gameOver || !isTimerRunning}
+                  isProcessing={isProcessingGuess}
+                  selectedYear={selectedOption}
+                  showResult={showResult}
+                  correctYear={correctYear}
+                />
+              )}
 
-              <CoachMark step="first-guess" title="Escolha o Ano!" description="Selecione uma das opções abaixo. Cada camisa foi usada em um ano específico!" position="top">
-                <div className="flex flex-col items-center space-y-3 w-full">
-                  {currentOptions.length > 0 && !gameOver && (
-                    <JerseyYearOptions
-                      options={currentOptions}
-                      onSelectOption={handleSelectOption}
-                      disabled={gameOver || !isTimerRunning}
-                      isProcessing={isProcessingGuess}
-                      selectedYear={selectedOption}
-                      showResult={showResult}
-                      correctYear={correctYear}
-                    />
-                  )}
+              <div className="flex justify-center pt-1">
+                <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning || showResult} />
+              </div>
 
-                  <div className="flex justify-center pt-2">
-                    <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning || showResult} />
-                  </div>
-
-                  {!gameOver && (
-                    <div className="flex justify-center">
-                      <ImageFeedbackButton itemName={`Camisa ${currentJersey.years.join('/')}`} itemType="jersey" imageUrl={currentJersey.image_url} itemId={currentJersey.id} onReportSent={() => resetGame()} />
-                    </div>
-                  )}
+              {!gameOver && (
+                <div className="flex justify-center">
+                  <ImageFeedbackButton itemName={`Camisa ${currentJersey.years.join('/')}`} itemType="jersey" imageUrl={currentJersey.image_url} itemId={currentJersey.id} onReportSent={() => resetGame()} />
                 </div>
-              </CoachMark>
+              )}
             </div>
           )}
 
