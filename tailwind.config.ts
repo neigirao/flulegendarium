@@ -67,6 +67,10 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        "background-warm": "hsl(var(--background-warm))",
+        gold: {
+          DEFAULT: "hsl(var(--gold-accent))",
+        },
         // Semantic status colors
         success: {
           DEFAULT: "hsl(var(--success))",

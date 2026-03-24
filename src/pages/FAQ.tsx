@@ -230,7 +230,7 @@ export default function FAQ() {
         schema="FAQ"
       />
       
-      <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">
+      <div className="min-h-screen page-warm bg-tricolor-vertical-border safe-area-top safe-area-bottom">
         {/* Header */}
         <header className="bg-background/95 backdrop-blur-md shadow-sm py-4 sticky top-0 z-40">
           <div className="container mx-auto px-4">

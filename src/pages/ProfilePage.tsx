@@ -54,7 +54,7 @@ const ProfilePage = () => {
   if (authLoading || !user) {
     return (
       <RootLayout>
-        <div className="min-h-screen flex items-center justify-center bg-tricolor-vertical-border safe-area-top safe-area-bottom">
+        <div className="min-h-screen flex items-center justify-center page-warm safe-area-top safe-area-bottom">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
         </div>
       </RootLayout>
@@ -76,7 +76,7 @@ const ProfilePage = () => {
       />
       <RootLayout>
         <TopNavigation />
-        <div className="min-h-screen bg-tricolor-vertical-border pt-16 safe-area-top safe-area-bottom">
+        <div className="min-h-screen page-warm bg-tricolor-vertical-border pt-16 safe-area-top safe-area-bottom">
           <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">
@@ -254,8 +254,8 @@ const ProfilePage = () => {
                                   variant={challenge.status === 'completed' ? 'default' : 'secondary'}
                                   className={challenge.status === 'completed' 
                                     ? (challenge.challenger_score > (challenge.challenged_score || 0) 
-                                      ? 'bg-green-500' 
-                                      : 'bg-red-500')
+                                      ? 'bg-success text-success-foreground' 
+                                      : 'bg-error text-error-foreground')
                                     : ''
                                   }
                                 >
@@ -317,8 +317,8 @@ const ProfilePage = () => {
                                   variant={challenge.status === 'completed' ? 'default' : 'secondary'}
                                   className={challenge.status === 'completed' 
                                     ? ((challenge.challenged_score || 0) > challenge.challenger_score 
-                                      ? 'bg-green-500' 
-                                      : 'bg-red-500')
+                                      ? 'bg-success text-success-foreground' 
+                                      : 'bg-error text-error-foreground')
                                     : ''
                                   }
                                 >

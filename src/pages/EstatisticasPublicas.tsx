@@ -76,7 +76,7 @@ const EstatisticasPublicas = () => {
         description="📊 Descubra como a comunidade tricolor joga: rankings, jogadores mais difíceis, distribuição por década, curiosidades e muito mais."
       />
       <TopNavigation />
-      <main className="min-h-screen bg-background pt-20 pb-16 px-4">
+      <main className="min-h-screen page-warm pt-20 pb-16 px-4">
         <div className="container mx-auto max-w-6xl space-y-12">
           {/* Breadcrumb */}
           <Breadcrumb>

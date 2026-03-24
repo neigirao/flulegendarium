@@ -66,7 +66,7 @@ const SocialPage = () => {
       />
       <RootLayout>
         <TopNavigation />
-        <div className="min-h-screen bg-tricolor-vertical-border pt-16 safe-area-top safe-area-bottom">
+        <div className="min-h-screen page-warm bg-tricolor-vertical-border pt-16 safe-area-top safe-area-bottom">
           <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">

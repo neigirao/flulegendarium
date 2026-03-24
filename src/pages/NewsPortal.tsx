@@ -50,7 +50,7 @@ const NewsPortal = () => {
         keywords="notícias fluminense, portal tricolor, fluminense fc, notícias flu"
       />
       <RootLayout>
-        <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">
+        <div className="min-h-screen page-warm bg-tricolor-vertical-border safe-area-top safe-area-bottom">
           {/* Header */}
           <div className="bg-gradient-to-r from-primary via-primary/90 to-secondary text-primary-foreground py-16">
             <div className="container mx-auto px-4">
