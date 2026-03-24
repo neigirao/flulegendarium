@@ -48,9 +48,9 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
         <div className="w-20" />
         
         <div className="flex flex-col items-center text-center">
-          <h1 className="text-display-sm text-accent-foreground font-display tracking-wide flex items-center gap-1.5">
+          <h1 className="text-display-sm text-primary font-display tracking-wide flex items-center gap-1.5">
             {icon && <span>{icon}</span>}
-            <span className="text-foreground">LENDAS DO FLU</span>
+            <span className="text-primary">LENDAS DO FLU</span>
           </h1>
           {(title || subtitle) && (
             <p className="text-xs text-muted-foreground/80 font-medium mt-0.5 max-w-xs">
