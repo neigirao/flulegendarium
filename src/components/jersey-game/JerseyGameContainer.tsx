@@ -127,7 +127,7 @@ const JerseyGameContainer = () => {
                 />
               )}
 
-              <div className="flex justify-center pt-1">
+              <div className="flex justify-center">
                 <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning || showResult} />
               </div>
 
