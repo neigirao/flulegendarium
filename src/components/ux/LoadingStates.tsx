@@ -55,7 +55,7 @@ export const LoadingState = ({ type, message, showProgress = false, progress = 0
         
         {/* Rotating border for general loading */}
         {type === 'general' && (
-          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-flu-grena animate-spin"></div>
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin"></div>
         )}
       </div>
 
@@ -120,7 +120,7 @@ export const FullScreenLoading = ({ message = "Carregando aplicação..." }: { m
     <div className="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="text-center space-y-6">
         <div className="relative">
-          <div className="w-24 h-24 border-4 border-primary/20 border-t-flu-grena rounded-full animate-spin"></div>
+          <div className="w-24 h-24 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
             <Sparkles className="w-8 h-8 text-primary animate-pulse" />
           </div>
