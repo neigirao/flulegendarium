@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DecadeSelectionPage } from './DecadeSelectionPage';
 import { BaseGameContainer } from '@/components/guess-game/BaseGameContainer';
+import { GameHeader } from '@/components/guess-game/GameHeader';
 import { GuestNameForm } from '@/components/guess-game/GuestNameForm';
 import { GameOverDialog } from '@/components/guess-game/GameOverDialog';
 import { GuessHistoryPanel } from '@/components/guess-game/GuessHistoryPanel';
