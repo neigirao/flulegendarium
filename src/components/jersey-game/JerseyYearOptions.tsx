@@ -39,11 +39,11 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
       return cn(
         'relative flex items-center justify-center',
         'text-xl sm:text-2xl font-bold',
-        'w-20 sm:w-24 h-14 sm:h-16',
+        'w-24 sm:w-28 h-16 sm:h-[4.5rem]',
         'rounded-xl border-2',
-        'transition-all duration-200',
+        'transition-all duration-200 shadow-sm',
         'bg-card text-card-foreground border-border',
-        'hover:bg-accent hover:border-accent-foreground/20',
+        'hover:bg-accent hover:border-accent-foreground/20 hover:shadow-md',
         'active:scale-95',
         disabled && 'opacity-50 cursor-not-allowed',
         !disabled && 'cursor-pointer'
