@@ -35,6 +35,10 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 351 98% 24%;
     
+    /* Warm Background */
+    --background-warm: 30 25% 97%;
+    --gold-accent: 38 43% 58%;
+    
     /* Tricolor Gradients */
     --gradient-tricolor: linear-gradient(135deg, hsl(351 98% 24%) 0%, hsl(159 100% 19%) 50%, hsl(0 0% 98%) 100%);
     --gradient-grena: linear-gradient(135deg, hsl(351 85% 35%) 0%, hsl(351 100% 18%) 100%);
