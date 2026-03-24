@@ -181,7 +181,7 @@ export const DecadeGameContainer = () => {
         <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} maxTime={60} />
 
         {currentPlayer && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-6 space-y-6">
             <div className="flex justify-center">
               <div className="relative p-[3px] rounded-2xl bg-gradient-to-br from-primary via-accent to-secondary shadow-[0_0_24px_hsl(var(--secondary)/0.2)]">
                 <div className="relative rounded-[13px] overflow-hidden bg-card w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80">
@@ -204,8 +204,8 @@ export const DecadeGameContainer = () => {
           </div>
         )}
 
-        {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact className="mt-4" />}
-        <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} className="mt-4" />
+        {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact />}
+        <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} />
       </BaseGameContainer>
 
       <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentPlayer?.name || ''} score={score} onResetScore={handleResetGame} isAuthenticated={!!orch.user} onSaveToRanking={saveToRanking} gameMode="classic" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} />

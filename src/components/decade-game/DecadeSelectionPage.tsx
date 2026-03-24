@@ -28,7 +28,7 @@ export const DecadeSelectionPage = ({
   const decades = getAllDecades();
 
   return (
-    <div data-testid="decade-selection-page" className="min-h-screen bg-gradient-to-br from-secondary/10 via-background to-primary/10 p-4 bg-tricolor-vertical-border safe-area-top safe-area-bottom">
+    <div data-testid="decade-selection-page" className="min-h-screen page-warm bg-tricolor-vertical-border p-4 safe-area-top safe-area-bottom">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
@@ -55,7 +55,7 @@ export const DecadeSelectionPage = ({
           {decades.map((decade) => (
             <Card 
               key={decade.id}
-              className="group hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105"
+              className="group hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-[1.02]"
               onClick={() => onDecadeSelect(decade.id)}
             >
               <CardHeader className="text-center">

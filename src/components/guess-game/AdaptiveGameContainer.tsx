@@ -86,7 +86,7 @@ const AdaptiveGameContainer = () => {
         <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
 
         {currentPlayer && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-6 space-y-6">
             {/* Image + vertical difficulty bar side by side */}
             <div className="flex justify-center items-start gap-3">
               <AdaptivePlayerImage key={`${gameKey}-${currentPlayer.id}`} player={currentPlayer} onImageFixed={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
@@ -108,8 +108,8 @@ const AdaptiveGameContainer = () => {
           </div>
         )}
 
-        {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact className="mt-4" />}
-        <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} className="mt-4" />
+        {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact />}
+        <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} />
       </BaseGameContainer>
 
       <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentPlayer?.name || ''} score={score} onResetScore={resetScore} isAuthenticated={!!orch.user} onSaveToRanking={saveToRanking} gameMode="adaptive" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} />

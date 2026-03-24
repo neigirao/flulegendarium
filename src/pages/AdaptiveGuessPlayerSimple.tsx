@@ -18,7 +18,7 @@ const AdaptiveGuessPlayerSimple = () => {
         <GameErrorBoundary>
           <div data-testid="quiz-adaptativo-page" className="min-h-screen page-warm">
             <TopNavigation />
-            <div className="pt-24 safe-area-top safe-area-bottom">
+            <div className="pt-24 pb-8 safe-area-top safe-area-bottom">
               <Suspense fallback={
                 <div className="min-h-screen flex items-center justify-center">
                   <div className="flex flex-col items-center gap-4 p-6 bg-background/80 backdrop-blur-sm rounded-xl shadow-lg">

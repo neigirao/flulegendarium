@@ -53,7 +53,7 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
             <span className="text-primary">LENDAS DO FLU</span>
           </h1>
           {(title || subtitle) && (
-            <p className="text-xs text-muted-foreground/80 font-medium mt-0.5 max-w-xs">
+            <p className="text-sm text-muted-foreground/80 font-medium mt-0.5 max-w-xs">
               {title}{subtitle ? ` • ${subtitle}` : ''}
             </p>
           )}

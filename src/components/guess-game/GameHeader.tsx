@@ -18,7 +18,7 @@ export const GameHeader = ({ score, onDebugClick, timeRemaining, gameActive, cur
     <header className="w-full">
       <div className="flex items-center justify-between gap-2 sm:gap-3">
         {/* Score card */}
-        <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-card/10 border border-border/20 backdrop-blur-sm">
+        <div className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl bg-card border border-border shadow-sm">
           <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-warning shrink-0" />
           <div className="flex flex-col">
             <span className="text-[9px] sm:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider leading-none">Score</span>
@@ -40,7 +40,7 @@ export const GameHeader = ({ score, onDebugClick, timeRemaining, gameActive, cur
         <div className="flex items-center gap-1.5 sm:gap-2">
           <ComboIndicator streak={currentStreak} />
           <button
-            className="p-1.5 sm:p-2 rounded-full bg-card/10 hover:bg-card/20 border border-border/20 transition-colors backdrop-blur-sm touch-target"
+            className="p-1.5 sm:p-2 rounded-full bg-card hover:bg-accent border border-border shadow-sm transition-colors touch-target"
             onClick={onDebugClick}
             aria-label="Debug"
           >

@@ -105,7 +105,7 @@ const JerseyGameContainer = () => {
           <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
         </CoachMark>
 
-        <div className="mt-4 space-y-4">
+        <div className="mt-6 space-y-6">
           <div className="flex justify-center items-start gap-3">
             {currentJersey && (
               <JerseyImage key={`${gameKey}-${currentJersey.id}`} jersey={currentJersey} onImageLoaded={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
@@ -127,7 +127,7 @@ const JerseyGameContainer = () => {
                 />
               )}
 
-              <div className="flex justify-center pt-1">
+              <div className="flex justify-center">
                 <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning || showResult} />
               </div>
 
@@ -139,8 +139,8 @@ const JerseyGameContainer = () => {
             </div>
           )}
 
-          {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact className="mt-4" />}
-          <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentJersey !== null} className="mt-4" />
+          {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact />}
+          <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentJersey !== null} />
         </div>
       </BaseGameContainer>
 
