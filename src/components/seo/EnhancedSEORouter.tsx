@@ -21,7 +21,7 @@ const SEO_ROUTES = {
     schema: 'Game' as const
   },
   '/quiz-decada': {
-    title: 'Quiz por Década - Eras Douradas do Fluminense',
+    title: 'Advinhe o Jogador por Década - Eras Douradas do Fluminense',
     description: 'Explore as diferentes eras do Fluminense! Quiz organizado por décadas com os maiores ídolos de cada período tricolor.',
     keywords: 'fluminense por década, história tricolor, jogadores anos 80 90 2000, eras douradas flu',
     schema: 'Game' as const

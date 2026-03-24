@@ -4,7 +4,7 @@ import { DIFFICULTY_LEVELS } from "@/config/difficulty-levels";
 /**
  * Hook de gerenciamento de estado do jogo por década.
  * 
- * Especialização do useBaseGameState para o modo Quiz por Década.
+ * Especialização do useBaseGameState para o modo Advinhe o Jogador por Década.
  * 
  * ### Sistema de Dificuldade
  * - Começa em "Muito Fácil"

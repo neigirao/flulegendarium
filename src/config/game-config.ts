@@ -141,7 +141,7 @@ export const GAME_MODES = {
   },
   DECADE: {
     id: 'decade',
-    name: 'Quiz por Década',
+    name: 'Advinhe o Jogador por Década',
     description: 'Teste seus conhecimentos sobre jogadores de cada época',
     path: '/quiz-decada',
     icon: '📅'

@@ -45,7 +45,7 @@ export const GameModesPreview = () => {
     },
     {
       id: "decade",
-      title: "Quiz por Década",
+      title: "Advinhe o Jogador por Década",
       description: "Escolha uma época: 60s, 70s, 80s, 90s, 2000s ou 2010s+ e teste seu conhecimento!",
       icon: Calendar,
       badge: "6 décadas",

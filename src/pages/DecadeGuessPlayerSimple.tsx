@@ -10,7 +10,7 @@ const DecadeGuessPlayerSimple = () => {
   return (
     <>
       <SEOManager
-        title="Quiz por Década - Jogadores de Cada Era do Fluminense | Lendas do Flu"
+        title="Advinhe o Jogador por Década - Jogadores de Cada Era do Fluminense | Lendas do Flu"
         description="🗓️ Escolha uma década e teste seus conhecimentos sobre as lendas do Fluminense! Dos anos 60 até os dias atuais."
         schema="Game"
       />
@@ -23,7 +23,7 @@ const DecadeGuessPlayerSimple = () => {
                 <div className="min-h-screen flex items-center justify-center">
                   <div className="flex flex-col items-center gap-4 p-6 bg-background/80 backdrop-blur-sm rounded-xl shadow-lg">
                     <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-                    <p className="text-primary font-display tracking-wide">Carregando Quiz por Década...</p>
+                    <p className="text-primary font-display tracking-wide">Carregando Advinhe o Jogador por Década...</p>
                   </div>
                 </div>
               }>
