@@ -40,7 +40,8 @@ export const GameModesPreview = () => {
       badge: playerCount > 0 ? `${playerCount}+ jogadores` : "188+ jogadores",
       badgeVariant: "secondary" as const,
       href: "/quiz-adaptativo",
-      color: "text-primary"
+      iconBg: "bg-primary/10",
+      iconColor: "text-primary"
     },
     {
       id: "decade",
@@ -50,7 +51,8 @@ export const GameModesPreview = () => {
       badge: "6 décadas",
       badgeVariant: "outline" as const,
       href: "/quiz-decada",
-      color: "text-secondary"
+      iconBg: "bg-secondary/10",
+      iconColor: "text-secondary"
     },
     {
       id: "jersey",
@@ -60,7 +62,8 @@ export const GameModesPreview = () => {
       badge: jerseyCount > 0 ? `${jerseyCount} camisas` : "Popular",
       badgeVariant: "default" as const,
       href: "/quiz-camisas",
-      color: "text-accent",
+      iconBg: "bg-gold/10",
+      iconColor: "text-gold",
       isPopular: true
     }
   ];
@@ -68,10 +71,10 @@ export const GameModesPreview = () => {
   return (
     <div className="mb-16">
       <div className="text-center mb-8">
-        <h2 className="text-display-title text-primary-foreground mb-3">
+        <h2 className="text-display-title text-primary mb-3">
           Escolha seu Modo de Jogo
         </h2>
-        <p className="text-primary-foreground/80 text-lg max-w-2xl mx-auto font-body">
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-body">
           3 formas diferentes de testar seu conhecimento tricolor
         </p>
       </div>
@@ -82,14 +85,14 @@ export const GameModesPreview = () => {
           
           return (
             <Link key={mode.id} to={mode.href} className="group">
-              <Card className={`h-full bg-card/10 backdrop-blur-sm border-border/20 hover:bg-card/20 transition-all duration-300 hover:scale-105 hover:shadow-xl ${mode.isPopular ? 'ring-2 ring-accent/50' : ''}`}>
+              <Card className={`h-full bg-card border border-border shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 ${mode.isPopular ? 'ring-2 ring-gold/40' : ''}`}>
                 <CardHeader className="text-center pb-2">
-                  <div className={`mx-auto p-4 rounded-full bg-background/10 mb-3 group-hover:bg-background/20 transition-colors ${mode.color}`}>
+                  <div className={`mx-auto p-4 rounded-full ${mode.iconBg} mb-3 group-hover:scale-110 transition-transform ${mode.iconColor}`}>
                     <Icon className="w-10 h-10" />
                   </div>
                   
                   <div className="flex items-center justify-center gap-2">
-                    <CardTitle className="text-primary-foreground font-display text-lg">
+                    <CardTitle className="text-foreground font-display text-lg">
                       {mode.title}
                     </CardTitle>
                     {mode.isPopular && (
@@ -101,7 +104,7 @@ export const GameModesPreview = () => {
                 </CardHeader>
                 
                 <CardContent className="text-center">
-                  <CardDescription className="text-primary-foreground/70 font-body mb-4">
+                  <CardDescription className="text-muted-foreground font-body mb-4">
                     {mode.description}
                   </CardDescription>
                   
@@ -111,7 +114,7 @@ export const GameModesPreview = () => {
                     </Badge>
                   )}
                   
-                  <div className="mt-4 flex items-center justify-center text-primary-foreground/60 group-hover:text-primary-foreground transition-colors">
+                  <div className="mt-4 flex items-center justify-center text-primary group-hover:text-primary/80 transition-colors">
                     <span className="text-sm font-medium">Jogar agora</span>
                     <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                   </div>
