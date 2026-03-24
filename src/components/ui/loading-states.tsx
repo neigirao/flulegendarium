@@ -16,7 +16,7 @@ export const LoadingSpinner = ({ size = "md", className }: LoadingSpinnerProps) 
 
   return (
     <Loader2 
-      className={cn("animate-spin text-flu-grena", sizeClasses[size], className)} 
+      className={cn("animate-spin text-primary", sizeClasses[size], className)} 
     />
   );
 };
@@ -75,8 +75,8 @@ export const LoadingCard = ({
       styles.container,
       className
     )}>
-      <div className="flex items-center justify-center w-12 h-12 bg-flu-verde/10 rounded-full mb-4">
-        <IconComponent className={cn("text-flu-grena animate-pulse", styles.icon)} />
+      <div className="flex items-center justify-center w-12 h-12 bg-secondary/10 rounded-full mb-4">
+        <IconComponent className={cn("text-primary animate-pulse", styles.icon)} />
       </div>
       
       <h3 className={cn("font-semibold text-foreground mb-2", styles.title)}>
@@ -90,7 +90,7 @@ export const LoadingCard = ({
       )}
       
       <div className="mt-4 w-16 h-1 bg-muted rounded-full overflow-hidden">
-        <div className="h-full bg-flu-grena rounded-full animate-pulse" style={{
+        <div className="h-full bg-primary rounded-full animate-pulse" style={{
           animation: "loading-bar 2s ease-in-out infinite"
         }} />
       </div>
@@ -164,7 +164,7 @@ export const PageLoading = ({
   title = "Carregando página...",
   description = "Aguarde um momento"
 }: PageLoadingProps) => (
-  <div className="min-h-screen bg-gradient-to-b from-flu-verde/20 to-white flex items-center justify-center p-4">
+  <div className="min-h-screen bg-gradient-to-b from-secondary/20 to-white flex items-center justify-center p-4">
     <LoadingCard
       title={title}
       description={description}

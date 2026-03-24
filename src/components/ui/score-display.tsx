@@ -8,11 +8,11 @@ const scoreDisplayVariants = cva(
     variants: {
       variant: {
         default: "text-foreground",
-        tricolor: "bg-gradient-to-r from-flu-grena via-flu-verde to-flu-grena bg-clip-text text-transparent",
-        grena: "text-flu-grena",
-        verde: "text-flu-verde",
-        success: "text-flu-verde animate-pulse",
-        highlight: "text-flu-grena drop-shadow-sm",
+        tricolor: "bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent",
+        grena: "text-primary",
+        verde: "text-secondary",
+        success: "text-secondary animate-pulse",
+        highlight: "text-primary drop-shadow-sm",
       },
       size: {
         sm: "text-lg",

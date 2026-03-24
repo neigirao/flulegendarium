@@ -46,7 +46,7 @@ const SaveScoreButton = memo(({ onShowRankingForm }: { onShowRankingForm: () => 
   <div className="text-center animate-fadeIn">
     <button
       onClick={onShowRankingForm}
-      className="bg-gradient-to-r from-flu-grena to-flu-grena/90 text-white px-8 py-4 rounded-2xl hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 mx-auto flu-shadow font-bold text-lg w-full sm:w-auto max-w-sm group"
+      className="bg-gradient-to-r from-primary to-primary/90 text-white px-8 py-4 rounded-2xl hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 mx-auto flu-shadow font-bold text-lg w-full sm:w-auto max-w-sm group"
     >
       <Trophy className="w-6 h-6 group-hover:animate-bounce" />
       Salvar Pontuação
@@ -116,10 +116,10 @@ export const GameStatus = memo(({
     <>
       <div className="space-y-6" data-testid="game-status">
         {/* Container principal com melhor visual hierarchy */}
-        <div className="bg-gradient-to-br from-flu-grena/5 via-white to-flu-verde/5 rounded-2xl border border-flu-grena/10 shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-br from-primary/5 via-white to-secondary/5 rounded-2xl border border-primary/10 shadow-lg overflow-hidden">
           
           {/* Header com timer destacado */}
-          <div className="bg-gradient-to-r from-flu-grena to-flu-grena/90 p-4 text-white">
+          <div className="bg-gradient-to-r from-primary to-primary/90 p-4 text-white">
             <div className="flex items-center justify-center gap-3">
               <Timer className="w-5 h-5 animate-pulse" />
               <h3 className="font-bold text-lg">Tempo Restante</h3>

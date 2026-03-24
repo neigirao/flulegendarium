@@ -16,7 +16,7 @@ const DecadeGuessPlayerSimple = () => {
       />
       <RootLayout>
         <GameErrorBoundary>
-          <div data-testid="quiz-decada-page" className="min-h-screen" style={{ background: 'linear-gradient(to bottom right, hsl(var(--game-bg-from)), hsl(var(--game-bg-via)), hsl(var(--game-bg-to)))' }}>
+          <div data-testid="quiz-decada-page" className="min-h-screen page-warm">
             <TopNavigation />
             <div className="pt-24 safe-area-top safe-area-bottom">
               <Suspense fallback={

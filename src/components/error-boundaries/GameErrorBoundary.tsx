@@ -17,7 +17,7 @@ interface State {
 // eslint-disable-next-line react-refresh/only-export-components
 const GameErrorFallback = ({ onRetry, onGoBack }: { onRetry: () => void; onGoBack: () => void }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-flu-verde/20 to-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-secondary/20 to-white flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -27,7 +27,7 @@ const GameErrorFallback = ({ onRetry, onGoBack }: { onRetry: () => void; onGoBac
               className="w-12 h-12 object-contain opacity-50"
             />
           </div>
-          <CardTitle className="text-flu-grena flex items-center justify-center gap-2">
+          <CardTitle className="text-primary flex items-center justify-center gap-2">
             <AlertTriangle className="w-5 h-5" />
             Erro no Jogo
           </CardTitle>
@@ -39,7 +39,7 @@ const GameErrorFallback = ({ onRetry, onGoBack }: { onRetry: () => void; onGoBac
           <div className="flex gap-2">
             <Button 
               onClick={onRetry}
-              className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+              className="flex-1 bg-primary hover:bg-primary/90"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Tentar Novamente

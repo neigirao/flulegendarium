@@ -23,7 +23,7 @@ export const UniversalTouchTarget = forwardRef<HTMLDivElement, UniversalTouchTar
       'transition-all duration-200',
       'active:scale-95',
       'hover:bg-gray-50',
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flu-grena'
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary'
     ] : [];
 
     return (

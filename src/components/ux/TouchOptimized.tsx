@@ -16,10 +16,10 @@ export const TouchOptimizedButton = forwardRef<HTMLButtonElement, TouchOptimized
   ({ children, onClick, disabled, variant = 'primary', size = 'md', className, type = 'button', 'data-testid': dataTestId }, ref) => {
     
     const variants = {
-      primary: "bg-gradient-to-r from-flu-grena to-flu-grena/90 text-white hover:from-flu-grena/90 hover:to-flu-grena/80 shadow-lg hover:shadow-xl",
-      secondary: "bg-gradient-to-r from-flu-verde to-flu-verde/90 text-white hover:from-flu-verde/90 hover:to-flu-verde/80 shadow-lg hover:shadow-xl",
-      outline: "bg-white border-2 border-flu-grena text-flu-grena hover:bg-flu-grena hover:text-white",
-      ghost: "bg-transparent text-flu-grena hover:bg-flu-grena/10"
+      primary: "bg-gradient-to-r from-primary to-primary/90 text-white hover:from-primary/90 hover:to-primary/80 shadow-lg hover:shadow-xl",
+      secondary: "bg-gradient-to-r from-secondary to-secondary/90 text-white hover:from-secondary/90 hover:to-secondary/80 shadow-lg hover:shadow-xl",
+      outline: "bg-white border-2 border-primary text-primary hover:bg-primary hover:text-white",
+      ghost: "bg-transparent text-primary hover:bg-primary/10"
     };
 
     const sizes = {
@@ -38,7 +38,7 @@ export const TouchOptimizedButton = forwardRef<HTMLButtonElement, TouchOptimized
         className={cn(
           // Base styles
           "relative rounded-xl font-semibold transition-all duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flu-grena focus-visible:ring-offset-2",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
           "active:scale-95 transform-gpu",
           "touch-manipulation", // Otimização para touch
           "-webkit-tap-highlight-color: transparent", // Remove highlight padrão do iOS
@@ -110,7 +110,7 @@ export const TouchOptimizedInput = ({
         "transition-all duration-200",
         
         // Focus styles
-        "focus:border-flu-verde focus:ring-2 focus:ring-flu-verde/20 focus:outline-none",
+        "focus:border-secondary focus:ring-2 focus:ring-secondary/20 focus:outline-none",
         
         // Touch optimizations
         "min-h-[44px]", // Altura mínima para touch
@@ -162,7 +162,7 @@ export const TouchOptimizedCard = ({
       {/* Touch feedback overlay */}
       {onClick && (
         <div className="absolute inset-0 rounded-xl overflow-hidden">
-          <div className="absolute inset-0 bg-flu-grena/5 opacity-0 active:opacity-100 transition-opacity duration-150"></div>
+          <div className="absolute inset-0 bg-primary/5 opacity-0 active:opacity-100 transition-opacity duration-150"></div>
         </div>
       )}
     </div>

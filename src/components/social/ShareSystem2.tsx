@@ -128,7 +128,7 @@ Teste seus conhecimentos: ${window.location.origin}
   };
 
   const defaultTrigger = (
-    <Button variant="default" className="gap-2 bg-flu-grena hover:bg-flu-grena/90">
+    <Button variant="default" className="gap-2 bg-primary hover:bg-primary/90">
       <Share2 className="w-4 h-4" />
       Compartilhar Resultado
     </Button>
@@ -141,7 +141,7 @@ Teste seus conhecimentos: ${window.location.origin}
       </DialogTrigger>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 text-flu-grena">
+          <DialogTitle className="flex items-center gap-2 text-primary">
             <Share2 className="w-5 h-5" />
             Compartilhar Resultado 2.0
           </DialogTitle>
@@ -153,28 +153,28 @@ Teste seus conhecimentos: ${window.location.origin}
             <FluCard variant="tricolor" size="sm" className="relative overflow-hidden">
               {/* Background Pattern */}
               <div className="absolute inset-0 opacity-10">
-                <div className="absolute inset-0 bg-gradient-to-br from-flu-grena via-flu-verde to-flu-branco"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-flu-branco"></div>
               </div>
               
               <div className="relative p-6 text-center">
                 <div className="mb-4">
-                  <h3 className="text-2xl font-black text-flu-grena mb-1">🏆 Lendas do Flu</h3>
+                  <h3 className="text-2xl font-black text-primary mb-1">🏆 Lendas do Flu</h3>
                   <p className="text-sm text-muted-foreground">Quiz Oficial Tricolor</p>
                 </div>
                 
                 <div className="space-y-3">
                   <div className="bg-card/80 rounded-lg p-3">
-                    <div className="text-3xl font-black text-flu-grena">{score}</div>
+                    <div className="text-3xl font-black text-primary">{score}</div>
                     <div className="text-sm text-muted-foreground">pontos conquistados</div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-2 text-sm">
-                    <div className="bg-flu-verde/20 rounded-lg p-2">
-                      <div className="font-bold text-flu-verde">{accuracy}%</div>
+                    <div className="bg-secondary/20 rounded-lg p-2">
+                      <div className="font-bold text-secondary">{accuracy}%</div>
                       <div className="text-xs text-muted-foreground">precisão</div>
                     </div>
-                    <div className="bg-flu-grena/20 rounded-lg p-2">
-                      <div className="font-bold text-flu-grena">{streak}</div>
+                    <div className="bg-primary/20 rounded-lg p-2">
+                      <div className="font-bold text-primary">{streak}</div>
                       <div className="text-xs text-muted-foreground">sequência</div>
                     </div>
                   </div>
@@ -199,7 +199,7 @@ Teste seus conhecimentos: ${window.location.origin}
             {navigator.share && (
               <Button
                 onClick={shareViaWebShare}
-                className="w-full bg-flu-grena hover:bg-flu-grena/90"
+                className="w-full bg-primary hover:bg-primary/90"
               >
                 <Share2 className="w-4 h-4 mr-2" />
                 Compartilhar Agora

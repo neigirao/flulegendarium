@@ -15,7 +15,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
   const steps = [
     {
       title: "Bem-vindo ao Lendas do Flu!",
-      icon: <Trophy className="w-8 h-8 text-flu-grena" />,
+      icon: <Trophy className="w-8 h-8 text-primary" />,
       content: (
         <div className="space-y-4">
           <p>Teste seus conhecimentos sobre os ídolos tricolores!</p>
@@ -25,7 +25,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
     },
     {
       title: "Como Jogar",
-      icon: <Target className="w-8 h-8 text-flu-grena" />,
+      icon: <Target className="w-8 h-8 text-primary" />,
       content: (
         <div className="space-y-4">
           <p><strong>1.</strong> Uma foto de um jogador será exibida</p>
@@ -38,7 +38,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
     },
     {
       title: "Tempo Limite",
-      icon: <Clock className="w-8 h-8 text-flu-grena" />,
+      icon: <Clock className="w-8 h-8 text-primary" />,
       content: (
         <div className="space-y-4">
           <p>Você tem <strong>30 segundos</strong> para cada jogador!</p>
@@ -61,7 +61,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
     },
     {
       title: "Sistema de Pontuação",
-      icon: <Trophy className="w-8 h-8 text-flu-grena" />,
+      icon: <Trophy className="w-8 h-8 text-primary" />,
       content: (
         <div className="space-y-4">
           <p><strong>Acertou:</strong> +5 pontos</p>
@@ -74,7 +74,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
     },
     {
       title: "Dicas Importantes",
-      icon: <Target className="w-8 h-8 text-flu-verde" />,
+      icon: <Target className="w-8 h-8 text-secondary" />,
       content: (
         <div className="space-y-4">
           <p><strong>✓</strong> Você pode usar nomes oficiais ou apelidos</p>
@@ -130,7 +130,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
           {/* Progress bar */}
           <div className="w-full bg-muted rounded-full h-2">
             <div
-              className="bg-flu-grena h-2 rounded-full transition-all duration-300"
+              className="bg-primary h-2 rounded-full transition-all duration-300"
               style={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
             />
           </div>
@@ -146,11 +146,11 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
             </Button>
 
             {currentStep === steps.length - 1 ? (
-              <Button onClick={onComplete} className="flex-1 bg-flu-grena">
+              <Button onClick={onComplete} className="flex-1 bg-primary">
                 Começar Jogo!
               </Button>
             ) : (
-              <Button onClick={nextStep} className="flex-1 bg-flu-grena">
+              <Button onClick={nextStep} className="flex-1 bg-primary">
                 Próximo
                 <ArrowRight size={16} className="ml-1" />
               </Button>

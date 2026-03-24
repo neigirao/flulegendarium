@@ -20,7 +20,7 @@ export const NewsCard = ({ article }: NewsCardProps) => {
 
   return (
     <Card 
-      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-flu-verde/20 hover:border-flu-grena/30"
+      className="group cursor-pointer hover:shadow-lg transition-all duration-300 border-secondary/20 hover:border-primary/30"
       onClick={handleClick}
     >
       {/* Featured Image */}
@@ -32,7 +32,7 @@ export const NewsCard = ({ article }: NewsCardProps) => {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           {article.category && (
-            <Badge className="absolute top-3 left-3 bg-flu-verde text-white">
+            <Badge className="absolute top-3 left-3 bg-secondary text-white">
               {article.category.name}
             </Badge>
           )}
@@ -41,7 +41,7 @@ export const NewsCard = ({ article }: NewsCardProps) => {
 
       <CardContent className="p-4">
         {/* Title */}
-        <h3 className="font-bold text-lg text-flu-grena mb-2 group-hover:text-flu-verde transition-colors duration-300 line-clamp-2">
+        <h3 className="font-bold text-lg text-primary mb-2 group-hover:text-secondary transition-colors duration-300 line-clamp-2">
           {article.title}
         </h3>
 
@@ -76,7 +76,7 @@ export const NewsCard = ({ article }: NewsCardProps) => {
 
         {/* Read More */}
         <div className="mt-4 pt-3 border-t border-border">
-          <span className="text-flu-verde text-sm font-medium group-hover:text-flu-grena transition-colors duration-300">
+          <span className="text-secondary text-sm font-medium group-hover:text-primary transition-colors duration-300">
             Ler mais →
           </span>
         </div>

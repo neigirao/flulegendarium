@@ -132,7 +132,7 @@ export const EnhancedErrorDisplay = ({
           {onRetry && (
             <Button 
               onClick={onRetry}
-              className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+              className="flex-1 bg-primary hover:bg-primary/90"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Tentar Novamente

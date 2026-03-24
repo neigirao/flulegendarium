@@ -19,7 +19,7 @@ export const NewsHero = ({ article }: NewsHeroProps) => {
 
   return (
     <div 
-      className="relative bg-gradient-to-r from-flu-grena to-flu-verde rounded-2xl overflow-hidden cursor-pointer group"
+      className="relative bg-gradient-to-r from-primary to-secondary rounded-2xl overflow-hidden cursor-pointer group"
       onClick={handleClick}
     >
       {/* Background Image */}
@@ -37,14 +37,14 @@ export const NewsHero = ({ article }: NewsHeroProps) => {
       <div className="relative p-8 md:p-12 text-white">
         {/* Category Badge */}
         {article.category && (
-          <Badge className="bg-flu-verde/80 text-white mb-4 text-sm">
+          <Badge className="bg-secondary/80 text-white mb-4 text-sm">
             {article.category.name}
           </Badge>
         )}
 
         {/* Content */}
         <div className="max-w-3xl">
-          <div className="bg-flu-verde/20 text-yellow-300 text-sm font-medium px-3 py-1 rounded-full inline-block mb-4">
+          <div className="bg-secondary/20 text-yellow-300 text-sm font-medium px-3 py-1 rounded-full inline-block mb-4">
             Es ja sueño
           </div>
           

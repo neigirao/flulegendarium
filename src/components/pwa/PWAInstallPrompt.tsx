@@ -162,7 +162,7 @@ export const PWAInstallPrompt = () => {
                 <Download className="w-5 h-5 text-white" />
               </div>
               <div>
-                <div className="flu-grena">Instalar App</div>
+                <div className="text-primary">Instalar App</div>
                 <Badge variant="secondary" className="text-xs">PWA</Badge>
               </div>
             </CardTitle>

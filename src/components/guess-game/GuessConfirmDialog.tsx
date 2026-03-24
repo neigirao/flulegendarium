@@ -32,7 +32,7 @@ export const GuessConfirmDialog = ({
             Confirmar Palpite
           </DialogTitle>
           <DialogDescription className="text-base">
-            Você tem certeza que o jogador é <strong className="text-flu-grena">"{guess}"</strong>?
+            Você tem certeza que o jogador é <strong className="text-primary">"{guess}"</strong>?
             <br />
             <span className="text-sm text-gray-500 mt-2 block">
               Lembre-se: você tem apenas uma tentativa por jogador!
@@ -43,7 +43,7 @@ export const GuessConfirmDialog = ({
           <Button variant="outline" onClick={onCancel}>
             Cancelar
           </Button>
-          <Button onClick={onConfirm} className="bg-flu-grena hover:bg-flu-grena/90">
+          <Button onClick={onConfirm} className="bg-primary hover:bg-primary/90">
             Confirmar Palpite
           </Button>
         </DialogFooter>

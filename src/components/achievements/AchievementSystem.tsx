@@ -31,7 +31,7 @@ const ACHIEVEMENTS: Achievement[] = [
     id: 'fred_tribute',
     name: 'Homenagem ao Fred',
     description: 'Acerte 199 jogadores (como os gols do Fred)',
-    icon: <Crown className="w-6 h-6 text-flu-grena" />,
+    icon: <Crown className="w-6 h-6 text-primary" />,
     unlocked: false,
     progress: 0,
     maxProgress: 199,
@@ -42,7 +42,7 @@ const ACHIEVEMENTS: Achievement[] = [
     id: 'castilho_defense',
     name: 'Defesa do Castilho',
     description: 'Complete 10 acertos seguidos',
-    icon: <Trophy className="w-6 h-6 text-flu-verde" />,
+    icon: <Trophy className="w-6 h-6 text-secondary" />,
     unlocked: false,
     progress: 0,
     maxProgress: 10,
@@ -64,7 +64,7 @@ const ACHIEVEMENTS: Achievement[] = [
     id: 'copa_libertadores',
     name: 'Glória Eterna',
     description: 'Acerte 50 jogadores no total',
-    icon: <Heart className="w-6 h-6 text-flu-grena" />,
+    icon: <Heart className="w-6 h-6 text-primary" />,
     unlocked: false,
     progress: 0,
     maxProgress: 50,
@@ -75,7 +75,7 @@ const ACHIEVEMENTS: Achievement[] = [
     id: 'century_club',
     name: 'Clube do Século',
     description: 'Acerte 100 jogadores no total',
-    icon: <Zap className="w-6 h-6 text-flu-verde" />,
+    icon: <Zap className="w-6 h-6 text-secondary" />,
     unlocked: false,
     progress: 0,
     maxProgress: 100,
@@ -135,7 +135,7 @@ export const AchievementSystem = ({
               <div className="font-semibold">{achievement.name}</div>
               <div className="text-sm">{achievement.description}</div>
               {achievement.fluTrivia && (
-                <div className="text-xs text-flu-verde italic">{achievement.fluTrivia}</div>
+                <div className="text-xs text-secondary italic">{achievement.fluTrivia}</div>
               )}
             </div>
           ),
@@ -152,7 +152,7 @@ export const AchievementSystem = ({
 
   return (
     <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4 space-y-3">
-      <h3 className="text-lg font-semibold text-flu-grena mb-4 text-center">
+      <h3 className="text-lg font-semibold text-primary mb-4 text-center">
         🏆 Conquistas Tricolores
       </h3>
       
@@ -162,14 +162,14 @@ export const AchievementSystem = ({
             key={achievement.id}
             className={`p-3 rounded-lg border-2 transition-all ${
               achievement.unlocked
-                ? 'border-flu-grena bg-flu-grena/10'
+                ? 'border-primary bg-primary/10'
                 : 'border-border bg-muted opacity-70'
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
               {achievement.icon}
               <span className={`text-sm font-medium ${
-                achievement.unlocked ? 'text-flu-grena' : 'text-muted-foreground'
+                achievement.unlocked ? 'text-primary' : 'text-muted-foreground'
               }`}>
                 {achievement.name}
               </span>
@@ -182,7 +182,7 @@ export const AchievementSystem = ({
             <div className="w-full bg-muted rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all ${
-                  achievement.unlocked ? 'bg-flu-grena' : 'bg-flu-verde'
+                  achievement.unlocked ? 'bg-primary' : 'bg-secondary'
                 }`}
                 style={{
                   width: `${(achievement.progress / achievement.maxProgress) * 100}%`
