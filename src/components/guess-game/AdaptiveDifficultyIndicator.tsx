@@ -33,7 +33,6 @@ export const AdaptiveDifficultyIndicator = ({
   const currentNum = difficultyToNumber[currentDifficulty];
 
   if (!vertical) {
-    // Fallback horizontal (legacy)
     return (
       <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card/10 border border-border/20 backdrop-blur-sm">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nível</span>
@@ -54,11 +53,11 @@ export const AdaptiveDifficultyIndicator = ({
   }
 
   return (
-    <div className="flex flex-col items-center gap-1.5">
-      <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider writing-mode-vertical">
+    <div className="flex flex-col items-center gap-1">
+      <span className="text-[9px] sm:text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
         Nível
       </span>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0.5 sm:gap-1">
         {difficultyLevels.map((level) => {
           const num = difficultyToNumber[level.key];
           const isActive = num <= currentNum;
@@ -66,7 +65,7 @@ export const AdaptiveDifficultyIndicator = ({
             <div
               key={level.key}
               className={cn(
-                "w-3 h-6 rounded-sm transition-all duration-300",
+                "w-2.5 sm:w-3 h-5 sm:h-6 rounded-sm transition-all duration-300",
                 isActive ? level.color : "bg-muted/20"
               )}
               title={`Nível ${num}`}
@@ -74,7 +73,7 @@ export const AdaptiveDifficultyIndicator = ({
           );
         })}
       </div>
-      <span className="text-xs font-bold text-foreground tabular-nums">{currentNum}/5</span>
+      <span className="text-[10px] sm:text-xs font-bold text-foreground tabular-nums">{currentNum}/5</span>
     </div>
   );
 };

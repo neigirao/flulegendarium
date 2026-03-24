@@ -29,7 +29,7 @@ export const AdaptivePlayerImage = ({
       {/* Tricolor gradient border */}
       <div className="relative p-[3px] rounded-2xl bg-gradient-to-br from-primary via-accent to-secondary shadow-[0_0_24px_hsl(var(--secondary)/0.2)]">
         <div
-          className="relative rounded-[13px] overflow-hidden bg-card w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80"
+          className="relative rounded-[13px] overflow-hidden bg-card w-56 h-56 xs:w-64 xs:h-64 sm:w-72 sm:h-72 md:w-80 md:h-80"
           style={{ filter: effects.filter }}
         >
           <UnifiedPlayerImage
