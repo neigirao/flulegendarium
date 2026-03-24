@@ -28,15 +28,15 @@ export const NewsSidebar = ({
       {/* Categories */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-flu-grena text-lg">CATEGORIAS</CardTitle>
+          <CardTitle className="text-primary text-lg">CATEGORIAS</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <Button
             variant={selectedCategory === null ? "default" : "ghost"}
             className={`w-full justify-start ${
               selectedCategory === null 
-                ? "bg-flu-grena text-white" 
-                : "text-flu-grena hover:bg-flu-verde/10"
+                ? "bg-primary text-white" 
+                : "text-primary hover:bg-secondary/10"
             }`}
             onClick={() => onCategorySelect(null)}
           >
@@ -49,8 +49,8 @@ export const NewsSidebar = ({
               variant={selectedCategory === category.id ? "default" : "ghost"}
               className={`w-full justify-start text-sm ${
                 selectedCategory === category.id 
-                  ? "bg-flu-grena text-white" 
-                  : "text-flu-grena hover:bg-flu-verde/10"
+                  ? "bg-primary text-white" 
+                  : "text-primary hover:bg-secondary/10"
               }`}
               onClick={() => onCategorySelect(category.id)}
             >
@@ -63,7 +63,7 @@ export const NewsSidebar = ({
       {/* Popular Articles */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-flu-grena text-lg">NOTÍCIAS POPULARES</CardTitle>
+          <CardTitle className="text-primary text-lg">NOTÍCIAS POPULARES</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {popularArticles.map((article) => (
@@ -84,7 +84,7 @@ export const NewsSidebar = ({
                 )}
                 
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-sm text-flu-grena group-hover:text-flu-verde transition-colors line-clamp-2 mb-1">
+                  <h4 className="font-medium text-sm text-primary group-hover:text-secondary transition-colors line-clamp-2 mb-1">
                     {article.title}
                   </h4>
                   

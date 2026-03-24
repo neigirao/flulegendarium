@@ -21,7 +21,7 @@ export const ResponsiveContainer = ({
   
   const variants = {
     default: "bg-transparent",
-    game: "bg-gradient-to-br from-flu-verde/5 via-background to-flu-grena/5 border border-border rounded-2xl shadow-lg backdrop-blur-sm",
+    game: "bg-gradient-to-br from-secondary/5 via-background to-primary/5 border border-border rounded-2xl shadow-lg backdrop-blur-sm",
     modal: "bg-card border border-border rounded-xl shadow-xl",
     card: "bg-card/90 backdrop-blur-sm border border-border rounded-xl shadow-md hover:shadow-lg transition-shadow"
   };

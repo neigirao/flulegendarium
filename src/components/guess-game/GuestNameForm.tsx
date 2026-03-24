@@ -24,10 +24,10 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
     <div data-testid="guest-name-form" className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="flex items-center justify-center w-16 h-16 bg-flu-verde/10 rounded-full mx-auto mb-4">
-            <User className="w-8 h-8 text-flu-verde" />
+          <div className="flex items-center justify-center w-16 h-16 bg-secondary/10 rounded-full mx-auto mb-4">
+            <User className="w-8 h-8 text-secondary" />
           </div>
-          <CardTitle className="text-2xl text-flu-grena">Qual é o seu nome?</CardTitle>
+          <CardTitle className="text-2xl text-primary">Qual é o seu nome?</CardTitle>
           <p className="text-muted-foreground">
             Digite seu nome para começar a jogar como convidado
           </p>
@@ -61,7 +61,7 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
                 data-testid="start-game-button"
                 type="submit"
                 disabled={!name.trim()}
-                className="flex-1 bg-flu-verde hover:bg-flu-verde/90 text-white"
+                className="flex-1 bg-secondary hover:bg-secondary/90 text-white"
               >
                 <Play className="w-4 h-4 mr-2" />
                 Começar Jogo

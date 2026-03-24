@@ -40,10 +40,10 @@ const AdminLogin = () => {
               alt="Fluminense FC" 
               className="w-8 h-8 object-contain"
             />
-            <span className="text-2xl font-bold text-flu-grena">Lendas do Flu</span>
+            <span className="text-2xl font-bold text-primary">Lendas do Flu</span>
           </Link>
           <nav className="flex items-center space-x-6">
-            <Link to="/" className="text-flu-verde hover:text-flu-grena transition-colors">
+            <Link to="/" className="text-secondary hover:text-primary transition-colors">
               Início
             </Link>
           </nav>
@@ -59,7 +59,7 @@ const AdminLogin = () => {
                 alt="Fluminense FC" 
                 className="w-12 h-12 object-contain"
               />
-              <CardTitle className="text-2xl font-bold text-flu-grena">
+              <CardTitle className="text-2xl font-bold text-primary">
                 Acesso Administrativo
               </CardTitle>
             </div>
@@ -68,7 +68,7 @@ const AdminLogin = () => {
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="username" className="text-flu-grena font-medium">
+                <Label htmlFor="username" className="text-primary font-medium">
                   Usuário
                 </Label>
                 <Input
@@ -77,12 +77,12 @@ const AdminLogin = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="focus:ring-flu-grena focus:border-flu-grena"
+                  className="focus:ring-primary focus:border-primary"
                   placeholder="Digite seu usuário"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-flu-grena font-medium">
+                <Label htmlFor="password" className="text-primary font-medium">
                   Senha
                 </Label>
                 <div className="relative">
@@ -92,13 +92,13 @@ const AdminLogin = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="focus:ring-flu-grena focus:border-flu-grena pr-10"
+                    className="focus:ring-primary focus:border-primary pr-10"
                     placeholder="Digite sua senha"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-flu-grena"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-primary"
                   >
                     {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                   </button>
@@ -112,7 +112,7 @@ const AdminLogin = () => {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-flu-grena hover:bg-flu-grena/90 text-white font-semibold py-3 shadow-lg"
+                className="w-full bg-primary hover:bg-primary/90 text-white font-semibold py-3 shadow-lg"
               >
                 {loading ? (
                   <div className="flex items-center gap-2">

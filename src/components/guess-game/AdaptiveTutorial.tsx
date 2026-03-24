@@ -16,8 +16,8 @@ const tutorialSteps = [
     content: (
       <div className="space-y-4">
         <p>Este modo especial ajusta automaticamente a dificuldade baseado no seu desempenho!</p>
-        <div className="bg-flu-grena/10 p-4 rounded-lg">
-          <p className="text-sm text-flu-grena font-medium">
+        <div className="bg-primary/10 p-4 rounded-lg">
+          <p className="text-sm text-primary font-medium">
             🧠 A IA aprende com você e oferece o desafio perfeito
           </p>
         </div>
@@ -90,8 +90,8 @@ const tutorialSteps = [
           <li>🏆 <strong>Notificações:</strong> Avisa quando muda de nível</li>
           <li>📈 <strong>Estatísticas:</strong> Acompanhe seu desempenho</li>
         </ul>
-        <div className="bg-flu-verde/10 p-4 rounded-lg">
-          <p className="text-sm text-flu-verde font-medium">
+        <div className="bg-secondary/10 p-4 rounded-lg">
+          <p className="text-sm text-secondary font-medium">
             ✨ Quanto melhor você fica, mais desafiante o jogo se torna!
           </p>
         </div>
@@ -125,7 +125,7 @@ export const AdaptiveTutorial = ({ isOpen, onComplete }: AdaptiveTutorialProps) 
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
-            <div className="p-2 bg-flu-grena rounded-full">
+            <div className="p-2 bg-primary rounded-full">
               <Icon className="w-5 h-5 text-white" />
             </div>
             {step.title}
@@ -142,7 +142,7 @@ export const AdaptiveTutorial = ({ isOpen, onComplete }: AdaptiveTutorialProps) 
               <div
                 key={index}
                 className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentStep ? 'bg-flu-grena' : 'bg-muted'
+                  index === currentStep ? 'bg-primary' : 'bg-muted'
                 }`}
               />
             ))}
@@ -162,7 +162,7 @@ export const AdaptiveTutorial = ({ isOpen, onComplete }: AdaptiveTutorialProps) 
             
             <Button
               onClick={handleNext}
-              className="bg-flu-grena hover:bg-flu-grena/90"
+              className="bg-primary hover:bg-primary/90"
             >
               {currentStep === tutorialSteps.length - 1 ? 'Começar!' : 'Próximo'}
               {currentStep < tutorialSteps.length - 1 && (

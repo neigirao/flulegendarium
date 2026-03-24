@@ -33,13 +33,13 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-flu-verde/50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-secondary/50 to-white">
       {/* Header do Admin */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div>
-              <h1 className="text-2xl font-bold text-flu-grena">Área Administrativa - Lendas do Flu</h1>
+              <h1 className="text-2xl font-bold text-primary">Área Administrativa - Lendas do Flu</h1>
               <p className="text-muted-foreground">Bem-vindo, {adminData?.user?.email}</p>
             </div>
             <Button variant="outline" onClick={logout} className="flex items-center gap-2">
@@ -107,15 +107,15 @@ export default function Admin() {
           <TabsContent value="image-audit">
             <div className="bg-white rounded-lg shadow p-6 space-y-8">
               <div>
-                <h2 className="text-xl font-bold text-flu-grena mb-4">Reports de Imagens (Usuários)</h2>
+                <h2 className="text-xl font-bold text-primary mb-4">Reports de Imagens (Usuários)</h2>
                 <ImageFeedbackReport />
               </div>
               <div className="border-t pt-8">
-                <h2 className="text-xl font-bold text-flu-grena mb-4">Auditoria de Imagens - Jogadores</h2>
+                <h2 className="text-xl font-bold text-primary mb-4">Auditoria de Imagens - Jogadores</h2>
                 <ImageAuditDashboard />
               </div>
               <div className="border-t pt-8">
-                <h2 className="text-xl font-bold text-flu-grena mb-4">Auditoria de Imagens - Camisas</h2>
+                <h2 className="text-xl font-bold text-primary mb-4">Auditoria de Imagens - Camisas</h2>
                 <JerseyImageAuditDashboard />
               </div>
             </div>
@@ -123,28 +123,28 @@ export default function Admin() {
 
           <TabsContent value="logged-users">
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-flu-grena mb-4">Usuários Logados</h2>
+              <h2 className="text-xl font-bold text-primary mb-4">Usuários Logados</h2>
               <LoggedUsersView />
             </div>
           </TabsContent>
 
           <TabsContent value="view-players">
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-flu-grena mb-4">Visualizar Jogadores</h2>
+              <h2 className="text-xl font-bold text-primary mb-4">Visualizar Jogadores</h2>
               <PlayersListView />
             </div>
           </TabsContent>
 
           <TabsContent value="players">
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-flu-grena mb-4">Gerenciar Jogadores</h2>
+              <h2 className="text-xl font-bold text-primary mb-4">Gerenciar Jogadores</h2>
               <PlayersManagement />
             </div>
           </TabsContent>
 
           <TabsContent value="jerseys">
             <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-flu-grena mb-4">Gerenciar Camisas</h2>
+              <h2 className="text-xl font-bold text-primary mb-4">Gerenciar Camisas</h2>
               <JerseysManagement />
             </div>
           </TabsContent>
@@ -152,7 +152,7 @@ export default function Admin() {
           <TabsContent value="add-player">
             <div className="max-w-md mx-auto">
               <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-bold text-flu-grena mb-4">Adicionar Novo Jogador</h2>
+                <h2 className="text-xl font-bold text-primary mb-4">Adicionar Novo Jogador</h2>
                 <AddPlayerForm />
               </div>
             </div>

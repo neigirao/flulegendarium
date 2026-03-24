@@ -151,16 +151,16 @@ export const AchievementsGrid = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-flu-grena flex items-center justify-between">
+        <CardTitle className="text-primary flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="w-6 h-6" />
             <span>Conquistas Tricolores</span>
           </div>
           <div className="flex items-center gap-4 text-sm font-normal">
-            <Badge variant="outline" className="text-flu-grena border-flu-grena">
+            <Badge variant="outline" className="text-primary border-primary">
               {unlockedCount}/{totalCount} desbloqueadas
             </Badge>
-            <Badge variant="outline" className="text-flu-verde border-flu-verde">
+            <Badge variant="outline" className="text-secondary border-secondary">
               {totalPoints} pontos
             </Badge>
           </div>

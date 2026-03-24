@@ -16,7 +16,7 @@ export const ErrorDisplay = ({ error }: ErrorDisplayProps) => {
       </p>
       <button 
         onClick={() => navigate("/")}
-        className="bg-flu-grena text-white px-4 py-2 rounded-lg"
+        className="bg-primary text-white px-4 py-2 rounded-lg"
       >
         Voltar
       </button>

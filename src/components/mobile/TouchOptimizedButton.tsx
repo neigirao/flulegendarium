@@ -22,7 +22,7 @@ export const TouchOptimizedButton = forwardRef<HTMLButtonElement, TouchOptimized
       // Transition for better UX
       'transition-all duration-200 ease-out',
       // Focus states for accessibility
-      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-flu-grena focus-visible:ring-offset-2',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
       // Active states for touch feedback
       'active:scale-95 active:transition-none',
       // Flex for content alignment
@@ -33,27 +33,27 @@ export const TouchOptimizedButton = forwardRef<HTMLButtonElement, TouchOptimized
 
     const variants = {
       primary: [
-        'bg-flu-grena text-white',
-        'hover:bg-flu-grena/90',
-        'active:bg-flu-grena/80',
+        'bg-primary text-white',
+        'hover:bg-primary/90',
+        'active:bg-primary/80',
         'disabled:bg-muted disabled:text-muted-foreground'
       ],
       secondary: [
-        'bg-flu-verde text-white',
-        'hover:bg-flu-verde/90',
-        'active:bg-flu-verde/80',
+        'bg-secondary text-white',
+        'hover:bg-secondary/90',
+        'active:bg-secondary/80',
         'disabled:bg-muted disabled:text-muted-foreground'
       ],
       outline: [
-        'border-2 border-flu-grena text-flu-grena bg-transparent',
-        'hover:bg-flu-grena hover:text-white',
-        'active:bg-flu-grena/90',
+        'border-2 border-primary text-primary bg-transparent',
+        'hover:bg-primary hover:text-white',
+        'active:bg-primary/90',
         'disabled:border-border disabled:text-muted-foreground'
       ],
       ghost: [
-        'text-flu-grena bg-transparent',
-        'hover:bg-flu-grena/10',
-        'active:bg-flu-grena/20',
+        'text-primary bg-transparent',
+        'hover:bg-primary/10',
+        'active:bg-primary/20',
         'disabled:text-muted-foreground'
       ]
     };

@@ -37,7 +37,7 @@ export const GameFeedbackAnimation: React.FC<GameFeedbackAnimationProps> = ({
           <motion.div
             className={`
               text-8xl font-bold transform
-              ${isCorrect ? 'text-flu-verde' : 'text-destructive'}
+              ${isCorrect ? 'text-secondary' : 'text-destructive'}
             `}
             initial={{ y: 50 }}
             animate={{ y: 0 }}

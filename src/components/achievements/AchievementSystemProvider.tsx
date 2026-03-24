@@ -151,7 +151,7 @@ export const AchievementSystemProvider = ({ children }: AchievementSystemProvide
       {pendingAchievements.map((achievement, index) => (
         <div
           key={`${achievement.id}-${index}`}
-          className="fixed top-4 right-4 z-50 bg-gradient-to-r from-flu-grena to-flu-verde text-white p-4 rounded-lg shadow-lg animate-slide-in-right"
+          className="fixed top-4 right-4 z-50 bg-gradient-to-r from-primary to-secondary text-white p-4 rounded-lg shadow-lg animate-slide-in-right"
           style={{ animationDelay: `${index * 500}ms` }}
         >
           <div className="flex items-center gap-3">

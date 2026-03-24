@@ -10,8 +10,8 @@ const playerCardVariants = cva(
       variant: {
         default: "",
         tricolor: "",
-        featured: "ring-2 ring-flu-grena/30",
-        legendary: "ring-2 ring-flu-verde/50 shadow-[var(--shadow-success)]",
+        featured: "ring-2 ring-primary/30",
+        legendary: "ring-2 ring-secondary/50 shadow-[var(--shadow-success)]",
       },
       size: {
         sm: "w-32 h-40",
@@ -68,7 +68,7 @@ const PlayerCardSignature = React.forwardRef<HTMLDivElement, PlayerCardSignature
         case "easy": return "text-green-500"
         case "medium": return "text-yellow-500"
         case "hard": return "text-orange-500"
-        case "legendary": return "text-flu-grena"
+        case "legendary": return "text-primary"
         default: return "text-muted-foreground"
       }
     }
@@ -102,7 +102,7 @@ const PlayerCardSignature = React.forwardRef<HTMLDivElement, PlayerCardSignature
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-flu-grena/20 to-flu-verde/20 flex items-center justify-center">
+            <div className="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
               <span className="text-4xl">⚽</span>
             </div>
           )}
@@ -115,13 +115,13 @@ const PlayerCardSignature = React.forwardRef<HTMLDivElement, PlayerCardSignature
           )}
           
           {/* Overlay on hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-flu-grena/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
         </div>
 
         {/* Content */}
         <div className="h-2/5 p-3 flex flex-col justify-between">
           <div>
-            <h3 className="font-bold text-sm leading-tight line-clamp-2 group-hover:text-flu-grena transition-colors">
+            <h3 className="font-bold text-sm leading-tight line-clamp-2 group-hover:text-primary transition-colors">
               {playerName}
             </h3>
             
@@ -132,7 +132,7 @@ const PlayerCardSignature = React.forwardRef<HTMLDivElement, PlayerCardSignature
             )}
             
             {decade && (
-              <p className="text-xs text-flu-verde font-medium">
+              <p className="text-xs text-secondary font-medium">
                 {decade}
               </p>
             )}
@@ -157,7 +157,7 @@ const PlayerCardSignature = React.forwardRef<HTMLDivElement, PlayerCardSignature
 
         {/* Tricolor stripe for legendary cards */}
         {variant === "legendary" && (
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-flu-grena via-flu-verde to-flu-grena" />
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-secondary to-primary" />
         )}
       </FluCard>
     )

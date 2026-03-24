@@ -101,7 +101,7 @@ export class RootErrorBoundary extends Component<Props, State> {
       const canRetry = this.retryCount < this.maxRetries;
       
       return (
-        <div className="min-h-screen bg-gradient-to-b from-flu-verde/10 to-background flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-b from-secondary/10 to-background flex items-center justify-center p-4">
           <Card className="w-full max-w-lg">
             <CardHeader className="text-center">
               <div className="flex justify-center mb-4">
@@ -109,7 +109,7 @@ export class RootErrorBoundary extends Component<Props, State> {
                   <AlertTriangle className="w-8 h-8 text-red-600" />
                 </div>
               </div>
-              <CardTitle className="text-flu-grena flex items-center justify-center gap-2">
+              <CardTitle className="text-primary flex items-center justify-center gap-2">
                 <Bug className="w-5 h-5" />
                 Ops! Algo deu errado
               </CardTitle>
@@ -132,7 +132,7 @@ export class RootErrorBoundary extends Component<Props, State> {
                 {canRetry ? (
                   <Button 
                     onClick={this.handleRetry}
-                    className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+                    className="flex-1 bg-primary hover:bg-primary/90"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Tentar Novamente ({this.maxRetries - this.retryCount})
@@ -140,7 +140,7 @@ export class RootErrorBoundary extends Component<Props, State> {
                 ) : (
                   <Button 
                     onClick={this.handleReload}
-                    className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+                    className="flex-1 bg-primary hover:bg-primary/90"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Recarregar App

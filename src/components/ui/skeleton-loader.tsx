@@ -46,7 +46,7 @@ export const SkeletonLoader = ({
 
 // Skeleton específico para o player image
 export const PlayerImageSkeleton = () => (
-  <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-muted border-2 border-flu-verde">
+  <div className="relative w-full h-[350px] md:h-[450px] rounded-lg overflow-hidden bg-muted border-2 border-secondary">
     <div className="absolute inset-0 bg-gradient-to-r from-muted via-muted-foreground/20 to-muted animate-pulse" />
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="w-20 h-20 bg-muted-foreground/30 rounded-full animate-pulse" />

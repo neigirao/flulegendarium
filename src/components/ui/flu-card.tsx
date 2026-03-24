@@ -8,11 +8,11 @@ const fluCardVariants = cva(
     variants: {
       variant: {
         default: "bg-card text-card-foreground border-border",
-        tricolor: "bg-gradient-to-br from-flu-grena/5 via-accent/50 to-flu-verde/5 border-flu-grena/20 shadow-[var(--shadow-tricolor)]",
-        grena: "bg-gradient-to-br from-flu-grena/10 to-flu-grena-dark/5 border-flu-grena/30 shadow-[var(--shadow-tricolor)]",
-        verde: "bg-gradient-to-br from-flu-verde/10 to-flu-verde-dark/5 border-flu-verde/30 shadow-[var(--shadow-verde)]",
-        elegant: "bg-gradient-to-br from-accent via-background to-accent/50 border-flu-grena/10 shadow-[var(--shadow-elegante)]",
-        glass: "bg-background/80 backdrop-blur-md border-flu-grena/20 shadow-lg",
+        tricolor: "bg-gradient-to-br from-primary/5 via-accent/50 to-secondary/5 border-primary/20 shadow-[var(--shadow-tricolor)]",
+        grena: "bg-gradient-to-br from-primary/10 to-primary-dark/5 border-primary/30 shadow-[var(--shadow-tricolor)]",
+        verde: "bg-gradient-to-br from-secondary/10 to-secondary-dark/5 border-secondary/30 shadow-[var(--shadow-verde)]",
+        elegant: "bg-gradient-to-br from-accent via-background to-accent/50 border-primary/10 shadow-[var(--shadow-elegante)]",
+        glass: "bg-background/80 backdrop-blur-md border-primary/20 shadow-lg",
       },
       hover: {
         none: "",
@@ -68,7 +68,7 @@ const FluCardTitle = React.forwardRef<
   <h3
     ref={ref}
     className={cn(
-      "text-xl font-bold leading-none tracking-tight bg-gradient-to-r from-flu-grena to-flu-verde bg-clip-text text-transparent",
+      "text-xl font-bold leading-none tracking-tight bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent",
       className
     )}
     {...props}

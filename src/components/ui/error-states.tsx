@@ -51,8 +51,8 @@ export const ErrorState = ({
       icon: AlertTriangle,
       title: title || "Erro no jogo",
       description: description || "Ocorreu um problema durante o jogo. Suas estatísticas foram salvas.",
-      color: "text-flu-grena",
-      bgColor: "bg-flu-verde/10"
+      color: "text-primary",
+      bgColor: "bg-secondary/10"
     },
     generic: {
       icon: AlertTriangle,
@@ -84,7 +84,7 @@ export const ErrorState = ({
             {showRetry && onRetry && (
               <Button 
                 onClick={onRetry}
-                className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+                className="flex-1 bg-primary hover:bg-primary/90"
               >
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Tentar Novamente

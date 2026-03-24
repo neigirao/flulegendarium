@@ -106,8 +106,8 @@ export const RealtimeRanking = () => {
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-4">
-        <Zap className="w-5 h-5 text-flu-grena animate-pulse" />
-        <span className="text-sm font-medium text-flu-grena">Ranking em Tempo Real</span>
+        <Zap className="w-5 h-5 text-primary animate-pulse" />
+        <span className="text-sm font-medium text-primary">Ranking em Tempo Real</span>
       </div>
       
       <AnimatePresence mode="popLayout">
@@ -124,13 +124,13 @@ export const RealtimeRanking = () => {
               exit={{ opacity: 0, y: -20 }}
               className={`
                 flex items-center justify-between p-3 rounded-lg border transition-all duration-300
-                ${isNew ? 'bg-flu-grena/10 border-flu-grena shadow-lg' : 'bg-card border-border hover:bg-muted'}
+                ${isNew ? 'bg-primary/10 border-primary shadow-lg' : 'bg-card border-border hover:bg-muted'}
               `}
             >
               <div className="flex items-center gap-3">
                 <div className={`
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-                  ${index < 3 ? 'bg-flu-grena text-white' : 'bg-muted text-muted-foreground'}
+                  ${index < 3 ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}
                 `}>
                   {index + 1}
                 </div>
@@ -150,7 +150,7 @@ export const RealtimeRanking = () => {
                   )}
                   
                   {isNew && (
-                    <Badge className="bg-flu-grena text-white text-xs animate-pulse">
+                    <Badge className="bg-primary text-white text-xs animate-pulse">
                       <Zap className="w-3 h-3 mr-1" />
                       Novo!
                     </Badge>
@@ -159,8 +159,8 @@ export const RealtimeRanking = () => {
               </div>
               
               <div className="flex items-center gap-2">
-                <Trophy className="w-4 h-4 text-flu-grena" />
-                <span className="font-bold text-flu-grena">
+                <Trophy className="w-4 h-4 text-primary" />
+                <span className="font-bold text-primary">
                   {ranking.score}
                 </span>
               </div>

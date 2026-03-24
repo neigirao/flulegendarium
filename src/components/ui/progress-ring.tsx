@@ -134,9 +134,9 @@ const ProgressRing = React.forwardRef<HTMLDivElement, ProgressRingProps>(
               size === "default" && "text-sm",
               size === "lg" && "text-lg",
               size === "xl" && "text-2xl",
-              variant === "tricolor" && "bg-gradient-to-r from-flu-grena to-flu-verde bg-clip-text text-transparent",
-              variant === "grena" && "text-flu-grena",
-              variant === "verde" && "text-flu-verde"
+              variant === "tricolor" && "bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent",
+              variant === "grena" && "text-primary",
+              variant === "verde" && "text-secondary"
             )}>
               {Math.round(progress)}%
             </span>

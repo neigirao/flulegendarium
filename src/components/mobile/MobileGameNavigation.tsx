@@ -43,7 +43,7 @@ export const MobileGameNavigation = ({
               <UniversalTouchTarget
                 size="sm"
                 onClick={onHome}
-                className="bg-flu-grena text-white hover:bg-flu-grena/90"
+                className="bg-primary text-white hover:bg-primary/90"
               >
                 <Home className="w-5 h-5" />
               </UniversalTouchTarget>

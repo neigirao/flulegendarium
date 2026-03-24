@@ -75,7 +75,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   <AlertTriangle className="w-8 h-8 text-red-600" />
                 </div>
               </div>
-              <CardTitle className="text-flu-grena">Ops! Algo deu errado</CardTitle>
+              <CardTitle className="text-primary">Ops! Algo deu errado</CardTitle>
               <CardDescription>
                 Ocorreu um erro inesperado. Tente novamente ou volte ao início.
               </CardDescription>
@@ -84,7 +84,7 @@ export class ErrorBoundary extends Component<Props, State> {
               <div className="flex gap-2">
                 <Button 
                   onClick={this.handleRetry}
-                  className="flex-1 bg-flu-grena hover:bg-flu-grena/90"
+                  className="flex-1 bg-primary hover:bg-primary/90"
                 >
                   <RefreshCw className="w-4 h-4 mr-2" />
                   Tentar Novamente

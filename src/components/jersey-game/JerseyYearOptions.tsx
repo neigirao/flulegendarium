@@ -58,8 +58,8 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
         'text-xl sm:text-2xl font-bold',
         'w-20 sm:w-24 h-14 sm:h-16',
         'rounded-xl border-2',
-        'bg-flu-verde/20 text-flu-verde border-flu-verde',
-        'ring-2 ring-flu-verde ring-offset-2 ring-offset-background'
+        'bg-secondary/20 text-secondary border-secondary',
+        'ring-2 ring-secondary ring-offset-2 ring-offset-background'
       );
     }
     
@@ -81,8 +81,8 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
         'text-xl sm:text-2xl font-bold',
         'w-20 sm:w-24 h-14 sm:h-16',
         'rounded-xl border-2',
-        'bg-flu-verde/10 text-flu-verde border-flu-verde',
-        'ring-2 ring-flu-verde/50'
+        'bg-secondary/10 text-secondary border-secondary',
+        'ring-2 ring-secondary/50'
       );
     }
     
@@ -126,7 +126,7 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
               <motion.span
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute -top-2 -right-2 w-5 h-5 bg-flu-verde rounded-full flex items-center justify-center text-white text-xs"
+                className="absolute -top-2 -right-2 w-5 h-5 bg-secondary rounded-full flex items-center justify-center text-white text-xs"
               >
                 ✓
               </motion.span>

@@ -21,10 +21,10 @@ export const GameProgress = ({
       label: "Pontos",
       value: currentScore,
       color: "flu-grena",
-      bgColor: "bg-gradient-to-br from-flu-grena/10 to-flu-grena/5",
-      borderColor: "border-flu-grena/20",
-      iconColor: "text-flu-grena",
-      valueColor: "text-flu-grena",
+      bgColor: "bg-gradient-to-br from-primary/10 to-primary/5",
+      borderColor: "border-primary/20",
+      iconColor: "text-primary",
+      valueColor: "text-primary",
       highlight: currentScore > 0
     },
     {
@@ -32,10 +32,10 @@ export const GameProgress = ({
       label: "Jogos",
       value: gamesPlayed,
       color: "flu-verde",
-      bgColor: "bg-gradient-to-br from-flu-verde/10 to-flu-verde/5",
-      borderColor: "border-flu-verde/20",
-      iconColor: "text-flu-verde",
-      valueColor: "text-flu-verde",
+      bgColor: "bg-gradient-to-br from-secondary/10 to-secondary/5",
+      borderColor: "border-secondary/20",
+      iconColor: "text-secondary",
+      valueColor: "text-secondary",
       highlight: gamesPlayed > 0
     },
     {

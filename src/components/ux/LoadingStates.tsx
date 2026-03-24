@@ -12,15 +12,15 @@ export const LoadingState = ({ type, message, showProgress = false, progress = 0
   const loadingConfigs = {
     general: {
       icon: Loader2,
-      color: "text-flu-grena",
-      bg: "bg-gradient-to-r from-flu-grena/10 to-flu-verde/10",
+      color: "text-primary",
+      bg: "bg-gradient-to-r from-primary/10 to-secondary/10",
       message: message || "Carregando...",
       animation: "animate-spin"
     },
     image: {
       icon: Image,
-      color: "text-flu-verde",
-      bg: "bg-gradient-to-r from-flu-verde/10 to-flu-grena/10",
+      color: "text-secondary",
+      bg: "bg-gradient-to-r from-secondary/10 to-primary/10",
       message: message || "Carregando imagem...",
       animation: "animate-pulse"
     },
@@ -67,9 +67,9 @@ export const LoadingState = ({ type, message, showProgress = false, progress = 0
         
         {/* Animated dots */}
         <div className="flex justify-center space-x-1">
-          <div className="w-2 h-2 bg-flu-grena rounded-full animate-bounce"></div>
-          <div className="w-2 h-2 bg-flu-grena rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-          <div className="w-2 h-2 bg-flu-grena rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+          <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
         </div>
       </div>
 
@@ -82,7 +82,7 @@ export const LoadingState = ({ type, message, showProgress = false, progress = 0
           </div>
           <div className="w-full bg-muted rounded-full h-2">
             <div 
-              className="bg-gradient-to-r from-flu-grena to-flu-verde h-2 rounded-full transition-all duration-300 ease-out"
+              className="bg-gradient-to-r from-primary to-secondary h-2 rounded-full transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             ></div>
           </div>
@@ -120,14 +120,14 @@ export const FullScreenLoading = ({ message = "Carregando aplicação..." }: { m
     <div className="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center">
       <div className="text-center space-y-6">
         <div className="relative">
-          <div className="w-24 h-24 border-4 border-flu-grena/20 border-t-flu-grena rounded-full animate-spin"></div>
+          <div className="w-24 h-24 border-4 border-primary/20 border-t-flu-grena rounded-full animate-spin"></div>
           <div className="absolute inset-0 flex items-center justify-center">
-            <Sparkles className="w-8 h-8 text-flu-grena animate-pulse" />
+            <Sparkles className="w-8 h-8 text-primary animate-pulse" />
           </div>
         </div>
         
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-flu-grena">
+          <h2 className="text-xl font-bold text-primary">
             Flu Legendarium
           </h2>
           <p className="text-muted-foreground">

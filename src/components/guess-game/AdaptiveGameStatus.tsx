@@ -25,7 +25,7 @@ export const AdaptiveGameStatus = ({
       {/* Timer */}
       <div className="bg-card/90 backdrop-blur-sm rounded-xl p-4 border border-border shadow-sm">
         <div className="flex items-center gap-2 mb-2">
-          <Clock className="w-4 h-4 text-flu-grena" />
+          <Clock className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-muted-foreground">Tempo</span>
         </div>
         <GameTimer 
