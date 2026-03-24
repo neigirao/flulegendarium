@@ -86,7 +86,7 @@ const AdaptiveGameContainer = () => {
         <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
 
         {currentPlayer && (
-          <div className="mt-4 space-y-4">
+          <div className="mt-6 space-y-6">
             {/* Image + vertical difficulty bar side by side */}
             <div className="flex justify-center items-start gap-3">
               <AdaptivePlayerImage key={`${gameKey}-${currentPlayer.id}`} player={currentPlayer} onImageFixed={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
