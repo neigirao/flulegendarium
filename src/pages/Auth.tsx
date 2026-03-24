@@ -144,7 +144,7 @@ const Auth = () => {
         description="Entre na sua conta para salvar seu progresso e competir no ranking global dos Lendas do Flu!"
       />
       <RootLayout>
-        <div className="min-h-screen bg-tricolor-vertical-border flex items-center justify-center p-4 safe-area-top safe-area-bottom">
+        <div className="min-h-screen page-warm bg-tricolor-vertical-border flex items-center justify-center p-4 safe-area-top safe-area-bottom">
           <div className="w-full max-w-md">
             {/* Header */}
             <div className="text-center mb-8">

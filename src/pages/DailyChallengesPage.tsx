@@ -53,7 +53,7 @@ const DailyChallengesPage = () => {
       />
       <RootLayout>
         <TopNavigation />
-        <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom pt-16">
+        <div className="min-h-screen page-warm bg-tricolor-vertical-border safe-area-top safe-area-bottom pt-16">
           <div className="container mx-auto px-4 py-8">
             {/* Header */}
             <div className="mb-8">
