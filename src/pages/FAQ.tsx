@@ -16,11 +16,11 @@ const faqData = [
       },
       {
         question: "Quais modos de jogo estão disponíveis?",
-        answer: "Temos TRÊS modos: 1) Advinhe o Jogador - Sistema inteligente que ajusta a dificuldade baseado no seu desempenho; 2) Quiz por Década - Escolha uma época específica (anos 70, 80, 90, 2000s, 2010s, 2020s); 3) Quiz das Camisas - Veja uma camisa histórica e escolha o ano correto entre 3 opções!"
+        answer: "Temos TRÊS modos: 1) Advinhe o Jogador - Sistema inteligente que ajusta a dificuldade baseado no seu desempenho; 2) Advinhe o Jogador por Década - Escolha uma época específica (anos 70, 80, 90, 2000s, 2010s, 2020s); 3) Quiz das Camisas - Veja uma camisa histórica e escolha o ano correto entre 3 opções!"
       },
       {
-        question: "Como funciona o Quiz por Década?",
-        answer: "No Quiz por Década você escolhe um período específico da história do Fluminense. Por exemplo, se escolher 'Anos 2000s', aparecerão apenas jogadores que atuaram nessa década. É perfeito para nostálgicos ou para testar conhecimento sobre eras específicas!"
+        question: "Como funciona o Advinhe o Jogador por Década?",
+        answer: "No Advinhe o Jogador por Década você escolhe um período específico da história do Fluminense. Por exemplo, se escolher 'Anos 2000s', aparecerão apenas jogadores que atuaram nessa década. É perfeito para nostálgicos ou para testar conhecimento sobre eras específicas!"
       },
       {
         question: "Como funciona o sistema adaptativo?",
@@ -106,7 +106,7 @@ const faqData = [
       },
       {
         question: "Posso escolher a dificuldade manualmente?",
-        answer: "No modo Advinhe o Jogador, a dificuldade é automática. Mas no Quiz por Década, você pode escolher a era que deseja jogar, o que indiretamente controla a dificuldade (décadas mais antigas tendem a ser mais difíceis)."
+        answer: "No modo Advinhe o Jogador, a dificuldade é automática. Mas no Advinhe o Jogador por Década, você pode escolher a era que deseja jogar, o que indiretamente controla a dificuldade (décadas mais antigas tendem a ser mais difíceis)."
       },
       {
         question: "O que significam os níveis de dificuldade?",
@@ -120,11 +120,11 @@ const faqData = [
     questions: [
       {
         question: "Como começar a jogar?",
-        answer: "Clique em 'Começar a Jogar' na página inicial, escolha entre Advinhe o Jogador ou Quiz por Década, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
+        answer: "Clique em 'Começar a Jogar' na página inicial, escolha entre Advinhe o Jogador ou Advinhe o Jogador por Década, passe pelo tutorial (se for sua primeira vez) e comece a testar seus conhecimentos tricolores!"
       },
       {
         question: "Qual é a diferença entre os modos?",
-        answer: "Advinhe o Jogador: dificuldade automática baseada no desempenho. Quiz por Década: você escolhe a era (70s, 80s, 90s, 2000s, 2010s, 2020s) e joga apenas com jogadores daquele período específico."
+        answer: "Advinhe o Jogador: dificuldade automática baseada no desempenho. Advinhe o Jogador por Década: você escolhe a era (70s, 80s, 90s, 2000s, 2010s, 2020s) e joga apenas com jogadores daquele período específico."
       },
       {
         question: "Posso tentar mais de uma vez por jogador?",
@@ -180,7 +180,7 @@ const faqData = [
       },
       {
         question: "Existe ranking separado por modo de jogo?",
-        answer: "O ranking mostra as melhores pontuações de todos os modos. Jogadores que conseguem alta pontuação no Quiz por Década das décadas mais antigas (mais difíceis) podem alcançar o topo mais facilmente!"
+        answer: "O ranking mostra as melhores pontuações de todos os modos. Jogadores que conseguem alta pontuação no Advinhe o Jogador por Década das décadas mais antigas (mais difíceis) podem alcançar o topo mais facilmente!"
       },
       {
         question: "Como funciona o ranking?",

@@ -80,7 +80,7 @@ const GameModeSelection = () => {
     },
     {
       id: 'decade',
-      title: 'Quiz por Década',
+      title: 'Advinhe o Jogador por Década',
       description: 'Escolha uma era do Fluminense e teste seus conhecimentos sobre os ídolos de cada época.',
       icon: CalendarIcon,
       path: '/quiz-decada',

@@ -152,7 +152,7 @@ export const DecadeGameContainer = () => {
 
   return (
     <>
-      <SEOManager title={`Quiz por Década - ${currentDifficulty.label} | Lendas do Flu`} description="Explore as diferentes eras do Fluminense! Quiz organizado por décadas." schema="Game" />
+      <SEOManager title={`Advinhe o Jogador por Década - ${currentDifficulty.label} | Lendas do Flu`} description="Explore as diferentes eras do Fluminense! Quiz organizado por décadas." schema="Game" />
 
       <DebugInfo show={orch.showDebug} imageUrl={currentPlayer?.image_url} />
 

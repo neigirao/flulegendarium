@@ -83,7 +83,7 @@ const SCHEMA_GENERATORS: Record<SchemaType, (props: { title: string; description
         "name": "Quais modos de jogo estão disponíveis?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Temos TRÊS modos: Advinhe o Jogador (dificuldade automática), Quiz por Década (escolha a era) e Quiz das Camisas (adivinhe o ano entre 3 opções)."
+          "text": "Temos TRÊS modos: Advinhe o Jogador (dificuldade automática), Advinhe o Jogador por Década (escolha a era) e Quiz das Camisas (adivinhe o ano entre 3 opções)."
         }
       },
       {
