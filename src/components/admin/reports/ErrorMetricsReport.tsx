@@ -1,16 +1,15 @@
 
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, TrendingUp, TrendingDown, Zap } from "lucide-react";
+import { AlertTriangle, TrendingUp, TrendingDown } from "lucide-react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { useReports } from "@/hooks/use-reports";
 
 interface ErrorMetric {
   error_type: string;
   count: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: 'low' | 'medium' | 'high';
   trend: 'up' | 'down' | 'stable';
-  last_occurred: string;
 }
 
 interface ErrorMetricsReportProps {
@@ -18,44 +17,47 @@ interface ErrorMetricsReportProps {
 }
 
 export const ErrorMetricsReport = ({ days = 7 }: ErrorMetricsReportProps) => {
-  const { data: errorMetrics = [], isLoading } = useQuery({
-    queryKey: ['error-metrics', days],
-    queryFn: async (): Promise<ErrorMetric[]> => {
-      // Simulate error metrics data based on period
-      return [
-        {
-          error_type: 'Game Load Timeout',
-          count: Math.round(12 * (days / 7)),
-          severity: 'medium',
-          trend: 'down',
-          last_occurred: new Date().toISOString()
-        },
-        {
-          error_type: 'Image Loading Failed',
-          count: Math.round(8 * (days / 7)),
-          severity: 'low',
-          trend: 'stable',
-          last_occurred: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()
-        },
-        {
-          error_type: 'Database Connection Error',
-          count: Math.round(3 * (days / 7)),
-          severity: 'high',
-          trend: 'up',
-          last_occurred: new Date().toISOString()
-        },
-        {
-          error_type: 'Authentication Failure',
-          count: Math.round(5 * (days / 7)),
-          severity: 'medium',
-          trend: 'down',
-          last_occurred: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()
-        }
-      ];
-    },
-    staleTime: 5 * 60 * 1000,
-    retry: 1
-  });
+  const { errorMetrics: dailyErrorMetrics = [], isLoadingErrors: isLoading } = useReports(Math.min(days, 30));
+
+  const currentWindow = dailyErrorMetrics.slice(-Math.max(1, Math.floor(days / 2)));
+  const previousWindow = dailyErrorMetrics.slice(
+    -Math.max(2, Math.floor(days)),
+    -Math.max(1, Math.floor(days / 2))
+  );
+
+  const aggregateErrors = (windowData: typeof dailyErrorMetrics) => {
+    const totals: Record<string, number> = {};
+    windowData.forEach(day => {
+      day.top_errors.forEach(error => {
+        totals[error.error_type] = (totals[error.error_type] || 0) + error.count;
+      });
+    });
+    return totals;
+  };
+
+  const currentTotals = aggregateErrors(currentWindow);
+  const previousTotals = aggregateErrors(previousWindow);
+  const totalCurrentErrors = Object.values(currentTotals).reduce((sum, count) => sum + count, 0);
+
+  const normalizedErrorMetrics: ErrorMetric[] = Object.entries(currentTotals)
+    .map(([error_type, count]) => {
+      const previousCount = previousTotals[error_type] || 0;
+      const trend: 'up' | 'down' | 'stable' = count > previousCount ? 'up' : count < previousCount ? 'down' : 'stable';
+      const ratio = totalCurrentErrors > 0 ? (count / totalCurrentErrors) * 100 : 0;
+
+      let severity: 'low' | 'medium' | 'high' = 'low';
+      if (ratio >= 35) severity = 'high';
+      else if (ratio >= 15) severity = 'medium';
+
+      return {
+        error_type,
+        count,
+        severity,
+        trend
+      };
+    })
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 8);
 
   const getSeverityColor = (severity: string) => {
     const colors = {
@@ -90,8 +92,8 @@ export const ErrorMetricsReport = ({ days = 7 }: ErrorMetricsReportProps) => {
     );
   }
 
-  const totalErrors = errorMetrics.reduce((sum, metric) => sum + metric.count, 0);
-  const criticalErrors = errorMetrics.filter(m => m.severity === 'critical').length;
+  const totalErrors = normalizedErrorMetrics.reduce((sum, metric) => sum + metric.count, 0);
+  const highSeverityErrors = normalizedErrorMetrics.filter(m => m.severity === 'high').length;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -113,21 +115,19 @@ export const ErrorMetricsReport = ({ days = 7 }: ErrorMetricsReportProps) => {
                 <p className="text-sm text-muted-foreground">Total de Erros</p>
               </div>
               <div className="text-center p-4 bg-orange-50 rounded-lg">
-                <div className="text-2xl font-bold text-orange-600">{criticalErrors}</div>
-                <p className="text-sm text-muted-foreground">Críticos</p>
+                <div className="text-2xl font-bold text-orange-600">{highSeverityErrors}</div>
+                <p className="text-sm text-muted-foreground">Alta Severidade</p>
               </div>
             </div>
 
             <div className="space-y-3">
-              {errorMetrics.map((error, index) => (
+              {normalizedErrorMetrics.map((error, index) => (
                 <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
                   <div className="flex items-center gap-3">
                     <AlertTriangle className="w-4 h-4 text-orange-500" />
                     <div>
                       <p className="font-medium text-sm">{error.error_type}</p>
-                      <p className="text-xs text-muted-foreground">
-                        Última vez: {new Date(error.last_occurred).toLocaleString('pt-BR')}
-                      </p>
+                      <p className="text-xs text-muted-foreground">Volume agregado no período</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -153,7 +153,7 @@ export const ErrorMetricsReport = ({ days = 7 }: ErrorMetricsReportProps) => {
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={errorMetrics}>
+            <BarChart data={normalizedErrorMetrics}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis 
                 dataKey="error_type" 
