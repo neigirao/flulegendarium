@@ -149,7 +149,7 @@ const ReportTable = ({ reports, onResolve }: ReportTableProps) => (
               {report.original_url || '—'}
             </td>
             <td className="px-3 py-2 max-w-[220px] truncate text-xs text-muted-foreground">
-              {report.device_info?.pageUrl || '—'}
+              {(report.device_info as any)?.pageUrl || '—'}
             </td>
             <td className="px-3 py-2 text-xs text-muted-foreground">
               {report.created_at ? new Date(report.created_at).toLocaleDateString('pt-BR') : '—'}

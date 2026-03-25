@@ -42,7 +42,7 @@ const Index = () => {
         todayPlayers: data?.today_players,
       });
 
-      return data as { player_count: number; jersey_count: number; today_players: number };
+      return data as unknown as { player_count: number; jersey_count: number; today_players: number };
     },
     staleTime: 5 * 60 * 1000,
   });
