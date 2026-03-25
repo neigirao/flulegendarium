@@ -22,8 +22,8 @@ const ROUTE_PREFETCH_MAP: Record<string, string[]> = {
  */
 const ROUTE_MODULES: Record<string, () => Promise<unknown>> = {
   '/selecionar-modo-jogo': () => import('@/pages/GameModeSelection'),
-  '/quiz-adaptativo': () => import('@/pages/AdaptiveGuessPlayerSimple'),
-  '/quiz-decada': () => import('@/pages/DecadeGuessPlayerSimple'),
+  // '/quiz-adaptativo' and '/quiz-decada' are statically imported in App.tsx
+  // and therefore don't benefit from dynamic prefetch imports.
   '/quiz-camisas': () => import('@/pages/JerseyQuizPage'),
   '/auth': () => import('@/pages/Auth'),
   '/perfil': () => import('@/pages/ProfilePage'),

@@ -23,7 +23,7 @@ import {
   useDecadeGameTimer,
   useDecadeGameState,
 } from '@/hooks/game';
-import { useGameOrchestration } from '@/hooks/game';
+import { useGameOrchestration } from '@/hooks/game/use-game-orchestration';
 import { Decade } from '@/types/decade-game';
 import { decadePlayerService } from '@/services/decadePlayerService';
 import { getDecadeInfo } from '@/data/decades';

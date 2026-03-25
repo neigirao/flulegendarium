@@ -12,13 +12,14 @@ import { GameModesPreview } from "@/components/home/GameModesPreview";
 import { useLinkPrefetch, useRoutePrefetch } from "@/hooks/use-route-prefetch";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { trackFunnelPageView: trackPageView, trackAuthPromptShown } = useAnalytics();
   const { onMouseEnter } = useLinkPrefetch();
-  
+
   useRoutePrefetch();
 
   useEffect(() => {
@@ -30,7 +31,17 @@ const Index = () => {
     queryKey: ['home-stats'],
     queryFn: async () => {
       const { data, error } = await supabase.rpc('get_home_stats');
-      if (error) throw error;
+      if (error) {
+        logger.maintenance('home-stats-rpc-failed', { error: error.message });
+        throw error;
+      }
+
+      logger.maintenance('home-stats-rpc-success', {
+        playerCount: data?.player_count,
+        jerseyCount: data?.jersey_count,
+        todayPlayers: data?.today_players,
+      });
+
       return data as { player_count: number; jersey_count: number; today_players: number };
     },
     staleTime: 5 * 60 * 1000,
@@ -43,7 +54,7 @@ const Index = () => {
   const handlePrefetchGameMode = useCallback(() => {
     onMouseEnter('/selecionar-modo-jogo');
   }, [onMouseEnter]);
-  
+
   const handleStartGame = () => {
     navigate('/selecionar-modo-jogo');
   };
@@ -125,7 +136,7 @@ const Index = () => {
               </p>
             )}
 
-            <p className="text-muted-foreground text-sm mb-4">
+            <p className="text-muted-foreground text-sm mb-4" aria-live="polite">
               Gratuito • Jogue sem cadastro • {playerCount || '188'}+ jogadores • {jerseyCount || '50'}+ camisas históricas
             </p>
 

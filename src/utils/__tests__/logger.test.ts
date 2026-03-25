@@ -63,7 +63,7 @@ describe('logger', () => {
       
       expect(mockConsoleInfo).toHaveBeenCalled();
       const call = mockConsoleInfo.mock.calls[0];
-      expect(call[1]).toEqual(testData);
+      expect(call[1]).toMatchObject({ data: testData });
     });
 
     it('should handle undefined context gracefully', async () => {
@@ -98,7 +98,7 @@ describe('logger', () => {
       
       expect(mockConsoleLog).toHaveBeenCalled();
       const call = mockConsoleLog.mock.calls[0];
-      expect(call[1]).toHaveProperty('playerName', 'Fred');
+      expect(call[1]).toMatchObject({ data: { playerName: 'Fred' } });
     });
 
     it('imageLoad should log success with IMAGE context', async () => {
@@ -128,7 +128,7 @@ describe('logger', () => {
       expect(mockConsoleLog).toHaveBeenCalled();
       const call = mockConsoleLog.mock.calls[0];
       expect(call[0]).toContain('TIMER');
-      expect(call[1]).toHaveProperty('timeRemaining', 60);
+      expect(call[1]).toMatchObject({ data: { timeRemaining: 60 } });
     });
 
     it('timer should handle undefined timeRemaining', async () => {
@@ -198,7 +198,7 @@ describe('logger', () => {
       logger.info('Complex data', 'CTX', complexData);
       
       const call = mockConsoleInfo.mock.calls[0];
-      expect(call[1]).toEqual(complexData);
+      expect(call[1]).toMatchObject({ data: complexData });
     });
 
     it('should handle null data', async () => {
@@ -215,7 +215,23 @@ describe('logger', () => {
       logger.info('Array data', 'CTX', arrayData);
       
       const call = mockConsoleInfo.mock.calls[0];
-      expect(call[1]).toEqual(arrayData);
+      expect(call[1]).toMatchObject({ data: arrayData });
+    });
+  });
+
+
+  describe('maintenance diagnostics', () => {
+    it('should store recent logs for maintenance', async () => {
+      const { logger } = await import('../logger');
+      logger.clearRecentLogs();
+      logger.maintenance('cache-refreshed', { items: 3 });
+
+      const logs = logger.getRecentLogs(5);
+      expect(logs.length).toBeGreaterThan(0);
+      expect(logs[0]).toMatchObject({
+        context: 'MAINTENANCE',
+        message: 'Maintenance: cache-refreshed'
+      });
     });
   });
 });

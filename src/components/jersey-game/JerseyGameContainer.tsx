@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import { useJerseyGuessGame } from "@/hooks/use-jersey-guess-game";
 import { useJerseysData } from "@/hooks/use-jerseys-data";
-import { useGameOrchestration } from "@/hooks/game";
+import { useGameOrchestration } from "@/hooks/game/use-game-orchestration";
 import { BaseGameContainer } from "@/components/guess-game/BaseGameContainer";
 import { GameHeader } from "@/components/guess-game/GameHeader";
 import { GameOverDialog } from "@/components/guess-game/GameOverDialog";
