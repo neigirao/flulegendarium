@@ -114,10 +114,6 @@ export const BusinessIntelligenceDashboard = () => {
             <Calendar size={16} />
             Coortes
           </TabsTrigger>
-          <TabsTrigger value="advanced" className="flex items-center gap-2">
-            <BarChart3 size={16} />
-            Avançado
-          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="executive" className="space-y-6">
