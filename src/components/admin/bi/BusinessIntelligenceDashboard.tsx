@@ -11,7 +11,6 @@ import {
   Calendar, 
   Activity, 
   TrendingUp,
-  BarChart3,
   Target,
   Zap,
   Brain,
