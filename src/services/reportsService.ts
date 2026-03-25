@@ -300,8 +300,9 @@ export const reportsService = {
       Object.values(dailyData).forEach(data => {
         data.top_errors = topErrors;
         data.error_rate = data.total_errors > 0 ? Math.round((data.total_errors / Math.max(100, data.total_errors * 10)) * 100) : 0;
-        data.resolved_errors = Math.round(data.total_errors * 0.8); // 80% resolvidos
-        data.avg_resolution_time = Math.round(4 + Math.random() * 8); // 4-12 horas
+        // A tabela "bugs" não possui status/resolução; manter determinístico e explícito
+        data.resolved_errors = 0;
+        data.avg_resolution_time = 0;
       });
 
       return Object.values(dailyData);
@@ -360,8 +361,27 @@ export const reportsService = {
 
       // Calcular métricas adicionais
       Object.values(dailyData).forEach(data => {
-        data.avg_resolution_time = Math.round(8 + Math.random() * 16); // 8-24 horas
-        data.satisfaction_score = Math.round(3.5 + Math.random() * 1.5); // 3.5-5.0
+        const dayTickets = tickets?.filter(ticket => 
+          new Date(ticket.created_at).toISOString().split('T')[0] === data.date
+        ) || [];
+
+        const resolvedDurationsHours = dayTickets
+          .filter(ticket => ticket.status === 'resolved' || ticket.status === 'closed')
+          .map(ticket => {
+            const createdAt = new Date(ticket.created_at).getTime();
+            const updatedAt = new Date(ticket.updated_at || ticket.created_at).getTime();
+            const diffHours = (updatedAt - createdAt) / (1000 * 60 * 60);
+            return Math.max(0, diffHours);
+          });
+
+        data.avg_resolution_time = resolvedDurationsHours.length > 0
+          ? Math.round(resolvedDurationsHours.reduce((sum, duration) => sum + duration, 0) / resolvedDurationsHours.length)
+          : 0;
+
+        // Proxy determinístico de satisfação: taxa de resolução convertida para escala 0-5
+        const total = data.new_tickets;
+        const resolutionRate = total > 0 ? data.resolved_tickets / total : 0;
+        data.satisfaction_score = Math.round(resolutionRate * 5 * 10) / 10;
       });
 
       return Object.values(dailyData);
@@ -402,11 +422,17 @@ export const reportsService = {
 
       // Processar feedback
       const categoryRatings: Record<string, { sum: number; count: number }> = {};
+      const dailyRatingTotals: Record<string, { sum: number; count: number }> = {};
 
       feedback?.forEach(f => {
         const date = new Date(f.created_at).toISOString().split('T')[0];
-        if (dailyData[date]) {
-          dailyData[date].total_feedback += 1;
+          if (dailyData[date]) {
+            dailyData[date].total_feedback += 1;
+            if (!dailyRatingTotals[date]) {
+              dailyRatingTotals[date] = { sum: 0, count: 0 };
+            }
+            dailyRatingTotals[date].sum += f.rating;
+            dailyRatingTotals[date].count += 1;
           
           if (f.rating >= 4) {
             dailyData[date].positive_feedback += 1;
@@ -434,9 +460,9 @@ export const reportsService = {
       }));
 
       Object.values(dailyData).forEach(data => {
-        if (data.total_feedback > 0) {
-          const totalRating = (data.positive_feedback * 4.5) + (data.neutral_feedback * 3) + (data.negative_feedback * 1.5);
-          data.avg_rating = Math.round((totalRating / data.total_feedback) * 10) / 10;
+        const dailyRatings = dailyRatingTotals[data.date];
+        if (dailyRatings && dailyRatings.count > 0) {
+          data.avg_rating = Math.round((dailyRatings.sum / dailyRatings.count) * 10) / 10;
         }
         data.categories = categories;
       });

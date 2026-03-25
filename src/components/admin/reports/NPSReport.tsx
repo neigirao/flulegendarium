@@ -1,10 +1,9 @@
 
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { useReports } from "@/hooks/use-reports";
 
 interface NPSData {
   score: number;
@@ -21,71 +20,35 @@ interface NPSReportProps {
 }
 
 export const NPSReport = ({ days = 30 }: NPSReportProps) => {
-  const { data: npsData, isLoading } = useQuery({
-    queryKey: ['nps-report', days],
-    queryFn: async (): Promise<NPSData> => {
-      try {
-        const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-        // Try to get actual feedback data from the user_feedback table
-        const { data: feedbacks, error } = await supabase
-          .from('user_feedback')
-          .select('rating, created_at')
-          .gte('created_at', periodAgo);
+  const { npsData: dailyNpsData = [], isLoadingNPS: isLoading } = useReports(days);
 
-        if (error) {
-          console.error('Error fetching NPS data:', error);
-          // Return default data if no feedback exists
-          return {
-            score: 0,
-            total_responses: 0,
-            promoters: 0,
-            passives: 0,
-            detractors: 0,
-            trend: 'stable'
-          };
-        }
+  const currentWindow = dailyNpsData.slice(-Math.max(1, Math.floor(days / 2)));
+  const previousWindow = dailyNpsData.slice(
+    -Math.max(2, Math.floor(days)),
+    -Math.max(1, Math.floor(days / 2))
+  );
 
-        if (!feedbacks || feedbacks.length === 0) {
-          return {
-            score: 0,
-            total_responses: 0,
-            promoters: 0,
-            passives: 0,
-            detractors: 0,
-            trend: 'stable'
-          };
-        }
+  const summarizeWindow = (windowData: typeof dailyNpsData) => {
+    const total_responses = windowData.reduce((sum, item) => sum + item.total_responses, 0);
+    const promoters = windowData.reduce((sum, item) => sum + item.promoters, 0);
+    const passives = windowData.reduce((sum, item) => sum + item.passives, 0);
+    const detractors = windowData.reduce((sum, item) => sum + item.detractors, 0);
+    const score = total_responses > 0
+      ? Math.round(((promoters - detractors) / total_responses) * 100)
+      : 0;
 
-        const ratings = feedbacks.map((f: { rating: number }) => f.rating);
-        const promoters = ratings.filter(r => r >= 9).length;
-        const passives = ratings.filter(r => r >= 7 && r <= 8).length;
-        const detractors = ratings.filter(r => r <= 6).length;
-        
-        const npsScore = Math.round(((promoters - detractors) / ratings.length) * 100);
+    return { total_responses, promoters, passives, detractors, score };
+  };
 
-        return {
-          score: npsScore,
-          total_responses: ratings.length,
-          promoters,
-          passives,
-          detractors,
-          trend: npsScore > 50 ? 'up' : npsScore < 30 ? 'down' : 'stable'
-        };
-      } catch (error) {
-        console.error('Error in NPS calculation:', error);
-        return {
-          score: 0,
-          total_responses: 0,
-          promoters: 0,
-          passives: 0,
-          detractors: 0,
-          trend: 'stable'
-        };
-      }
-    },
-    staleTime: 10 * 60 * 1000,
-    retry: 1
-  });
+  const currentSummary = summarizeWindow(currentWindow);
+  const previousSummary = summarizeWindow(previousWindow);
+
+  const npsData: NPSData = {
+    ...currentSummary,
+    trend: currentSummary.score > previousSummary.score ? 'up' :
+      currentSummary.score < previousSummary.score ? 'down' : 'stable',
+    previous_score: previousSummary.score
+  };
 
   if (isLoading) {
     return (
