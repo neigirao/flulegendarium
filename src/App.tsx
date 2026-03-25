@@ -42,6 +42,13 @@ import {
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
 
+const AppRouteFallback = () => (
+  <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6 text-center" role="status" aria-live="polite">
+    <div className="animate-spin rounded-full h-14 w-14 border-b-2 border-primary" aria-hidden="true"></div>
+    <p className="text-sm text-muted-foreground">Carregando conteúdo…</p>
+  </div>
+);
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -58,85 +65,86 @@ function App() {
         <PWAProvider>
           <BrowserRouter>
             <RoutePrefetchProvider>
-            <AuthProvider>
-              <UXProvider>
-                <TooltipProvider>
-                  <MobileViewport />
-                  <AdvancedServiceWorker />
-                  <PWAStatusIndicator />
-                  <PWAInstallPrompt />
-                  
-                  <RootLayout>
-                    <div className="min-h-screen bg-background font-sans antialiased">
-                      <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
-                        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-                      </div>}>
-                        <Routes>
-                          <Route path="/" element={<Index />} />
-                          <Route path="/auth" element={<LazyAuth />} />
-                          <Route path="/reset-password" element={<LazyResetPassword />} />
-                          <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
-                          <Route 
-                            path="/quiz-adaptativo" 
-                            element={
-                              <GameErrorBoundary>
-                                <AdaptiveGuessPlayerSimple />
-                              </GameErrorBoundary>
-                            } 
-                          />
-                          <Route 
-                            path="/quiz-decada" 
-                            element={
-                              <GameErrorBoundary>
-                                <DecadeGuessPlayerSimple />
-                              </GameErrorBoundary>
-                            } 
-                          />
-                          <Route 
-                            path="/quiz-camisas" 
-                            element={
-                              <GameErrorBoundary>
-                                <LazyJerseyQuizPage />
-                              </GameErrorBoundary>
-                            } 
-                          />
-                          
-                          <Route path="/estatisticas" element={<LazyEstatisticasPublicas />} />
-                          <Route path="/social" element={<LazySocialPage />} />
-                          <Route path="/perfil" element={<LazyProfilePage />} />
-                          <Route path="/desafios" element={<LazyDailyChallengesPage />} />
-                          <Route path="/faq" element={<LazyFAQ />} />
-                          <Route path="/noticias" element={<LazyNewsPortal />} />
-                          <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
-                          <Route path="/doacoes" element={<LazyDonations />} />
-                          <Route path="/conquistas" element={<LazyConquistas />} />
-                          <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
-                          <Route 
-                            path="/admin" 
-                            element={
-                              <AdminErrorBoundary>
-                                <LazyAdmin />
-                              </AdminErrorBoundary>
-                            } 
-                          />
-                          <Route 
-                            path="/admin/dashboard" 
-                            element={
-                              <AdminErrorBoundary>
-                                <LazyAdmin />
-                              </AdminErrorBoundary>
-                            } 
-                          />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
-                      </Suspense>
-                    </div>
-                  </RootLayout>
-                  
-                  <Toaster />
-                </TooltipProvider>
-              </UXProvider>
-            </AuthProvider>
+              <AuthProvider>
+                <UXProvider>
+                  <TooltipProvider>
+                    <MobileViewport />
+                    <AdvancedServiceWorker />
+                    <PWAStatusIndicator />
+                    <PWAInstallPrompt />
+
+                    <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-md">
+                      Pular para o conteúdo principal
+                    </a>
+                    <RootLayout>
+                      <div className="min-h-screen bg-background font-sans antialiased">
+                        <Suspense fallback={<AppRouteFallback />}>
+                          <Routes>
+                            <Route path="/" element={<Index />} />
+                            <Route path="/auth" element={<LazyAuth />} />
+                            <Route path="/reset-password" element={<LazyResetPassword />} />
+                            <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
+                            <Route
+                              path="/quiz-adaptativo"
+                              element={
+                                <GameErrorBoundary>
+                                  <AdaptiveGuessPlayerSimple />
+                                </GameErrorBoundary>
+                              }
+                            />
+                            <Route
+                              path="/quiz-decada"
+                              element={
+                                <GameErrorBoundary>
+                                  <DecadeGuessPlayerSimple />
+                                </GameErrorBoundary>
+                              }
+                            />
+                            <Route
+                              path="/quiz-camisas"
+                              element={
+                                <GameErrorBoundary>
+                                  <LazyJerseyQuizPage />
+                                </GameErrorBoundary>
+                              }
+                            />
+
+                            <Route path="/estatisticas" element={<LazyEstatisticasPublicas />} />
+                            <Route path="/social" element={<LazySocialPage />} />
+                            <Route path="/perfil" element={<LazyProfilePage />} />
+                            <Route path="/desafios" element={<LazyDailyChallengesPage />} />
+                            <Route path="/faq" element={<LazyFAQ />} />
+                            <Route path="/noticias" element={<LazyNewsPortal />} />
+                            <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
+                            <Route path="/doacoes" element={<LazyDonations />} />
+                            <Route path="/conquistas" element={<LazyConquistas />} />
+                            <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
+                            <Route
+                              path="/admin"
+                              element={
+                                <AdminErrorBoundary>
+                                  <LazyAdmin />
+                                </AdminErrorBoundary>
+                              }
+                            />
+                            <Route
+                              path="/admin/dashboard"
+                              element={
+                                <AdminErrorBoundary>
+                                  <LazyAdmin />
+                                </AdminErrorBoundary>
+                              }
+                            />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </Suspense>
+                      </div>
+                    </RootLayout>
+
+                    <Toaster />
+                  </TooltipProvider>
+                </UXProvider>
+              </AuthProvider>
             </RoutePrefetchProvider>
           </BrowserRouter>
         </PWAProvider>

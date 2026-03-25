@@ -1,7 +1,7 @@
 import React, { useCallback } from "react";
 import type { DifficultyLevel } from "@/types/guess-game";
 import { useAdaptiveGuessGame } from "@/hooks/game";
-import { useGameOrchestration } from "@/hooks/game";
+import { useGameOrchestration } from "@/hooks/game/use-game-orchestration";
 import { usePlayersData } from "@/hooks/data";
 import { BaseGameContainer } from "./BaseGameContainer";
 import { ImageFeedbackButton } from "@/components/image-feedback/ImageFeedbackButton";

@@ -15,7 +15,7 @@ export const RootLayout = ({ children }: RootLayoutProps) => {
   }, [location.pathname]);
   
   return (
-    <main role="main">
+    <main id="main-content" role="main" tabIndex={-1} className="focus:outline-none">
       <Suspense
         fallback={
           <PageLoading
