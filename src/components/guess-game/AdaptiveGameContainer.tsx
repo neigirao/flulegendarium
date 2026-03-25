@@ -73,8 +73,6 @@ const AdaptiveGameContainer = () => {
 
       <BaseGameContainer
         title="Advinhe o Jogador"
-        subtitle="Dificuldade automática baseada no seu desempenho"
-        icon="🎯"
         isLoading={isLoading}
         loadingMessage="Carregando jogadores..."
         hasPlayers={!!(players && players.length > 0)}
