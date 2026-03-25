@@ -1,322 +1,83 @@
-# 🏗️ Arquitetura do Lendas do Flu
+# Arquitetura da Aplicação
 
-## Visão Geral
+## 1. Visão em camadas
 
-O "Lendas do Flu" é uma aplicação web de quiz sobre jogadores históricos do Fluminense Football Club. A arquitetura foi projetada para ser escalável, manutenível e otimizada para performance.
+A aplicação segue uma arquitetura em camadas para separar responsabilidades:
 
-## Diagrama de Arquitetura
+1. **Apresentação** (`components`, `pages`)
+2. **Orquestração de fluxo** (`hooks`)
+3. **Domínio e serviços** (`services`, `utils`)
+4. **Estado e contratos** (`stores`, `schemas`, `types`)
+5. **Infra e integrações** (`integrations/supabase`, storage, edge functions)
 
-```mermaid
-graph TB
-    subgraph "Frontend - React + TypeScript"
-        A[App.tsx] --> B[Router]
-        B --> C[Game Modes]
-        B --> D[Admin]
-        B --> E[News]
-        C --> F[Adaptive Quiz]
-        C --> G[Decade Quiz]
-    end
-    
-    subgraph "State Management"
-        H[Zustand Stores]
-        I[React Query Cache]
-        J[Local Storage]
-    end
-    
-    subgraph "Backend - Supabase"
-        K[PostgreSQL]
-        L[Edge Functions]
-        M[Storage]
-        N[Auth]
-    end
-    
-    F --> H
-    G --> H
-    F --> I
-    G --> I
-    I --> K
-    L --> K
-    D --> N
-    
-    style A fill:#1a472a
-    style K fill:#2d5f3f
-    style F fill:#8b0000
-    style G fill:#8b0000
-```
+Essa separação é essencial para diagnosticar erros de forma rápida: cada camada tem sintomas típicos e pontos de coleta de evidência.
 
-## Estrutura de Pastas
-
-```
-src/
-├── core/                    # Lógica de negócio central
-│   ├── game/               # Sistema de jogo
-│   ├── player/             # Gestão de jogadores
-│   └── scoring/            # Sistema de pontuação
-├── features/               # Funcionalidades por domínio
-│   ├── game-adaptive/     # Quiz adaptativo
-│   ├── game-decade/       # Quiz por década
-│   ├── admin/             # Painel administrativo
-│   ├── news/              # Portal de notícias
-│   └── achievements/      # Sistema de conquistas
-├── components/            # Componentes React
-│   ├── ui/               # Componentes base (shadcn)
-│   ├── guess-game/       # Componentes do quiz
-│   ├── admin/            # Componentes admin
-│   └── ...
-├── hooks/                # Hooks customizados
-├── utils/                # Utilitários
-├── services/             # Serviços de API
-├── stores/               # Zustand stores
-└── types/                # Definições TypeScript
-```
-
-## Fluxo de Dados
-
-### 1. Inicialização do Jogo
+## 2. Fluxo principal do jogo
 
 ```mermaid
-sequenceDiagram
-    participant U as Usuário
-    participant C as Component
-    participant H as Hook
-    participant S as Supabase
-    
-    U->>C: Acessa /quiz-adaptativo
-    C->>H: useAdaptiveGuessGame()
-    H->>S: Busca jogadores
-    S-->>H: Lista de jogadores
-    H->>H: selectPlayerByDifficulty()
-    H-->>C: currentPlayer
-    C->>U: Exibe jogador
+flowchart TD
+    A[Usuário inicia modo de jogo] --> B[Container da página]
+    B --> C[Hook de jogo]
+    C --> D[Service de seleção/pontuação]
+    D --> E[Supabase ou dados locais]
+    E --> C
+    C --> F[Atualiza estado UI + Store]
+    F --> G[Render de feedback e próxima rodada]
 ```
 
-### 2. Processamento de Palpite
+## 3. Componentes arquiteturais críticos
 
-```mermaid
-sequenceDiagram
-    participant U as Usuário
-    participant C as Component
-    participant H as Hook
-    participant F as Edge Function
-    participant DB as Database
-    
-    U->>C: Digita palpite
-    C->>H: handleGuess(guess)
-    H->>F: processPlayerName()
-    F->>DB: Busca apelidos
-    DB-->>F: Lista de apelidos
-    F->>F: Calcula similaridade
-    F-->>H: {confidence, isCorrect}
-    H->>H: Atualiza pontuação
-    H->>DB: Salva tentativa
-    H-->>C: Resultado
-    C->>U: Feedback visual
-```
+### 3.1 Modo de jogo
 
-### 3. Sistema de Dificuldade Adaptativa
+- Hooks de jogo concentram regras de progressão (tentativas, dificuldade, rodada).
+- Serviços encapsulam regras de seleção e persistência.
+- UI deve apenas refletir estado e emitir eventos (não duplicar regra de negócio).
 
-```mermaid
-stateDiagram-v2
-    [*] --> MuitoFacil
-    MuitoFacil --> Facil: 3 acertos consecutivos
-    Facil --> Medio: 3 acertos consecutivos
-    Medio --> Dificil: 3 acertos consecutivos
-    Dificil --> MuitoDificil: 3 acertos consecutivos
-    
-    MuitoDificil --> Dificil: 2 erros consecutivos
-    Dificil --> Medio: 2 erros consecutivos
-    Medio --> Facil: 2 erros consecutivos
-    Facil --> MuitoFacil: 2 erros consecutivos
-```
+### 3.2 Tratamento de erro
 
-## Componentes Principais
+- Error boundaries protegem renderização de blocos críticos.
+- Serviços devem retornar falhas tratáveis (mensagem + contexto mínimo).
+- Logs precisam incluir rota, modo de jogo e payload resumido.
 
-### 1. Game Containers
+### 3.3 Dados e validação
 
-**AdaptiveGameContainer** - Container principal do quiz adaptativo
-- Gerencia autenticação de convidados
-- Controla início do timer
-- Integra sistema de conquistas
-- Renderiza componentes do jogo
+- Schemas garantem contrato entre frontend e backend.
+- Tipos (`types`) definem fronteira de dados confiáveis.
+- Dados externos nunca devem entrar no fluxo principal sem validação.
 
-**DecadeGameContainer** - Container do quiz por década
-- Filtra jogadores por década
-- Mesmo sistema adaptativo
-- Timer e pontuação independentes
+## 4. Estratégia de escalabilidade
 
-### 2. Hooks Customizados
+- **Horizontal (features):** novas modalidades entram por novos containers/hooks sem quebrar existentes.
+- **Vertical (confiabilidade):** erros recorrentes viram testes e runbook.
+- **Operacional:** observabilidade e triagem padronizada reduzem MTTR.
 
-**useAdaptiveGuessGame** - Hook principal do jogo adaptativo
-- Seleção de jogadores por dificuldade
-- Ajuste automático de dificuldade
-- Gestão de timer e pontuação
-- Processamento de palpites
+## 5. Decisões de design (resumo)
 
-**useAdaptivePlayerSelection** - Seleção inteligente de jogadores
-- Filtra por nível de dificuldade
-- Evita repetição de jogadores
-- Fallback para jogadores disponíveis
+1. **React + hooks** para composição de lógica por fluxo.
+2. **Zustand** para estado global simples e previsível.
+3. **TanStack Query** para cache e sincronização de dados remotos.
+4. **Supabase** para backend com autenticação e storage integrado.
 
-**useSimpleGameMetrics** - Métricas e analytics
-- Rastreamento de tentativas
-- Cálculo de duração
-- Salvamento de histórico
+## 6. Limites de responsabilidade
 
-### 3. Services
+- `components/`: renderizar e coletar interação.
+- `hooks/`: coordenar estado e casos de uso.
+- `services/`: regras puras e acesso a dados.
+- `integrations/`: detalhes de SDK/infra externa.
 
-**playerDataService** - Gestão de dados de jogadores
-- CRUD de jogadores
-- Upload de imagens
-- Validação de dados
+Se um bug exige mexer em múltiplas camadas, a correção deve explicar claramente por que cada camada foi alterada.
 
-**gameHistoryService** - Histórico de partidas
-- Salvamento de sessões
-- Cálculo de estatísticas
-- Ranking de jogadores
+## 7. Arquitetura para evolução com IA
 
-**achievementsService** - Sistema de conquistas
-- Verificação de condições
-- Desbloqueio de achievements
-- Progresso do usuário
+Para manter qualidade em mudanças assistidas por IA:
 
-## Stack Tecnológica
+- usar hipóteses testáveis,
+- restringir escopo por camada,
+- exigir evidência de validação,
+- documentar trade-offs e rollback.
 
-### Frontend
-- **React 18**: Biblioteca UI com Concurrent Features
-- **TypeScript**: Type safety e IntelliSense
-- **Vite**: Build tool rápido
-- **Tailwind CSS**: Utility-first CSS
-- **shadcn/ui**: Componentes acessíveis
+Referências operacionais:
 
-### Backend
-- **Supabase**: Backend-as-a-Service
-  - PostgreSQL: Banco de dados relacional
-  - Edge Functions: Serverless compute
-  - Storage: Upload de imagens
-  - Auth: Autenticação de usuários
-  - Realtime: Subscriptions em tempo real
-
-### State Management
-- **Zustand**: State management leve
-- **React Query**: Cache e sincronização de dados
-- **LocalStorage**: Persistência local
-
-### Performance
-- **React.lazy**: Code splitting
-- **React.memo**: Memoização de componentes
-- **useMemo/useCallback**: Otimização de renders
-- **Service Worker**: Cache offline
-
-### Analytics & Monitoring
-- **Sentry**: Error tracking
-- **Google Analytics**: Usage analytics
-- **Web Vitals**: Performance metrics
-
-## Patterns e Práticas
-
-### 1. Component Pattern
-- Container/Presentational separation
-- Compound components para complexidade
-- Render props quando necessário
-- Custom hooks para lógica compartilhada
-
-### 2. State Management
-- Zustand para estado global simples
-- React Query para estado servidor
-- Local state para UI temporária
-- Context para temas e providers
-
-### 3. Error Handling
-- Error Boundaries em níveis críticos
-- Try/catch em operações assíncronas
-- Logging estruturado para debug
-- Fallbacks graceful para usuário
-
-### 4. Performance
-- Lazy loading de rotas
-- Memoização seletiva
-- Virtualização de listas longas
-- Debounce em inputs
-- Image optimization
-
-## Segurança
-
-### 1. Autenticação
-- JWT tokens via Supabase Auth
-- Row Level Security (RLS) no banco
-- Session management seguro
-
-### 2. Validação
-- Zod schemas para runtime validation
-- TypeScript para compile-time safety
-- Sanitização de inputs do usuário
-
-### 3. Edge Functions
-- Rate limiting
-- Input validation
-- Error handling robusto
-
-## Escalabilidade
-
-### 1. Database
-- Índices otimizados
-- Query optimization
-- Connection pooling
-- Read replicas (futuro)
-
-### 2. Frontend
-- Code splitting agressivo
-- Asset optimization
-- CDN para static assets
-- Service Worker caching
-
-### 3. Backend
-- Edge Functions escaláveis
-- Supabase auto-scaling
-- Cache strategies
-
-## Deployment
-
-### Pipeline
-1. **Development**: Local com Vite dev server
-2. **Preview**: Lovable preview deployments
-3. **Production**: Lovable.app hosting
-
-### Environments
-- `.env.local`: Variáveis locais
-- Supabase project: Dev/Prod separation
-- Edge Functions: Versioned deployments
-
-## Monitoramento
-
-### Métricas Chave
-- **Core Web Vitals**: LCP, FID, CLS
-- **Game Metrics**: Taxa de acerto, tempo médio
-- **User Metrics**: DAU, MAU, retention
-- **Error Rate**: Errors por sessão
-
-### Alertas
-- Error spikes (Sentry)
-- Performance degradation
-- API failures
-- Database slow queries
-
-## Roadmap Técnico
-
-### Curto Prazo (1-2 meses)
-- [ ] Implementar testes unitários (Vitest)
-- [ ] Adicionar E2E tests (Playwright)
-- [ ] Melhorar acessibilidade (WCAG 2.1)
-- [ ] Otimizar bundle size
-
-### Médio Prazo (3-6 meses)
-- [ ] Migrar para React Server Components
-- [ ] Implementar cache distribuído
-- [ ] Add WebSocket para real-time
-- [ ] Multi-language support
-
-### Longo Prazo (6-12 meses)
-- [ ] Mobile app (React Native)
-- [ ] Modo multiplayer
-- [ ] AI-powered difficulty
-- [ ] Advanced analytics dashboard
+- `docs/AI_GUIDE.md`
+- `docs/ERROR_TRIAGE.md`
+- `docs/CONTRIBUTING.md`
