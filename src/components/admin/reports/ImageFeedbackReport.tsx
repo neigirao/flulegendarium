@@ -113,9 +113,7 @@ interface ReportTableProps {
     created_at: string | null;
     resolved: boolean | null;
     retry_count: number | null;
-    device_info: {
-      pageUrl?: string;
-    } | null;
+    device_info: Record<string, unknown> | null;
   }>;
   onResolve: (id: string) => void;
 }
