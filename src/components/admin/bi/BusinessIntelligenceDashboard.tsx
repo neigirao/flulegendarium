@@ -142,39 +142,6 @@ export const BusinessIntelligenceDashboard = () => {
           />
         </TabsContent>
 
-        <TabsContent value="advanced" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics Preditivos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <Brain className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Machine Learning em desenvolvimento</p>
-                    <p className="text-sm">Previsão de churn e recomendações</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>A/B Testing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Framework de testes em desenvolvimento</p>
-                    <p className="text-sm">Otimização contínua de features</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
       </Tabs>
     </div>
   );

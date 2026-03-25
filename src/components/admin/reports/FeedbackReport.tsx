@@ -64,7 +64,7 @@ export const FeedbackReport = ({ days = 30 }: FeedbackReportProps) => {
 
         return [];
       } catch (error) {
-        console.error('Error fetching feedbacks:', error);
+        logger.error('Error fetching feedbacks', 'REPORTS', { error: String(error) });
         return [];
       }
     },
