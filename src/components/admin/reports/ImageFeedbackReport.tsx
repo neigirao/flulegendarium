@@ -113,6 +113,9 @@ interface ReportTableProps {
     created_at: string | null;
     resolved: boolean | null;
     retry_count: number | null;
+    device_info: {
+      pageUrl?: string;
+    } | null;
   }>;
   onResolve: (id: string) => void;
 }
@@ -125,6 +128,7 @@ const ReportTable = ({ reports, onResolve }: ReportTableProps) => (
           <th className="px-3 py-2 text-left font-medium">Nome</th>
           <th className="px-3 py-2 text-left font-medium">Tipo</th>
           <th className="px-3 py-2 text-left font-medium">URL</th>
+          <th className="px-3 py-2 text-left font-medium">Página</th>
           <th className="px-3 py-2 text-left font-medium">Data</th>
           <th className="px-3 py-2 text-left font-medium">Status</th>
           <th className="px-3 py-2 text-left font-medium">Ação</th>
@@ -145,6 +149,9 @@ const ReportTable = ({ reports, onResolve }: ReportTableProps) => (
             </td>
             <td className="px-3 py-2 max-w-[200px] truncate text-xs text-muted-foreground">
               {report.original_url || '—'}
+            </td>
+            <td className="px-3 py-2 max-w-[220px] truncate text-xs text-muted-foreground">
+              {report.device_info?.pageUrl || '—'}
             </td>
             <td className="px-3 py-2 text-xs text-muted-foreground">
               {report.created_at ? new Date(report.created_at).toLocaleDateString('pt-BR') : '—'}

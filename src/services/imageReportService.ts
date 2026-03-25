@@ -16,6 +16,7 @@ interface ImageErrorReport {
     userAgent: string;
     viewport: { width: number; height: number };
     connection?: string;
+    pageUrl?: string;
   };
 }
 
@@ -44,7 +45,8 @@ export const reportImageError = async (report: ImageErrorReport): Promise<void> 
         height: window.innerHeight
       },
       connection: (navigator as Navigator & { connection?: { effectiveType?: string } })
-        .connection?.effectiveType
+        .connection?.effectiveType,
+      pageUrl: window.location.href
     };
 
     const { error } = await supabase
@@ -108,6 +110,7 @@ export const reportUserImageFeedback = async (
     viewport: { width: window.innerWidth, height: window.innerHeight },
     connection: (navigator as Navigator & { connection?: { effectiveType?: string } })
       .connection?.effectiveType,
+    pageUrl: window.location.href,
     itemType,
   };
 
