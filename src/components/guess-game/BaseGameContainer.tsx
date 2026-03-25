@@ -27,9 +27,6 @@ interface BaseGameContainerProps {
 export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
   onBack,
   backLabel = "Voltar",
-  title,
-  subtitle,
-  icon,
   isLoading,
   loadingMessage = "Carregando...",
   hasPlayers,
@@ -43,23 +40,9 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
 }) => {
   return (
     <ResponsiveContainer variant="game" maxWidth="xl">
-      {/* Header: title centered, controls right */}
-      <div className="flex items-center justify-between mb-5">
-        <div className="w-20" />
-        
-        <div className="flex flex-col items-center text-center">
-          <h1 className="text-display-sm text-primary font-display tracking-wide flex items-center gap-1.5">
-            {icon && <span>{icon}</span>}
-            <span className="text-primary">LENDAS DO FLU</span>
-          </h1>
-          {(title || subtitle) && (
-            <p className="text-sm text-muted-foreground/80 font-medium mt-0.5 max-w-xs">
-              {title}{subtitle ? ` • ${subtitle}` : ''}
-            </p>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1 w-20 justify-end">
+      {/* Header controls */}
+      <div className="flex items-center justify-end mb-2">
+        <div className="flex items-center gap-1">
           {onReset && showReset && (
             <Button variant="ghost" size="sm" onClick={onReset} className="text-muted-foreground hover:text-foreground h-8 w-8 p-0">
               <RotateCcw className="w-3.5 h-3.5" />
