@@ -1,6 +1,8 @@
 
 // Utilitários para validação de dados e prevenção de erros
 
+import { logger } from '@/utils/logger';
+
 export interface ValidationResult<T = unknown> {
   isValid: boolean;
   error?: string;
@@ -17,11 +19,10 @@ export const validateImageUrl = (url: string | null | undefined): ValidationResu
     };
   }
 
-  // Verifica se é uma URL válida
   try {
     new URL(url);
   } catch {
-    console.warn('⚠️ URL de imagem inválida:', url);
+    logger.warn('URL de imagem inválida', 'VALIDATION', { url });
     return {
       isValid: false,
       error: 'URL de imagem inválida',
@@ -29,14 +30,13 @@ export const validateImageUrl = (url: string | null | undefined): ValidationResu
     };
   }
 
-  // Verifica se é uma extensão de imagem válida
   const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
   const hasValidExtension = validExtensions.some(ext => 
     url.toLowerCase().includes(ext)
   );
 
   if (!hasValidExtension && !url.includes('supabase') && !url.includes('lovable-uploads')) {
-    console.warn('⚠️ URL não parece ser uma imagem:', url);
+    logger.warn('URL não parece ser uma imagem', 'VALIDATION', { url });
     return {
       isValid: false,
       error: 'URL não parece ser uma imagem válida',
@@ -58,7 +58,6 @@ interface SanitizedPlayerData {
   period: string;
 }
 
-// Validador de dados de jogador
 export const validatePlayerData = (player: Record<string, unknown> | null | undefined): ValidationResult<SanitizedPlayerData> => {
   if (!player) {
     return {
@@ -77,7 +76,6 @@ export const validatePlayerData = (player: Record<string, unknown> | null | unde
     };
   }
 
-  // Sanitiza os dados
   const sanitizedPlayer: SanitizedPlayerData = {
     id: String(player.id),
     name: String(player.name).trim(),
@@ -92,7 +90,6 @@ export const validatePlayerData = (player: Record<string, unknown> | null | unde
   };
 };
 
-// Validador de dados de resposta da API
 export const validateApiResponse = (data: unknown, expectedFields: string[] = []): ValidationResult => {
   if (!data) {
     return {
@@ -114,7 +111,7 @@ export const validateApiResponse = (data: unknown, expectedFields: string[] = []
       const missingFields = expectedFields.filter(field => !(field in (dataToCheck as Record<string, unknown>)));
       
       if (missingFields.length > 0) {
-        console.warn('⚠️ Campos esperados ausentes:', missingFields);
+        logger.warn('Campos esperados ausentes na resposta da API', 'VALIDATION', { missingFields });
         return {
           isValid: false,
           error: `Campos esperados ausentes: ${missingFields.join(', ')}`
@@ -129,7 +126,6 @@ export const validateApiResponse = (data: unknown, expectedFields: string[] = []
   };
 };
 
-// Utilitário para tentativas com retry
 export const withRetry = async <T>(
   fn: () => Promise<T>,
   maxRetries: number = 3,
@@ -139,24 +135,22 @@ export const withRetry = async <T>(
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      console.log(`🔄 Tentativa ${attempt}/${maxRetries}`);
+      logger.debug(`Tentativa ${attempt}/${maxRetries}`, 'RETRY');
       return await fn();
     } catch (error) {
       lastError = error as Error;
-      console.warn(`⚠️ Tentativa ${attempt} falhou:`, error);
+      logger.warn(`Tentativa ${attempt} falhou`, 'RETRY', { error: String(error) });
       
       if (attempt < maxRetries) {
-        console.log(`⏳ Aguardando ${delay}ms antes da próxima tentativa...`);
         await new Promise(resolve => setTimeout(resolve, delay * attempt));
       }
     }
   }
   
-  console.error('❌ Todas as tentativas falharam');
+  logger.error('Todas as tentativas falharam', 'RETRY');
   throw lastError!;
 };
 
-// Sanitizador de strings
 export const sanitizeString = (str: unknown): string => {
   if (str === null || str === undefined) {
     return '';
@@ -168,11 +162,10 @@ export const sanitizeString = (str: unknown): string => {
   
   return str
     .trim()
-    .replace(/\s+/g, ' ') // Remove espaços extras
-    .replace(/[<>]/g, ''); // Remove caracteres perigosos
+    .replace(/\s+/g, ' ')
+    .replace(/[<>]/g, '');
 };
 
-// Validador de números
 export const validateNumber = (value: unknown, min?: number, max?: number): ValidationResult<number> => {
   const num = Number(value);
   

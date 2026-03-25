@@ -3,7 +3,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ErrorState } from '@/components/ui/error-states';
+import { logger } from '@/utils/logger';
 
 interface Props {
   children: ReactNode;
@@ -43,22 +43,16 @@ export class RootErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('🚨 Root Error Boundary caught error:', {
+    logger.error('Root Error Boundary caught error', 'ERROR_BOUNDARY', {
       error: error.message,
       stack: error.stack,
       componentStack: errorInfo.componentStack,
       errorId: this.state.errorId,
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
       url: window.location.href
     });
 
-    this.setState({
-      error,
-      errorInfo
-    });
+    this.setState({ error, errorInfo });
 
-    // Track error for analytics
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'app_crash', {
         error_message: error.message,
@@ -72,7 +66,7 @@ export class RootErrorBoundary extends Component<Props, State> {
   handleRetry = () => {
     if (this.retryCount < this.maxRetries) {
       this.retryCount++;
-      console.log(`🔄 Tentativa de recuperação ${this.retryCount}/${this.maxRetries}`);
+      logger.info(`Tentativa de recuperação ${this.retryCount}/${this.maxRetries}`, 'ERROR_BOUNDARY');
       
       this.setState({
         hasError: false,
@@ -81,18 +75,16 @@ export class RootErrorBoundary extends Component<Props, State> {
         errorId: this.generateErrorId()
       });
     } else {
-      console.warn('⚠️ Máximo de tentativas de recuperação atingido');
+      logger.warn('Máximo de tentativas de recuperação atingido', 'ERROR_BOUNDARY');
       this.handleReload();
     }
   };
 
   handleReload = () => {
-    console.log('🔄 Recarregando aplicação...');
     window.location.reload();
   };
 
   handleGoHome = () => {
-    console.log('🏠 Redirecionando para página inicial...');
     window.location.href = '/';
   };
 

@@ -3,6 +3,7 @@ import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { logger } from '@/utils/logger';
 
 interface Props {
   children: ReactNode;
@@ -35,23 +36,17 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('ErrorBoundary caught an error:', error, errorInfo);
-    
-    this.setState({
-      error,
-      errorInfo
+    logger.error('ErrorBoundary caught an error', 'ERROR_BOUNDARY', {
+      error: error.message,
+      componentStack: errorInfo.componentStack
     });
-
-    // Call custom error handler if provided
+    
+    this.setState({ error, errorInfo });
     this.props.onError?.(error, errorInfo);
   }
 
   handleRetry = () => {
-    this.setState({
-      hasError: false,
-      error: null,
-      errorInfo: null
-    });
+    this.setState({ hasError: false, error: null, errorInfo: null });
   };
 
   handleGoHome = () => {
@@ -60,12 +55,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      // Use custom fallback if provided
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      // Default error UI
       return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4">
           <Card className="w-full max-w-md">

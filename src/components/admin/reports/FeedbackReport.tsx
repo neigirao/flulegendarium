@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Star, MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 interface FeedbackItem {
   id: string;
@@ -34,7 +35,7 @@ export const FeedbackReport = ({ days = 30 }: FeedbackReportProps) => {
           .limit(100);
 
         if (error) {
-          console.error('Error fetching feedback data:', error);
+          logger.error('Error fetching feedback data', 'REPORTS', { error: error.message });
           return [];
         }
 
@@ -63,7 +64,7 @@ export const FeedbackReport = ({ days = 30 }: FeedbackReportProps) => {
 
         return [];
       } catch (error) {
-        console.error('Error fetching feedbacks:', error);
+        logger.error('Error fetching feedbacks', 'REPORTS', { error: String(error) });
         return [];
       }
     },

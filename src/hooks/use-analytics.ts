@@ -126,16 +126,17 @@ export const useAnalytics = () => {
   }, [flushGA]);
 
   const trackPageView = useCallback((page: string) => {
+    const gaId = import.meta.env.VITE_GA4_ID || 'G-X2VE77MEYC';
     if ('requestIdleCallback' in window) {
       requestIdleCallback(() => {
         if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('config', 'G-X2VE77MEYC', { page_path: page });
+          window.gtag('config', gaId, { page_path: page });
         }
       });
     } else {
       setTimeout(() => {
         if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('config', 'G-X2VE77MEYC', { page_path: page });
+          window.gtag('config', gaId, { page_path: page });
         }
       }, 100);
     }

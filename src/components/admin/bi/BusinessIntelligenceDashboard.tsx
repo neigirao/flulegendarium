@@ -11,7 +11,6 @@ import {
   Calendar, 
   Activity, 
   TrendingUp,
-  BarChart3,
   Target,
   Zap,
   Brain,
@@ -97,7 +96,7 @@ export const BusinessIntelligenceDashboard = () => {
       )}
 
       <Tabs defaultValue="executive" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 max-w-3xl">
+        <TabsList className="grid w-full grid-cols-4 max-w-3xl">
           <TabsTrigger value="executive" className="flex items-center gap-2">
             <LineChart size={16} />
             Executivo
@@ -113,10 +112,6 @@ export const BusinessIntelligenceDashboard = () => {
           <TabsTrigger value="cohorts" className="flex items-center gap-2">
             <Calendar size={16} />
             Coortes
-          </TabsTrigger>
-          <TabsTrigger value="advanced" className="flex items-center gap-2">
-            <BarChart3 size={16} />
-            Avançado
           </TabsTrigger>
         </TabsList>
 
@@ -146,39 +141,6 @@ export const BusinessIntelligenceDashboard = () => {
           />
         </TabsContent>
 
-        <TabsContent value="advanced" className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Analytics Preditivos</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <Brain className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Machine Learning em desenvolvimento</p>
-                    <p className="text-sm">Previsão de churn e recomendações</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>A/B Testing</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 flex items-center justify-center text-muted-foreground">
-                  <div className="text-center">
-                    <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                    <p>Framework de testes em desenvolvimento</p>
-                    <p className="text-sm">Otimização contínua de features</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
       </Tabs>
     </div>
   );
