@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Star, MessageSquare, ThumbsUp, ThumbsDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 interface FeedbackItem {
   id: string;
