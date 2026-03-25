@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/utils/logger";
 
 export interface UserSegment {
   id: string;
@@ -57,7 +58,6 @@ export const adminBusinessIntelligence = {
       const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
       const extendedPeriodAgo = new Date(Date.now() - (days * 2) * 24 * 60 * 60 * 1000).toISOString();
 
-      // Buscar dados de usuários e histórico de jogos
       const { data: gameHistory } = await supabase
         .from('user_game_history')
         .select('user_id, score, created_at, game_duration, correct_guesses, total_attempts')
@@ -69,29 +69,20 @@ export const adminBusinessIntelligence = {
 
       if (!gameHistory || !profiles) return [];
 
-      // Calcular métricas por usuário
       const userMetrics = gameHistory.reduce((acc, game) => {
         const userId = game.user_id;
         const isRecent = new Date(game.created_at) >= new Date(periodAgo);
         
         if (!acc[userId]) {
           acc[userId] = {
-            total_games: 0,
-            recent_games: 0,
-            previous_games: 0,
-            total_score: 0,
-            total_duration: 0,
-            accuracy: 0,
+            total_games: 0, recent_games: 0, previous_games: 0,
+            total_score: 0, total_duration: 0, accuracy: 0,
             last_activity: new Date(game.created_at)
           };
         }
         
         acc[userId].total_games += 1;
-        if (isRecent) {
-          acc[userId].recent_games += 1;
-        } else {
-          acc[userId].previous_games += 1;
-        }
+        if (isRecent) { acc[userId].recent_games += 1; } else { acc[userId].previous_games += 1; }
         acc[userId].total_score += game.score;
         acc[userId].total_duration += game.game_duration || 180;
         acc[userId].accuracy += game.total_attempts > 0 ? (game.correct_guesses / game.total_attempts) * 100 : 0;
@@ -103,65 +94,36 @@ export const adminBusinessIntelligence = {
         return acc;
       }, {} as Record<string, { total_games: number; recent_games: number; previous_games: number; total_score: number; total_duration: number; accuracy: number; last_activity: Date }>);
 
-      // Segmentar usuários baseado em comportamento
       const segments: UserSegment[] = [
         {
-          id: 'champions',
-          segment_name: 'Champions',
+          id: 'champions', segment_name: 'Champions',
           description: 'Usuários mais engajados com alta frequência e performance',
-          user_count: 0,
-          percentage: 0,
-          avg_session_duration: 0,
-          retention_rate: 0,
-          conversion_rate: 0,
-          growth_rate: 0,
-          avg_score: 0,
-          avg_accuracy: 0,
+          user_count: 0, percentage: 0, avg_session_duration: 0, retention_rate: 0,
+          conversion_rate: 0, growth_rate: 0, avg_score: 0, avg_accuracy: 0,
           characteristics: ['Alta frequência de jogos', 'Pontuação acima da média', 'Sessões longas'],
           recommended_actions: ['Programa de embaixadores', 'Conteúdo exclusivo', 'Desafios especiais']
         },
         {
-          id: 'loyal',
-          segment_name: 'Usuários Fiéis',
+          id: 'loyal', segment_name: 'Usuários Fiéis',
           description: 'Usuários regulares com boa retenção',
-          user_count: 0,
-          percentage: 0,
-          avg_session_duration: 0,
-          retention_rate: 0,
-          conversion_rate: 0,
-          growth_rate: 0,
-          avg_score: 0,
-          avg_accuracy: 0,
+          user_count: 0, percentage: 0, avg_session_duration: 0, retention_rate: 0,
+          conversion_rate: 0, growth_rate: 0, avg_score: 0, avg_accuracy: 0,
           characteristics: ['Joga regularmente', 'Boa taxa de acerto', 'Retorna frequentemente'],
           recommended_actions: ['Campanhas de fidelidade', 'Novos modos de jogo', 'Recompensas']
         },
         {
-          id: 'casual',
-          segment_name: 'Jogadores Casuais',
+          id: 'casual', segment_name: 'Jogadores Casuais',
           description: 'Usuários que jogam esporadicamente',
-          user_count: 0,
-          percentage: 0,
-          avg_session_duration: 0,
-          retention_rate: 0,
-          conversion_rate: 0,
-          growth_rate: 0,
-          avg_score: 0,
-          avg_accuracy: 0,
+          user_count: 0, percentage: 0, avg_session_duration: 0, retention_rate: 0,
+          conversion_rate: 0, growth_rate: 0, avg_score: 0, avg_accuracy: 0,
           characteristics: ['Sessões curtas', 'Joga ocasionalmente', 'Precisa de motivação'],
           recommended_actions: ['Notificações personalizadas', 'Tutoriais', 'Gamificação']
         },
         {
-          id: 'at-risk',
-          segment_name: 'Em Risco',
+          id: 'at-risk', segment_name: 'Em Risco',
           description: 'Usuários com risco de abandono',
-          user_count: 0,
-          percentage: 0,
-          avg_session_duration: 0,
-          retention_rate: 0,
-          conversion_rate: 0,
-          growth_rate: 0,
-          avg_score: 0,
-          avg_accuracy: 0,
+          user_count: 0, percentage: 0, avg_session_duration: 0, retention_rate: 0,
+          conversion_rate: 0, growth_rate: 0, avg_score: 0, avg_accuracy: 0,
           characteristics: ['Atividade em declínio', 'Última atividade > 7 dias', 'Performance baixa'],
           recommended_actions: ['Campanhas de reativação', 'Suporte personalizado', 'Incentivos especiais']
         }
@@ -173,7 +135,6 @@ export const adminBusinessIntelligence = {
         return acc;
       }, {} as Record<string, { recent: number; previous: number }>);
       
-      // Classificar usuários em segmentos
       Object.entries(userMetrics).forEach(([_userId, metrics]) => {
         const avgScore = metrics.total_score / metrics.total_games;
         const avgDuration = metrics.total_duration / metrics.total_games;
@@ -185,13 +146,13 @@ export const adminBusinessIntelligence = {
         let segment: UserSegment;
         
         if (metrics.recent_games >= 10 && avgScore >= 600 && avgAccuracy >= 70) {
-          segment = segments[0]; // Champions
+          segment = segments[0];
         } else if (metrics.recent_games >= 5 && avgScore >= 400 && daysSinceLastActivity <= 3) {
-          segment = segments[1]; // Loyal
+          segment = segments[1];
         } else if (daysSinceLastActivity > 7 || avgScore < 300) {
-          segment = segments[3]; // At Risk
+          segment = segments[3];
         } else {
-          segment = segments[2]; // Casual
+          segment = segments[2];
         }
 
         segment.user_count += 1;
@@ -203,7 +164,6 @@ export const adminBusinessIntelligence = {
         segmentGames[segment.id].previous += metrics.previous_games;
       });
 
-      // Calcular percentuais e médias
       segments.forEach(segment => {
         if (segment.user_count > 0) {
           segment.percentage = Math.round((segment.user_count / totalUsers) * 100);
@@ -225,7 +185,7 @@ export const adminBusinessIntelligence = {
       return segments.filter(s => s.user_count > 0);
 
     } catch (error) {
-      console.error('Erro ao buscar segmentos de usuários:', error);
+      logger.error('Erro ao buscar segmentos de usuários', 'BI', { error: String(error) });
       return [];
     }
   },
@@ -244,11 +204,19 @@ export const adminBusinessIntelligence = {
 
       if (!profiles || !gameHistory) return [];
 
-      // Agrupar usuários por mês de registro
+      // Index game history by user_id for O(1) lookup
+      const gamesByUser = new Map<string, { created_at: string }[]>();
+      gameHistory.forEach(game => {
+        if (!gamesByUser.has(game.user_id)) {
+          gamesByUser.set(game.user_id, []);
+        }
+        gamesByUser.get(game.user_id)!.push(game);
+      });
+
       const cohorts: Record<string, CohortData> = {};
       
       profiles.forEach(profile => {
-        const cohortMonth = new Date(profile.created_at).toISOString().slice(0, 7); // YYYY-MM
+        const cohortMonth = new Date(profile.created_at).toISOString().slice(0, 7);
         
         if (!cohorts[cohortMonth]) {
           cohorts[cohortMonth] = {
@@ -265,73 +233,49 @@ export const adminBusinessIntelligence = {
         cohorts[cohortMonth].users_acquired += 1;
       });
 
-      // Calcular retenção para cada coorte
       Object.values(cohorts).forEach(cohort => {
         const cohortUsers = profiles.filter(p => 
           new Date(p.created_at).toISOString().slice(0, 7) === cohort.cohort_period
         );
 
-        // Calcular retenção por semana
         const cohortStartDate = new Date(cohort.cohort_period + '-01');
+
+        const checkRetention = (weekStart: Date, weekEnd: Date) => {
+          return cohortUsers.filter(user => {
+            const userGames = gamesByUser.get(user.id) || [];
+            return userGames.some(game => {
+              const gameDate = new Date(game.created_at);
+              return gameDate >= weekStart && gameDate < weekEnd;
+            });
+          }).length;
+        };
         
-        // Week 1
-        const week1Start = new Date(cohortStartDate);
-        const week1End = new Date(cohortStartDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-        const week1ActiveUsers = cohortUsers.filter(user => {
-          return gameHistory.some(game => 
-            game.user_id === user.id &&
-            new Date(game.created_at) >= week1Start &&
-            new Date(game.created_at) < week1End
-          );
-        }).length;
-        cohort.retention_week_1 = cohort.users_acquired > 0 ? Math.round((week1ActiveUsers / cohort.users_acquired) * 100) : 0;
+        const w1s = new Date(cohortStartDate);
+        const w1e = new Date(cohortStartDate.getTime() + 7 * 86400000);
+        cohort.retention_week_1 = cohort.users_acquired > 0 ? Math.round((checkRetention(w1s, w1e) / cohort.users_acquired) * 100) : 0;
 
-        // Week 2
-        const week2Start = new Date(cohortStartDate.getTime() + 7 * 24 * 60 * 60 * 1000);
-        const week2End = new Date(cohortStartDate.getTime() + 14 * 24 * 60 * 60 * 1000);
-        const week2ActiveUsers = cohortUsers.filter(user => {
-          return gameHistory.some(game => 
-            game.user_id === user.id &&
-            new Date(game.created_at) >= week2Start &&
-            new Date(game.created_at) < week2End
-          );
-        }).length;
-        cohort.retention_week_2 = cohort.users_acquired > 0 ? Math.round((week2ActiveUsers / cohort.users_acquired) * 100) : 0;
+        const w2s = new Date(cohortStartDate.getTime() + 7 * 86400000);
+        const w2e = new Date(cohortStartDate.getTime() + 14 * 86400000);
+        cohort.retention_week_2 = cohort.users_acquired > 0 ? Math.round((checkRetention(w2s, w2e) / cohort.users_acquired) * 100) : 0;
 
-        // Week 4
-        const week4Start = new Date(cohortStartDate.getTime() + 21 * 24 * 60 * 60 * 1000);
-        const week4End = new Date(cohortStartDate.getTime() + 28 * 24 * 60 * 60 * 1000);
-        const week4ActiveUsers = cohortUsers.filter(user => {
-          return gameHistory.some(game => 
-            game.user_id === user.id &&
-            new Date(game.created_at) >= week4Start &&
-            new Date(game.created_at) < week4End
-          );
-        }).length;
-        cohort.retention_week_4 = cohort.users_acquired > 0 ? Math.round((week4ActiveUsers / cohort.users_acquired) * 100) : 0;
+        const w4s = new Date(cohortStartDate.getTime() + 21 * 86400000);
+        const w4e = new Date(cohortStartDate.getTime() + 28 * 86400000);
+        cohort.retention_week_4 = cohort.users_acquired > 0 ? Math.round((checkRetention(w4s, w4e) / cohort.users_acquired) * 100) : 0;
 
-        // Week 12
-        const week12Start = new Date(cohortStartDate.getTime() + 77 * 24 * 60 * 60 * 1000);
-        const week12End = new Date(cohortStartDate.getTime() + 84 * 24 * 60 * 60 * 1000);
-        const week12ActiveUsers = cohortUsers.filter(user => {
-          return gameHistory.some(game => 
-            game.user_id === user.id &&
-            new Date(game.created_at) >= week12Start &&
-            new Date(game.created_at) < week12End
-          );
-        }).length;
-        cohort.retention_week_12 = cohort.users_acquired > 0 ? Math.round((week12ActiveUsers / cohort.users_acquired) * 100) : 0;
+        const w12s = new Date(cohortStartDate.getTime() + 77 * 86400000);
+        const w12e = new Date(cohortStartDate.getTime() + 84 * 86400000);
+        cohort.retention_week_12 = cohort.users_acquired > 0 ? Math.round((checkRetention(w12s, w12e) / cohort.users_acquired) * 100) : 0;
 
-        cohort.avg_ltv = 0; // Sem receita por enquanto
+        cohort.avg_ltv = 0;
       });
 
       return Object.values(cohorts)
-        .filter(c => c.users_acquired >= 5) // Apenas coortes com pelo menos 5 usuários
+        .filter(c => c.users_acquired >= 5)
         .sort((a, b) => b.cohort_period.localeCompare(a.cohort_period))
-        .slice(0, 12); // Últimos 12 meses
+        .slice(0, 12);
 
     } catch (error) {
-      console.error('Erro ao buscar análise de coorte:', error);
+      logger.error('Erro ao buscar análise de coorte', 'BI', { error: String(error) });
       return [];
     }
   },
@@ -344,51 +288,26 @@ export const adminBusinessIntelligence = {
       const lastHour = new Date(now.getTime() - 60 * 60 * 1000);
       const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
 
-      // Buscar dados recentes
-      const { data: todayGames } = await supabase
-        .from('user_game_history')
-        .select('*')
-        .gte('created_at', today.toISOString());
+      const [
+        { data: todayGames },
+        { data: yesterdayGames },
+        { data: recentGames },
+        { data: previousHourGames },
+        { data: gameStarts },
+        { data: yesterdayStarts },
+        { data: todayBugs },
+        { data: pendingTickets }
+      ] = await Promise.all([
+        supabase.from('user_game_history').select('*').gte('created_at', today.toISOString()),
+        supabase.from('user_game_history').select('*').gte('created_at', yesterday.toISOString()).lt('created_at', today.toISOString()),
+        supabase.from('user_game_history').select('*').gte('created_at', lastHour.toISOString()),
+        supabase.from('user_game_history').select('*').gte('created_at', twoHoursAgo.toISOString()).lt('created_at', lastHour.toISOString()),
+        supabase.from('game_starts').select('*').gte('created_at', today.toISOString()),
+        supabase.from('game_starts').select('*').gte('created_at', yesterday.toISOString()).lt('created_at', today.toISOString()),
+        supabase.from('bugs').select('id').gte('created_at', today.toISOString()),
+        supabase.from('support_tickets').select('id').in('status', ['open', 'in_progress'])
+      ]);
 
-      const { data: yesterdayGames } = await supabase
-        .from('user_game_history')
-        .select('*')
-        .gte('created_at', yesterday.toISOString())
-        .lt('created_at', today.toISOString());
-
-      const { data: recentGames } = await supabase
-        .from('user_game_history')
-        .select('*')
-        .gte('created_at', lastHour.toISOString());
-
-      const { data: previousHourGames } = await supabase
-        .from('user_game_history')
-        .select('*')
-        .gte('created_at', twoHoursAgo.toISOString())
-        .lt('created_at', lastHour.toISOString());
-
-      const { data: gameStarts } = await supabase
-        .from('game_starts')
-        .select('*')
-        .gte('created_at', today.toISOString());
-
-      const { data: yesterdayStarts } = await supabase
-        .from('game_starts')
-        .select('*')
-        .gte('created_at', yesterday.toISOString())
-        .lt('created_at', today.toISOString());
-
-      const { data: todayBugs } = await supabase
-        .from('bugs')
-        .select('id')
-        .gte('created_at', today.toISOString());
-
-      const { data: pendingTickets } = await supabase
-        .from('support_tickets')
-        .select('id')
-        .in('status', ['open', 'in_progress']);
-
-      // Calcular métricas operacionais
       const todayActiveUsers = new Set(todayGames?.map(g => g.user_id) || []).size;
       const yesterdayActiveUsers = new Set(yesterdayGames?.map(g => g.user_id) || []).size;
       const recentActiveUsers = new Set(recentGames?.map(g => g.user_id) || []).size;
@@ -397,146 +316,36 @@ export const adminBusinessIntelligence = {
       const todayGamesCount = todayGames?.length || 0;
       const yesterdayGamesCount = yesterdayGames?.length || 0;
 
-      const todayStarts = gameStarts?.length || 0;
+      const todayStartsCount = gameStarts?.length || 0;
       const yesterdayStartsCount = yesterdayStarts?.length || 0;
 
-      const completionRate = todayStarts > 0 ? (todayGamesCount / todayStarts) * 100 : 0;
+      const completionRate = todayStartsCount > 0 ? (todayGamesCount / todayStartsCount) * 100 : 0;
       const yesterdayCompletionRate = yesterdayStartsCount > 0 ? (yesterdayGamesCount / yesterdayStartsCount) * 100 : 0;
 
-      const avgSessionDuration = todayGames?.length > 0 ?
-        Math.round((todayGames.reduce((sum, game) => sum + (game.game_duration || 180), 0) / todayGames.length) / 60) : 0;
+      const avgSessionDuration = todayGames?.length ? Math.round((todayGames.reduce((sum, game) => sum + (game.game_duration || 180), 0) / todayGames.length) / 60) : 0;
+      const yesterdayAvgDuration = yesterdayGames?.length ? Math.round((yesterdayGames.reduce((sum, game) => sum + (game.game_duration || 180), 0) / yesterdayGames.length) / 60) : 0;
 
-      const yesterdayAvgDuration = yesterdayGames?.length > 0 ?
-        Math.round((yesterdayGames.reduce((sum, game) => sum + (game.game_duration || 180), 0) / yesterdayGames.length) / 60) : 0;
+      const avgScore = todayGames?.length ? Math.round(todayGames.reduce((sum, game) => sum + game.score, 0) / todayGames.length) : 0;
+      const yesterdayAvgScore = yesterdayGames?.length ? Math.round(yesterdayGames.reduce((sum, game) => sum + game.score, 0) / yesterdayGames.length) : 0;
 
-      const avgScore = todayGames?.length > 0 ?
-        Math.round(todayGames.reduce((sum, game) => sum + game.score, 0) / todayGames.length) : 0;
-
-      const yesterdayAvgScore = yesterdayGames?.length > 0 ?
-        Math.round(yesterdayGames.reduce((sum, game) => sum + game.score, 0) / yesterdayGames.length) : 0;
-
-      const calculateChangePercentage = (current: number, previous: number) => {
+      const calcChange = (current: number, previous: number) => {
         if (previous === 0) return current > 0 ? 100 : 0;
         return Math.round(((current - previous) / previous) * 100);
       };
 
-      const metrics: OperationalMetric[] = [
-        {
-          id: 'dau',
-          metric_name: 'Usuários Ativos Diários',
-          current_value: todayActiveUsers,
-          previous_value: yesterdayActiveUsers,
-          target_value: Math.max(50, Math.round(todayActiveUsers * 1.2)),
-          unit: '',
-          category: 'engagement',
-          trend: todayActiveUsers > yesterdayActiveUsers ? 'up' : 
-                 todayActiveUsers < yesterdayActiveUsers ? 'down' : 'stable',
-          status: todayActiveUsers >= yesterdayActiveUsers ? 'healthy' : 'warning',
-          change_percentage: calculateChangePercentage(todayActiveUsers, yesterdayActiveUsers),
-          last_updated: now.toISOString()
-        },
-        {
-          id: 'hourly-active',
-          metric_name: 'Usuários Ativos (Última Hora)',
-          current_value: recentActiveUsers,
-          previous_value: previousHourActiveUsers,
-          target_value: Math.max(10, Math.round(Math.max(recentActiveUsers, previousHourActiveUsers) * 1.1)),
-          unit: '',
-          category: 'performance',
-          trend: recentActiveUsers > previousHourActiveUsers ? 'up' :
-                 recentActiveUsers < previousHourActiveUsers ? 'down' : 'stable',
-          status: recentActiveUsers > 5 ? 'healthy' : 'warning',
-          change_percentage: calculateChangePercentage(recentActiveUsers, previousHourActiveUsers),
-          last_updated: now.toISOString()
-        },
-        {
-          id: 'completion-rate',
-          metric_name: 'Taxa de Conclusão',
-          current_value: Math.round(completionRate),
-          previous_value: Math.round(yesterdayCompletionRate),
-          target_value: 85,
-          unit: '%',
-          category: 'engagement',
-          trend: completionRate > yesterdayCompletionRate ? 'up' : 
-                 completionRate < yesterdayCompletionRate ? 'down' : 'stable',
-          status: completionRate > 70 ? 'healthy' : completionRate > 50 ? 'warning' : 'critical',
-          change_percentage: calculateChangePercentage(completionRate, yesterdayCompletionRate),
-          last_updated: now.toISOString()
-        },
-        {
-          id: 'avg-session',
-          metric_name: 'Duração Média da Sessão',
-          current_value: avgSessionDuration,
-          previous_value: yesterdayAvgDuration,
-          target_value: 8,
-          unit: 'min',
-          category: 'engagement',
-          trend: avgSessionDuration > yesterdayAvgDuration ? 'up' : 
-                 avgSessionDuration < yesterdayAvgDuration ? 'down' : 'stable',
-          status: avgSessionDuration >= 5 ? 'healthy' : 'warning',
-          change_percentage: calculateChangePercentage(avgSessionDuration, yesterdayAvgDuration),
-          last_updated: now.toISOString()
-        },
-        {
-          id: 'avg-score',
-          metric_name: 'Pontuação Média',
-          current_value: avgScore,
-          previous_value: yesterdayAvgScore,
-          target_value: 500,
-          unit: 'pts',
-          category: 'performance',
-          trend: avgScore > yesterdayAvgScore ? 'up' : 
-                 avgScore < yesterdayAvgScore ? 'down' : 'stable',
-          status: avgScore >= 400 ? 'healthy' : avgScore >= 300 ? 'warning' : 'critical',
-          change_percentage: calculateChangePercentage(avgScore, yesterdayAvgScore),
-          last_updated: now.toISOString()
-        },
-        {
-          id: 'games-today',
-          metric_name: 'Jogos Completados Hoje',
-          current_value: todayGamesCount,
-          previous_value: yesterdayGamesCount,
-          target_value: Math.max(100, Math.round(todayGamesCount * 1.1)),
-          unit: '',
-          category: 'business',
-          trend: todayGamesCount > yesterdayGamesCount ? 'up' : 
-                 todayGamesCount < yesterdayGamesCount ? 'down' : 'stable',
-          status: todayGamesCount >= yesterdayGamesCount ? 'healthy' : 'warning',
-          change_percentage: calculateChangePercentage(todayGamesCount, yesterdayGamesCount),
-          last_updated: now.toISOString()
-        },
-        {
-          id: 'bugs-today',
-          metric_name: 'Incidentes Reportados Hoje',
-          current_value: todayBugs?.length || 0,
-          previous_value: 0,
-          target_value: 0,
-          unit: '',
-          category: 'technical',
-          trend: (todayBugs?.length || 0) > 0 ? 'up' : 'stable',
-          status: (todayBugs?.length || 0) > 10 ? 'critical' : (todayBugs?.length || 0) > 3 ? 'warning' : 'healthy',
-          change_percentage: 0,
-          last_updated: now.toISOString()
-        },
-        {
-          id: 'pending-support',
-          metric_name: 'Tickets Pendentes',
-          current_value: pendingTickets?.length || 0,
-          previous_value: 0,
-          target_value: 5,
-          unit: '',
-          category: 'technical',
-          trend: (pendingTickets?.length || 0) > 5 ? 'up' : 'stable',
-          status: (pendingTickets?.length || 0) > 15 ? 'critical' : (pendingTickets?.length || 0) > 5 ? 'warning' : 'healthy',
-          change_percentage: 0,
-          last_updated: now.toISOString()
-        }
+      return [
+        { id: 'dau', metric_name: 'Usuários Ativos Diários', current_value: todayActiveUsers, previous_value: yesterdayActiveUsers, target_value: Math.max(50, Math.round(todayActiveUsers * 1.2)), unit: '', category: 'engagement', trend: todayActiveUsers > yesterdayActiveUsers ? 'up' : todayActiveUsers < yesterdayActiveUsers ? 'down' : 'stable', status: todayActiveUsers >= yesterdayActiveUsers ? 'healthy' : 'warning', change_percentage: calcChange(todayActiveUsers, yesterdayActiveUsers), last_updated: now.toISOString() },
+        { id: 'hourly-active', metric_name: 'Usuários Ativos (Última Hora)', current_value: recentActiveUsers, previous_value: previousHourActiveUsers, target_value: Math.max(10, Math.round(Math.max(recentActiveUsers, previousHourActiveUsers) * 1.1)), unit: '', category: 'performance', trend: recentActiveUsers > previousHourActiveUsers ? 'up' : recentActiveUsers < previousHourActiveUsers ? 'down' : 'stable', status: recentActiveUsers > 5 ? 'healthy' : 'warning', change_percentage: calcChange(recentActiveUsers, previousHourActiveUsers), last_updated: now.toISOString() },
+        { id: 'completion-rate', metric_name: 'Taxa de Conclusão', current_value: Math.round(completionRate), previous_value: Math.round(yesterdayCompletionRate), target_value: 85, unit: '%', category: 'engagement', trend: completionRate > yesterdayCompletionRate ? 'up' : completionRate < yesterdayCompletionRate ? 'down' : 'stable', status: completionRate > 70 ? 'healthy' : completionRate > 50 ? 'warning' : 'critical', change_percentage: calcChange(completionRate, yesterdayCompletionRate), last_updated: now.toISOString() },
+        { id: 'avg-session', metric_name: 'Duração Média da Sessão', current_value: avgSessionDuration, previous_value: yesterdayAvgDuration, target_value: 8, unit: 'min', category: 'engagement', trend: avgSessionDuration > yesterdayAvgDuration ? 'up' : avgSessionDuration < yesterdayAvgDuration ? 'down' : 'stable', status: avgSessionDuration >= 5 ? 'healthy' : 'warning', change_percentage: calcChange(avgSessionDuration, yesterdayAvgDuration), last_updated: now.toISOString() },
+        { id: 'avg-score', metric_name: 'Pontuação Média', current_value: avgScore, previous_value: yesterdayAvgScore, target_value: 500, unit: 'pts', category: 'performance', trend: avgScore > yesterdayAvgScore ? 'up' : avgScore < yesterdayAvgScore ? 'down' : 'stable', status: avgScore >= 400 ? 'healthy' : avgScore >= 300 ? 'warning' : 'critical', change_percentage: calcChange(avgScore, yesterdayAvgScore), last_updated: now.toISOString() },
+        { id: 'games-today', metric_name: 'Jogos Completados Hoje', current_value: todayGamesCount, previous_value: yesterdayGamesCount, target_value: Math.max(100, Math.round(todayGamesCount * 1.1)), unit: '', category: 'business', trend: todayGamesCount > yesterdayGamesCount ? 'up' : todayGamesCount < yesterdayGamesCount ? 'down' : 'stable', status: todayGamesCount >= yesterdayGamesCount ? 'healthy' : 'warning', change_percentage: calcChange(todayGamesCount, yesterdayGamesCount), last_updated: now.toISOString() },
+        { id: 'bugs-today', metric_name: 'Incidentes Reportados Hoje', current_value: todayBugs?.length || 0, previous_value: 0, target_value: 0, unit: '', category: 'technical', trend: (todayBugs?.length || 0) > 0 ? 'up' : 'stable', status: (todayBugs?.length || 0) > 10 ? 'critical' : (todayBugs?.length || 0) > 3 ? 'warning' : 'healthy', change_percentage: 0, last_updated: now.toISOString() },
+        { id: 'pending-support', metric_name: 'Tickets Pendentes', current_value: pendingTickets?.length || 0, previous_value: 0, target_value: 5, unit: '', category: 'technical', trend: (pendingTickets?.length || 0) > 5 ? 'up' : 'stable', status: (pendingTickets?.length || 0) > 15 ? 'critical' : (pendingTickets?.length || 0) > 5 ? 'warning' : 'healthy', change_percentage: 0, last_updated: now.toISOString() }
       ];
 
-      return metrics;
-
     } catch (error) {
-      console.error('Erro ao buscar métricas operacionais:', error);
+      logger.error('Erro ao buscar métricas operacionais', 'BI', { error: String(error) });
       return [];
     }
   },
@@ -545,31 +354,19 @@ export const adminBusinessIntelligence = {
     try {
       const now = new Date();
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
       const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
       const periodAgo = new Date(today.getTime() - days * 24 * 60 * 60 * 1000);
 
-      // Buscar dados para diferentes períodos
-      const { data: dailyData } = await supabase
-        .from('user_game_history')
-        .select('user_id, game_duration, created_at')
-        .gte('created_at', today.toISOString());
+      const [
+        { data: dailyData },
+        { data: weeklyData },
+        { data: periodData }
+      ] = await Promise.all([
+        supabase.from('user_game_history').select('user_id, game_duration, created_at').gte('created_at', today.toISOString()),
+        supabase.from('user_game_history').select('user_id').gte('created_at', weekAgo.toISOString()),
+        supabase.from('user_game_history').select('user_id, created_at').gte('created_at', periodAgo.toISOString())
+      ]);
 
-      const { data: weeklyData } = await supabase
-        .from('user_game_history')
-        .select('user_id')
-        .gte('created_at', weekAgo.toISOString());
-
-      const { data: periodData } = await supabase
-        .from('user_game_history')
-        .select('user_id, created_at')
-        .gte('created_at', periodAgo.toISOString());
-
-      const { data: allTimeData } = await supabase
-        .from('user_game_history')
-        .select('user_id, created_at');
-
-      // Calcular métricas
       const dailyActiveUsers = new Set(dailyData?.map(d => d.user_id) || []).size;
       const weeklyActiveUsers = new Set(weeklyData?.map(d => d.user_id) || []).size;
       const periodActiveUsers = new Set(periodData?.map(d => d.user_id) || []).size;
@@ -577,7 +374,6 @@ export const adminBusinessIntelligence = {
       const engagementScore = periodActiveUsers > 0 ? 
         Math.round((dailyActiveUsers / periodActiveUsers) * 100) : 0;
 
-      // Calcular retenção (usuários que jogaram esta semana e na semana passada)
       const lastWeekData = periodData?.filter(d =>
         new Date(d.created_at) >= weekAgo && new Date(d.created_at) < today
       ) || [];
@@ -587,10 +383,7 @@ export const adminBusinessIntelligence = {
       const retentionRate = lastWeekUsers.size > 0 ? 
         Math.round((retainedUsers / lastWeekUsers.size) * 100) : 0;
 
-      const churnRate = Math.max(0, 100 - retentionRate);
-
-      const avgSessionDuration = dailyData?.length > 0 ?
-        Math.round((dailyData.reduce((sum, d) => sum + (d.game_duration || 180), 0) / dailyData.length) / 60) : 0;
+      const avgSessionDuration = dailyData?.length ? Math.round((dailyData.reduce((sum, d) => sum + (d.game_duration || 180), 0) / dailyData.length) / 60) : 0;
 
       return {
         monthly_active_users: periodActiveUsers,
@@ -598,22 +391,17 @@ export const adminBusinessIntelligence = {
         weekly_active_users: weeklyActiveUsers,
         engagement_score: engagementScore,
         retention_rate: retentionRate,
-        churn_rate: churnRate,
+        churn_rate: Math.max(0, 100 - retentionRate),
         avg_session_duration: avgSessionDuration,
         last_updated: now.toISOString()
       };
 
     } catch (error) {
-      console.error('Erro ao buscar métricas de negócio:', error);
+      logger.error('Erro ao buscar métricas de negócio', 'BI', { error: String(error) });
       return {
-        monthly_active_users: 0,
-        daily_active_users: 0,
-        weekly_active_users: 0,
-        engagement_score: 0,
-        retention_rate: 0,
-        churn_rate: 0,
-        avg_session_duration: 0,
-        last_updated: new Date().toISOString()
+        monthly_active_users: 0, daily_active_users: 0, weekly_active_users: 0,
+        engagement_score: 0, retention_rate: 0, churn_rate: 0,
+        avg_session_duration: 0, last_updated: new Date().toISOString()
       };
     }
   }

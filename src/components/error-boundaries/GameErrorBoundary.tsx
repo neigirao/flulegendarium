@@ -1,9 +1,9 @@
 
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { AlertTriangle, RefreshCw, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { logger } from '@/utils/logger';
 
 interface Props {
   children: ReactNode;
@@ -76,7 +76,10 @@ export class GameErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('GameErrorBoundary caught an error:', error, errorInfo);
+    logger.error('GameErrorBoundary caught an error', 'ERROR_BOUNDARY', {
+      error: error.message,
+      componentStack: errorInfo.componentStack
+    });
     
     // Track game errors for analytics
     if (typeof window !== 'undefined' && window.gtag) {

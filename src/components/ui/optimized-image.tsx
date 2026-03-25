@@ -1,6 +1,7 @@
 
 import { useState, useRef, useEffect, memo, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { logger } from '@/utils/logger';
 
 interface OptimizedImageProps {
   src: string;
@@ -39,18 +40,15 @@ export const OptimizedImage = memo(({
   }, [src]);
 
   const handleLoad = useCallback(() => {
-    console.log(`📸 OptimizedImage loaded successfully: ${currentSrc}`);
     setIsLoaded(true);
     setHasError(false);
     onLoad?.();
-  }, [currentSrc, onLoad]);
+  }, [onLoad]);
 
   const handleError = useCallback(() => {
-    console.error(`❌ OptimizedImage error for: ${currentSrc}`);
+    logger.warn('Erro ao carregar imagem', 'IMAGE', { src: currentSrc });
     
-    // Try fallback only once
     if (!hasTriedFallback.current && currentSrc !== fallbackSrc) {
-      console.log(`🔄 Trying fallback for: ${currentSrc} -> ${fallbackSrc}`);
       hasTriedFallback.current = true;
       setCurrentSrc(fallbackSrc);
     } else {
@@ -61,7 +59,6 @@ export const OptimizedImage = memo(({
     onError?.();
   }, [currentSrc, fallbackSrc, onError]);
 
-  // Intersection Observer for lazy loading
   useEffect(() => {
     if (!imgRef.current || priority) return;
 
