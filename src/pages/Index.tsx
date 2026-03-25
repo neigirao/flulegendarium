@@ -36,13 +36,15 @@ const Index = () => {
         throw error;
       }
 
+      const result = data as unknown as { player_count: number; jersey_count: number; today_players: number };
+
       logger.maintenance('home-stats-rpc-success', {
-        playerCount: data?.player_count,
-        jerseyCount: data?.jersey_count,
-        todayPlayers: data?.today_players,
+        playerCount: result?.player_count,
+        jerseyCount: result?.jersey_count,
+        todayPlayers: result?.today_players,
       });
 
-      return data as unknown as { player_count: number; jersey_count: number; today_players: number };
+      return result;
     },
     staleTime: 5 * 60 * 1000,
   });
