@@ -78,6 +78,7 @@ export const adminBusinessIntelligence = {
           acc[userId] = {
             total_games: 0,
             recent_games: 0,
+            previous_games: 0,
             total_score: 0,
             total_duration: 0,
             accuracy: 0,
@@ -86,7 +87,11 @@ export const adminBusinessIntelligence = {
         }
         
         acc[userId].total_games += 1;
-        if (isRecent) acc[userId].recent_games += 1;
+        if (isRecent) {
+          acc[userId].recent_games += 1;
+        } else {
+          acc[userId].previous_games += 1;
+        }
         acc[userId].total_score += game.score;
         acc[userId].total_duration += game.game_duration || 180;
         acc[userId].accuracy += game.total_attempts > 0 ? (game.correct_guesses / game.total_attempts) * 100 : 0;
@@ -96,7 +101,7 @@ export const adminBusinessIntelligence = {
         }
         
         return acc;
-      }, {} as Record<string, { total_games: number; recent_games: number; total_score: number; total_duration: number; accuracy: number; last_activity: Date }>);
+      }, {} as Record<string, { total_games: number; recent_games: number; previous_games: number; total_score: number; total_duration: number; accuracy: number; last_activity: Date }>);
 
       // Segmentar usuários baseado em comportamento
       const segments: UserSegment[] = [
@@ -163,8 +168,10 @@ export const adminBusinessIntelligence = {
       ];
 
       const totalUsers = Object.keys(userMetrics).length;
-      let totalScoreSum = 0;
-      let totalAccuracySum = 0;
+      const segmentGames = segments.reduce((acc, segment) => {
+        acc[segment.id] = { recent: 0, previous: 0 };
+        return acc;
+      }, {} as Record<string, { recent: number; previous: number }>);
       
       // Classificar usuários em segmentos
       Object.entries(userMetrics).forEach(([_userId, metrics]) => {
@@ -174,9 +181,6 @@ export const adminBusinessIntelligence = {
         const daysSinceLastActivity = Math.floor(
           (Date.now() - metrics.last_activity.getTime()) / (1000 * 60 * 60 * 24)
         );
-
-        totalScoreSum += avgScore;
-        totalAccuracySum += avgAccuracy;
 
         let segment: UserSegment;
         
@@ -195,6 +199,8 @@ export const adminBusinessIntelligence = {
         segment.retention_rate += daysSinceLastActivity <= 7 ? 1 : 0;
         segment.avg_score += avgScore;
         segment.avg_accuracy += avgAccuracy;
+        segmentGames[segment.id].recent += metrics.recent_games;
+        segmentGames[segment.id].previous += metrics.previous_games;
       });
 
       // Calcular percentuais e médias
@@ -205,8 +211,14 @@ export const adminBusinessIntelligence = {
           segment.retention_rate = Math.round((segment.retention_rate / segment.user_count) * 100);
           segment.avg_score = Math.round(segment.avg_score / segment.user_count);
           segment.avg_accuracy = Math.round(segment.avg_accuracy / segment.user_count);
-          segment.conversion_rate = Math.round(Math.random() * 20 + 60);
-          segment.growth_rate = Math.round((Math.random() - 0.5) * 20);
+          segment.conversion_rate = Math.round(
+            (segmentGames[segment.id].recent / Math.max(1, segment.user_count)) * 100
+          );
+          const previous = segmentGames[segment.id].previous;
+          const current = segmentGames[segment.id].recent;
+          segment.growth_rate = previous > 0
+            ? Math.round(((current - previous) / previous) * 100)
+            : current > 0 ? 100 : 0;
         }
       });
 
@@ -330,6 +342,7 @@ export const adminBusinessIntelligence = {
       const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
       const lastHour = new Date(now.getTime() - 60 * 60 * 1000);
+      const twoHoursAgo = new Date(now.getTime() - 2 * 60 * 60 * 1000);
 
       // Buscar dados recentes
       const { data: todayGames } = await supabase
@@ -348,6 +361,12 @@ export const adminBusinessIntelligence = {
         .select('*')
         .gte('created_at', lastHour.toISOString());
 
+      const { data: previousHourGames } = await supabase
+        .from('user_game_history')
+        .select('*')
+        .gte('created_at', twoHoursAgo.toISOString())
+        .lt('created_at', lastHour.toISOString());
+
       const { data: gameStarts } = await supabase
         .from('game_starts')
         .select('*')
@@ -359,10 +378,21 @@ export const adminBusinessIntelligence = {
         .gte('created_at', yesterday.toISOString())
         .lt('created_at', today.toISOString());
 
+      const { data: todayBugs } = await supabase
+        .from('bugs')
+        .select('id')
+        .gte('created_at', today.toISOString());
+
+      const { data: pendingTickets } = await supabase
+        .from('support_tickets')
+        .select('id')
+        .in('status', ['open', 'in_progress']);
+
       // Calcular métricas operacionais
       const todayActiveUsers = new Set(todayGames?.map(g => g.user_id) || []).size;
       const yesterdayActiveUsers = new Set(yesterdayGames?.map(g => g.user_id) || []).size;
       const recentActiveUsers = new Set(recentGames?.map(g => g.user_id) || []).size;
+      const previousHourActiveUsers = new Set(previousHourGames?.map(g => g.user_id) || []).size;
 
       const todayGamesCount = todayGames?.length || 0;
       const yesterdayGamesCount = yesterdayGames?.length || 0;
@@ -409,13 +439,14 @@ export const adminBusinessIntelligence = {
           id: 'hourly-active',
           metric_name: 'Usuários Ativos (Última Hora)',
           current_value: recentActiveUsers,
-          previous_value: Math.round(recentActiveUsers * 0.8),
-          target_value: Math.max(10, Math.round(recentActiveUsers * 1.3)),
+          previous_value: previousHourActiveUsers,
+          target_value: Math.max(10, Math.round(Math.max(recentActiveUsers, previousHourActiveUsers) * 1.1)),
           unit: '',
           category: 'performance',
-          trend: 'stable',
+          trend: recentActiveUsers > previousHourActiveUsers ? 'up' :
+                 recentActiveUsers < previousHourActiveUsers ? 'down' : 'stable',
           status: recentActiveUsers > 5 ? 'healthy' : 'warning',
-          change_percentage: 20,
+          change_percentage: calculateChangePercentage(recentActiveUsers, previousHourActiveUsers),
           last_updated: now.toISOString()
         },
         {
@@ -475,29 +506,29 @@ export const adminBusinessIntelligence = {
           last_updated: now.toISOString()
         },
         {
-          id: 'system-health',
-          metric_name: 'Saúde do Sistema',
-          current_value: 99,
-          previous_value: 98,
-          target_value: 99,
-          unit: '%',
+          id: 'bugs-today',
+          metric_name: 'Incidentes Reportados Hoje',
+          current_value: todayBugs?.length || 0,
+          previous_value: 0,
+          target_value: 0,
+          unit: '',
           category: 'technical',
-          trend: 'up',
-          status: 'healthy',
-          change_percentage: 1,
+          trend: (todayBugs?.length || 0) > 0 ? 'up' : 'stable',
+          status: (todayBugs?.length || 0) > 10 ? 'critical' : (todayBugs?.length || 0) > 3 ? 'warning' : 'healthy',
+          change_percentage: 0,
           last_updated: now.toISOString()
         },
         {
-          id: 'response-time',
-          metric_name: 'Tempo de Resposta Médio',
-          current_value: 150,
-          previous_value: 180,
-          target_value: 200,
-          unit: 'ms',
+          id: 'pending-support',
+          metric_name: 'Tickets Pendentes',
+          current_value: pendingTickets?.length || 0,
+          previous_value: 0,
+          target_value: 5,
+          unit: '',
           category: 'technical',
-          trend: 'up',
-          status: 'healthy',
-          change_percentage: -17,
+          trend: (pendingTickets?.length || 0) > 5 ? 'up' : 'stable',
+          status: (pendingTickets?.length || 0) > 15 ? 'critical' : (pendingTickets?.length || 0) > 5 ? 'warning' : 'healthy',
+          change_percentage: 0,
           last_updated: now.toISOString()
         }
       ];
