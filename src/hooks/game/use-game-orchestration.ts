@@ -184,9 +184,11 @@ export const useGameOrchestration = (config: GameOrchestrationConfig) => {
 
   // --- DevTools detection ---
 
-  const handleDevToolsDetected = useCallback(() => {
+  const handleDevToolsDetected = useCallback((reason: 'f12' | 'context_inspect' | 'background_detected') => {
     if (!gameOver) {
-      gameToasts.showDevToolsDetected();
+      if (reason === 'f12' || reason === 'context_inspect') {
+        gameToasts.showDevToolsDetected();
+      }
       resetGame();
     }
   }, [gameOver, gameToasts, resetGame]);
