@@ -96,7 +96,7 @@ export const BusinessIntelligenceDashboard = () => {
       )}
 
       <Tabs defaultValue="executive" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5 max-w-3xl">
+        <TabsList className="grid w-full grid-cols-4 max-w-3xl">
           <TabsTrigger value="executive" className="flex items-center gap-2">
             <LineChart size={16} />
             Executivo
