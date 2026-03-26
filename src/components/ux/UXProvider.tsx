@@ -40,6 +40,9 @@ export const UXProvider = ({ children }: UXProviderProps) => {
     triggerHapticFeedback
   } = useUXFeedback();
 
+  // Google One Tap — shows prompt for unauthenticated users
+  useGoogleOneTap();
+
   const contextValue: UXContextType = {
     showSuccess,
     showError,
