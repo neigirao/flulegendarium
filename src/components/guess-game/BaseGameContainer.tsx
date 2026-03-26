@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { ResponsiveContainer } from '@/components/ux/ResponsiveContainer';
-import { LoadingState } from '@/components/ux/LoadingStates';
+import { GameSkeleton } from './GameSkeleton';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
 
