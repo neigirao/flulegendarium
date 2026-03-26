@@ -5,10 +5,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { UXProvider } from "@/components/ux/UXProvider";
-import { PWAProvider } from "@/components/pwa/PWAProvider";
-import { PWAInstallPrompt } from "@/components/pwa/PWAInstallPrompt";
-import { PWAStatusIndicator } from "@/components/pwa/PWAStatusIndicator";
-import { AdvancedServiceWorker } from "@/components/performance/AdvancedServiceWorker";
 import { RootLayout } from "@/components/RootLayout";
 import { MobileViewport } from "@/components/mobile/MobileViewport";
 import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBoundary";
@@ -62,17 +58,12 @@ function App() {
   return (
     <RootErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <PWAProvider>
-          <BrowserRouter>
+        <BrowserRouter>
             <RoutePrefetchProvider>
               <AuthProvider>
                 <UXProvider>
                   <TooltipProvider>
                     <MobileViewport />
-                    <AdvancedServiceWorker />
-                    <PWAStatusIndicator />
-                    <PWAInstallPrompt />
-
                     <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-primary focus:text-primary-foreground focus:px-4 focus:py-2 focus:rounded-md">
                       Pular para o conteúdo principal
                     </a>
@@ -147,7 +138,6 @@ function App() {
               </AuthProvider>
             </RoutePrefetchProvider>
           </BrowserRouter>
-        </PWAProvider>
       </QueryClientProvider>
     </RootErrorBoundary>
   );

@@ -26,4 +26,3 @@ if (window.requestIdleCallback) {
   setTimeout(() => initSentry(), 0);
 }
 
-// ServiceWorker is handled by AdvancedServiceWorker component
