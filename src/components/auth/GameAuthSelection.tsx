@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { Mail, UserCheck, UserPlus } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface GameAuthSelectionProps {
   onGuestPlay: () => void;
