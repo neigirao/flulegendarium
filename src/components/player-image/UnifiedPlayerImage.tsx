@@ -22,6 +22,13 @@ interface UnifiedPlayerImageProps {
   showDifficultyIndicator?: boolean;
 }
 
+interface SmartFramingResult {
+  position: string;
+  zoom: number;
+}
+
+const MAX_FRAMING_CACHE_ITEMS = 120;
+
 const difficultyEffects = {
   muito_facil: {
     filter: "brightness(1) contrast(1) saturate(1)",
@@ -69,6 +76,73 @@ const getAlternativeUrl = (player: Player, retryCount: number): string => {
   return defaultImage;
 };
 
+const analyzeImageFraming = (img: HTMLImageElement): SmartFramingResult => {
+  const fallback = { position: '50% 50%', zoom: 1 };
+
+  if (typeof document === 'undefined') return fallback;
+  if (!img.naturalWidth || !img.naturalHeight) return fallback;
+
+  const targetMaxDimension = 128;
+  const scale = Math.min(1, targetMaxDimension / Math.max(img.naturalWidth, img.naturalHeight));
+  const sampleWidth = Math.max(8, Math.round(img.naturalWidth * scale));
+  const sampleHeight = Math.max(8, Math.round(img.naturalHeight * scale));
+
+  const canvas = document.createElement('canvas');
+  canvas.width = sampleWidth;
+  canvas.height = sampleHeight;
+
+  const context = canvas.getContext('2d', { willReadFrequently: true });
+  if (!context) return fallback;
+
+  try {
+    context.drawImage(img, 0, 0, sampleWidth, sampleHeight);
+    const imageData = context.getImageData(0, 0, sampleWidth, sampleHeight).data;
+
+    let minX = sampleWidth;
+    let minY = sampleHeight;
+    let maxX = -1;
+    let maxY = -1;
+    let visiblePixels = 0;
+
+    for (let y = 0; y < sampleHeight; y++) {
+      for (let x = 0; x < sampleWidth; x++) {
+        const alpha = imageData[(y * sampleWidth + x) * 4 + 3];
+        if (alpha > 24) {
+          visiblePixels++;
+          minX = Math.min(minX, x);
+          minY = Math.min(minY, y);
+          maxX = Math.max(maxX, x);
+          maxY = Math.max(maxY, y);
+        }
+      }
+    }
+
+    if (visiblePixels === 0) return fallback;
+
+    const visibleRatio = visiblePixels / (sampleWidth * sampleHeight);
+    if (visibleRatio > 0.96) return fallback;
+
+    const contentWidth = Math.max(1, maxX - minX + 1);
+    const contentHeight = Math.max(1, maxY - minY + 1);
+    const centerX = ((minX + maxX) / 2 / sampleWidth) * 100;
+    const centerY = ((minY + maxY) / 2 / sampleHeight) * 100;
+
+    const widthFillRatio = contentWidth / sampleWidth;
+    const heightFillRatio = contentHeight / sampleHeight;
+    const zoomFactor = Math.min(
+      1.18,
+      Math.max(1, Math.min(1 / widthFillRatio, 1 / heightFillRatio) * 0.92)
+    );
+
+    return {
+      position: `${centerX.toFixed(2)}% ${centerY.toFixed(2)}%`,
+      zoom: Number(zoomFactor.toFixed(3))
+    };
+  } catch {
+    return fallback;
+  }
+};
+
 export const UnifiedPlayerImage = memo(({
   player,
   onImageLoaded,
@@ -81,9 +155,15 @@ export const UnifiedPlayerImage = memo(({
   const [retryCount, setRetryCount] = useState(0);
   const [currentSrc, setCurrentSrc] = useState<string>('');
   const [inView, setInView] = useState(priority);
-  const imgRef = useRef<HTMLImageElement>(null);
+  const [imageFraming, setImageFraming] = useState<SmartFramingResult>({ position: '50% 50%', zoom: 1 });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imgElementRef = useRef<HTMLImageElement>(null);
   const observerRef = useRef<IntersectionObserver>();
   const originalSrcRef = useRef<string>('');
+  const framingCacheRef = useRef<Map<string, SmartFramingResult>>(new Map());
+  const isMountedRef = useRef(true);
+  const idleTaskIdRef = useRef<number | null>(null);
+  const timeoutTaskIdRef = useRef<number | null>(null);
 
   // Obter URL inicial
   useEffect(() => {
@@ -92,6 +172,7 @@ export const UnifiedPlayerImage = memo(({
     setCurrentSrc(initialSrc);
     setRetryCount(0);
     setImageStatus('loading');
+    setImageFraming({ position: '50% 50%', zoom: 1 });
   }, [player]);
 
   const effects = difficulty ? difficultyEffects[difficulty] : null;
@@ -112,7 +193,7 @@ export const UnifiedPlayerImage = memo(({
       { rootMargin: '50px 0px', threshold: 0.01 }
     );
 
-    const currentRef = imgRef.current;
+    const currentRef = containerRef.current;
     if (currentRef) {
       observerRef.current.observe(currentRef);
     }
@@ -124,9 +205,61 @@ export const UnifiedPlayerImage = memo(({
     };
   }, [priority, inView]);
 
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+
+      if (typeof window !== 'undefined' && idleTaskIdRef.current !== null && 'cancelIdleCallback' in window) {
+        (window as Window & { cancelIdleCallback: (handle: number) => void }).cancelIdleCallback(idleTaskIdRef.current);
+      }
+
+      if (timeoutTaskIdRef.current !== null) {
+        clearTimeout(timeoutTaskIdRef.current);
+      }
+    };
+  }, []);
+
+  const optimizeImageFraming = useCallback((imgElement: HTMLImageElement) => {
+    const cacheKey = `${player.id}:${currentSrc}`;
+    const cachedFraming = framingCacheRef.current.get(cacheKey);
+
+    if (cachedFraming) {
+      setImageFraming(cachedFraming);
+      return;
+    }
+
+    const runAnalysis = () => {
+      const analyzedFraming = analyzeImageFraming(imgElement);
+
+      if (!isMountedRef.current) return;
+
+      if (framingCacheRef.current.size >= MAX_FRAMING_CACHE_ITEMS) {
+        const oldestKey = framingCacheRef.current.keys().next().value;
+        if (oldestKey) {
+          framingCacheRef.current.delete(oldestKey);
+        }
+      }
+
+      framingCacheRef.current.set(cacheKey, analyzedFraming);
+      setImageFraming(analyzedFraming);
+    };
+
+    if (typeof window !== 'undefined' && 'requestIdleCallback' in window) {
+      idleTaskIdRef.current = (window as Window & { requestIdleCallback: (callback: IdleRequestCallback) => number })
+        .requestIdleCallback(() => runAnalysis());
+      return;
+    }
+
+    timeoutTaskIdRef.current = window.setTimeout(runAnalysis, 0);
+  }, [player.id, currentSrc]);
+
   const handleImageLoad = useCallback(() => {
     setImageStatus('loaded');
     markImageAsLoaded(player.id);
+
+    if (imgElementRef.current) {
+      optimizeImageFraming(imgElementRef.current);
+    }
     
     if (retryCount > 0) {
       logger.info(`Imagem carregada após ${retryCount} retry(s)`, 'IMAGE_RETRY', {
@@ -137,7 +270,7 @@ export const UnifiedPlayerImage = memo(({
     }
     
     onImageLoaded?.();
-  }, [player.id, player.name, currentSrc, retryCount, onImageLoaded]);
+  }, [player.id, player.name, currentSrc, retryCount, onImageLoaded, optimizeImageFraming]);
 
   const handleImageError = useCallback(() => {
     logger.warn(`Erro ao carregar imagem (tentativa ${retryCount + 1})`, 'IMAGE_ERROR', {
@@ -217,9 +350,9 @@ export const UnifiedPlayerImage = memo(({
           </div>
         )}
 
-        {/* Image container */}
+          {/* Image container */}
         <div 
-          ref={imgRef}
+          ref={containerRef}
           className={cn(
             "relative bg-background rounded-lg overflow-hidden",
             difficulty ? "w-80 h-80 md:w-96 md:h-96 rounded-2xl" : "aspect-[4/5] min-h-[300px]"
@@ -227,35 +360,40 @@ export const UnifiedPlayerImage = memo(({
         >
           {/* Image with srcset for responsive loading */}
           {(inView || priority) && currentSrc && (
-            <img
-              key={`${player.id}-${currentSrc}-${retryCount}`}
-              src={isSupabaseStorageUrl(currentSrc) 
-                ? getTransformedImageUrl(currentSrc, { width: 400, quality: 80, format: 'webp' }) 
-                : currentSrc}
-              srcSet={isSupabaseStorageUrl(currentSrc) 
-                ? getResponsiveSrcSet(currentSrc, [320, 480, 640, 800]) 
-                : undefined}
-              sizes={difficulty 
-                ? "(max-width: 768px) 320px, 384px" 
-                : "(max-width: 640px) 100vw, (max-width: 1024px) 400px, 500px"}
-              alt={`Foto de ${player.name}`}
-              className={cn(
-                "w-full h-full object-contain transition-all duration-500 border-2 border-primary shadow-md hover:shadow-lg",
-                imageStatus === 'loaded' ? 'opacity-100' : 'opacity-0'
-              )}
-              loading={priority ? 'eager' : 'lazy'}
-              decoding={priority ? 'sync' : 'async'}
-              fetchPriority={priority ? 'high' : 'auto'}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-              data-testid="player-image"
-              data-lcp-critical={priority ? 'true' : undefined}
-              style={{
-                aspectRatio: difficulty ? '1' : '4/5',
-                contentVisibility: priority ? 'visible' : 'auto',
-                containIntrinsicSize: difficulty ? '384px 384px' : '400px 500px'
-              }}
-            />
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-muted/20 to-background/20">
+              <img
+                ref={imgElementRef}
+                key={`${player.id}-${currentSrc}-${retryCount}`}
+                src={isSupabaseStorageUrl(currentSrc) 
+                  ? getTransformedImageUrl(currentSrc, { width: 400, quality: 80, format: 'webp' }) 
+                  : currentSrc}
+                srcSet={isSupabaseStorageUrl(currentSrc) 
+                  ? getResponsiveSrcSet(currentSrc, [320, 480, 640, 800]) 
+                  : undefined}
+                sizes={difficulty 
+                  ? "(max-width: 768px) 320px, 384px" 
+                  : "(max-width: 640px) 100vw, (max-width: 1024px) 400px, 500px"}
+                alt={`Foto de ${player.name}`}
+                className={cn(
+                  "max-w-full max-h-full w-auto h-auto object-contain transition-all duration-500 border-2 border-primary shadow-md hover:shadow-lg",
+                  imageStatus === 'loaded' ? 'opacity-100' : 'opacity-0'
+                )}
+                loading={priority ? 'eager' : 'lazy'}
+                decoding={priority ? 'sync' : 'async'}
+                fetchPriority={priority ? 'high' : 'auto'}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+                data-testid="player-image"
+                data-lcp-critical={priority ? 'true' : undefined}
+                style={{
+                  objectPosition: imageFraming.position,
+                  transform: `scale(${imageFraming.zoom})`,
+                  transformOrigin: 'center center',
+                  contentVisibility: priority ? 'visible' : 'auto',
+                  containIntrinsicSize: difficulty ? '384px 384px' : '400px 500px'
+                }}
+              />
+            </div>
           )}
 
           {/* Error state */}
