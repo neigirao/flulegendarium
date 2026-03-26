@@ -10,7 +10,7 @@ interface ImageErrorReport {
   player_name: string;
   original_url: string | null;
   resolved_url: string | null;
-  error_type: 'load_error' | 'timeout' | 'invalid_url' | 'network_error';
+  error_type: 'load_error' | 'timeout' | 'invalid_url' | 'network_error' | 'user_report';
   retry_count: number;
   device_info?: {
     userAgent: string;
@@ -122,6 +122,8 @@ export const reportUserImageFeedback = async (
       original_url: imageUrl,
       error_type: 'user_report',
       retry_count: 0,
+      resolved: false,
+      reported_at: new Date().toISOString(),
       device_info: deviceInfo,
     });
 

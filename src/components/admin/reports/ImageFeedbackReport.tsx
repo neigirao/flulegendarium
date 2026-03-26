@@ -18,7 +18,7 @@ export const ImageFeedbackReport = () => {
         .order('created_at', { ascending: false })
         .limit(100);
 
-      if (filter === 'pending') query = query.eq('resolved', false);
+      if (filter === 'pending') query = query.not('resolved', 'is', true);
       if (filter === 'resolved') query = query.eq('resolved', true);
 
       const { data, error } = await query;
@@ -118,6 +118,10 @@ interface ReportTableProps {
   onResolve: (id: string) => void;
 }
 
+interface DeviceInfo {
+  pageUrl?: string;
+}
+
 const ReportTable = ({ reports, onResolve }: ReportTableProps) => (
   <div className="overflow-x-auto rounded-lg border border-border">
     <table className="w-full text-sm">
@@ -149,7 +153,7 @@ const ReportTable = ({ reports, onResolve }: ReportTableProps) => (
               {report.original_url || '—'}
             </td>
             <td className="px-3 py-2 max-w-[220px] truncate text-xs text-muted-foreground">
-              {(report.device_info as any)?.pageUrl || '—'}
+              {(report.device_info as DeviceInfo | null)?.pageUrl || '—'}
             </td>
             <td className="px-3 py-2 text-xs text-muted-foreground">
               {report.created_at ? new Date(report.created_at).toLocaleDateString('pt-BR') : '—'}

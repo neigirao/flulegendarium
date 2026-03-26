@@ -355,7 +355,7 @@ export const UnifiedPlayerImage = memo(({
           ref={containerRef}
           className={cn(
             "relative bg-background rounded-lg overflow-hidden",
-            difficulty ? "w-80 h-80 md:w-96 md:h-96 rounded-2xl" : "aspect-[4/5] min-h-[300px]"
+            difficulty ? "w-full h-full rounded-2xl" : "aspect-[4/5] min-h-[300px]"
           )}
         >
           {/* Image with srcset for responsive loading */}
@@ -375,7 +375,7 @@ export const UnifiedPlayerImage = memo(({
                   : "(max-width: 640px) 100vw, (max-width: 1024px) 400px, 500px"}
                 alt={`Foto de ${player.name}`}
                 className={cn(
-                  "max-w-full max-h-full w-auto h-auto object-contain transition-all duration-500 border-2 border-primary shadow-md hover:shadow-lg",
+                  "w-full h-full object-cover transition-all duration-500",
                   imageStatus === 'loaded' ? 'opacity-100' : 'opacity-0'
                 )}
                 loading={priority ? 'eager' : 'lazy'}
