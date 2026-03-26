@@ -1,6 +1,6 @@
 
 import { cn } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface GameTimerProps {
   timeRemaining: number;
@@ -11,6 +11,7 @@ interface GameTimerProps {
 
 export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 45 }: GameTimerProps) => {
   const [shake, setShake] = useState(false);
+  const lastVibrated = useRef<number>(-1);
   const isCritical = timeRemaining <= 5 && !gameOver;
   const isUrgent = timeRemaining <= 10 && !gameOver;
 
@@ -22,10 +23,23 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 45 }: 
     }
   }, [timeRemaining, isCritical, isRunning]);
 
+  // Haptic feedback on mobile in last 5s
+  useEffect(() => {
+    if (isCritical && isRunning && timeRemaining !== lastVibrated.current) {
+      lastVibrated.current = timeRemaining;
+      try {
+        navigator?.vibrate?.(80);
+      } catch {
+        // silent fallback
+      }
+    }
+  }, [timeRemaining, isCritical, isRunning]);
+
   const progress = Math.max(0, timeRemaining / maxTime);
   const radius = 42;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
+  const strokeWidth = isCritical ? 8 : 6;
 
   const getStrokeColor = () => {
     if (isCritical) return "hsl(var(--destructive))";
@@ -43,14 +57,14 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 45 }: 
         <circle
           cx="50" cy="50" r={radius}
           stroke="hsl(var(--muted) / 0.3)"
-          strokeWidth={6}
+          strokeWidth={strokeWidth}
           fill="none"
         />
         {/* Progress ring */}
         <circle
           cx="50" cy="50" r={radius}
           stroke={getStrokeColor()}
-          strokeWidth={6}
+          strokeWidth={strokeWidth}
           fill="none"
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -66,8 +80,8 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 45 }: 
       {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className={cn(
-          "font-display text-2xl leading-none tabular-nums",
-          isCritical ? "text-destructive" : isUrgent ? "text-warning" : "text-foreground"
+          "font-display text-2xl leading-none tabular-nums transition-all duration-300",
+          isCritical ? "text-destructive animate-pulse scale-110" : isUrgent ? "text-warning" : "text-foreground"
         )}>
           {timeRemaining}
         </span>

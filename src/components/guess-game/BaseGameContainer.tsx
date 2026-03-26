@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
 import { ResponsiveContainer } from '@/components/ux/ResponsiveContainer';
-import { LoadingState } from '@/components/ux/LoadingStates';
+import { GameSkeleton } from './GameSkeleton';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
 
@@ -60,9 +60,7 @@ export const BaseGameContainer: React.FC<BaseGameContainerProps> = ({
       {/* Game content */}
       <div className="space-y-4">
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
-            <LoadingState type="general" message={loadingMessage} />
-          </div>
+          <GameSkeleton />
         ) : !hasPlayers ? (
           <div className="text-center py-20">
             <div className="text-6xl mb-4">😕</div>
