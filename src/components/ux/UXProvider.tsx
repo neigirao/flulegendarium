@@ -64,7 +64,8 @@ export const UXProvider = ({ children }: UXProviderProps) => {
             />
           )}
           
-          {/* Onboarding trigger para novos usuários */}
+          {/* Onboarding */}
+          <WelcomeOverlay />
           <OnboardingTrigger />
         </AchievementSystemProvider>
       </OnboardingProvider>
