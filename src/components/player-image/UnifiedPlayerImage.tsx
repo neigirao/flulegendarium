@@ -250,7 +250,7 @@ export const UnifiedPlayerImage = memo(({
       return;
     }
 
-    timeoutTaskIdRef.current = window.setTimeout(runAnalysis, 0);
+    timeoutTaskIdRef.current = globalThis.setTimeout(runAnalysis, 0);
   }, [player.id, currentSrc]);
 
   const handleImageLoad = useCallback(() => {

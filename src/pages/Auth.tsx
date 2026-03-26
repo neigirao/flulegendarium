@@ -12,6 +12,7 @@ import { RootLayout } from '@/components/RootLayout';
 import { SEOManager } from '@/components/seo/SEOManager';
 import { ArrowLeft, Mail, Lock, User } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const { user, signIn, signUp, resetPassword, loading } = useAuth();
