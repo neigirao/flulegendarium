@@ -3,6 +3,7 @@ import { useUXFeedback } from '@/hooks/use-ux-feedback';
 import { EnhancedFeedback } from './EnhancedFeedback';
 import { AchievementSystemProvider } from '@/components/achievements/AchievementSystemProvider';
 import { OnboardingProvider, OnboardingTrigger, WelcomeOverlay } from '@/components/onboarding';
+import { useGoogleOneTap } from '@/hooks/useGoogleOneTap';
 
 interface UXContextType {
   showSuccess: (points: number, streak?: number, playerName?: string) => void;
@@ -38,6 +39,9 @@ export const UXProvider = ({ children }: UXProviderProps) => {
     closeFeedback,
     triggerHapticFeedback
   } = useUXFeedback();
+
+  // Google One Tap — shows prompt for unauthenticated users
+  useGoogleOneTap();
 
   const contextValue: UXContextType = {
     showSuccess,
