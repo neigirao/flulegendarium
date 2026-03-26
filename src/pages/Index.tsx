@@ -10,6 +10,7 @@ import { useAnalytics } from "@/hooks/analytics";
 import { GameTypeRankings } from "@/components/home/GameTypeRankings";
 import { GameModesPreview } from "@/components/home/GameModesPreview";
 import { useLinkPrefetch, useRoutePrefetch } from "@/hooks/use-route-prefetch";
+import { Footer } from "@/components/layout/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
