@@ -164,6 +164,7 @@ export const UnifiedPlayerImage = memo(({
   const isMountedRef = useRef(true);
   const idleTaskIdRef = useRef<number | null>(null);
   const timeoutTaskIdRef = useRef<number | null>(null);
+  const loadTimeoutRef = useRef<number | null>(null);
 
   // Obter URL inicial
   useEffect(() => {
@@ -173,7 +174,14 @@ export const UnifiedPlayerImage = memo(({
     setRetryCount(0);
     setImageStatus('loading');
     setImageFraming({ position: '50% 50%', zoom: 1 });
-  }, [player]);
+
+    logger.info('Inicializando carregamento de imagem do jogador', 'PLAYER_IMAGE_FLOW', {
+      playerId: player.id,
+      playerName: player.name,
+      initialSrc,
+      priority
+    });
+  }, [player, priority]);
 
   const effects = difficulty ? difficultyEffects[difficulty] : null;
 
@@ -216,6 +224,10 @@ export const UnifiedPlayerImage = memo(({
       if (timeoutTaskIdRef.current !== null) {
         clearTimeout(timeoutTaskIdRef.current);
       }
+
+      if (loadTimeoutRef.current !== null) {
+        clearTimeout(loadTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -254,6 +266,11 @@ export const UnifiedPlayerImage = memo(({
   }, [player.id, currentSrc]);
 
   const handleImageLoad = useCallback(() => {
+    if (loadTimeoutRef.current !== null) {
+      clearTimeout(loadTimeoutRef.current);
+      loadTimeoutRef.current = null;
+    }
+
     setImageStatus('loaded');
     markImageAsLoaded(player.id);
 
@@ -272,11 +289,18 @@ export const UnifiedPlayerImage = memo(({
     onImageLoaded?.();
   }, [player.id, player.name, currentSrc, retryCount, onImageLoaded, optimizeImageFraming]);
 
-  const handleImageError = useCallback(() => {
+  const handleImageFailure = useCallback((reason: 'load_error' | 'timeout', details?: Record<string, unknown>) => {
+    if (loadTimeoutRef.current !== null) {
+      clearTimeout(loadTimeoutRef.current);
+      loadTimeoutRef.current = null;
+    }
+
     logger.warn(`Erro ao carregar imagem (tentativa ${retryCount + 1})`, 'IMAGE_ERROR', {
       playerId: player.id,
       playerName: player.name,
-      attemptedUrl: currentSrc
+      attemptedUrl: currentSrc,
+      reason,
+      ...details
     });
 
     // Tentar URL alternativa se ainda houver retries disponíveis
@@ -291,6 +315,7 @@ export const UnifiedPlayerImage = memo(({
       
       setRetryCount(nextRetry);
       setCurrentSrc(alternativeUrl);
+      setImageStatus('loading');
       return;
     }
 
@@ -303,16 +328,54 @@ export const UnifiedPlayerImage = memo(({
       player_name: player.name,
       original_url: originalSrcRef.current,
       resolved_url: currentSrc,
-      error_type: 'load_error',
+      error_type: reason,
       retry_count: retryCount
     });
 
     logger.error(`Todas as tentativas falharam para ${player.name}`, 'IMAGE_ERROR', {
       playerId: player.id,
       originalUrl: originalSrcRef.current,
-      lastAttemptedUrl: currentSrc
+      lastAttemptedUrl: currentSrc,
+      reason
     });
   }, [player, currentSrc, retryCount]);
+
+  const handleImageError = useCallback(() => {
+    handleImageFailure('load_error');
+  }, [handleImageFailure]);
+
+  useEffect(() => {
+    if (!currentSrc || imageStatus !== 'loading' || !(inView || priority)) return;
+
+    if (loadTimeoutRef.current !== null) {
+      clearTimeout(loadTimeoutRef.current);
+    }
+
+    const effectiveSrc = isSupabaseStorageUrl(currentSrc)
+      ? getTransformedImageUrl(currentSrc, { width: 400, quality: 80, format: 'webp' })
+      : currentSrc;
+
+    logger.info('Aguardando carregamento da imagem do jogador', 'PLAYER_IMAGE_FLOW', {
+      playerId: player.id,
+      playerName: player.name,
+      currentSrc,
+      effectiveSrc,
+      retryCount
+    });
+
+    loadTimeoutRef.current = globalThis.setTimeout(() => {
+      if (!isMountedRef.current || imageStatus !== 'loading') return;
+
+      handleImageFailure('timeout', { timeoutMs: 10000, effectiveSrc });
+    }, 10000) as unknown as number;
+
+    return () => {
+      if (loadTimeoutRef.current !== null) {
+        clearTimeout(loadTimeoutRef.current);
+        loadTimeoutRef.current = null;
+      }
+    };
+  }, [currentSrc, imageStatus, inView, priority, player.id, player.name, retryCount, handleImageFailure]);
 
   return (
     <div className={cn("w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto", className)}>
