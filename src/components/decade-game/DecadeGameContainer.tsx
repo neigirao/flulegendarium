@@ -208,7 +208,7 @@ export const DecadeGameContainer = () => {
         <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} />
       </BaseGameContainer>
 
-      <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentPlayer?.name || ''} score={score} onResetScore={handleResetGame} isAuthenticated={!!orch.user} onSaveToRanking={saveToRanking} gameMode="classic" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} />
+      <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentPlayer?.name || ''} score={score} onResetScore={handleResetGame} isAuthenticated={!!orch.user} onSaveToRanking={saveToRanking} gameMode="classic" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} rankingPlayerName={orch.guestName} />
 
       <AchievementNotification achievement={orch.currentNotification} onClose={orch.dismissNotification} />
     </>

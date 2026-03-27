@@ -144,7 +144,7 @@ const JerseyGameContainer = () => {
         </div>
       </BaseGameContainer>
 
-      <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentJersey ? `Camisa de ${currentJersey.years.join('/')}` : ''} score={score} onResetScore={resetGame} isAuthenticated={!!orch.user} onSaveToRanking={handleSaveToRanking} gameMode="adaptive" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} />
+      <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentJersey ? `Camisa de ${currentJersey.years.join('/')}` : ''} score={score} onResetScore={resetGame} isAuthenticated={!!orch.user} onSaveToRanking={handleSaveToRanking} gameMode="adaptive" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} rankingPlayerName={orch.guestName} />
 
       {orch.showGuestNameForm && (
         <CoachMark step="name-input" title="Qual seu Nome?" description="Informe seu nome para começar. Ele aparecerá no ranking se você pontuar!" position="bottom">
