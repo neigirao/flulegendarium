@@ -3,6 +3,7 @@ import { playerImagesFallbacks, defaultImage, guaranteedFallbackImage, CACHE_EXP
 import { imageCache, cleanExpiredCache } from './cache';
 import { isProblematicDomain, isUrlProblematic } from './problematicUrls';
 import { logger } from '@/utils/logger';
+import { normalizeLegacyGameImageUrl } from '@/utils/imageUrlNormalizer';
 
 /**
  * Valida se uma URL de imagem é válida e acessível
@@ -53,7 +54,7 @@ export const getReliableImageUrl = (player: Player): string => {
     return cached.url;
   }
   
-  let imageUrl = player.image_url;
+  let imageUrl = normalizeLegacyGameImageUrl(player.image_url);
   
   // PRIORIDADE 1: Se existe fallback configurado, priorizar (mais confiável)
   if (playerImagesFallbacks[player.name]) {
@@ -61,8 +62,7 @@ export const getReliableImageUrl = (player: Player): string => {
     logger.info(`✅ Usando fallback configurado para ${player.name}:`, imageUrl);
   }
   // PRIORIDADE 2: Verificar se a URL do banco é válida
-  else if (player.image_url && isValidImageUrl(player.image_url)) {
-    imageUrl = player.image_url;
+  else if (imageUrl && isValidImageUrl(imageUrl)) {
     logger.info(`✅ Usando URL do banco para ${player.name}:`, imageUrl);
   }
   // PRIORIDADE 3: Tentar match parcial nos fallbacks

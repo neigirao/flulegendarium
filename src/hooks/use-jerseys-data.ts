@@ -4,6 +4,7 @@ import { Jersey } from "@/types/jersey-game";
 import { useMemo } from "react";
 import { logger } from "@/utils/logger";
 import { shuffleJerseysByDifficulty } from "@/utils/jersey-game/shuffleJerseys";
+import { normalizeLegacyGameImageUrl } from "@/utils/imageUrlNormalizer";
 
 interface DatabaseJersey {
   id: string;
@@ -107,7 +108,7 @@ export const useJerseysData = () => {
     const processedJerseys = rawJerseys.map((jersey: DatabaseJersey): Jersey => ({
       id: jersey.id,
       years: Array.isArray(jersey.years) ? jersey.years : [jersey.years],
-      image_url: jersey.image_url,
+      image_url: normalizeLegacyGameImageUrl(jersey.image_url),
       type: jersey.type as Jersey['type'],
       manufacturer: jersey.manufacturer,
       season: jersey.season,

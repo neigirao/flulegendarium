@@ -5,6 +5,7 @@
 
 import { logger } from '@/utils/logger';
 import { JERSEY_CACHE_EXPIRATION, jerseyDefaultImage as defaultImage, guaranteedJerseyFallback } from './constants';
+import { normalizeLegacyGameImageUrl } from '@/utils/imageUrlNormalizer';
 
 // Re-export para manter compatibilidade
 export { jerseyDefaultImage } from './constants';
@@ -90,7 +91,7 @@ export const getReliableJerseyImageUrl = (jersey: JerseyForImage): string => {
     return cached.url;
   }
   
-  let imageUrl = jersey.image_url;
+  let imageUrl = normalizeLegacyGameImageUrl(jersey.image_url);
   
   // PRIORIDADE 1: Se existe fallback configurado, priorizar
   if (jerseyImagesFallbacks[jersey.id]) {
@@ -98,8 +99,7 @@ export const getReliableJerseyImageUrl = (jersey: JerseyForImage): string => {
     logger.info(`✅ Usando fallback configurado para camisa ${jersey.years.join('/')}:`, 'JERSEY_IMAGE', imageUrl);
   }
   // PRIORIDADE 2: Verificar se a URL do banco é válida
-  else if (jersey.image_url && isValidJerseyImageUrl(jersey.image_url)) {
-    imageUrl = jersey.image_url;
+  else if (imageUrl && isValidJerseyImageUrl(imageUrl)) {
     logger.debug(`✅ Usando URL do banco para camisa ${jersey.years.join('/')}`, 'JERSEY_IMAGE');
   }
   // PRIORIDADE 3: Imagem padrão
