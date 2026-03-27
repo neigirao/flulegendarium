@@ -399,9 +399,13 @@ export const UnifiedPlayerImage = memo(({
           {/* Error state */}
           {imageStatus === 'error' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/10 text-muted-foreground p-4">
-              <div className="w-16 h-16 mx-auto mb-2 rounded-full bg-primary/20 flex items-center justify-center">
-                <span className="text-xs font-bold text-primary">FLU</span>
-              </div>
+              <img
+                src={defaultImage}
+                alt="Escudo do Fluminense"
+                className="w-24 h-24 object-contain opacity-80 mb-3"
+                loading="eager"
+                decoding="async"
+              />
               <p className="text-sm text-center">Usando escudo do Fluminense</p>
             </div>
           )}

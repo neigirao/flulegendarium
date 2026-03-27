@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { DecadePlayer, Decade } from "@/types/decade-game";
 import { convertStatistics } from "@/utils/statistics-converter";
 import { logger } from "@/utils/logger";
+import { normalizeLegacyGameImageUrl } from "@/utils/imageUrlNormalizer";
 
 export const decadePlayerService = {
   async getPlayersByDecade(decade: Decade): Promise<DecadePlayer[]> {
@@ -43,11 +44,14 @@ export const decadePlayerService = {
 
       logger.info(`Encontrados ${data.length} jogadores da década ${decade}`, 'DecadePlayer');
       
-      return data.map(player => ({
+      return data.map(player => {
+        const normalizedImageUrl = normalizeLegacyGameImageUrl(player.image_url);
+
+        return {
         id: player.id,
         name: player.name || 'Nome não informado',
         position: player.position || 'Posição não informada',
-        image_url: player.image_url || '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
+        image_url: normalizedImageUrl || '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
         year_highlight: player.year_highlight || '',
         fun_fact: player.fun_fact || '',
         achievements: Array.isArray(player.achievements) ? player.achievements : [],
@@ -60,7 +64,8 @@ export const decadePlayerService = {
         correct_attempts: player.correct_attempts || 0,
         average_guess_time: player.average_guess_time || 30000,
         decades: Array.isArray(player.decades) ? player.decades as Decade[] : []
-      }));
+      };
+    });
 
     } catch (error) {
       logger.error('Exceção ao buscar jogadores por década', 'DecadePlayer', error);

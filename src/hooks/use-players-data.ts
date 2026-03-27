@@ -5,6 +5,7 @@ import { convertStatistics } from "@/utils/statistics-converter";
 import { useMemo } from "react";
 import { logger } from "@/utils/logger";
 import { fetchWithSWR, invalidateSWRCache } from "@/utils/cache";
+import { normalizeLegacyGameImageUrl } from "@/utils/imageUrlNormalizer";
 
 interface DatabasePlayer {
   id: string;
@@ -118,11 +119,13 @@ export const usePlayersData = () => {
     logger.debug('Processando jogadores', 'PLAYERS_DATA');
     
     const processedPlayers = rawPlayers.map((player: DatabasePlayer) => {
+      const normalizedImageUrl = normalizeLegacyGameImageUrl(player.image_url);
+
       const enhancedPlayer: Player = {
         id: player.id,
         name: player.name || 'Nome não informado',
         position: player.position || 'Posição não informada',
-        image_url: player.image_url || '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
+        image_url: normalizedImageUrl || '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png',
         year_highlight: player.year_highlight || '',
         fun_fact: player.fun_fact || '',
         achievements: Array.isArray(player.achievements) ? player.achievements : [],
