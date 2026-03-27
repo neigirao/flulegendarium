@@ -38,6 +38,12 @@ export const LazyFAQ = createLazyComponent(
   React.createElement(PerformanceSkeleton, { height: 500 })
 );
 
+// Tutorial Module
+export const LazyTutorial = createLazyComponent(
+  () => import('@/pages/Tutorial'),
+  React.createElement(PerformanceSkeleton, { height: 500 })
+);
+
 // News Module
 export const LazyNewsPortal = createLazyComponent(
   () => import('@/pages/NewsPortal'),

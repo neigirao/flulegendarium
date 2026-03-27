@@ -7,7 +7,6 @@ import { ArrowLeft, LogIn, Trophy, Star, Settings, ChevronRight } from "lucide-r
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/analytics";
-import { CoachMark, useOnboarding } from "@/components/onboarding";
 import { TimerSelector } from "@/components/game-settings/TimerSelector";
 
 // Custom SVG Icons
@@ -43,17 +42,10 @@ const GameModeSelection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { trackFunnelPageView: trackPageView, trackGameModeClick, trackAuthPromptShown } = useAnalytics();
-  const { isOnboardingActive, goToStep } = useOnboarding();
 
   useEffect(() => {
     trackPageView('game_selection');
   }, [trackPageView]);
-
-  useEffect(() => {
-    if (isOnboardingActive) {
-      goToStep('game-mode-selection');
-    }
-  }, [isOnboardingActive, goToStep]);
 
   const handleGameModeClick = (mode: string, path: string) => {
     trackGameModeClick(mode);
@@ -180,9 +172,9 @@ const GameModeSelection = () => {
 
             {/* Game Mode Cards — Vertical Stack */}
             <div className="max-w-xl mx-auto space-y-4 mb-12">
-              {gameModes.map((gm, index) => {
+              {gameModes.map((gm) => {
                 const Icon = gm.icon;
-                const cardContent = (
+                return (
                   <Card
                     key={gm.id}
                     className={`bg-card border ${gm.borderColor} shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer group`}
@@ -215,23 +207,6 @@ const GameModeSelection = () => {
                     </CardContent>
                   </Card>
                 );
-
-                // Wrap first card with CoachMark
-                if (index === 0) {
-                  return (
-                    <CoachMark
-                      key={gm.id}
-                      step="game-mode-selection"
-                      title="Escolha um Modo de Jogo"
-                      description="O modo Advinhe o Jogador ajusta a dificuldade conforme você joga. Recomendamos começar por aqui!"
-                      position="top"
-                    >
-                      {cardContent}
-                    </CoachMark>
-                  );
-                }
-
-                return cardContent;
               })}
             </div>
           </div>

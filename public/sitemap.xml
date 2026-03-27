@@ -50,6 +50,14 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Tutorial -->
+  <url>
+    <loc>https://lendasdoflu.com/tutorial</loc>
+    <lastmod>2026-03-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Portal de Notícias -->
   <url>
     <loc>https://lendasdoflu.com/noticias</loc>
