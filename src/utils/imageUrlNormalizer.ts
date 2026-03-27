@@ -1,4 +1,5 @@
 const LOVABLE_UPLOADS_WEBP_PATTERN = /(\/lovable-uploads\/[^/?#]+)\.webp(\?[^#]*)?(#.*)?$/i;
+const LOVABLE_UPLOADS_RELATIVE_PATTERN = /^lovable-uploads\//i;
 
 /**
  * Normaliza URLs legadas de imagens que apontam para assets removidos.
@@ -10,5 +11,9 @@ export const normalizeLegacyGameImageUrl = (url: string | null | undefined): str
   const trimmed = url.trim();
   if (!trimmed) return '';
 
-  return trimmed.replace(LOVABLE_UPLOADS_WEBP_PATTERN, '$1.png$2$3');
+  const normalizedPath = LOVABLE_UPLOADS_RELATIVE_PATTERN.test(trimmed)
+    ? `/${trimmed}`
+    : trimmed;
+
+  return normalizedPath.replace(LOVABLE_UPLOADS_WEBP_PATTERN, '$1.png$2$3');
 };

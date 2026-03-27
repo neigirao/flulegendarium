@@ -8,6 +8,12 @@ describe('normalizeLegacyGameImageUrl', () => {
     ).toBe('/lovable-uploads/abc-123.png');
   });
 
+  it('normaliza caminho local sem barra inicial para evitar 404 em rotas aninhadas', () => {
+    expect(
+      normalizeLegacyGameImageUrl('lovable-uploads/abc-123.png')
+    ).toBe('/lovable-uploads/abc-123.png');
+  });
+
   it('converte URL absoluta com query/hash preservando sufixos', () => {
     expect(
       normalizeLegacyGameImageUrl('https://lendasdoflu.com/lovable-uploads/abc-123.webp?v=1#hero')
