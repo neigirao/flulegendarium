@@ -1,6 +1,14 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback } from "react";
 import { Player, DifficultyLevel } from "@/types/guess-game";
 import { logger } from "@/utils/logger";
+
+const DIFFICULTY_ORDER: DifficultyLevel[] = [
+  'muito_facil',
+  'facil',
+  'medio',
+  'dificil',
+  'muito_dificil'
+];
 
 /**
  * Hook para seleção adaptativa de jogadores baseada em dificuldade.
@@ -47,6 +55,23 @@ import { logger } from "@/utils/logger";
 export const useAdaptivePlayerSelection = () => {
   const [currentDifficultyLevel, setCurrentDifficultyLevel] = useState<DifficultyLevel>('muito_facil');
 
+  const buildFallbackOrder = useCallback((targetDifficulty: DifficultyLevel): DifficultyLevel[] => {
+    const startIndex = DIFFICULTY_ORDER.indexOf(targetDifficulty);
+    if (startIndex < 0) return DIFFICULTY_ORDER;
+
+    const ordered: DifficultyLevel[] = [targetDifficulty];
+
+    for (let offset = 1; offset < DIFFICULTY_ORDER.length; offset++) {
+      const easier = DIFFICULTY_ORDER[startIndex - offset];
+      const harder = DIFFICULTY_ORDER[startIndex + offset];
+
+      if (easier) ordered.push(easier);
+      if (harder) ordered.push(harder);
+    }
+
+    return ordered;
+  }, []);
+
   /**
    * Seleciona um jogador aleatório baseado no nível de dificuldade.
    * 
@@ -89,23 +114,27 @@ export const useAdaptivePlayerSelection = () => {
       return null;
     }
     
-    // SEMPRE RESPEITAR A DIFICULDADE DO BANCO - SEM FALLBACKS
-    const playersAtDifficulty = availablePlayers.filter(player => 
-      player.difficulty_level === difficultyLevel
-    );
-    
-    if (playersAtDifficulty.length > 0) {
+    const fallbackOrder = buildFallbackOrder(difficultyLevel);
+
+    for (const candidateDifficulty of fallbackOrder) {
+      const playersAtDifficulty = availablePlayers.filter(player => 
+        player.difficulty_level === candidateDifficulty
+      );
+
+      if (playersAtDifficulty.length === 0) continue;
+
       const randomIndex = Math.floor(Math.random() * playersAtDifficulty.length);
       const selectedPlayer = playersAtDifficulty[randomIndex];
-      
-      // Log todos os jogadores disponíveis nesta dificuldade
+      const fallbackUsed = candidateDifficulty !== difficultyLevel;
       const availableNames = playersAtDifficulty.map(p => p.name).join(', ');
-      
+
       logger.info(
-        `✅ Jogador selecionado da dificuldade ${difficultyLevel}: ${selectedPlayer.name}`,
+        `✅ Jogador selecionado da dificuldade ${candidateDifficulty}: ${selectedPlayer.name}`,
         'PLAYER_SELECTION',
         { 
-          difficulty: difficultyLevel,
+          requestedDifficulty: difficultyLevel,
+          selectedDifficulty: candidateDifficulty,
+          fallbackUsed,
           playerDifficulty: selectedPlayer.difficulty_level,
           difficultyScore: selectedPlayer.difficulty_score,
           availableCount: playersAtDifficulty.length,
@@ -114,14 +143,41 @@ export const useAdaptivePlayerSelection = () => {
           selectedFromPool: `${randomIndex + 1}/${playersAtDifficulty.length}`
         }
       );
-      
+
+      if (fallbackUsed) {
+        logger.warn(
+          `⚠️ Fallback de dificuldade aplicado: ${difficultyLevel} → ${candidateDifficulty}`,
+          'PLAYER_SELECTION',
+          {
+            requestedDifficulty: difficultyLevel,
+            selectedDifficulty: candidateDifficulty
+          }
+        );
+      }
+
       return selectedPlayer;
     }
-    
-    // Se não houver jogadores na dificuldade exata, retornar null
-    // O sistema deve respeitar SEMPRE a dificuldade do banco de dados
+
+    // Sem nenhum jogador em níveis reconhecidos: fallback final para qualquer jogador disponível
+    if (availablePlayers.length > 0) {
+      const randomIndex = Math.floor(Math.random() * availablePlayers.length);
+      const selectedPlayer = availablePlayers[randomIndex];
+
+      logger.warn(
+        '⚠️ Selecionando jogador sem dificuldade reconhecida',
+        'PLAYER_SELECTION',
+        {
+          requestedDifficulty: difficultyLevel,
+          selectedPlayerId: selectedPlayer.id,
+          selectedPlayerDifficulty: selectedPlayer.difficulty_level || null
+        }
+      );
+
+      return selectedPlayer;
+    }
+
     logger.error(
-      `❌ Nenhum jogador disponível na dificuldade ${difficultyLevel}`,
+      `❌ Nenhum jogador disponível para seleção`,
       'PLAYER_SELECTION',
       {
         requestedDifficulty: difficultyLevel,
@@ -132,7 +188,7 @@ export const useAdaptivePlayerSelection = () => {
     );
     
     return null;
-  }, []);
+  }, [buildFallbackOrder]);
 
   return {
     selectPlayerByDifficulty,
