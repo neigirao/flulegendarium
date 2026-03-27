@@ -381,6 +381,12 @@ export const useAnalytics = () => {
     trackFeatureUsage,
     trackPerformanceMetric,
     // Funnel
+    // One Tap
+    trackOneTapDisplayed,
+    trackOneTapCompleted,
+    trackOneTapSkipped,
+    trackOneTapError,
+    // Funnel
     trackFunnelStep,
     trackFunnelPageView,
     trackGameModeClick,
