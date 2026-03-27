@@ -57,15 +57,20 @@ export const useGoogleOneTap = () => {
         context: 'signin',
         cancel_on_tap_outside: true,
         itp_support: true,
+        use_fedcm_for_button: true,
       });
 
-      window.google.accounts.id.prompt((notification) => {
-        if (notification.isNotDisplayed()) {
-          console.log('[OneTap] Not displayed:', notification.getNotDisplayedReason());
-        } else if (notification.isSkippedMoment()) {
-          console.log('[OneTap] Skipped:', notification.getSkippedReason());
-        } else if (notification.isDismissedMoment()) {
-          console.log('[OneTap] Dismissed:', notification.getDismissedReason());
+      window.google.accounts.id.prompt((notification: Record<string, unknown>) => {
+        const momentType = typeof notification.getMomentType === 'function'
+          ? (notification.getMomentType as () => string)()
+          : undefined;
+
+        if (momentType === 'display') {
+          console.log('[OneTap] Prompt displayed');
+        } else if (momentType === 'skipped') {
+          console.log('[OneTap] Prompt skipped');
+        } else if (momentType === 'dismissed') {
+          console.log('[OneTap] Prompt dismissed');
         }
       });
     };
