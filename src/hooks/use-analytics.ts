@@ -218,6 +218,25 @@ export const useAnalytics = () => {
   }, [trackEvent]);
 
   // ─── Funnel Layer (persists to Supabase) ───
+
+  // ─── Google One Tap Tracking ───
+  const trackOneTapDisplayed = useCallback(() => {
+    trackEvent({ action: 'one_tap_displayed', category: 'Auth', label: 'google_one_tap' });
+  }, [trackEvent]);
+
+  const trackOneTapCompleted = useCallback(() => {
+    trackEvent({ action: 'one_tap_completed', category: 'Auth', label: 'google_one_tap' });
+  }, [trackEvent]);
+
+  const trackOneTapSkipped = useCallback(() => {
+    trackEvent({ action: 'one_tap_skipped', category: 'Auth', label: 'google_one_tap' });
+  }, [trackEvent]);
+
+  const trackOneTapError = useCallback((errorMsg: string) => {
+    trackEvent({ action: 'one_tap_error', category: 'Auth', label: errorMsg });
+  }, [trackEvent]);
+
+  // ─── Funnel Layer (persists to Supabase) ───
   const flushFunnel = useCallback(async () => {
     if (funnelQueueRef.current.length === 0) return;
     const events = [...funnelQueueRef.current];
