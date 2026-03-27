@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/analytics';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 declare global {
   interface Window {
@@ -26,6 +27,8 @@ declare global {
 
 export const useGoogleOneTap = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const initializedRef = useRef(false);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const { trackOneTapDisplayed, trackOneTapCompleted, trackOneTapSkipped, trackOneTapError } = useAnalytics();
@@ -60,6 +63,7 @@ export const useGoogleOneTap = () => {
         cancel_on_tap_outside: true,
         itp_support: true,
         use_fedcm_for_button: true,
+        use_fedcm_for_prompt: true,
       });
 
       window.google.accounts.id.prompt((notification: Record<string, unknown>) => {
@@ -93,6 +97,10 @@ export const useGoogleOneTap = () => {
         } else {
           console.log('[OneTap] Login successful');
           trackOneTapCompleted();
+
+          const routeState = location.state as { from?: { pathname?: string } } | null;
+          const redirectTo = routeState?.from?.pathname || '/selecionar-modo-jogo';
+          navigate(redirectTo, { replace: true });
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'unknown';
@@ -115,5 +123,5 @@ export const useGoogleOneTap = () => {
       }
       initializedRef.current = false;
     };
-  }, [user, clientId]);
+  }, [user, clientId, location.state, navigate, trackOneTapCompleted, trackOneTapDisplayed, trackOneTapError, trackOneTapSkipped]);
 };
