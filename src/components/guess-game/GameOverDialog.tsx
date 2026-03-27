@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -31,6 +31,7 @@ interface GameOverDialogProps {
   gameMode?: 'classic' | 'adaptive';
   difficultyLevel?: string;
   unlockedAchievementIds?: string[];
+  rankingPlayerName?: string;
 }
 
 // Animation variants
@@ -73,17 +74,20 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   onSaveToRanking,
   gameMode = 'classic',
   difficultyLevel,
-  unlockedAchievementIds = []
+  unlockedAchievementIds = [],
+  rankingPlayerName = ''
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [showRankingForm, setShowRankingForm] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [showChallengeResult, setShowChallengeResult] = useState(false);
   const [hasActiveChallenge, setHasActiveChallenge] = useState(false);
   const [isPersonalRecord, setIsPersonalRecord] = useState(false);
   const [previousRecord, setPreviousRecord] = useState(0);
+  const autoSaveInFlightRef = useRef(false);
 
   // Check for personal record
   useEffect(() => {
@@ -152,38 +156,55 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     }
   }, [open, score, gameMode, difficultyLevel]);
 
-  // Auto-save for logged-in users with a name
+  const resolvedRankingName = rankingPlayerName.trim()
+    || user?.user_metadata?.full_name?.trim()
+    || user?.user_metadata?.name?.trim()
+    || user?.email?.split('@')[0]?.trim()
+    || '';
+
+  // Auto-save for users with an available name (guest or logged-in)
   useEffect(() => {
-    const autoSaveForLoggedUser = async () => {
-      if (open && score > 0 && !autoSaved && user && onSaveToRanking) {
-        const userName = user.user_metadata?.full_name;
-        if (userName) {
-          try {
-            await onSaveToRanking(userName, score, difficultyLevel);
-            setAutoSaved(true);
-            setShowShareOptions(true);
-            toast.success('Pontuação salva automaticamente no ranking!');
-          } catch (error) {
-            console.error('Error auto-saving to ranking:', error);
-            setShowRankingForm(true);
-          }
+    const autoSaveToRanking = async () => {
+      if (
+        open &&
+        score > 0 &&
+        !autoSaved &&
+        !autoSaveInFlightRef.current &&
+        onSaveToRanking &&
+        resolvedRankingName
+      ) {
+        autoSaveInFlightRef.current = true;
+        setIsAutoSaving(true);
+        try {
+          await onSaveToRanking(resolvedRankingName, score, difficultyLevel);
+          setAutoSaved(true);
+          setShowShareOptions(true);
+          toast.success('Pontuação salva automaticamente no ranking!');
+        } catch (error) {
+          console.error('Error auto-saving to ranking:', error);
+          setShowRankingForm(true);
+        } finally {
+          setIsAutoSaving(false);
+          autoSaveInFlightRef.current = false;
         }
       }
     };
 
-    autoSaveForLoggedUser();
-  }, [open, score, user, onSaveToRanking, difficultyLevel, autoSaved]);
+    autoSaveToRanking();
+  }, [open, score, onSaveToRanking, difficultyLevel, autoSaved, resolvedRankingName]);
 
   // Reset state when dialog closes
   useEffect(() => {
     if (!open) {
       setAutoSaved(false);
+      setIsAutoSaving(false);
       setShowRankingForm(false);
       setShowShareOptions(false);
       setShowChallengeResult(false);
       setHasActiveChallenge(false);
       setIsPersonalRecord(false);
       setPreviousRecord(0);
+      autoSaveInFlightRef.current = false;
     }
   }, [open]);
 
@@ -232,7 +253,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   };
 
   // Determine if we should show the initial state (not auto-saved, not showing form, not showing share)
-  const showInitialState = !showRankingForm && !showShareOptions && !autoSaved;
+  const showInitialState = !showRankingForm && !showShareOptions && !autoSaved && !isAutoSaving;
 
   return (
     <>
@@ -339,6 +360,21 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
             </AnimatePresence>
 
             <AnimatePresence mode="wait">
+              {isAutoSaving && (
+                <motion.div
+                  key="autosaving"
+                  className="space-y-3 py-2"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p className="text-sm text-muted-foreground">
+                    Salvando sua pontuação automaticamente no ranking...
+                  </p>
+                </motion.div>
+              )}
+
               {showInitialState && (
                 <motion.div 
                   key="initial"
