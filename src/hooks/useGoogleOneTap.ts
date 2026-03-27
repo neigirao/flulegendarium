@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useAnalytics } from '@/hooks/analytics';
 
 declare global {
   interface Window {
@@ -27,6 +28,7 @@ export const useGoogleOneTap = () => {
   const { user } = useAuth();
   const initializedRef = useRef(false);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+  const { trackOneTapDisplayed, trackOneTapCompleted, trackOneTapSkipped, trackOneTapError } = useAnalytics();
 
   useEffect(() => {
     if (user || !clientId || initializedRef.current) return;
@@ -67,10 +69,13 @@ export const useGoogleOneTap = () => {
 
         if (momentType === 'display') {
           console.log('[OneTap] Prompt displayed');
+          trackOneTapDisplayed();
         } else if (momentType === 'skipped') {
           console.log('[OneTap] Prompt skipped');
+          trackOneTapSkipped();
         } else if (momentType === 'dismissed') {
           console.log('[OneTap] Prompt dismissed');
+          trackOneTapSkipped();
         }
       });
     };
@@ -84,11 +89,15 @@ export const useGoogleOneTap = () => {
 
         if (error) {
           console.error('[OneTap] Auth error:', error.message);
+          trackOneTapError(error.message);
         } else {
           console.log('[OneTap] Login successful');
+          trackOneTapCompleted();
         }
       } catch (err) {
-        console.error('[OneTap] Unexpected error:', err);
+        const msg = err instanceof Error ? err.message : 'unknown';
+        console.error('[OneTap] Unexpected error:', msg);
+        trackOneTapError(msg);
       }
     };
 
