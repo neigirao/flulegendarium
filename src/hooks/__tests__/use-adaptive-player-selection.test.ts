@@ -160,7 +160,7 @@ describe('useAdaptivePlayerSelection', () => {
       expect(selectedPlayer).toBeNull();
     });
 
-    it('should return null if no players at exact difficulty', () => {
+    it('should fallback to nearest difficulty if exact one is unavailable', () => {
       const { result } = renderHook(() => useAdaptivePlayerSelection());
 
       const limitedPlayers = mockPlayers.filter(
@@ -171,7 +171,8 @@ describe('useAdaptivePlayerSelection', () => {
         'facil'
       );
 
-      expect(selectedPlayer).toBeNull();
+      expect(selectedPlayer).not.toBeNull();
+      expect(selectedPlayer!.difficulty_level).toBe('muito_facil');
     });
 
     it('should return random player from filtered set', () => {
@@ -330,8 +331,8 @@ describe('useAdaptivePlayerSelection', () => {
     });
   });
 
-  describe('no fallback behavior', () => {
-    it('should NOT fallback to other difficulties', () => {
+  describe('fallback behavior', () => {
+    it('should fallback to other difficulties when requested one is missing', () => {
       const { result } = renderHook(() => useAdaptivePlayerSelection());
 
       const players: Player[] = [
@@ -339,16 +340,17 @@ describe('useAdaptivePlayerSelection', () => {
         createMockPlayer('2', 'Hard Player', 'dificil'),
       ];
 
-      // Request medio - should return null, not fallback
+      // Request medio - should fallback to nearest available (muito_facil or dificil)
       const selected = result.current.selectPlayerByDifficulty(
         players,
         'medio'
       );
 
-      expect(selected).toBeNull();
+      expect(selected).not.toBeNull();
+      expect(['muito_facil', 'dificil']).toContain(selected!.difficulty_level);
     });
 
-    it('should strictly respect database difficulty', () => {
+    it('should still prioritize exact difficulty when available', () => {
       const { result } = renderHook(() => useAdaptivePlayerSelection());
 
       const players: Player[] = [
@@ -357,13 +359,14 @@ describe('useAdaptivePlayerSelection', () => {
         createMockPlayer('3', 'Player 3', 'facil'),
       ];
 
-      // Request dificil - should return null
+      // Request facil - should return exact match
       const selected = result.current.selectPlayerByDifficulty(
         players,
-        'dificil'
+        'facil'
       );
 
-      expect(selected).toBeNull();
+      expect(selected).not.toBeNull();
+      expect(selected!.difficulty_level).toBe('facil');
     });
   });
 
