@@ -19,7 +19,6 @@ import { KeyboardShortcutsHint } from "@/components/game/KeyboardShortcutsHint";
 import { AchievementNotification } from "@/components/achievements/AchievementNotification";
 import { SEOManager } from "@/components/seo/SEOManager";
 import { clearJerseyImageCache, prepareNextJerseyBatch } from "@/utils/jersey-image/preloadUtils";
-import { CoachMark } from "@/components/onboarding";
 import type { DifficultyLevel } from "@/types/guess-game";
 
 const JerseyGameContainer = () => {
@@ -101,9 +100,7 @@ const JerseyGameContainer = () => {
         emptyStateMessage="Nenhuma camisa encontrada para o quiz"
         playerCount={jerseys?.length}
       >
-        <CoachMark step="timer-explanation" title="Fique de Olho no Tempo!" description="Você tem tempo limitado para escolher. Respostas rápidas valem mais pontos!" position="bottom">
-          <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
-        </CoachMark>
+        <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
 
         <div className="mt-6 space-y-6">
           <div className="flex justify-center items-start gap-3">
@@ -147,9 +144,7 @@ const JerseyGameContainer = () => {
       <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentJersey ? `Camisa de ${currentJersey.years.join('/')}` : ''} score={score} onResetScore={resetGame} isAuthenticated={!!orch.user} onSaveToRanking={handleSaveToRanking} gameMode="adaptive" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} rankingPlayerName={orch.guestName} />
 
       {orch.showGuestNameForm && (
-        <CoachMark step="name-input" title="Qual seu Nome?" description="Informe seu nome para começar. Ele aparecerá no ranking se você pontuar!" position="bottom">
-          <GuestNameForm onNameSubmitted={orch.handleGuestNameSubmit} onCancel={orch.onGuestCancel} />
-        </CoachMark>
+        <GuestNameForm onNameSubmitted={orch.handleGuestNameSubmit} onCancel={orch.onGuestCancel} />
       )}
 
       <AchievementNotification achievement={orch.currentNotification} onClose={orch.dismissNotification} />

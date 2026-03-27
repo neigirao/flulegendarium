@@ -39,9 +39,9 @@ export const TopNavigation = () => {
       icon: Heart,
     },
     {
-      label: "FAQ",
-      route: '/faq',
-      onClick: () => navigate('/faq'),
+      label: "Tutorial",
+      route: '/tutorial',
+      onClick: () => navigate('/tutorial'),
       icon: HelpCircle,
     },
     {

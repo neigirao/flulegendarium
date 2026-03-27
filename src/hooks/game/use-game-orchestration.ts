@@ -9,7 +9,7 @@ import { useSkipPlayer } from './use-skip-player';
 import { useGameKeyboardShortcuts } from '@/hooks/use-game-keyboard-shortcuts';
 import { useDevToolsDetection } from '@/hooks/use-devtools-detection';
 import { useGameToasts } from '@/hooks/use-game-toasts';
-import { CoachMark, useOnboarding } from '@/components/onboarding';
+import { useOnboarding } from '@/components/onboarding';
 import { ACHIEVEMENTS } from '@/types/achievements';
 import type { DifficultyChangeInfo, DifficultyLevel } from '@/types/guess-game';
 

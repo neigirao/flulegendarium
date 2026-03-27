@@ -63,12 +63,12 @@ const SCHEMA_GENERATORS: Record<SchemaType, (props: { title: string; description
     ]
   }),
 
-  FAQ: ({ description }) => ({
+  FAQ: ({ title, description, url }) => ({
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "name": "FAQ - Lendas do Flu",
+    "name": title,
     "description": description,
-    "url": `${CANONICAL_DOMAIN}/faq`,
+    "url": url,
     "mainEntity": [
       {
         "@type": "Question",

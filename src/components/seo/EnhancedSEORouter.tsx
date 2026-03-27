@@ -44,6 +44,12 @@ const SEO_ROUTES = {
     keywords: 'como jogar quiz fluminense, regras jogo tricolor, dúvidas flu, ajuda quiz',
     schema: 'FAQ' as const
   },
+  '/tutorial': {
+    title: 'Tutorial do Jogo - Guia Completo Lendas do Flu',
+    description: 'Aprenda como jogar todos os modos do Lendas do Flu com regras, pontuação, dicas e perguntas frequentes.',
+    keywords: 'tutorial lendas do flu, como jogar quiz fluminense, guia jogo tricolor, regras pontuação',
+    schema: 'FAQ' as const
+  },
   '/conquistas': {
     title: 'Conquistas - Desbloqueie Achievements no Quiz do Fluminense',
     description: 'Desbloqueie conquistas especiais jogando o quiz do Fluminense. Mostre seu conhecimento tricolor e colecione todos os badges!',

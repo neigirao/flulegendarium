@@ -24,6 +24,7 @@ import {
   LazyAdminLogin,
   LazyAuth,
   LazyFAQ,
+  LazyTutorial,
   LazySocialPage,
   LazyNewsPortal,
   LazyNewsArticle,
@@ -105,6 +106,7 @@ function App() {
                             <Route path="/perfil" element={<LazyProfilePage />} />
                             <Route path="/desafios" element={<LazyDailyChallengesPage />} />
                             <Route path="/faq" element={<LazyFAQ />} />
+                            <Route path="/tutorial" element={<LazyTutorial />} />
                             <Route path="/noticias" element={<LazyNewsPortal />} />
                             <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
                             <Route path="/doacoes" element={<LazyDonations />} />

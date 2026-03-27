@@ -30,6 +30,7 @@ const ROUTE_MODULES: Record<string, () => Promise<unknown>> = {
   '/conquistas': () => import('@/pages/Conquistas'),
   '/noticias': () => import('@/pages/NewsPortal'),
   '/faq': () => import('@/pages/FAQ'),
+  '/tutorial': () => import('@/pages/Tutorial'),
   '/doacoes': () => import('@/pages/Donations'),
   '/social': () => import('@/pages/SocialPage'),
   '/desafios': () => import('@/pages/DailyChallengesPage'),

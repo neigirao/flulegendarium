@@ -30,7 +30,6 @@ import { getDecadeInfo } from '@/data/decades';
 import { Button } from '@/components/ui/button';
 import { logger } from '@/utils/logger';
 import { clearAllImageCache, prepareNextBatch } from '@/utils/player-image';
-import { CoachMark } from '@/components/onboarding';
 import type { DifficultyLevel } from '@/types/guess-game';
 
 export const DecadeGameContainer = () => {
@@ -161,9 +160,7 @@ export const DecadeGameContainer = () => {
       )}
 
       {orch.showGuestNameForm && (
-        <CoachMark step="name-input" title="Qual seu Nome?" description="Informe seu nome para começar. Ele aparecerá no ranking se você pontuar!" position="bottom">
-          <GuestNameForm onNameSubmitted={orch.handleGuestNameSubmit} onCancel={handleBackToSelection} />
-        </CoachMark>
+        <GuestNameForm onNameSubmitted={orch.handleGuestNameSubmit} onCancel={handleBackToSelection} />
       )}
 
       <BaseGameContainer

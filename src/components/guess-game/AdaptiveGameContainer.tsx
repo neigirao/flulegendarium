@@ -21,7 +21,6 @@ import { AchievementNotification } from "@/components/achievements/AchievementNo
 import { SEOManager } from "@/components/seo/SEOManager";
 import { clearAllImageCache } from "@/utils/player-image/cache";
 import { prepareNextBatch } from "@/utils/player-image/preloadUtils";
-import { CoachMark } from "@/components/onboarding";
 
 const AdaptiveGameContainer = () => {
   const { players, isLoading, playersError } = usePlayersData();
@@ -113,9 +112,7 @@ const AdaptiveGameContainer = () => {
       <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentPlayer?.name || ''} score={score} onResetScore={resetScore} isAuthenticated={!!orch.user} onSaveToRanking={saveToRanking} gameMode="adaptive" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} rankingPlayerName={orch.guestName} />
 
       {orch.showGuestNameForm && (
-        <CoachMark step="name-input" title="Qual seu Nome?" description="Informe seu nome para começar. Ele aparecerá no ranking se você pontuar!" position="bottom">
-          <GuestNameForm onNameSubmitted={orch.handleGuestNameSubmit} onCancel={orch.onGuestCancel} />
-        </CoachMark>
+        <GuestNameForm onNameSubmitted={orch.handleGuestNameSubmit} onCancel={orch.onGuestCancel} />
       )}
 
       {(adaptiveDiffChange || orch.difficultyChangeInfo) && (

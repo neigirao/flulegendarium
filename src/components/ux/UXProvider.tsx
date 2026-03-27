@@ -2,7 +2,7 @@ import { ReactNode, createContext, useContext } from 'react';
 import { useUXFeedback } from '@/hooks/use-ux-feedback';
 import { EnhancedFeedback } from './EnhancedFeedback';
 import { AchievementSystemProvider } from '@/components/achievements/AchievementSystemProvider';
-import { OnboardingProvider, OnboardingTrigger, WelcomeOverlay } from '@/components/onboarding';
+import { OnboardingProvider } from '@/components/onboarding';
 import { useGoogleOneTap } from '@/hooks/useGoogleOneTap';
 
 interface UXContextType {
@@ -68,9 +68,6 @@ export const UXProvider = ({ children }: UXProviderProps) => {
             />
           )}
           
-          {/* Onboarding */}
-          <WelcomeOverlay />
-          <OnboardingTrigger />
         </AchievementSystemProvider>
       </OnboardingProvider>
     </UXContext.Provider>
