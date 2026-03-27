@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/analytics';
@@ -30,8 +30,29 @@ export const useGoogleOneTap = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const initializedRef = useRef(false);
+  const oneTapLoginSucceededRef = useRef(false);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
   const { trackOneTapDisplayed, trackOneTapCompleted, trackOneTapSkipped, trackOneTapError } = useAnalytics();
+
+  const redirectAfterLogin = useCallback(() => {
+    const routeState = location.state as { from?: { pathname?: string } } | null;
+    const redirectTo = routeState?.from?.pathname || '/selecionar-modo-jogo';
+
+    navigate(redirectTo, { replace: true });
+
+    globalThis.setTimeout(() => {
+      if (window.location.pathname !== redirectTo) {
+        window.location.assign(redirectTo);
+      }
+    }, 150);
+  }, [location.state, navigate]);
+
+  useEffect(() => {
+    if (!user || !oneTapLoginSucceededRef.current) return;
+
+    oneTapLoginSucceededRef.current = false;
+    redirectAfterLogin();
+  }, [redirectAfterLogin, user]);
 
   useEffect(() => {
     if (user || !clientId || initializedRef.current) return;
@@ -97,10 +118,8 @@ export const useGoogleOneTap = () => {
         } else {
           console.log('[OneTap] Login successful');
           trackOneTapCompleted();
-
-          const routeState = location.state as { from?: { pathname?: string } } | null;
-          const redirectTo = routeState?.from?.pathname || '/selecionar-modo-jogo';
-          navigate(redirectTo, { replace: true });
+          oneTapLoginSucceededRef.current = true;
+          redirectAfterLogin();
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'unknown';
@@ -123,5 +142,5 @@ export const useGoogleOneTap = () => {
       }
       initializedRef.current = false;
     };
-  }, [user, clientId, location.state, navigate, trackOneTapCompleted, trackOneTapDisplayed, trackOneTapError, trackOneTapSkipped]);
+  }, [user, clientId, location.state, navigate, redirectAfterLogin, trackOneTapCompleted, trackOneTapDisplayed, trackOneTapError, trackOneTapSkipped]);
 };
