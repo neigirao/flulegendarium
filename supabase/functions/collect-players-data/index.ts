@@ -82,7 +82,7 @@ serve(async (req) => {
       console.error("Erro ao obter dados dos jogadores:", error);
       return new Response(
         JSON.stringify({ 
-          error: `Falha ao obter dados dos jogadores: ${error.message}` 
+          error: `Falha ao obter dados dos jogadores: ${error instanceof Error ? error.message : 'Unknown error'}` 
         }),
         { 
           status: 500,
