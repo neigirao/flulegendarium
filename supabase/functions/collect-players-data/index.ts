@@ -123,7 +123,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Erro inesperado:', error);
     return new Response(
-      JSON.stringify({ error: `Erro inesperado: ${error.message}` }),
+      JSON.stringify({ error: `Erro inesperado: ${error instanceof Error ? error.message : 'Unknown error'}` }),
       { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
