@@ -30,6 +30,7 @@ npm run preview
 - Arquitetura e limites de responsabilidade: `docs/ARCHITECTURE.md`
 - Guia para contribuição técnica: `docs/CONTRIBUTING.md`
 - Guia operacional para IA: `docs/AI_GUIDE.md`
+- Índice rápido do código para agentes: `docs/AI_CODEBASE_INDEX.md`
 - Runbook de diagnóstico e triagem: `docs/ERROR_TRIAGE.md`
 - Estratégias de prevenção de erro de imagens: `docs/IMAGE_ERROR_PREVENTION.md`
 - Fluxo de jogo funcional: `docs/GAME_FLOW.md`
@@ -44,7 +45,7 @@ A aplicação adota 3 princípios obrigatórios:
 
 ## Processo recomendado para mudanças
 
-1. Ler `docs/AI_GUIDE.md` (se usar IA) e `docs/ARCHITECTURE.md`.
+1. Ler `docs/AI_GUIDE.md`, `docs/AI_CODEBASE_INDEX.md` (se usar IA) e `docs/ARCHITECTURE.md`.
 2. Executar alteração pequena e orientada por hipótese.
 3. Validar localmente (`npm run lint` + testes afetados).
 4. Registrar decisões e riscos no PR (template em `docs/CONTRIBUTING.md`).
