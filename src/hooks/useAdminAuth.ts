@@ -60,24 +60,15 @@ export const useAdminAuth = () => {
     setError(null);
 
     try {
-      // Check admin credentials in admin_users table
-      const { data: adminUser, error: adminError } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('username', username)
-        .single();
+      // Validate credentials through a SECURITY DEFINER RPC (avoids exposing password hashes)
+      const { data: adminRows, error: adminError } = await supabase.rpc('verify_admin_credentials', {
+        p_username: username,
+        p_password: password,
+      });
+
+      const adminUser = adminRows?.[0];
 
       if (adminError || !adminUser) {
-        setError('Credenciais inválidas');
-        return;
-      }
-
-      // Verify password (in a real scenario, you'd use proper password hashing)
-      // For now, we'll use a simple comparison
-      const bcrypt = await import('bcryptjs');
-      const isValidPassword = await bcrypt.compare(password, adminUser.password_hash);
-
-      if (!isValidPassword) {
         setError('Credenciais inválidas');
         return;
       }
