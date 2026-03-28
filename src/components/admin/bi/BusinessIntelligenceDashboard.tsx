@@ -1,7 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserSegmentationCard } from "./UserSegmentationCard";
 import { CohortAnalysisCard } from "./CohortAnalysisCard";
-import { OperationalDashboard } from "./OperationalDashboard";
 import { ExecutiveAnalyticsDashboard } from "../analytics/ExecutiveAnalyticsDashboard";
 import { PeriodSelector } from "../shared/PeriodSelector";
 import { useReportPeriod } from "@/hooks/use-report-period";
@@ -9,7 +8,6 @@ import { useAdminAnalytics } from "@/hooks/analytics";
 import { 
   Users, 
   Calendar, 
-  Activity, 
   TrendingUp,
   Target,
   Zap,
@@ -23,12 +21,9 @@ export const BusinessIntelligenceDashboard = () => {
   const {
     userSegments,
     cohortAnalysis,
-    operationalMetrics,
     businessMetrics,
-    isLoading,
     isLoadingSegments,
     isLoadingCohorts,
-    isLoadingOperational,
     isLoadingBusiness
   } = useAdminAnalytics(period);
 
@@ -38,7 +33,7 @@ export const BusinessIntelligenceDashboard = () => {
         <div>
           <h2 className="text-2xl font-bold text-primary mb-2">Business Intelligence</h2>
           <p className="text-muted-foreground">
-            Analytics avançados, segmentação de usuários e métricas operacionais em tempo real
+            Analytics avançados, segmentação de usuários e análise de coortes em tempo real
           </p>
         </div>
         <PeriodSelector value={period} onChange={setPeriod} />
@@ -96,14 +91,10 @@ export const BusinessIntelligenceDashboard = () => {
       )}
 
       <Tabs defaultValue="executive" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-3xl">
+        <TabsList className="grid w-full grid-cols-3 max-w-3xl">
           <TabsTrigger value="executive" className="flex items-center gap-2">
             <LineChart size={16} />
             Executivo
-          </TabsTrigger>
-          <TabsTrigger value="operational" className="flex items-center gap-2">
-            <Activity size={16} />
-            Operacional
           </TabsTrigger>
           <TabsTrigger value="segments" className="flex items-center gap-2">
             <Users size={16} />
@@ -117,14 +108,6 @@ export const BusinessIntelligenceDashboard = () => {
 
         <TabsContent value="executive" className="space-y-6">
           <ExecutiveAnalyticsDashboard />
-        </TabsContent>
-
-        <TabsContent value="operational" className="space-y-6">
-          <OperationalDashboard 
-            metrics={operationalMetrics}
-            businessMetrics={businessMetrics}
-            isLoading={isLoadingOperational || isLoadingBusiness}
-          />
         </TabsContent>
 
         <TabsContent value="segments" className="space-y-6">
