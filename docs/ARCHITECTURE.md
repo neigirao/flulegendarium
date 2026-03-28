@@ -81,3 +81,7 @@ Referências operacionais:
 - `docs/AI_GUIDE.md`
 - `docs/ERROR_TRIAGE.md`
 - `docs/CONTRIBUTING.md`
+
+## 8. Leitura rápida para agentes de IA
+
+Para reduzir tempo de diagnóstico em tarefas amplas, consulte primeiro `docs/AI_CODEBASE_INDEX.md` e depois aprofunde por camada neste documento.
