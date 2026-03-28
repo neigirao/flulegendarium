@@ -29,6 +29,7 @@ export const useGoogleOneTap = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const isOneTapRoute = location.pathname === '/auth' || location.pathname === '/login';
   const initializedRef = useRef(false);
   const oneTapLoginSucceededRef = useRef(false);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -55,7 +56,7 @@ export const useGoogleOneTap = () => {
   }, [redirectAfterLogin, user]);
 
   useEffect(() => {
-    if (user || !clientId || initializedRef.current) return;
+    if (user || !clientId || initializedRef.current || !isOneTapRoute) return;
 
     const loadAndInit = () => {
       // Don't load if already present
@@ -128,18 +129,29 @@ export const useGoogleOneTap = () => {
       }
     };
 
-    // Defer loading to not block main thread
-    if ('requestIdleCallback' in window) {
-      (window as Window & { requestIdleCallback: (cb: () => void) => number })
-        .requestIdleCallback(loadAndInit);
+    // Defer loading so One Tap doesn't compete with initial paint/LCP
+    const scheduleOneTap = () => {
+      if ('requestIdleCallback' in window) {
+        (window as Window & { requestIdleCallback: (cb: () => void, options?: { timeout: number }) => number })
+          .requestIdleCallback(loadAndInit, { timeout: 5000 });
+        return;
+      }
+
+      globalThis.setTimeout(loadAndInit, 3500);
+    };
+
+    if (document.readyState === 'complete') {
+      scheduleOneTap();
     } else {
-      globalThis.setTimeout(loadAndInit, 2000);
+      window.addEventListener('load', scheduleOneTap, { once: true });
     }
 
     return () => {
+      window.removeEventListener('load', scheduleOneTap);
+
       if (window.google?.accounts?.id) {
         window.google.accounts.id.cancel();
       }
     };
-  }, [user, clientId, location.state, navigate, redirectAfterLogin, trackOneTapCompleted, trackOneTapDisplayed, trackOneTapError, trackOneTapSkipped]);
+  }, [user, clientId, isOneTapRoute, location.state, navigate, redirectAfterLogin, trackOneTapCompleted, trackOneTapDisplayed, trackOneTapError, trackOneTapSkipped]);
 };
