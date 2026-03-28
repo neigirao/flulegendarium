@@ -96,3 +96,10 @@ export const LazyEstatisticasPublicas = createLazyComponent(
   () => import('@/pages/EstatisticasPublicas'),
   React.createElement(PerformanceSkeleton, { height: 600 })
 );
+
+
+// Design System Module
+export const LazyDesignSystem = createLazyComponent(
+  () => import('@/pages/DesignSystem'),
+  React.createElement(PerformanceSkeleton, { height: 700 })
+);
