@@ -64,7 +64,7 @@ Em PR ou relatório técnico, incluir:
 - Mudança grande sem hipótese clara.
 - IA sugere “reescrever tudo” para corrigir bug localizado.
 
-## 6. Prompt-base recomendado para manutenção
+## 7. Prompt-base recomendado para manutenção
 
 ```txt
 Contexto: projeto React + TS com Supabase.
