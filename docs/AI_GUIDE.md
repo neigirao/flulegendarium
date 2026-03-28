@@ -19,7 +19,7 @@ Toda tarefa deve seguir este contrato:
    - caminho do usuário,
    - serviços e hooks envolvidos.
 2. **Declarar hipótese técnica antes de editar**
-   - “Acredito que o erro está em X por causa de Y”.
+   - "Acredito que o erro está em X por causa de Y".
 3. **Propor alteração mínima**
    - evitar refatorações amplas junto com bugfix.
 4. **Validar evidências**
@@ -50,15 +50,21 @@ Em PR ou relatório técnico, incluir:
 4. **Validação:** quais comandos e testes.
 5. **Rollback:** como reverter rapidamente.
 
-## 5. Sinais de alerta (não prosseguir sem revisar)
+## 5. Regras absolutas para assets visuais
+
+- **NUNCA gerar imagens via IA** para substituir fotos de jogadores ou camisas. Imagens geradas por IA não representam fielmente os jogadores/uniformes reais e comprometem a credibilidade do projeto.
+- Quando uma imagem de jogador ou camisa estiver indisponível, usar **placeholder genérico** (escudo do Fluminense ou silhueta) até que uma foto real seja obtida e enviada manualmente pelo administrador.
+- Fotos reais devem ser carregadas via **painel admin** (upload manual) ou migradas de fontes externas confiáveis via Edge Function `migrate-player-image`.
+
+## 6. Sinais de alerta (não prosseguir sem revisar)
 
 - Mudança altera regra de pontuação/dificuldade sem teste.
 - Mudança mexe em seleção de jogadores com fallback oculto.
 - Mudança de imagem ignora validação de URL/fallback.
 - Mudança grande sem hipótese clara.
-- IA sugere “reescrever tudo” para corrigir bug localizado.
+- IA sugere "reescrever tudo" para corrigir bug localizado.
 
-## 6. Prompt-base recomendado para manutenção
+## 7. Prompt-base recomendado para manutenção
 
 ```txt
 Contexto: projeto React + TS com Supabase.
@@ -67,14 +73,14 @@ Restrições: alteração mínima, sem quebrar modos de jogo existentes.
 Exija: hipótese, arquivos tocados, riscos, testes e rollback.
 ```
 
-## 7. Boas práticas para evolução contínua
+## 8. Boas práticas para evolução contínua
 
-- Abrir tarefas por problema real (erro/latência/usabilidade), não por “refatorar tudo”.
+- Abrir tarefas por problema real (erro/latência/usabilidade), não por "refatorar tudo".
 - Preferir melhorias incrementais com métricas comparáveis.
 - Converter correções recorrentes em runbooks (`docs/ERROR_TRIAGE.md`).
 - Revisar documentação em toda mudança de contrato (service, hook, schema).
 
-## 8. Definição de pronto para mudanças propostas por IA
+## 9. Definição de pronto para mudanças propostas por IA
 
 Uma proposta de IA só está pronta quando:
 
