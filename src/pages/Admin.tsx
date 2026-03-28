@@ -1,5 +1,4 @@
 
-import { useState } from "react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AddPlayerForm } from "@/components/AddPlayerForm";
@@ -17,6 +16,12 @@ import { JerseysManagement } from "@/components/admin/jerseys";
 
 export default function Admin() {
   const { isAuthenticated, isLoading, adminData, logout } = useAdminAuth();
+  const adminTabsListClassName =
+    "grid w-full grid-cols-2 gap-2 rounded-lg bg-secondary/70 p-1 sm:grid-cols-4 lg:grid-cols-8";
+  const adminTabsTriggerClassName =
+    "flex items-center gap-2 rounded-md text-foreground data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm";
+  const adminCardClassName = "rounded-lg bg-white p-6 shadow";
+  const adminSectionTitleClassName = "mb-4 text-xl font-bold text-primary";
 
   if (isLoading) {
     return (
@@ -52,36 +57,36 @@ export default function Admin() {
       {/* Conteúdo Principal */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Tabs defaultValue="dashboard" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8 max-w-7xl">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+          <TabsList className={adminTabsListClassName}>
+            <TabsTrigger value="dashboard" className={adminTabsTriggerClassName}>
               <BarChart3 size={16} />
               Dashboard
             </TabsTrigger>
-            <TabsTrigger value="business-intelligence" className="flex items-center gap-2">
+            <TabsTrigger value="business-intelligence" className={adminTabsTriggerClassName}>
               <Brain size={16} />
               BI
             </TabsTrigger>
-            <TabsTrigger value="image-audit" className="flex items-center gap-2">
+            <TabsTrigger value="image-audit" className={adminTabsTriggerClassName}>
               <Image size={16} />
               Imagens
             </TabsTrigger>
-            <TabsTrigger value="logged-users" className="flex items-center gap-2">
+            <TabsTrigger value="logged-users" className={adminTabsTriggerClassName}>
               <UserCheck size={16} />
               Usuários
             </TabsTrigger>
-            <TabsTrigger value="view-players" className="flex items-center gap-2">
+            <TabsTrigger value="view-players" className={adminTabsTriggerClassName}>
               <Eye size={16} />
               Visualizar
             </TabsTrigger>
-            <TabsTrigger value="players" className="flex items-center gap-2">
+            <TabsTrigger value="players" className={adminTabsTriggerClassName}>
               <Users size={16} />
               Gerenciar
             </TabsTrigger>
-            <TabsTrigger value="jerseys" className="flex items-center gap-2">
+            <TabsTrigger value="jerseys" className={adminTabsTriggerClassName}>
               <Shirt size={16} />
               Camisas
             </TabsTrigger>
-            <TabsTrigger value="add-player" className="flex items-center gap-2">
+            <TabsTrigger value="add-player" className={adminTabsTriggerClassName}>
               <UserPlus size={16} />
               Adicionar
             </TabsTrigger>
@@ -96,54 +101,54 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="image-audit">
-            <div className="bg-white rounded-lg shadow p-6 space-y-8">
+            <div className={`${adminCardClassName} space-y-8`}>
               <div>
-                <h2 className="text-xl font-bold text-primary mb-4">Reports de Imagens (Usuários)</h2>
+                <h2 className={adminSectionTitleClassName}>Reports de Imagens (Usuários)</h2>
                 <ImageFeedbackReport />
               </div>
               <div className="border-t pt-8">
-                <h2 className="text-xl font-bold text-primary mb-4">Auditoria de Imagens - Jogadores</h2>
+                <h2 className={adminSectionTitleClassName}>Auditoria de Imagens - Jogadores</h2>
                 <ImageAuditDashboard />
               </div>
               <div className="border-t pt-8">
-                <h2 className="text-xl font-bold text-primary mb-4">Auditoria de Imagens - Camisas</h2>
+                <h2 className={adminSectionTitleClassName}>Auditoria de Imagens - Camisas</h2>
                 <JerseyImageAuditDashboard />
               </div>
             </div>
           </TabsContent>
 
           <TabsContent value="logged-users">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-primary mb-4">Usuários Logados</h2>
+            <div className={adminCardClassName}>
+              <h2 className={adminSectionTitleClassName}>Usuários Logados</h2>
               <LoggedUsersView />
             </div>
           </TabsContent>
 
           <TabsContent value="view-players">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-primary mb-4">Visualizar Jogadores</h2>
+            <div className={adminCardClassName}>
+              <h2 className={adminSectionTitleClassName}>Visualizar Jogadores</h2>
               <PlayersListView />
             </div>
           </TabsContent>
 
           <TabsContent value="players">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-primary mb-4">Gerenciar Jogadores</h2>
+            <div className={adminCardClassName}>
+              <h2 className={adminSectionTitleClassName}>Gerenciar Jogadores</h2>
               <PlayersManagement />
             </div>
           </TabsContent>
 
           <TabsContent value="jerseys">
-            <div className="bg-white rounded-lg shadow p-6">
-              <h2 className="text-xl font-bold text-primary mb-4">Gerenciar Camisas</h2>
+            <div className={adminCardClassName}>
+              <h2 className={adminSectionTitleClassName}>Gerenciar Camisas</h2>
               <JerseysManagement />
             </div>
           </TabsContent>
 
           <TabsContent value="add-player">
             <div className="max-w-md mx-auto">
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl font-bold text-primary mb-4">Adicionar Novo Jogador</h2>
+              <div className={adminCardClassName}>
+                <h2 className={adminSectionTitleClassName}>Adicionar Novo Jogador</h2>
                 <AddPlayerForm />
               </div>
             </div>
