@@ -75,6 +75,10 @@ export const ImageAuditDashboard = () => {
           }
         }
 
+        const isSupabaseStorage = player.image_url.includes('supabase.co/storage');
+        const isLovableUpload = player.image_url.startsWith('/lovable-uploads/');
+        const isLocal = isSupabaseStorage || isLovableUpload;
+
         return {
           id: player.id,
           name: player.name,
@@ -82,7 +86,7 @@ export const ImageAuditDashboard = () => {
           is_external: isExternal,
           is_problematic: isProblematic,
           domain,
-          needs_migration: isExternal && (isProblematic || domain.includes('globo') || domain.includes('uol')),
+          needs_migration: isExternal && !isLocal,
           migration_status: 'pending',
         };
       });
