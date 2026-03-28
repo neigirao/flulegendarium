@@ -9,21 +9,6 @@ import { executiveAnalyticsService } from "@/services/executiveAnalyticsService"
  * Lazy-loaded only in admin dashboards.
  */
 export const useAdminAnalytics = (days: number = 30) => {
-  // ─── Business Intelligence (from use-business-intelligence) ───
-  const { data: userSegments = [], isLoading: isLoadingSegments } = useQuery({
-    queryKey: ['admin-user-segments', days],
-    queryFn: () => adminBusinessIntelligence.getUserSegments(days),
-    staleTime: 10 * 60 * 1000,
-    retry: 2
-  });
-
-  const { data: cohortAnalysis = [], isLoading: isLoadingCohorts } = useQuery({
-    queryKey: ['admin-cohort-analysis'],
-    queryFn: () => adminBusinessIntelligence.getCohortAnalysis(),
-    staleTime: 30 * 60 * 1000,
-    retry: 2
-  });
-
   const { data: operationalMetrics = [], isLoading: isLoadingOperational } = useQuery({
     queryKey: ['admin-operational-metrics'],
     queryFn: () => adminBusinessIntelligence.getOperationalMetrics(),
@@ -77,12 +62,8 @@ export const useAdminAnalytics = (days: number = 30) => {
 
   return {
     // Business Intelligence
-    userSegments,
-    cohortAnalysis,
     operationalMetrics,
     businessMetrics,
-    isLoadingSegments,
-    isLoadingCohorts,
     isLoadingOperational,
     isLoadingBusiness,
     // Executive Analytics
@@ -97,7 +78,7 @@ export const useAdminAnalytics = (days: number = 30) => {
     isLoadingDifficulty,
     isLoadingScores,
     // Combined loading
-    isLoading: isLoadingSegments || isLoadingCohorts || isLoadingOperational || isLoadingBusiness ||
+    isLoading: isLoadingOperational || isLoadingBusiness ||
                isLoadingFunnel || isLoadingHeatmap || isLoadingDifficulty || isLoadingScores,
   };
 };
