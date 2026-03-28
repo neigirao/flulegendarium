@@ -100,7 +100,7 @@ serve(async (req) => {
       console.error("Erro ao salvar jogadores no banco:", error);
       return new Response(
         JSON.stringify({ 
-          error: `Falha ao salvar jogadores no banco: ${error.message}` 
+          error: `Falha ao salvar jogadores no banco: ${error instanceof Error ? error.message : 'Unknown error'}` 
         }),
         { 
           status: 500,
