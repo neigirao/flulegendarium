@@ -140,7 +140,6 @@ export const useGoogleOneTap = () => {
       if (window.google?.accounts?.id) {
         window.google.accounts.id.cancel();
       }
-      initializedRef.current = false;
     };
   }, [user, clientId, location.state, navigate, redirectAfterLogin, trackOneTapCompleted, trackOneTapDisplayed, trackOneTapError, trackOneTapSkipped]);
 };
