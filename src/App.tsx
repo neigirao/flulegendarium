@@ -34,7 +34,8 @@ import {
   LazyProfilePage,
   LazyDailyChallengesPage,
   LazyJerseyQuizPage,
-  LazyEstatisticasPublicas
+  LazyEstatisticasPublicas,
+  LazyDesignSystem
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
@@ -45,6 +46,8 @@ const AppRouteFallback = () => (
     <p className="text-sm text-muted-foreground">Carregando conteúdo…</p>
   </div>
 );
+
+const isDesignSystemEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_DESIGN_SYSTEM === "true";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -102,6 +105,7 @@ function App() {
                             />
 
                             <Route path="/estatisticas" element={<LazyEstatisticasPublicas />} />
+                            {isDesignSystemEnabled && <Route path="/design-system" element={<LazyDesignSystem />} />}
                             <Route path="/social" element={<LazySocialPage />} />
                             <Route path="/perfil" element={<LazyProfilePage />} />
                             <Route path="/desafios" element={<LazyDailyChallengesPage />} />
