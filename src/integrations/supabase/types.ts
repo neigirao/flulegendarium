@@ -1752,6 +1752,13 @@ export type Database = {
         Returns: string
       }
       is_admin: { Args: never; Returns: boolean }
+      verify_admin_credentials: {
+        Args: { p_password: string; p_username: string }
+        Returns: {
+          id: string
+          username: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

@@ -61,7 +61,7 @@ export const useAdminAuth = () => {
 
     try {
       // Validate credentials through a SECURITY DEFINER RPC (avoids exposing password hashes)
-      const { data: adminRows, error: adminError } = await supabase.rpc('verify_admin_credentials', {
+      const { data: adminRows, error: adminError } = await (supabase.rpc as any)('verify_admin_credentials', {
         p_username: username,
         p_password: password,
       });
