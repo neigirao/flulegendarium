@@ -381,9 +381,10 @@ export const UnifiedPlayerImage = memo(({
   }, [currentSrc, imageStatus, inView, priority, player.id, player.name, retryCount, handleImageFailure]);
 
   return (
-    <div className={cn("w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto", className)}>
+    <div className={cn("w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto", difficulty && "h-full", className)}>
       <div className={cn(
         "relative rounded-lg overflow-hidden bg-muted/10",
+        difficulty && "h-full",
         effects?.borderColor && `border-4 ${effects.borderColor}`,
         effects?.glowColor && `shadow-2xl ${effects.glowColor}`,
         difficulty && "p-1 rounded-3xl transition-all duration-500"
