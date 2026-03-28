@@ -1,6 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserSegmentationCard } from "./UserSegmentationCard";
-import { CohortAnalysisCard } from "./CohortAnalysisCard";
 import { OperationalDashboard } from "./OperationalDashboard";
 import { ExecutiveAnalyticsDashboard } from "../analytics/ExecutiveAnalyticsDashboard";
 import { PeriodSelector } from "../shared/PeriodSelector";
@@ -8,7 +7,6 @@ import { useReportPeriod } from "@/hooks/use-report-period";
 import { useAdminAnalytics } from "@/hooks/analytics";
 import { 
   Users, 
-  Calendar, 
   Activity, 
   TrendingUp,
   Target,
@@ -22,12 +20,9 @@ export const BusinessIntelligenceDashboard = () => {
   const { period, setPeriod } = useReportPeriod();
   const {
     userSegments,
-    cohortAnalysis,
     operationalMetrics,
     businessMetrics,
-    isLoading,
     isLoadingSegments,
-    isLoadingCohorts,
     isLoadingOperational,
     isLoadingBusiness
   } = useAdminAnalytics(period);
@@ -96,7 +91,7 @@ export const BusinessIntelligenceDashboard = () => {
       )}
 
       <Tabs defaultValue="executive" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 max-w-3xl">
+        <TabsList className="grid w-full grid-cols-3 max-w-3xl">
           <TabsTrigger value="executive" className="flex items-center gap-2">
             <LineChart size={16} />
             Executivo
@@ -108,10 +103,6 @@ export const BusinessIntelligenceDashboard = () => {
           <TabsTrigger value="segments" className="flex items-center gap-2">
             <Users size={16} />
             Segmentos
-          </TabsTrigger>
-          <TabsTrigger value="cohorts" className="flex items-center gap-2">
-            <Calendar size={16} />
-            Coortes
           </TabsTrigger>
         </TabsList>
 
@@ -131,13 +122,6 @@ export const BusinessIntelligenceDashboard = () => {
           <UserSegmentationCard 
             segments={userSegments}
             isLoading={isLoadingSegments}
-          />
-        </TabsContent>
-
-        <TabsContent value="cohorts" className="space-y-6">
-          <CohortAnalysisCard 
-            cohorts={cohortAnalysis}
-            isLoading={isLoadingCohorts}
           />
         </TabsContent>
 

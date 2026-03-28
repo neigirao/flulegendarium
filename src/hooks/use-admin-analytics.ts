@@ -17,13 +17,6 @@ export const useAdminAnalytics = (days: number = 30) => {
     retry: 2
   });
 
-  const { data: cohortAnalysis = [], isLoading: isLoadingCohorts } = useQuery({
-    queryKey: ['admin-cohort-analysis'],
-    queryFn: () => adminBusinessIntelligence.getCohortAnalysis(),
-    staleTime: 30 * 60 * 1000,
-    retry: 2
-  });
-
   const { data: operationalMetrics = [], isLoading: isLoadingOperational } = useQuery({
     queryKey: ['admin-operational-metrics'],
     queryFn: () => adminBusinessIntelligence.getOperationalMetrics(),
@@ -85,11 +78,9 @@ export const useAdminAnalytics = (days: number = 30) => {
   return {
     // Business Intelligence
     userSegments,
-    cohortAnalysis,
     operationalMetrics,
     businessMetrics,
     isLoadingSegments,
-    isLoadingCohorts,
     isLoadingOperational,
     isLoadingBusiness,
     // Executive Analytics
@@ -106,7 +97,7 @@ export const useAdminAnalytics = (days: number = 30) => {
     isLoadingDifficulty,
     isLoadingScores,
     // Combined loading
-    isLoading: isLoadingSegments || isLoadingCohorts || isLoadingOperational || isLoadingBusiness ||
+    isLoading: isLoadingSegments || isLoadingOperational || isLoadingBusiness ||
                isLoadingFunnel || isLoadingHeatmap || isLoadingDifficulty || isLoadingScores,
   };
 };
