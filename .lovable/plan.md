@@ -1,72 +1,71 @@
 
 
-# Google Sign-In + Google One Tap
+## Diagnóstico: Jogo não exibe imagens dos jogadores + Erros de build
 
-## Credenciais (fornecidas pelo usuário)
+### Problema Principal
+A imagem do jogador não aparece no quiz adaptativo. A análise revela duas causas raiz:
 
-- **Client ID**: `1079382547248-ak86i9vrbfjdebfja205qgrpfsuo43iq.apps.googleusercontent.com`
-- **Client Secret**: `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`
+1. **~70% das imagens são URLs externas não confiáveis** (gstatic, glbimg, netflu, etc.) que falham por CORS, hotlink protection ou expiração. A validação em `isValidImageUrl` bloqueia domínios do grupo Globo (`glbimg.com`) e o mecanismo de retry tenta URLs no Supabase Storage que não existem (baseadas no nome do jogador normalizado).
 
-## Pré-requisito: Configuração no Supabase Dashboard
+2. **Build quebrado** por erros de TypeScript em 3 Edge Functions (`collect-players-data`, `process-player-name`, `upload-player`) — `error` tipado como `unknown` e parâmetros sem tipo.
 
-O usuário deve acessar o Supabase Dashboard (Auth → Providers → Google) e:
-1. Habilitar o provider Google
-2. Colar o Client ID e Client Secret acima
-3. Verificar que o callback URL `https://hafxruwnggitvtyngedy.supabase.co/auth/v1/callback` está nas Authorized Redirect URLs do Google Cloud Console
-4. Verificar que `https://flulegendarium.lovable.app` e `https://id-preview--2d18f90c-a6cd-4fc2-913d-b76eb4df6c17.lovable.app` estão nas Authorized JavaScript Origins
+3. **Google One Tap inicializando múltiplas vezes** — o cleanup do useEffect reseta `initializedRef.current = false`, causando re-inicialização a cada re-render do componente.
 
-## Implementação
+### Distribuição de URLs no banco
+- Supabase Storage: 58 jogadores (confiável)
+- Google Thumbnails (gstatic): 41 jogadores (efêmero, pode expirar)
+- Globo (glbimg): 30 jogadores (bloqueado pela validação)
+- Outros externos: 66 jogadores (CORS/hotlink imprevisível)
+- Fluzao.xyz: 1 jogador
 
-### 1. Fix build error — `UnifiedPlayerImage.tsx` (linha 253)
+### Plano de Correção
 
-`window.setTimeout` → `globalThis.setTimeout` para evitar erro TS18048.
+**Passo 1: Corrigir erros de build nas Edge Functions**
+- `collect-players-data/index.ts`: Tipar `error` como `unknown` nos catch blocks usando `(error instanceof Error ? error.message : 'Unknown error')`. Adicionar tipo `Record<string, unknown>` ao `playerImagesMap` e tipos aos parâmetros de `savePlayersToDatabase`.
+- `process-player-name/index.ts` (linha 225): Mesma correção de `error.message`.
+- `upload-player/index.ts` (linha 73): Mesma correção de `error.message`.
 
-### 2. Adicionar `VITE_GOOGLE_CLIENT_ID` ao `.env`
+**Passo 2: Permitir URLs externas no carregamento de imagens**
+- Em `src/utils/player-image/problematicUrls.ts`: Remover `glbimg.com` do bloqueio (muitas imagens válidas vêm deste CDN).
+- Em `src/utils/player-image/imageUtils.ts`: Relaxar a validação para aceitar qualquer URL http/https que não seja suspeitamente malformada. O mecanismo de retry + fallback para imagem padrão já cobre falhas reais.
 
+**Passo 3: Garantir que a imagem padrão apareça visualmente quando o carregamento falha**
+- Em `UnifiedPlayerImage.tsx`: Quando `imageStatus === 'error'`, chamar `onImageLoaded?.()` para que o timer inicie mesmo sem imagem do jogador. Atualmente, se a imagem falha E o `onImageLoaded` nunca é chamado, o jogo pode travar sem timer (embora no screenshot o timer está rodando, indicando que em alguns cenários o timer inicia por outra via).
+
+**Passo 4: Corrigir Google One Tap sendo inicializado múltiplas vezes**
+- Em `useGoogleOneTap.ts`: Não resetar `initializedRef.current = false` no cleanup. O Google SDK já está carregado na página; resetar o ref causa re-inicialização desnecessária.
+
+### Detalhes Técnicos
+
+```text
+Fluxo de carregamento de imagem:
+┌─────────────┐    ┌──────────────┐    ┌─────────────┐
+│ getReliable  │───►│ isValidImage │───►│ Imagem no   │
+│ ImageUrl()   │    │ Url() check  │    │ componente  │
+└─────────────┘    └──────┬───────┘    └──────┬──────┘
+                          │ BLOQUEIA           │ FALHA
+                          │ glbimg.com         │ timeout/CORS
+                          ▼                    ▼
+                   ┌──────────────┐    ┌─────────────┐
+                   │ defaultImage │    │ retry com   │
+                   │ (escudo)     │    │ URL supabase│
+                   └──────────────┘    │ (não existe)│
+                                       └──────┬──────┘
+                                              ▼
+                                       ┌─────────────┐
+                                       │ defaultImage │
+                                       └─────────────┘
+
+Correção: permitir URLs externas → elas carregam 
+diretamente ou falham e usam fallback normalmente.
 ```
-VITE_GOOGLE_CLIENT_ID="1079382547248-ak86i9vrbfjdebfja205qgrpfsuo43iq.apps.googleusercontent.com"
-```
 
-### 3. Criar hook `useGoogleOneTap` — `src/hooks/useGoogleOneTap.ts`
-
-- Carrega o script `https://accounts.google.com/gsi/client` via `requestIdleCallback`
-- Inicializa `google.accounts.id.initialize` com:
-  - `client_id` do env
-  - `auto_select: false`
-  - `context: 'signin'`
-  - `cancel_on_tap_outside: true`
-- Callback: chama `supabase.auth.signInWithIdToken({ provider: 'google', token: credential })`
-- Chama `google.accounts.id.prompt()` — o Google controla posicionamento (canto superior direito desktop, bottom sheet mobile) e cooldown exponencial automaticamente
-- Só ativa se usuário NÃO está logado e `VITE_GOOGLE_CLIENT_ID` existe
-- Tracking via `useAnalytics`: `one_tap_displayed`, `one_tap_completed`, `one_tap_skipped`, `one_tap_error`
-
-### 4. Botão "Entrar com Google" na página Auth — `src/pages/Auth.tsx`
-
-- Adicionar divider "ou continue com" + botão Google estilizado (ícone Google + texto) entre os tabs e o link "Jogar como convidado" (após linha 321, antes de linha 324)
-- O botão chama `supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/selecionar-modo-jogo' } })`
-
-### 5. Botão "Entrar com Google" no `GameAuthSelection.tsx`
-
-- Adicionar botão Google no card de "FAZER LOGIN" (após o botão "Login com Email", linha 77)
-- Mesmo flow OAuth do passo 4
-
-### 6. Montar One Tap global — `src/components/ux/UXProvider.tsx`
-
-- Importar e chamar `useGoogleOneTap()` dentro do `UXProvider`
-- O hook só exibe o prompt se o usuário não está autenticado
-
-## Arquivos afetados
-
-| Ação | Arquivo |
-|------|---------|
-| Fix | `src/components/player-image/UnifiedPlayerImage.tsx` |
-| Editar | `.env` |
-| Criar | `src/hooks/useGoogleOneTap.ts` |
-| Editar | `src/pages/Auth.tsx` |
-| Editar | `src/components/auth/GameAuthSelection.tsx` |
-| Editar | `src/components/ux/UXProvider.tsx` |
-
-## Nota de segurança
-
-O Client ID é uma chave pública (visível no HTML) — seguro para o frontend. O Client Secret NÃO vai no código — fica apenas no Supabase Dashboard.
+**Arquivos a modificar:**
+1. `supabase/functions/collect-players-data/index.ts` — fix TypeScript errors
+2. `supabase/functions/process-player-name/index.ts` — fix TypeScript errors
+3. `supabase/functions/upload-player/index.ts` — fix TypeScript errors
+4. `src/utils/player-image/problematicUrls.ts` — remover bloqueio de glbimg
+5. `src/utils/player-image/imageUtils.ts` — relaxar validação
+6. `src/components/player-image/UnifiedPlayerImage.tsx` — chamar onImageLoaded no error state
+7. `src/hooks/useGoogleOneTap.ts` — corrigir re-inicialização múltipla
 
