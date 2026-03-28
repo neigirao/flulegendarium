@@ -1,16 +1,7 @@
 import { logger } from '@/utils/logger';
 
 // Domínios conhecidos por aplicar rate limiting ou ter problemas frequentes
-const KNOWN_PROBLEMATIC_DOMAINS = [
-  'placar.com.br',
-  'globoesporte.globo.com',
-  'espn.com.br',
-  'ge.globo.com',
-  'lance.com.br',
-  'uol.com.br',
-  'estadao.com.br',
-  'oglobo.globo.com',
-];
+const KNOWN_PROBLEMATIC_DOMAINS: string[] = [];
 
 const PROBLEMATIC_URLS_KEY = 'flu-legendarium-problematic-urls';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 horas

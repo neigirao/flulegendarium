@@ -22,7 +22,6 @@ const isValidImageUrl = (url: string): boolean => {
     /chat_\d+_ss\.png/, // Padrão de erro identificado
     /undefined/i,
     /null/i,
-    /\s+/, // espaços
   ];
   
   for (const pattern of suspiciousPatterns) {
@@ -30,12 +29,6 @@ const isValidImageUrl = (url: string): boolean => {
       logger.warn('🚨 URL de imagem com padrão suspeito:', url);
       return false;
     }
-  }
-  
-  // Verificar se é de domínio problemático ou está marcada como problemática
-  if (isProblematicDomain(url) || isUrlProblematic(url)) {
-    logger.warn('🚨 URL de domínio problemático ou marcada como problemática:', url);
-    return false;
   }
   
   return true;

@@ -289,7 +289,7 @@ async function getPlayerImageUrl(playerName: string) {
   }
 }
 
-async function savePlayersToDatabase(players, supabase) {
+async function savePlayersToDatabase(players: Array<Record<string, unknown>>, supabase: ReturnType<typeof createClient>) {
   console.log(`Salvando ${players.length} jogadores no banco de dados...`);
   
   const savedPlayers = [];

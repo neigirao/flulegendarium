@@ -322,6 +322,9 @@ export const UnifiedPlayerImage = memo(({
     // Todas as tentativas falharam - reportar erro
     setImageStatus('error');
     
+    // Garantir que o jogo continue mesmo sem imagem
+    onImageLoaded?.();
+    
     // Reportar erro para o backend (async, não bloqueia)
     reportImageError({
       player_id: player.id,
