@@ -50,7 +50,13 @@ Em PR ou relatório técnico, incluir:
 4. **Validação:** quais comandos e testes.
 5. **Rollback:** como reverter rapidamente.
 
-## 5. Sinais de alerta (não prosseguir sem revisar)
+## 5. Regras absolutas para assets visuais
+
+- **NUNCA gerar imagens via IA** para substituir fotos de jogadores ou camisas. Imagens geradas por IA não representam fielmente os jogadores/uniformes reais e comprometem a credibilidade do projeto.
+- Quando uma imagem de jogador ou camisa estiver indisponível, usar **placeholder genérico** (escudo do Fluminense ou silhueta) até que uma foto real seja obtida e enviada manualmente pelo administrador.
+- Fotos reais devem ser carregadas via **painel admin** (upload manual) ou migradas de fontes externas confiáveis via Edge Function `migrate-player-image`.
+
+## 6. Sinais de alerta (não prosseguir sem revisar)
 
 - Mudança altera regra de pontuação/dificuldade sem teste.
 - Mudança mexe em seleção de jogadores com fallback oculto.
