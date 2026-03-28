@@ -1,6 +1,5 @@
 import { useAdminAnalytics } from "@/hooks/analytics";
 import { FunnelVisualization } from "./FunnelVisualization";
-import { FunnelTrendChart } from "./FunnelTrendChart";
 import { RetentionMetricsCard } from "./RetentionMetricsCard";
 import { ActivityHeatmap } from "./ActivityHeatmap";
 import { PlayerDifficultyAnalysis } from "./PlayerDifficultyAnalysis";
@@ -17,14 +16,12 @@ export const ExecutiveAnalyticsDashboard = () => {
   const { period, setPeriod } = useReportPeriod();
   const {
     funnelData,
-    funnelTrend,
     retentionMetrics,
     heatmapData,
     playerDifficulty,
     scoreDistribution,
     isLoading,
     isLoadingFunnel,
-    isLoadingTrend,
     isLoadingRetention,
     isLoadingHeatmap,
     isLoadingDifficulty,
@@ -33,7 +30,6 @@ export const ExecutiveAnalyticsDashboard = () => {
 
   const handleRefresh = () => {
     queryClient.invalidateQueries({ queryKey: ['executive-funnel', period] });
-    queryClient.invalidateQueries({ queryKey: ['executive-funnel-trend', period] });
     queryClient.invalidateQueries({ queryKey: ['executive-retention', period] });
     queryClient.invalidateQueries({ queryKey: ['executive-heatmap', period] });
     queryClient.invalidateQueries({ queryKey: ['executive-player-difficulty'] });
@@ -61,7 +57,7 @@ export const ExecutiveAnalyticsDashboard = () => {
             Dashboard Analytics Executivo
           </h2>
           <p className="text-muted-foreground">
-            Funil completo de 7 etapas, tendências e métricas de retenção
+            Funil completo de 7 etapas e métricas de retenção
           </p>
         </div>
         <div className="flex items-center gap-4">
@@ -147,18 +143,12 @@ export const ExecutiveAnalyticsDashboard = () => {
         isLoading={isLoadingRetention}
       />
 
-      {/* Funil e Tendência lado a lado */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <FunnelVisualization 
-          stages={funnelData} 
-          isLoading={isLoadingFunnel}
-          periodDays={period}
-        />
-        <FunnelTrendChart 
-          data={funnelTrend} 
-          isLoading={isLoadingTrend}
-        />
-      </div>
+      {/* Funil de Conversão */}
+      <FunnelVisualization 
+        stages={funnelData} 
+        isLoading={isLoadingFunnel}
+        periodDays={period}
+      />
 
       {/* Heatmap e Distribuição */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

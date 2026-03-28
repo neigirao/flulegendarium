@@ -47,13 +47,6 @@ export const useAdminAnalytics = (days: number = 30) => {
     retry: 2
   });
 
-  const { data: funnelTrend = [], isLoading: isLoadingTrend } = useQuery({
-    queryKey: ['executive-funnel-trend', days],
-    queryFn: () => executiveAnalyticsService.getFunnelTrend(days),
-    staleTime: 5 * 60 * 1000,
-    retry: 2
-  });
-
   const { data: retentionMetrics, isLoading: isLoadingRetention } = useQuery({
     queryKey: ['executive-retention', days],
     queryFn: () => executiveAnalyticsService.getRetentionMetrics(days),
@@ -94,13 +87,11 @@ export const useAdminAnalytics = (days: number = 30) => {
     isLoadingBusiness,
     // Executive Analytics
     funnelData,
-    funnelTrend,
     retentionMetrics: retentionMetrics || { playAgainRate: 0, averageSessionsPerUser: 0, returningUsers: 0 },
     heatmapData,
     playerDifficulty,
     scoreDistribution,
     isLoadingFunnel,
-    isLoadingTrend,
     isLoadingRetention,
     isLoadingHeatmap,
     isLoadingDifficulty,
