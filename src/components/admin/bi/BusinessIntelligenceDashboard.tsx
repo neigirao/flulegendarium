@@ -1,13 +1,10 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UserSegmentationCard } from "./UserSegmentationCard";
-import { CohortAnalysisCard } from "./CohortAnalysisCard";
 import { ExecutiveAnalyticsDashboard } from "../analytics/ExecutiveAnalyticsDashboard";
 import { PeriodSelector } from "../shared/PeriodSelector";
 import { useReportPeriod } from "@/hooks/use-report-period";
 import { useAdminAnalytics } from "@/hooks/analytics";
 import { 
   Users, 
-  Calendar, 
   TrendingUp,
   Target,
   Zap,
@@ -19,11 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 export const BusinessIntelligenceDashboard = () => {
   const { period, setPeriod } = useReportPeriod();
   const {
-    userSegments,
-    cohortAnalysis,
     businessMetrics,
-    isLoadingSegments,
-    isLoadingCohorts,
     isLoadingBusiness
   } = useAdminAnalytics(period);
 
@@ -33,7 +26,7 @@ export const BusinessIntelligenceDashboard = () => {
         <div>
           <h2 className="text-2xl font-bold text-primary mb-2">Business Intelligence</h2>
           <p className="text-muted-foreground">
-            Analytics avançados, segmentação de usuários e análise de coortes em tempo real
+            Analytics avançados e visão executiva em tempo real
           </p>
         </div>
         <PeriodSelector value={period} onChange={setPeriod} />
@@ -91,37 +84,15 @@ export const BusinessIntelligenceDashboard = () => {
       )}
 
       <Tabs defaultValue="executive" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 max-w-3xl">
+        <TabsList className="grid w-full grid-cols-1 max-w-sm">
           <TabsTrigger value="executive" className="flex items-center gap-2">
             <LineChart size={16} />
             Executivo
-          </TabsTrigger>
-          <TabsTrigger value="segments" className="flex items-center gap-2">
-            <Users size={16} />
-            Segmentos
-          </TabsTrigger>
-          <TabsTrigger value="cohorts" className="flex items-center gap-2">
-            <Calendar size={16} />
-            Coortes
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="executive" className="space-y-6">
           <ExecutiveAnalyticsDashboard />
-        </TabsContent>
-
-        <TabsContent value="segments" className="space-y-6">
-          <UserSegmentationCard 
-            segments={userSegments}
-            isLoading={isLoadingSegments}
-          />
-        </TabsContent>
-
-        <TabsContent value="cohorts" className="space-y-6">
-          <CohortAnalysisCard 
-            cohorts={cohortAnalysis}
-            isLoading={isLoadingCohorts}
-          />
         </TabsContent>
 
       </Tabs>
