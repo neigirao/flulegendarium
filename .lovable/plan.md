@@ -1,71 +1,39 @@
 
 
-## Diagnóstico: Jogo não exibe imagens dos jogadores + Erros de build
+## Fix: Player image not displaying due to broken CSS height chain
 
-### Problema Principal
-A imagem do jogador não aparece no quiz adaptativo. A análise revela duas causas raiz:
-
-1. **~70% das imagens são URLs externas não confiáveis** (gstatic, glbimg, netflu, etc.) que falham por CORS, hotlink protection ou expiração. A validação em `isValidImageUrl` bloqueia domínios do grupo Globo (`glbimg.com`) e o mecanismo de retry tenta URLs no Supabase Storage que não existem (baseadas no nome do jogador normalizado).
-
-2. **Build quebrado** por erros de TypeScript em 3 Edge Functions (`collect-players-data`, `process-player-name`, `upload-player`) — `error` tipado como `unknown` e parâmetros sem tipo.
-
-3. **Google One Tap inicializando múltiplas vezes** — o cleanup do useEffect reseta `initializedRef.current = false`, causando re-inicialização a cada re-render do componente.
-
-### Distribuição de URLs no banco
-- Supabase Storage: 58 jogadores (confiável)
-- Google Thumbnails (gstatic): 41 jogadores (efêmero, pode expirar)
-- Globo (glbimg): 30 jogadores (bloqueado pela validação)
-- Outros externos: 66 jogadores (CORS/hotlink imprevisível)
-- Fluzao.xyz: 1 jogador
-
-### Plano de Correção
-
-**Passo 1: Corrigir erros de build nas Edge Functions**
-- `collect-players-data/index.ts`: Tipar `error` como `unknown` nos catch blocks usando `(error instanceof Error ? error.message : 'Unknown error')`. Adicionar tipo `Record<string, unknown>` ao `playerImagesMap` e tipos aos parâmetros de `savePlayersToDatabase`.
-- `process-player-name/index.ts` (linha 225): Mesma correção de `error.message`.
-- `upload-player/index.ts` (linha 73): Mesma correção de `error.message`.
-
-**Passo 2: Permitir URLs externas no carregamento de imagens**
-- Em `src/utils/player-image/problematicUrls.ts`: Remover `glbimg.com` do bloqueio (muitas imagens válidas vêm deste CDN).
-- Em `src/utils/player-image/imageUtils.ts`: Relaxar a validação para aceitar qualquer URL http/https que não seja suspeitamente malformada. O mecanismo de retry + fallback para imagem padrão já cobre falhas reais.
-
-**Passo 3: Garantir que a imagem padrão apareça visualmente quando o carregamento falha**
-- Em `UnifiedPlayerImage.tsx`: Quando `imageStatus === 'error'`, chamar `onImageLoaded?.()` para que o timer inicie mesmo sem imagem do jogador. Atualmente, se a imagem falha E o `onImageLoaded` nunca é chamado, o jogo pode travar sem timer (embora no screenshot o timer está rodando, indicando que em alguns cenários o timer inicia por outra via).
-
-**Passo 4: Corrigir Google One Tap sendo inicializado múltiplas vezes**
-- Em `useGoogleOneTap.ts`: Não resetar `initializedRef.current = false` no cleanup. O Google SDK já está carregado na página; resetar o ref causa re-inicialização desnecessária.
-
-### Detalhes Técnicos
+### Root Cause
+In `UnifiedPlayerImage.tsx`, when `difficulty` is set (always the case in the quiz), the image container uses `h-full` but its parent and grandparent divs lack `h-full`. This breaks the CSS percentage height chain, causing the image container to collapse to 0px height. All children are absolutely positioned, so nothing provides intrinsic height.
 
 ```text
-Fluxo de carregamento de imagem:
-┌─────────────┐    ┌──────────────┐    ┌─────────────┐
-│ getReliable  │───►│ isValidImage │───►│ Imagem no   │
-│ ImageUrl()   │    │ Url() check  │    │ componente  │
-└─────────────┘    └──────┬───────┘    └──────┬──────┘
-                          │ BLOQUEIA           │ FALHA
-                          │ glbimg.com         │ timeout/CORS
-                          ▼                    ▼
-                   ┌──────────────┐    ┌─────────────┐
-                   │ defaultImage │    │ retry com   │
-                   │ (escudo)     │    │ URL supabase│
-                   └──────────────┘    │ (não existe)│
-                                       └──────┬──────┘
-                                              ▼
-                                       ┌─────────────┐
-                                       │ defaultImage │
-                                       └─────────────┘
-
-Correção: permitir URLs externas → elas carregam 
-diretamente ou falham e usam fallback normalmente.
+AdaptivePlayerImage container:  w-56 h-56 (224px) ✓
+  └─ UnifiedPlayerImage outer:  w-full max-w-md    ✗ height=auto
+      └─ Inner wrapper:         relative            ✗ height=auto
+          └─ Image container:   w-full h-full       ✗ h-full of auto = 0
+              └─ img:           absolute inset-0    → invisible
 ```
 
-**Arquivos a modificar:**
-1. `supabase/functions/collect-players-data/index.ts` — fix TypeScript errors
-2. `supabase/functions/process-player-name/index.ts` — fix TypeScript errors
-3. `supabase/functions/upload-player/index.ts` — fix TypeScript errors
-4. `src/utils/player-image/problematicUrls.ts` — remover bloqueio de glbimg
-5. `src/utils/player-image/imageUtils.ts` — relaxar validação
-6. `src/components/player-image/UnifiedPlayerImage.tsx` — chamar onImageLoaded no error state
-7. `src/hooks/useGoogleOneTap.ts` — corrigir re-inicialização múltipla
+### Fix (1 file)
+
+**`src/components/player-image/UnifiedPlayerImage.tsx`**
+
+1. **Line 384** — Add `h-full` when difficulty is set:
+   ```tsx
+   <div className={cn("w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto", difficulty && "h-full", className)}>
+   ```
+
+2. **Line 385-389** — Add `h-full` when difficulty is set:
+   ```tsx
+   <div className={cn(
+     "relative rounded-lg overflow-hidden bg-muted/10",
+     difficulty && "h-full",
+     effects?.borderColor && `border-4 ${effects.borderColor}`,
+     ...
+   )}>
+   ```
+
+This restores the height chain so `h-full` on the image container correctly inherits from the 224px parent in `AdaptivePlayerImage`.
+
+### Secondary cleanup (same file)
+- Change `fetchPriority` to `fetchpriority` (line 449) to fix the React DOM warning visible in console logs.
 
