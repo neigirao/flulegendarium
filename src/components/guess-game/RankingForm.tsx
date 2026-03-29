@@ -65,7 +65,7 @@ export const RankingForm = ({
         `${name.trim()} (@${instagram.trim().replace('@', '')})` : 
         name.trim();
 
-      console.log('📝 Preparando salvamento do ranking:', {
+      logger.debug('Preparando salvamento do ranking', 'RANKING_FORM', {
         player_name: playerDisplayName,
         score: score,
         user_id: user?.id || null,
