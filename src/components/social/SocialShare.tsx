@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { QuickShareButton } from './QuickShareButton';
 import { Achievement } from "@/types/achievements";
+import { logger } from "@/utils/logger";
+import { Achievement } from "@/types/achievements";
 
 interface SocialShareProps {
   score: number;
