@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useState } from 'react';
-import { useAchievements } from '@/hooks/game';
 import { useUX } from '@/components/ux/UXProvider';
+import { logger } from '@/utils/logger';
 
 interface PendingAchievement {
   id: string;
@@ -24,7 +24,6 @@ interface AchievementSystemProviderProps {
 }
 
 export const AchievementSystemProvider = ({ children }: AchievementSystemProviderProps) => {
-  const { checkAndUnlockAchievements } = useAchievements();
   const { showAchievement, triggerHapticFeedback } = useUX();
   const [pendingAchievements, setPendingAchievements] = useState<PendingAchievement[]>([]);
 
@@ -51,7 +50,7 @@ export const AchievementSystemProvider = ({ children }: AchievementSystemProvide
     triggerHapticFeedback('success');
     
     // Log achievement unlock
-    console.log(`🏆 Achievement unlocked: ${mockAchievement.title}`, {
+    logger.debug(`Achievement unlocked: ${mockAchievement.title}`, 'ACHIEVEMENT', {
       achievementId,
       playerName,
       points: mockAchievement.points

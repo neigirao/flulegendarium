@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { QuickShareButton } from './QuickShareButton';
 import { Achievement } from "@/types/achievements";
+import { logger } from "@/utils/logger";
 
 interface SocialShareProps {
   score: number;
@@ -91,7 +92,7 @@ Teste seus conhecimentos sobre os ídolos tricolores:`;
           url: shareUrl,
         });
       } catch (err) {
-        console.log('Error sharing:', err);
+        logger.debug('Share cancelled or failed', 'SOCIAL_SHARE', err);
       }
     }
   };

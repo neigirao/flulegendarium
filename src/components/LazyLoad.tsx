@@ -1,4 +1,4 @@
-import React, { Suspense, ComponentType } from 'react';
+import React, { Suspense, ComponentType, lazy } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { PerformanceSkeleton } from '@/components/performance/PerformanceSkeleton';
 
@@ -41,5 +41,18 @@ export const LazyLoad: React.FC<LazyLoadProps> = ({
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-export { withLazyLoad, createLazyComponent } from '@/utils/lazy-load-utils.tsx';
+export function createLazyComponent(
+  importFn: () => Promise<{ default: ComponentType<Record<string, unknown>> }>,
+  fallback?: React.ReactNode
+) {
+  const LazyComponent = lazy(importFn);
+
+  const WrappedComponent = (props: Record<string, unknown>) => (
+    <Suspense fallback={fallback || <PerformanceSkeleton height={400} />}>
+      <LazyComponent {...props} />
+    </Suspense>
+  );
+
+  WrappedComponent.displayName = 'LazyComponent';
+  return WrappedComponent;
+}

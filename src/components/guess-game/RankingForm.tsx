@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Trophy, User, X, Instagram } from "lucide-react";
 import { useAnalytics } from "@/hooks/analytics";
 import { useQueryClient } from "@tanstack/react-query";
+import { logger } from "@/utils/logger";
 
 interface RankingFormProps {
   score: number;
@@ -40,7 +41,7 @@ export const RankingForm = ({
                          user.email?.split('@')[0] || 
                          '';
       
-      console.log('👤 Usuário logado, preenchendo automaticamente:', displayName);
+      logger.debug('Usuário logado, preenchendo automaticamente', 'RANKING_FORM', { displayName });
       setName(displayName);
     }
   }, [user]);
@@ -64,7 +65,7 @@ export const RankingForm = ({
         `${name.trim()} (@${instagram.trim().replace('@', '')})` : 
         name.trim();
 
-      console.log('📝 Preparando salvamento do ranking:', {
+      logger.debug('Preparando salvamento do ranking', 'RANKING_FORM', {
         player_name: playerDisplayName,
         score: score,
         user_id: user?.id || null,
@@ -94,7 +95,7 @@ export const RankingForm = ({
       // Notifica componente pai para fazer o salvamento
       onSaved(playerDisplayName);
     } catch (error) {
-      console.error('❌ Erro ao preparar salvamento:', error);
+      logger.error('Erro ao preparar salvamento', 'RANKING_FORM', error);
       
       trackEvent({
         action: 'score_save_error',

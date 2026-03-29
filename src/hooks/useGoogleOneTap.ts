@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/analytics';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { logger } from '@/utils/logger';
 
 declare global {
   interface Window {
@@ -94,13 +95,13 @@ export const useGoogleOneTap = () => {
           : undefined;
 
         if (momentType === 'display') {
-          console.log('[OneTap] Prompt displayed');
+          logger.debug('Prompt displayed', 'ONE_TAP');
           trackOneTapDisplayed();
         } else if (momentType === 'skipped') {
-          console.log('[OneTap] Prompt skipped');
+          logger.debug('Prompt skipped', 'ONE_TAP');
           trackOneTapSkipped();
         } else if (momentType === 'dismissed') {
-          console.log('[OneTap] Prompt dismissed');
+          logger.debug('Prompt dismissed', 'ONE_TAP');
           trackOneTapSkipped();
         }
       });
@@ -114,17 +115,17 @@ export const useGoogleOneTap = () => {
         });
 
         if (error) {
-          console.error('[OneTap] Auth error:', error.message);
+          logger.error('Auth error', 'ONE_TAP', { message: error.message });
           trackOneTapError(error.message);
         } else {
-          console.log('[OneTap] Login successful');
+          logger.info('Login successful', 'ONE_TAP');
           trackOneTapCompleted();
           oneTapLoginSucceededRef.current = true;
           redirectAfterLogin();
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'unknown';
-        console.error('[OneTap] Unexpected error:', msg);
+        logger.error('Unexpected error', 'ONE_TAP', { message: msg });
         trackOneTapError(msg);
       }
     };
