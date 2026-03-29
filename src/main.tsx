@@ -40,12 +40,12 @@ const scheduleDeferredStyles = () => {
         return;
       }
 
-      window.setTimeout(loadDeferredStyles, 0);
+      setTimeout(loadDeferredStyles, 0);
     });
     return;
   }
 
-  window.setTimeout(loadDeferredStyles, 0);
+  setTimeout(loadDeferredStyles, 0);
 };
 
 // Render app first, then lazy-load monitoring and non-critical styles

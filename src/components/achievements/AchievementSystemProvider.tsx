@@ -49,7 +49,7 @@ export const AchievementSystemProvider = ({ children }: AchievementSystemProvide
     triggerHapticFeedback('success');
     
     // Log achievement unlock
-    console.log(`🏆 Achievement unlocked: ${mockAchievement.title}`, {
+    logger.debug(`Achievement unlocked: ${mockAchievement.title}`, 'ACHIEVEMENT', {
       achievementId,
       playerName,
       points: mockAchievement.points
