@@ -82,9 +82,6 @@ export const AnimatedContainer = ({
     >
       {children}
     </motion.div>
-    >
-      {children}
-    </motion.div>
   );
 };
 
