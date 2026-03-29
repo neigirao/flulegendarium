@@ -41,7 +41,7 @@ export const RankingForm = ({
                          user.email?.split('@')[0] || 
                          '';
       
-      console.log('👤 Usuário logado, preenchendo automaticamente:', displayName);
+      logger.debug('Usuário logado, preenchendo automaticamente', 'RANKING_FORM', { displayName });
       setName(displayName);
     }
   }, [user]);
