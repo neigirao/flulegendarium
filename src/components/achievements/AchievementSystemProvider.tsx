@@ -23,7 +23,6 @@ interface AchievementSystemProviderProps {
 }
 
 export const AchievementSystemProvider = ({ children }: AchievementSystemProviderProps) => {
-  const { checkAndUnlockAchievements } = useAchievements();
   const { showAchievement, triggerHapticFeedback } = useUX();
   const [pendingAchievements, setPendingAchievements] = useState<PendingAchievement[]>([]);
 
