@@ -125,7 +125,7 @@ export const useGoogleOneTap = () => {
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'unknown';
-        console.error('[OneTap] Unexpected error:', msg);
+        logger.error('Unexpected error', 'ONE_TAP', { message: msg });
         trackOneTapError(msg);
       }
     };
