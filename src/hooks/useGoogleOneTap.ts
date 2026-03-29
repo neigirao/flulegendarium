@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/analytics';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { logger } from '@/utils/logger';
 
 declare global {
   interface Window {
