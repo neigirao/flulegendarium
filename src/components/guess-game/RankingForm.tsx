@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Trophy, User, X, Instagram } from "lucide-react";
 import { useAnalytics } from "@/hooks/analytics";
 import { useQueryClient } from "@tanstack/react-query";
+import { logger } from "@/utils/logger";
 
 interface RankingFormProps {
   score: number;
