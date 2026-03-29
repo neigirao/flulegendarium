@@ -41,14 +41,13 @@ export const LazyLoad: React.FC<LazyLoadProps> = ({
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function createLazyComponent<P extends Record<string, any>>(
-  importFn: () => Promise<{ default: ComponentType<P> }>,
+export function createLazyComponent(
+  importFn: () => Promise<{ default: ComponentType<Record<string, unknown>> }>,
   fallback?: React.ReactNode
 ) {
   const LazyComponent = lazy(importFn);
 
-  const WrappedComponent = (props: P) => (
+  const WrappedComponent = (props: Record<string, unknown>) => (
     <Suspense fallback={fallback || <PerformanceSkeleton height={400} />}>
       <LazyComponent {...props} />
     </Suspense>
