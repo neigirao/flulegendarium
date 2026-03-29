@@ -31,7 +31,7 @@ export const DECADES_INFO: Record<Decade, DecadeInfo> = {
     label: 'Anos 2000',
     description: 'Era moderna com grandes contratações',
     period: '2000-2009',
-    color: 'bg-blue-500',
+    color: 'bg-info',
     icon: '🎯'
   },
   '2010s': {
