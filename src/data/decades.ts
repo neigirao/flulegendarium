@@ -15,7 +15,7 @@ export const DECADES_INFO: Record<Decade, DecadeInfo> = {
     label: 'Anos 80', 
     description: 'Década de ouro com grandes conquistas',
     period: '1980-1989',
-    color: 'bg-orange-500',
+    color: 'bg-primary',
     icon: '🏆'
   },
   '1990s': {
