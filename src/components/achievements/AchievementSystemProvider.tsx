@@ -1,5 +1,6 @@
 import { ReactNode, createContext, useState } from 'react';
 import { useUX } from '@/components/ux/UXProvider';
+import { logger } from '@/utils/logger';
 
 interface PendingAchievement {
   id: string;
