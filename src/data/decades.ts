@@ -7,7 +7,7 @@ export const DECADES_INFO: Record<Decade, DecadeInfo> = {
     label: 'Anos 70',
     description: 'A era dos grandes craques e do futebol arte',
     period: '1970-1979',
-    color: 'bg-amber-500',
+    color: 'bg-accent',
     icon: '🌟'
   },
   '1980s': {
