@@ -41,10 +41,8 @@ export const LazyLoad: React.FC<LazyLoadProps> = ({
   );
 };
 
-/**
- * Creates a lazy-loaded component with automatic Suspense wrapping.
- */
-export function createLazyComponent<P extends object>(
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function createLazyComponent<P extends Record<string, any>>(
   importFn: () => Promise<{ default: ComponentType<P> }>,
   fallback?: React.ReactNode
 ) {
@@ -52,7 +50,7 @@ export function createLazyComponent<P extends object>(
 
   const WrappedComponent = (props: P) => (
     <Suspense fallback={fallback || <PerformanceSkeleton height={400} />}>
-      <LazyComponent {...props as P & React.JSX.IntrinsicAttributes} />
+      <LazyComponent {...props} />
     </Suspense>
   );
 
