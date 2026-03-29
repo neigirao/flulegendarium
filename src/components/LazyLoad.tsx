@@ -52,7 +52,7 @@ export function createLazyComponent<P extends object>(
 
   const WrappedComponent = (props: P) => (
     <Suspense fallback={fallback || <PerformanceSkeleton height={400} />}>
-      <LazyComponent {...props} />
+      <LazyComponent {...props as P & React.JSX.IntrinsicAttributes} />
     </Suspense>
   );
 
