@@ -115,10 +115,10 @@ export const useGoogleOneTap = () => {
         });
 
         if (error) {
-          console.error('[OneTap] Auth error:', error.message);
+          logger.error('Auth error', 'ONE_TAP', { message: error.message });
           trackOneTapError(error.message);
         } else {
-          console.log('[OneTap] Login successful');
+          logger.info('Login successful', 'ONE_TAP');
           trackOneTapCompleted();
           oneTapLoginSucceededRef.current = true;
           redirectAfterLogin();
