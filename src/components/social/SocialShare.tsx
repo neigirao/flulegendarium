@@ -93,7 +93,7 @@ Teste seus conhecimentos sobre os ídolos tricolores:`;
           url: shareUrl,
         });
       } catch (err) {
-        console.log('Error sharing:', err);
+        logger.debug('Share cancelled or failed', 'SOCIAL_SHARE', err);
       }
     }
   };

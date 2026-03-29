@@ -95,7 +95,7 @@ export const RankingForm = ({
       // Notifica componente pai para fazer o salvamento
       onSaved(playerDisplayName);
     } catch (error) {
-      console.error('❌ Erro ao preparar salvamento:', error);
+      logger.error('Erro ao preparar salvamento', 'RANKING_FORM', error);
       
       trackEvent({
         action: 'score_save_error',

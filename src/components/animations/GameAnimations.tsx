@@ -70,18 +70,18 @@ export const AnimatedContainer = ({
   className,
   delay = 0
 }: AnimatedContainerProps) => {
-  const animation = gameAnimationVariants[variant];
+  const { initial, animate, exit, transition } = gameAnimationVariants[variant];
   
   return (
     <motion.div
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      initial={animation.initial as any}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      animate={animation.animate as any}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      exit={animation.exit as any}
-      transition={{ ...animation.transition, delay }}
+      initial={initial}
+      animate={animate}
+      exit={exit}
+      transition={{ ...transition, delay }}
       className={className}
+    >
+      {children}
+    </motion.div>
     >
       {children}
     </motion.div>

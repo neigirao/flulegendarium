@@ -47,7 +47,7 @@ export const DECADES_INFO: Record<Decade, DecadeInfo> = {
     label: 'Anos 2020',
     description: 'Era atual com novos talentos e conquistas',
     period: '2020-presente',
-    color: 'bg-purple-500',
+    color: 'bg-muted',
     icon: '💫'
   }
 };
