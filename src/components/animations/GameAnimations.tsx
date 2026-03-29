@@ -197,7 +197,7 @@ export const AnimatedScore = ({
           initial={{ opacity: 1, y: 0 }}
           animate={{ opacity: 0, y: -20 }}
           transition={{ duration: 1 }}
-          className="absolute -right-8 text-green-500 text-sm font-bold"
+          className="absolute -right-8 text-success text-sm font-bold"
         >
           +{diff}
         </motion.span>
