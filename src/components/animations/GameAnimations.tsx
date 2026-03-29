@@ -5,54 +5,43 @@ import { ReactNode } from "react";
 // Variantes de animação padronizadas para todos os jogos
 // eslint-disable-next-line react-refresh/only-export-components
 export const gameAnimationVariants = {
-  // Fade in/out básico
   fadeIn: {
     initial: { opacity: 0 },
     animate: { opacity: 1 },
     exit: { opacity: 0 },
     transition: { duration: 0.2 }
   },
-
-  // Slide de baixo para cima
   slideUp: {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: -20 },
     transition: { duration: 0.3, ease: "easeOut" }
   },
-
-  // Slide da direita
   slideInRight: {
     initial: { opacity: 0, x: 50 },
     animate: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -50 },
     transition: { duration: 0.3, ease: "easeOut" }
   },
-
-  // Scale bounce para feedback de acerto
   scaleBounce: {
     initial: { scale: 0.8, opacity: 0 },
     animate: { scale: 1, opacity: 1 },
     exit: { scale: 0.8, opacity: 0 },
     transition: { type: "spring", stiffness: 300, damping: 20 }
   },
-
-  // Pop para notificações
   pop: {
     initial: { scale: 0.5, opacity: 0 },
     animate: { scale: 1, opacity: 1 },
     exit: { scale: 0.5, opacity: 0 },
     transition: { type: "spring", stiffness: 400, damping: 25 }
   },
-
-  // Shake para erros
   shake: {
     initial: { x: 0 },
-    animate: { x: [0, -10, 10, -10, 10, 0] },
+    animate: { x: [0, -10, 10, -10, 10, 0] as number[] },
     exit: { x: 0 },
     transition: { duration: 0.4 }
   }
-} as const;
+};
 
 type AnimationVariant = 'fadeIn' | 'slideUp' | 'slideInRight' | 'scaleBounce' | 'pop' | 'shake';
 
