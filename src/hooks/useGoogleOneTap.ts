@@ -95,13 +95,13 @@ export const useGoogleOneTap = () => {
           : undefined;
 
         if (momentType === 'display') {
-          console.log('[OneTap] Prompt displayed');
+          logger.debug('Prompt displayed', 'ONE_TAP');
           trackOneTapDisplayed();
         } else if (momentType === 'skipped') {
-          console.log('[OneTap] Prompt skipped');
+          logger.debug('Prompt skipped', 'ONE_TAP');
           trackOneTapSkipped();
         } else if (momentType === 'dismissed') {
-          console.log('[OneTap] Prompt dismissed');
+          logger.debug('Prompt dismissed', 'ONE_TAP');
           trackOneTapSkipped();
         }
       });
