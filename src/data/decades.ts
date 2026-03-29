@@ -23,7 +23,7 @@ export const DECADES_INFO: Record<Decade, DecadeInfo> = {
     label: 'Anos 90',
     description: 'Consolidação e grandes ídolos tricolores',
     period: '1990-1999',
-    color: 'bg-red-500',
+    color: 'bg-destructive',
     icon: '⚽'
   },
   '2000s': {
