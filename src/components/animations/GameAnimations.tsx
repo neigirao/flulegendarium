@@ -238,7 +238,7 @@ export const StreakIndicator = ({
       >
         🔥
       </motion.span>
-      <span className="font-bold text-orange-500">{streak}</span>
+      <span className="font-bold text-warning">{streak}</span>
     </motion.div>
   );
 };
