@@ -1,5 +1,4 @@
 import { ReactNode, createContext, useState } from 'react';
-import { useAchievements } from '@/hooks/game';
 import { useUX } from '@/components/ux/UXProvider';
 
 interface PendingAchievement {
