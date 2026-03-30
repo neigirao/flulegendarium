@@ -39,20 +39,24 @@ export const useAdminAuth = () => {
           return;
         }
 
-        // Re-validate server-side: verify the admin user still exists
-        const { data: adminRows, error: rpcError } = await (supabase.rpc as CallableFunction)(
-          'verify_admin_credentials',
-          { p_username: session.user?.user_metadata?.username, p_password: '__session_check__' }
-        );
+        // Re-validate server-side: verify the admin user still exists by ID
+        const { data: adminRows, error: rpcError } = await supabase
+          .from('admin_users')
+          .select('id, username')
+          .eq('id', session.user?.id)
+          .limit(1);
 
-        // If the RPC returns no rows, it means credentials are invalid.
-        // But we can't re-verify the password here since we don't store it.
-        // Instead, we trust the stored session within the 24h window
-        // and rely on the fact that verify_admin_credentials was called at login.
-        // The session age check + server-side login validation is the security layer.
-        
-        if (rpcError) {
-          logger.warn('Session re-validation RPC error (non-blocking)', 'ADMIN_AUTH', rpcError);
+        // Note: RLS on admin_users blocks direct SELECT (USING false),
+        // but we have a permissive policy "Admin users são públicos para leitura" (USING true).
+        // If both policies exist, the permissive one wins for SELECT.
+
+        if (rpcError || !adminRows || adminRows.length === 0) {
+          logger.warn('Admin session invalid - user no longer exists', 'ADMIN_AUTH');
+          localStorage.removeItem('admin_session');
+          setIsAuthenticated(false);
+          setAdminData(null);
+          setIsLoading(false);
+          return;
         }
 
         setIsAuthenticated(true);
@@ -90,10 +94,10 @@ export const useAdminAuth = () => {
         return;
       }
 
-      const mockUser = {
+      const sessionUser = {
         id: adminUser.id,
-        email: `${username}@admin.local`,
-        user_metadata: { username },
+        email: '',
+        user_metadata: { username: adminUser.username },
         app_metadata: { role: 'admin' },
         aud: 'authenticated',
         created_at: new Date().toISOString()
@@ -101,12 +105,12 @@ export const useAdminAuth = () => {
 
       setIsAuthenticated(true);
       setAdminData({
-        user: mockUser,
+        user: sessionUser,
         isAdmin: true
       });
       
       localStorage.setItem('admin_session', JSON.stringify({
-        user: mockUser,
+        user: sessionUser,
         timestamp: Date.now()
       }));
 

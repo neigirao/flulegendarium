@@ -303,7 +303,7 @@ export const JerseyImageUpload = ({
               alt="Preview da camisa" 
               className="max-h-48 rounded-lg border border-border object-contain bg-muted/30"
               onError={(e) => {
-                (e.target as HTMLImageElement).src = '/placeholder.svg';
+                (e.target as HTMLImageElement).src = '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png';
               }}
             />
             {imageUrl && (

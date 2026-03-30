@@ -1,5 +1,6 @@
 import type { Jersey } from "@/types/jersey-game";
 import { logger } from "@/utils/logger";
+import { jerseyDefaultImage } from "./constants";
 
 /**
  * Cache para imagens de camisas
@@ -10,7 +11,7 @@ const jerseyImageCache = new Map<string, { url: string; loaded: boolean }>();
  * Obtém URL confiável da imagem da camisa
  */
 const getJerseyImageUrl = (jersey: Jersey): string => {
-  return jersey.image_url || '/placeholder.svg';
+  return jersey.image_url || jerseyDefaultImage;
 };
 
 /**

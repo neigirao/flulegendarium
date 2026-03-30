@@ -34,7 +34,7 @@ export const OptimizedImage = memo(({
   sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
   onLoad,
   onError,
-  fallbackSrc = '/placeholder.svg'
+  fallbackSrc = '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png'
 }: OptimizedImageProps) => {
   const [status, setStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
   const [inView, setInView] = useState(priority);
