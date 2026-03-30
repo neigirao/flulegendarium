@@ -26,7 +26,7 @@ const isValidImageUrl = (url: string): boolean => {
   
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(url)) {
-      logger.warn('🚨 URL de imagem com padrão suspeito:', url);
+      logger.warn('URL de imagem com padrão suspeito', 'PLAYER_IMAGE', { url });
       return false;
     }
   }
