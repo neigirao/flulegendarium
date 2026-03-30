@@ -3,6 +3,7 @@ import { Player } from './types';
 import { imageCache } from './cache';
 import { getReliableImageUrl } from './imageUtils';
 import { defaultImage, playerImagesFallbacks } from './constants';
+import { logger } from '@/utils/logger';
 
 export const preloadPlayerImages = (players: Player[]) => {
   if (!players || players.length === 0) return;
@@ -12,7 +13,7 @@ export const preloadPlayerImages = (players: Player[]) => {
     8
   );
   
-  console.log(`Precarregando ${preloadCount} imagens de jogadores de forma sequencial`);
+  logger.debug(`Precarregando ${preloadCount} imagens de jogadores de forma sequencial`, 'PLAYER_IMAGE');
   
   const preloadSequentially = (index = 0) => {
     if (index >= preloadCount || index >= players.length) return;
@@ -34,7 +35,7 @@ export const preloadPlayerImages = (players: Player[]) => {
     
     img.onload = loadNextImage;
     img.onerror = () => {
-      console.warn(`Falha ao pré-carregar imagem para ${player.name}`);
+      logger.warn(`Falha ao pré-carregar imagem para ${player.name}`, 'PLAYER_IMAGE');
       if (playerImagesFallbacks[player.name]) {
         const fallbackImg = new Image();
         fallbackImg.src = playerImagesFallbacks[player.name];
@@ -78,7 +79,7 @@ export const preloadNextPlayer = (nextPlayer: Player | null) => {
       img.fetchPriority = 'low';
       
       img.onload = () => {
-        console.log(`Imagem do próximo jogador (${nextPlayer.name}) pré-carregada com sucesso`);
+        logger.debug(`Imagem do próximo jogador (${nextPlayer.name}) pré-carregada com sucesso`, 'PLAYER_IMAGE');
         const cached = imageCache.get(nextPlayer.id);
         if (cached) {
           imageCache.set(nextPlayer.id, { ...cached, loaded: true });
@@ -86,7 +87,7 @@ export const preloadNextPlayer = (nextPlayer: Player | null) => {
       };
       
       img.onerror = () => {
-        console.warn(`Falha ao pré-carregar próximo jogador (${nextPlayer.name})`);
+        logger.warn(`Falha ao pré-carregar próximo jogador (${nextPlayer.name})`, 'PLAYER_IMAGE');
         if (playerImagesFallbacks[nextPlayer.name]) {
           const fallbackImg = new Image();
           fallbackImg.src = playerImagesFallbacks[nextPlayer.name];
@@ -115,7 +116,7 @@ export const prepareNextBatch = (allPlayers: Player[], currentPlayer: Player | n
   }
   
   if (nextBatch.length > 0) {
-    console.log(`Preparando próximo lote de ${nextBatch.length} jogadores em background`);
+    logger.debug(`Preparando próximo lote de ${nextBatch.length} jogadores em background`, 'PLAYER_IMAGE');
     
     setTimeout(() => {
       nextBatch.forEach((player, index) => {
