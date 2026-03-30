@@ -38,24 +38,24 @@ export const RetentionMetricsCard = ({
       label: 'Jogar Novamente',
       value: `${playAgainRate}%`,
       description: 'Jogadores que reiniciam',
-      color: 'text-green-600',
-      bgColor: 'bg-green-50 dark:bg-green-950/30'
+      color: 'text-flu-verde',
+      bgColor: 'bg-flu-verde/10'
     },
     {
       icon: Repeat,
       label: 'Sessões/Usuário',
       value: averageSessionsPerUser.toFixed(1),
       description: 'Média por jogador',
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50 dark:bg-blue-950/30'
+      color: 'text-accent-foreground',
+      bgColor: 'bg-accent/50'
     },
     {
       icon: UserCheck,
       label: 'Retornaram',
       value: returningUsers.toLocaleString('pt-BR'),
       description: 'Usuários recorrentes',
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50 dark:bg-purple-950/30'
+      color: 'text-secondary-foreground',
+      bgColor: 'bg-secondary/50'
     }
   ];
 

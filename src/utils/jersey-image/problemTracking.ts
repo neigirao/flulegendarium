@@ -4,7 +4,6 @@
  */
 
 import { logger } from '@/utils/logger';
-import { errorReporter } from '@/utils/errorReporting';
 
 // Set de camisas com problemas de imagem
 const problemJerseys = new Set<string>();
@@ -44,8 +43,7 @@ export const reportJerseyImageProblem = (
   
   problemHistory.push(problem);
   
-  // Log detalhado para console
-  logger.error('🚨 JERSEY IMAGE PROBLEM:', 'JERSEY_IMAGE_ERROR', {
+  logger.error('Jersey image load failed', 'JERSEY_IMAGE_ERROR', {
     jerseyId,
     years: years.join('/'),
     originalUrl,
@@ -53,18 +51,6 @@ export const reportJerseyImageProblem = (
     error,
     timestamp: problem.timestamp
   });
-  
-  // Reportar para sistema de erros
-  errorReporter.reportNetworkError(
-    `Jersey image load failed: ${jerseyId} (${years.join('/')})`,
-    {
-      jerseyId,
-      years: years.join('/'),
-      imageUrl: originalUrl,
-      optimizedUrl,
-      errorMessage: error
-    }
-  );
 };
 
 /**

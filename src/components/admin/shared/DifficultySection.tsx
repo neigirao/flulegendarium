@@ -7,11 +7,11 @@ import { DifficultyLevel } from "@/types/guess-game";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const DIFFICULTY_LEVELS = [
-  { value: 'muito_facil' as DifficultyLevel, label: 'Muito Fácil', color: 'text-green-600', multiplier: '1x' },
-  { value: 'facil' as DifficultyLevel, label: 'Fácil', color: 'text-blue-600', multiplier: '1.2x' },
-  { value: 'medio' as DifficultyLevel, label: 'Médio', color: 'text-yellow-600', multiplier: '1.5x' },
-  { value: 'dificil' as DifficultyLevel, label: 'Difícil', color: 'text-orange-600', multiplier: '2x' },
-  { value: 'muito_dificil' as DifficultyLevel, label: 'Muito Difícil', color: 'text-red-600', multiplier: '3x' }
+  { value: 'muito_facil' as DifficultyLevel, label: 'Muito Fácil', color: 'text-flu-verde', multiplier: '1x' },
+  { value: 'facil' as DifficultyLevel, label: 'Fácil', color: 'text-accent-foreground', multiplier: '1.2x' },
+  { value: 'medio' as DifficultyLevel, label: 'Médio', color: 'text-warning', multiplier: '1.5x' },
+  { value: 'dificil' as DifficultyLevel, label: 'Difícil', color: 'text-primary', multiplier: '2x' },
+  { value: 'muito_dificil' as DifficultyLevel, label: 'Muito Difícil', color: 'text-destructive', multiplier: '3x' }
 ] as const;
 
 // eslint-disable-next-line react-refresh/only-export-components

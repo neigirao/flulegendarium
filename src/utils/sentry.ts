@@ -107,16 +107,12 @@ export const initializeSentry = () => {
     Sentry.setTag('memory.total', Math.round(memoryInfo.totalJSHeapSize / 1024 / 1024));
   }
   
-  // Test if Sentry is working
-  console.log('Sentry initialized successfully');
-  
   // Add a way to manually test Sentry
   window.testSentry = () => {
     try {
       throw new Error("Manual Sentry test error!");
     } catch (error) {
       Sentry.captureException(error);
-      console.log('Test error sent to Sentry');
     }
   };
 };
