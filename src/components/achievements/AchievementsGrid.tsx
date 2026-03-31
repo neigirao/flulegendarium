@@ -91,7 +91,7 @@ export const AchievementsGrid = () => {
       case 'heroi_copacabana':
         return Math.min(gameStats.totalCorrect, 100);
       case 'campeao_america':
-        return Math.min(gameStats.totalScore, 500);
+        return Math.min(gameStats.totalCorrect, 500);
 
       // Conquistas de dedicação
       case 'guerreiro_laranjeiras':
