@@ -1,27 +1,39 @@
 
 
-# Auto-save ranking com nome obrigatório
+# Revisão: Perfil, Conquistas e Bug da Imagem QR Code
 
-## Situação atual
-- O `use-game-orchestration.ts` **já garante** que jogadores não-logados vejam o `GuestNameForm` antes de jogar (linha 213-217). Jogadores logados têm nome via `user_metadata`.
-- Portanto, **todo jogador já tem nome** quando chega ao game over — via `guestName` (convidado) ou `user` (logado).
-- O problema: `resolvedRankingName` ainda pode cair para `''` (linha 163), e o botão "Salvar no Ranking" manual ainda existe (linhas 378-458).
+## Achados
 
-## Alterações
+### 1. BUG CRÍTICO — QR Code de doação como fallback de camisa
+Em `src/utils/fallback-images/index.ts` linha 21, `DEFAULT_JERSEY_IMAGE` aponta para `/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png` — que é a **imagem do QR Code PIX de doação** usada em `Donations.tsx`. Embora `DEFAULT_JERSEY_IMAGE` não esteja sendo importada atualmente em nenhum componente, sua existência é perigosa e deve ser corrigida para apontar ao SVG de camisa inline ou ao escudo do clube.
 
-### 1. `GameOverDialog.tsx` — Fallback nunca vazio + remover UI manual
+Além disso, a validação em `src/utils/player-image/imageUtils.ts` **não bloqueia URLs do tipo gstatic** (que são thumbnails do Google e podem parecer QR codes). Apenas o jersey imageUtils tem essa proteção. Precisamos adicionar o mesmo bloqueio no player imageUtils.
 
-**Linha 163**: Trocar `|| ''` por `|| 'Tricolor Anônimo'` como safety net (nunca deveria ser atingido, mas garante que o auto-save sempre dispara).
+### 2. Perfil (`ProfilePage.tsx`) — 100% dados reais, OK
+- Todas as estatísticas vêm de `use-user-profile.ts` que consulta `user_game_history`, `rankings` e `user_challenges` no Supabase
+- Nenhum dado mockado encontrado
+- Empty states bem tratados
+- **Sem problemas**
 
-**Linhas 378-458**: Remover o bloco `showInitialState` (botão "Salvar no Ranking") e o bloco `showRankingForm` (`RankingForm`). Após auto-save, mostrar diretamente os botões "Jogar Novamente" e "Voltar ao Início" junto com share options.
+### 3. Conquistas (`Conquistas.tsx` + `AchievementsGrid.tsx`) — 100% dados reais, OK
+- Progresso calculado a partir de `user_game_history` real via Supabase
+- Achievements desbloqueados vêm de `user_achievements` table
+- `calculateRealProgress` mapeia IDs de achievement para estatísticas reais do banco
+- **Sem problemas de dados mockados**
 
-**Remover**: `import { RankingForm }`, state `showRankingForm`, handlers `handleSaveToRanking`, `handleSkipRanking`.
+### 4. Conquistas — Pequeno bug de progresso
+O `calculateRealProgress` não cobre todos os achievement IDs definidos em `ACHIEVEMENTS`. IDs como `coracao_tricolor`, `primeiro_campeao`, `hat_trick_tricolor`, `titulo_em_casa`, `lenda_viva`, `heroi_copacabana`, `campeao_america`, etc. não têm case no switch — retornam 0 sempre. Os cases existentes usam IDs antigos (`first_game`, `streak_5`, `games_10`, etc.) que não existem mais.
 
-### 2. Garantia de nome — já existe, sem mudança necessária
+---
 
-O fluxo atual no `use-game-orchestration.ts` já impede o jogo sem nome:
-- Não-logado → `showGuestNameForm = true` (bloqueia a UI até inserir nome)
-- Logado → `user` presente, nome vem de `user_metadata`
+## Plano de Execução
 
-Nenhuma alteração necessária nos game containers ou no orchestration hook.
+### 1. Corrigir `DEFAULT_JERSEY_IMAGE` (fallback-images/index.ts)
+Substituir a URL do QR code pela referência ao SVG inline de camisa (`fluminenseJerseySvg`), eliminando qualquer chance de mostrar QR code como fallback.
+
+### 2. Adicionar bloqueio de gstatic no player imageUtils
+Adicionar os patterns `encrypted-tbn0.gstatic.com` e `gstatic.com/images` à lista de `suspiciousPatterns` em `src/utils/player-image/imageUtils.ts`, igual já existe no jersey imageUtils.
+
+### 3. Corrigir `calculateRealProgress` no AchievementsGrid
+Atualizar o switch para usar os IDs reais definidos em `ACHIEVEMENTS` (`coracao_tricolor`, `primeiro_campeao`, `hat_trick_tricolor`, `titulo_em_casa`, `lenda_viva`, `heroi_copacabana`, `campeao_america`, `guerreiro_laranjeiras`, `filho_do_maraca`, `maquina_tricolor`, `raio_laranjeiras`), mapeando cada um para a estatística correta do banco.
 
