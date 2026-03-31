@@ -210,16 +210,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     sessionStorage.removeItem('active_challenge');
   };
 
-  const handleSaveToRanking = async (name: string) => {
-    if (onSaveToRanking) {
-      await onSaveToRanking(name, score, difficultyLevel);
-    }
-    setShowRankingForm(false);
-    setShowShareOptions(true);
-  };
-
   const handleNewGame = () => {
-    setShowRankingForm(false);
     setShowShareOptions(false);
     setAutoSaved(false);
     clearAllImageCache();
