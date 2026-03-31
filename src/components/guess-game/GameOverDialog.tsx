@@ -357,86 +357,46 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                 </motion.div>
               )}
 
-              {showInitialState && (
+              {showActionButtons && (
                 <motion.div 
-                  key="initial"
-                  className="space-y-4"
+                  key="actions"
+                  className="space-y-3"
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
                   exit="exit"
                 >
-                  {/* Primary Actions */}
-                  <motion.div className="space-y-3" variants={itemVariants}>
-                    {score > 0 && (
-                      <motion.div
-                        variants={buttonVariants}
-                        initial="rest"
-                        whileHover="hover"
-                        whileTap="tap"
-                      >
-                        <Button
-                          onClick={() => setShowRankingForm(true)}
-                          className="w-full bg-primary hover:bg-primary/90"
-                        >
-                          <Trophy className="w-4 h-4 mr-2" />
-                          Salvar no Ranking
-                        </Button>
-                      </motion.div>
-                    )}
-                    
-                    <motion.div
-                      variants={buttonVariants}
-                      initial="rest"
-                      whileHover="hover"
-                      whileTap="tap"
+                  <motion.div
+                    variants={buttonVariants}
+                    initial="rest"
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <Button
+                      onClick={handleNewGame}
+                      variant="outline"
+                      className="w-full"
                     >
-                      <Button
-                        onClick={handleNewGame}
-                        variant="outline"
-                        className="w-full"
-                      >
-                        <RotateCcw className="w-4 h-4 mr-2" />
-                        Jogar Novamente
-                      </Button>
-                    </motion.div>
-                    
-                    <motion.div
-                      variants={buttonVariants}
-                      initial="rest"
-                      whileHover="hover"
-                      whileTap="tap"
-                    >
-                      <Button
-                        variant="ghost"
-                        className="w-full"
-                        onClick={handleGoHome}
-                      >
-                        <Home className="w-4 h-4 mr-2" />
-                        Voltar ao Início
-                      </Button>
-                    </motion.div>
-
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Jogar Novamente
+                    </Button>
                   </motion.div>
-                </motion.div>
-              )}
-
-              {showRankingForm && (
-                <motion.div
-                  key="ranking"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <RankingForm
-                    score={score}
-                    onSaved={handleSaveToRanking}
-                    onCancel={handleSkipRanking}
-                    isAuthenticated={isAuthenticated}
-                    gameMode={gameMode}
-                    difficultyLevel={difficultyLevel}
-                  />
+                  
+                  <motion.div
+                    variants={buttonVariants}
+                    initial="rest"
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <Button
+                      variant="ghost"
+                      className="w-full"
+                      onClick={handleGoHome}
+                    >
+                      <Home className="w-4 h-4 mr-2" />
+                      Voltar ao Início
+                    </Button>
+                  </motion.div>
                 </motion.div>
               )}
 
