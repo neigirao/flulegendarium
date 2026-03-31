@@ -78,7 +78,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [showRankingForm, setShowRankingForm] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
