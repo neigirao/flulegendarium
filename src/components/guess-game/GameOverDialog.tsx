@@ -220,7 +220,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   };
 
   const handleGoHome = () => {
-    setShowRankingForm(false);
     setShowShareOptions(false);
     setAutoSaved(false);
     clearAllImageCache();
