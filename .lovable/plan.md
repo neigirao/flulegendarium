@@ -1,21 +1,27 @@
-# Auditoria Completa — CONCLUÍDA
 
-Todos os sprints foram executados com sucesso.
 
-## Resumo das Correções
+# Auto-save ranking com nome obrigatório
 
-### Sprint 1 — Dados Mockados + Dead Code ✅
-- Removido `Math.random()` do badge em `OperationalDashboard.tsx` → texto estático "Tempo real"
-- Renomeado `mockUser` para `sessionUser` em `useAdminAuth.ts`, removido email fake
-- Deletados 4 arquivos dead code em `src/utils/performance/` (imageOptimizer, databaseOptimization, cacheOptimization, cacheStrategy)
-- Deletado `src/utils/errorReporting.ts` (duplicava Sentry)
+## Situação atual
+- O `use-game-orchestration.ts` **já garante** que jogadores não-logados vejam o `GuestNameForm` antes de jogar (linha 213-217). Jogadores logados têm nome via `user_metadata`.
+- Portanto, **todo jogador já tem nome** quando chega ao game over — via `guestName` (convidado) ou `user` (logado).
+- O problema: `resolvedRankingName` ainda pode cair para `''` (linha 163), e o botão "Salvar no Ranking" manual ainda existe (linhas 378-458).
 
-### Sprint 2 — Segurança + Logging ✅
-- `useAdminAuth.ts` agora re-valida sessão via query real ao `admin_users` (verifica se admin_id existe)
-- Migrados `console.log/warn` restantes para `logger` em `preloadUtils.ts`, `sentry.ts`, `imageUtils.ts`, `problemTracking.ts`
-- Removida dependência de `errorReporting.ts` em `problemTracking.ts`
+## Alterações
 
-### Sprint 3 — Tokens Semânticos + Fallbacks ✅
-- Migradas cores hardcoded para tokens semânticos em: `OperationalDashboard`, `RetentionMetricsCard`, `ScoreDistributionChart`, `DifficultySection`, `NPSReport`
-- Substituídos 9 usos de `/placeholder.svg` por imagem real do projeto (`/lovable-uploads/...`)
-- `jerseyDefaultImage` agora usa o SVG inline garantido em vez de placeholder genérico
+### 1. `GameOverDialog.tsx` — Fallback nunca vazio + remover UI manual
+
+**Linha 163**: Trocar `|| ''` por `|| 'Tricolor Anônimo'` como safety net (nunca deveria ser atingido, mas garante que o auto-save sempre dispara).
+
+**Linhas 378-458**: Remover o bloco `showInitialState` (botão "Salvar no Ranking") e o bloco `showRankingForm` (`RankingForm`). Após auto-save, mostrar diretamente os botões "Jogar Novamente" e "Voltar ao Início" junto com share options.
+
+**Remover**: `import { RankingForm }`, state `showRankingForm`, handlers `handleSaveToRanking`, `handleSkipRanking`.
+
+### 2. Garantia de nome — já existe, sem mudança necessária
+
+O fluxo atual no `use-game-orchestration.ts` já impede o jogo sem nome:
+- Não-logado → `showGuestNameForm = true` (bloqueia a UI até inserir nome)
+- Logado → `user` presente, nome vem de `user_metadata`
+
+Nenhuma alteração necessária nos game containers ou no orchestration hook.
+
