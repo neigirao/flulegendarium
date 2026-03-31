@@ -77,7 +77,7 @@ export const AchievementsGrid = () => {
       case 'coracao_tricolor':
         return Math.min(gameStats.gamesPlayed, 1);
       case 'primeiro_campeao':
-        return Math.min(gameStats.totalScore, 5);
+        return Math.min(gameStats.totalCorrect, 5);
 
       // Conquistas de sequência
       case 'hat_trick_tricolor':
