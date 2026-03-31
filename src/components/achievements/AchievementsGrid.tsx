@@ -89,7 +89,7 @@ export const AchievementsGrid = () => {
 
       // Conquistas de pontuação
       case 'heroi_copacabana':
-        return Math.min(gameStats.totalScore, 100);
+        return Math.min(gameStats.totalCorrect, 100);
       case 'campeao_america':
         return Math.min(gameStats.totalScore, 500);
 
