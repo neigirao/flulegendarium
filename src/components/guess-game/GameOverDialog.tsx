@@ -159,9 +159,9 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     || user?.user_metadata?.full_name?.trim()
     || user?.user_metadata?.name?.trim()
     || user?.email?.split('@')[0]?.trim()
-    || '';
+    || 'Tricolor Anônimo';
 
-  // Auto-save for users with an available name (guest or logged-in)
+  // Auto-save for all players
   useEffect(() => {
     const autoSaveToRanking = async () => {
       if (
