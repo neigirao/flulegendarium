@@ -227,11 +227,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     navigate('/', { replace: true });
   };
 
-  const handleSkipRanking = () => {
-    setShowRankingForm(false);
-    setShowShareOptions(true);
-  };
-
   const getScoreMessage = () => {
     if (gameMode === 'adaptive') {
       return `Você conseguiu ${score} pontos no modo adaptativo${difficultyLevel ? ` (Nível: ${difficultyLevel})` : ''}!`;
