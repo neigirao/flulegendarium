@@ -196,7 +196,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     if (!open) {
       setAutoSaved(false);
       setIsAutoSaving(false);
-      setShowRankingForm(false);
       setShowShareOptions(false);
       setShowChallengeResult(false);
       setHasActiveChallenge(false);
