@@ -22,6 +22,8 @@ const isValidImageUrl = (url: string): boolean => {
     /chat_\d+_ss\.png/, // Padrão de erro identificado
     /undefined/i,
     /null/i,
+    /encrypted-tbn\d+\.gstatic\.com/i, // Thumbnails do Google (podem ser QR codes)
+    /gstatic\.com\/images/i, // Imagens genéricas do Google
   ];
   
   for (const pattern of suspiciousPatterns) {
