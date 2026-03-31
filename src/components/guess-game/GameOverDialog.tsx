@@ -234,8 +234,8 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     return `Você conseguiu ${score} pontos!`;
   };
 
-  // Determine if we should show the initial state (not auto-saved, not showing form, not showing share)
-  const showInitialState = !showRankingForm && !showShareOptions && !autoSaved && !isAutoSaving;
+  // Show action buttons when not auto-saving and not showing share options
+  const showActionButtons = !isAutoSaving && !showShareOptions && !autoSaved;
 
   return (
     <>
