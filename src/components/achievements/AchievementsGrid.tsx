@@ -73,32 +73,57 @@ export const AchievementsGrid = () => {
     if (!gameStats) return 0;
 
     switch (achievementId) {
-      case 'first_game':
-        return gameStats.gamesPlayed > 0 ? 1 : 0;
-      
-      case 'streak_5':
-        return Math.min(gameStats.bestStreak, 5);
-      
-      case 'streak_10':
+      // Conquistas básicas
+      case 'coracao_tricolor':
+        return Math.min(gameStats.gamesPlayed, 1);
+      case 'primeiro_campeao':
+        return Math.min(gameStats.totalScore, 5);
+
+      // Conquistas de sequência
+      case 'hat_trick_tricolor':
+        return Math.min(gameStats.bestStreak, 3);
+      case 'titulo_em_casa':
         return Math.min(gameStats.bestStreak, 10);
-      
-      case 'accuracy_master':
-        return gameStats.accuracy >= 80 ? 10 : Math.floor((gameStats.accuracy / 80) * 10);
-      
-      case 'speed_demon': {
-        const fastGames = gameStats.avgTime < 5000 ? 10 : 0;
-        return fastGames;
-      }
-      
-      case 'games_10':
-        return Math.min(gameStats.gamesPlayed, 10);
-      
-      case 'games_50':
+      case 'lenda_viva':
+        return Math.min(gameStats.bestStreak, 15);
+
+      // Conquistas de pontuação
+      case 'heroi_copacabana':
+        return Math.min(gameStats.totalScore, 100);
+      case 'campeao_america':
+        return Math.min(gameStats.totalScore, 500);
+
+      // Conquistas de dedicação
+      case 'guerreiro_laranjeiras':
         return Math.min(gameStats.gamesPlayed, 50);
-      
-      case 'games_100':
+      case 'filho_do_maraca':
         return Math.min(gameStats.gamesPlayed, 100);
-      
+
+      // Conquistas de excelência
+      case 'maquina_tricolor':
+        return gameStats.accuracy >= 100 ? 100 : Math.floor(gameStats.accuracy);
+
+      // Conquistas de tempo
+      case 'raio_laranjeiras':
+        return gameStats.avgTime > 0 && gameStats.avgTime <= 3000 ? 1 : 0;
+
+      // Conquistas de posição (sem dados específicos por posição no gameStats, retorna 0)
+      case 'muralha_tricolor':
+      case 'artilheiro_tricolor':
+      case 'zagueiro_raiz':
+        return 0;
+
+      // Conquistas de conhecimento histórico
+      case 'historiador_tricolor':
+      case 'expert_moderno':
+        return 0;
+
+      // Conquistas comportamentais
+      case 'coruja_laranjeiras':
+      case 'madrugador_tricolor':
+      case 'persistente_tricolor':
+        return 0;
+
       default:
         return 0;
     }

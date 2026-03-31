@@ -18,7 +18,7 @@ export {
 
 // Imagens padrão do storage (podem falhar em casos extremos)
 export const DEFAULT_PLAYER_IMAGE = "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png";
-export const DEFAULT_JERSEY_IMAGE = "/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png";
+export const DEFAULT_JERSEY_IMAGE = getFallbackSvg('jersey');
 
 /**
  * Obtém a imagem de fallback final que NUNCA falha
