@@ -1,13 +1,31 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { User } from '@supabase/supabase-js';
 import { logger } from '@/utils/logger';
 
+interface AdminSessionUser {
+  id: string;
+  username: string;
+}
+
 interface AdminAuth {
-  user: User;
+  user: AdminSessionUser;
   isAdmin: boolean;
 }
+
+const ADMIN_SESSION_KEY = 'admin_session';
+const ADMIN_SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+const isValidAdminSessionUser = (user: unknown): user is AdminSessionUser => {
+  return Boolean(
+    user &&
+      typeof user === 'object' &&
+      'id' in user &&
+      'username' in user &&
+      typeof (user as { id: unknown }).id === 'string' &&
+      typeof (user as { username: unknown }).username === 'string'
+  );
+};
 
 export const useAdminAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -19,8 +37,24 @@ export const useAdminAuth = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const storedSession = localStorage.getItem('admin_session');
-        if (!storedSession) {
+        // Check for stored admin session
+        const storedSession = localStorage.getItem(ADMIN_SESSION_KEY);
+        if (storedSession) {
+          const session = JSON.parse(storedSession);
+          const sessionAge = Date.now() - Number(session?.timestamp ?? 0);
+          
+          if (sessionAge < ADMIN_SESSION_MAX_AGE_MS && isValidAdminSessionUser(session?.user)) {
+            setIsAuthenticated(true);
+            setAdminData({
+              user: session.user,
+              isAdmin: true
+            });
+          } else {
+            localStorage.removeItem(ADMIN_SESSION_KEY);
+            setIsAuthenticated(false);
+            setAdminData(null);
+          }
+        } else {
           setIsAuthenticated(false);
           setAdminData(null);
           setIsLoading(false);
@@ -94,23 +128,20 @@ export const useAdminAuth = () => {
         return;
       }
 
-      const sessionUser = {
+      const adminUserSession: AdminSessionUser = {
         id: adminUser.id,
-        email: '',
-        user_metadata: { username: adminUser.username },
-        app_metadata: { role: 'admin' },
-        aud: 'authenticated',
-        created_at: new Date().toISOString()
-      } as unknown as User;
+        username: adminUser.username ?? username,
+      };
 
       setIsAuthenticated(true);
       setAdminData({
-        user: sessionUser,
+        user: adminUserSession,
         isAdmin: true
       });
       
-      localStorage.setItem('admin_session', JSON.stringify({
-        user: sessionUser,
+      // Store admin session in localStorage
+      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
+        user: adminUserSession,
         timestamp: Date.now()
       }));
 
@@ -124,7 +155,7 @@ export const useAdminAuth = () => {
   };
 
   const logout = async () => {
-    localStorage.removeItem('admin_session');
+    localStorage.removeItem(ADMIN_SESSION_KEY);
     setIsAuthenticated(false);
     setAdminData(null);
     navigate('/admin/login-administrador');

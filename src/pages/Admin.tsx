@@ -1,21 +1,39 @@
 
+import { Suspense, lazy } from "react";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 import { AddPlayerForm } from "@/components/AddPlayerForm";
 import { PlayersManagement } from "@/components/admin/PlayersManagement";
 import { PlayersListView } from "@/components/admin/PlayersListView";
 import { LoggedUsersView } from "@/components/admin/LoggedUsersView";
-import { BusinessIntelligenceDashboard } from "@/components/admin/bi/BusinessIntelligenceDashboard";
-import { ImageAuditDashboard } from "@/components/admin/images/ImageAuditDashboard";
-import { JerseyImageAuditDashboard } from "@/components/admin/images/JerseyImageAuditDashboard";
-import { ImageFeedbackReport } from "@/components/admin/reports/ImageFeedbackReport";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LogOut, BarChart3, UserPlus, Users, Eye, UserCheck, Brain, Image, Shirt } from "lucide-react";
 import { JerseysManagement } from "@/components/admin/jerseys";
 
+const BusinessIntelligenceDashboard = lazy(() =>
+  import("@/components/admin/bi/BusinessIntelligenceDashboard").then((module) => ({
+    default: module.BusinessIntelligenceDashboard,
+  }))
+);
+const ImageAuditDashboard = lazy(() =>
+  import("@/components/admin/images/ImageAuditDashboard").then((module) => ({
+    default: module.ImageAuditDashboard,
+  }))
+);
+const JerseyImageAuditDashboard = lazy(() =>
+  import("@/components/admin/images/JerseyImageAuditDashboard").then((module) => ({
+    default: module.JerseyImageAuditDashboard,
+  }))
+);
+const ImageFeedbackReport = lazy(() =>
+  import("@/components/admin/reports/ImageFeedbackReport").then((module) => ({
+    default: module.ImageFeedbackReport,
+  }))
+);
+
 export default function Admin() {
-  const { isAuthenticated, isLoading, adminData, logout } = useAdminAuth();
+  const { adminData, logout } = useAdminAuth();
   const adminTabsListClassName =
     "grid w-full grid-cols-2 gap-2 rounded-lg bg-secondary/70 p-1 sm:grid-cols-4 lg:grid-cols-8";
   const adminTabsTriggerClassName =
@@ -23,18 +41,11 @@ export default function Admin() {
   const adminCardClassName = "rounded-lg bg-white p-6 shadow";
   const adminSectionTitleClassName = "mb-4 text-xl font-bold text-primary";
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Carregando...</div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    window.location.href = '/admin/login-administrador';
-    return null;
-  }
+  const adminTabFallback = (
+    <div className="flex items-center justify-center rounded-lg bg-white p-6 shadow">
+      <div className="text-sm text-muted-foreground">Carregando módulo administrativo...</div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-secondary/50 to-white">
@@ -44,7 +55,7 @@ export default function Admin() {
           <div className="flex justify-between items-center py-4">
             <div>
               <h1 className="text-2xl font-bold text-primary">Área Administrativa - Lendas do Flu</h1>
-              <p className="text-muted-foreground">Bem-vindo, {adminData?.user?.email}</p>
+              <p className="text-muted-foreground">Bem-vindo, {adminData?.user?.username}</p>
             </div>
             <Button variant="outline" onClick={logout} className="flex items-center gap-2">
               <LogOut size={16} />
@@ -97,22 +108,30 @@ export default function Admin() {
           </TabsContent>
 
           <TabsContent value="business-intelligence">
-            <BusinessIntelligenceDashboard />
+            <Suspense fallback={adminTabFallback}>
+              <BusinessIntelligenceDashboard />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="image-audit">
             <div className={`${adminCardClassName} space-y-8`}>
               <div>
                 <h2 className={adminSectionTitleClassName}>Reports de Imagens (Usuários)</h2>
-                <ImageFeedbackReport />
+                <Suspense fallback={adminTabFallback}>
+                  <ImageFeedbackReport />
+                </Suspense>
               </div>
               <div className="border-t pt-8">
                 <h2 className={adminSectionTitleClassName}>Auditoria de Imagens - Jogadores</h2>
-                <ImageAuditDashboard />
+                <Suspense fallback={adminTabFallback}>
+                  <ImageAuditDashboard />
+                </Suspense>
               </div>
               <div className="border-t pt-8">
                 <h2 className={adminSectionTitleClassName}>Auditoria de Imagens - Camisas</h2>
-                <JerseyImageAuditDashboard />
+                <Suspense fallback={adminTabFallback}>
+                  <JerseyImageAuditDashboard />
+                </Suspense>
               </div>
             </div>
           </TabsContent>

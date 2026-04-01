@@ -32,6 +32,7 @@ export interface ErrorMetrics {
   }>;
   resolved_errors: number;
   avg_resolution_time: number;
+  data_quality?: 'real' | 'partial' | 'empty';
 }
 
 export interface SupportTicketData {
@@ -225,77 +226,26 @@ export const reportsService = {
   },
 
   async getErrorMetricsReport(days: number = 7): Promise<ErrorMetrics[]> {
-    const startDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-
-    const { data: bugs, error } = await supabase
-      .from('bugs')
-      .select('*')
-      .gte('created_at', startDate.toISOString());
+    const { data, error } = await (supabase.rpc as any)('get_error_metrics_daily', {
+      p_days: Math.max(1, days),
+    });
 
     if (error) {
-      logger.error('Erro ao buscar métricas de erro', 'REPORTS', { error: error.message });
+      logger.error('Erro ao buscar métricas de erro via RPC', 'REPORTS', { error: error.message });
       throw error;
     }
 
-    const dailyData: Record<string, ErrorMetrics> = {};
+    if (!Array.isArray(data)) return [];
 
-    for (let i = 0; i < days; i++) {
-      const date = new Date(startDate);
-      date.setDate(date.getDate() + i);
-      const dateStr = date.toISOString().split('T')[0];
-
-      dailyData[dateStr] = {
-        date: dateStr,
-        total_errors: 0,
-        error_rate: 0,
-        top_errors: [],
-        resolved_errors: 0,
-        avg_resolution_time: 0
-      };
-    }
-
-    const errorTypes: Record<string, number> = {};
-    
-    bugs?.forEach(bug => {
-      const date = new Date(bug.created_at).toISOString().split('T')[0];
-      if (dailyData[date]) {
-        dailyData[date].total_errors += 1;
-        
-        const description = bug.description.toLowerCase();
-        let errorType = 'Outros';
-        
-        if (description.includes('carregamento') || description.includes('loading')) {
-          errorType = 'Carregamento';
-        } else if (description.includes('imagem') || description.includes('image')) {
-          errorType = 'Imagens';
-        } else if (description.includes('login') || description.includes('auth')) {
-          errorType = 'Autenticação';
-        } else if (description.includes('pontuação') || description.includes('score')) {
-          errorType = 'Pontuação';
-        }
-        
-        errorTypes[errorType] = (errorTypes[errorType] || 0) + 1;
-      }
-    });
-
-    const totalErrors = Object.values(errorTypes).reduce((sum, count) => sum + count, 0);
-    const topErrors = Object.entries(errorTypes)
-      .map(([type, count]) => ({
-        error_type: type,
-        count,
-        percentage: totalErrors > 0 ? Math.round((count / totalErrors) * 100) : 0
-      }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 5);
-
-    Object.values(dailyData).forEach(data => {
-      data.top_errors = topErrors;
-      data.error_rate = data.total_errors > 0 ? Math.round((data.total_errors / Math.max(100, data.total_errors * 10)) * 100) : 0;
-      data.resolved_errors = 0;
-      data.avg_resolution_time = 0;
-    });
-
-    return Object.values(dailyData);
+    return data.map((row: any) => ({
+      date: String(row.date),
+      total_errors: Number(row.total_errors ?? 0),
+      error_rate: Number(row.error_rate ?? 0),
+      top_errors: Array.isArray(row.top_errors) ? row.top_errors : [],
+      resolved_errors: Number(row.resolved_errors ?? 0),
+      avg_resolution_time: Number(row.avg_resolution_time ?? 0),
+      data_quality: (row.data_quality ?? 'empty') as 'real' | 'partial' | 'empty',
+    }));
   },
 
   async getSupportTicketsReport(days: number = 30): Promise<SupportTicketData[]> {

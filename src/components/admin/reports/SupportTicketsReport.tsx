@@ -1,125 +1,19 @@
 
-import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
 import { 
   LifeBuoy, 
   Clock, 
-  CheckCircle, 
-  AlertCircle, 
-  User,
-  Calendar,
-  MessageCircle 
+  AlertCircle
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-
-interface SupportTicket {
-  id: string;
-  title: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  status: 'open' | 'in_progress' | 'resolved' | 'closed';
-  category: 'technical' | 'gameplay' | 'account' | 'billing' | 'feature_request';
-  created_at: string;
-  updated_at: string;
-  user_email?: string;
-  assigned_to?: string;
-}
+import { useReports } from "@/hooks/use-reports";
 
 interface SupportTicketsReportProps {
   days?: number;
 }
 
 export const SupportTicketsReport = ({ days = 30 }: SupportTicketsReportProps) => {
-  const { data: tickets, isLoading } = useQuery({
-    queryKey: ['support-tickets', days],
-    queryFn: async (): Promise<SupportTicket[]> => {
-      try {
-        const periodAgo = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-        const { data, error } = await supabase
-          .from('support_tickets')
-          .select('*')
-          .gte('created_at', periodAgo)
-          .order('created_at', { ascending: false })
-          .limit(100);
-
-        if (error) {
-          console.error('Error fetching support tickets:', error);
-          return [];
-        }
-
-        // Validate and transform data to match our interface
-        if (data && Array.isArray(data)) {
-          return data.filter(item => 
-            item && 
-            typeof item === 'object' && 
-            'id' in item && 
-            'title' in item && 
-            'description' in item && 
-            'created_at' in item
-          ).map(item => ({
-            id: item.id,
-            title: item.title,
-            description: item.description,
-            priority: (['low', 'medium', 'high', 'urgent'].includes(item.priority) 
-              ? item.priority 
-              : 'medium') as 'low' | 'medium' | 'high' | 'urgent',
-            status: (['open', 'in_progress', 'resolved', 'closed'].includes(item.status) 
-              ? item.status 
-              : 'open') as 'open' | 'in_progress' | 'resolved' | 'closed',
-            category: (['technical', 'gameplay', 'account', 'billing', 'feature_request'].includes(item.category) 
-              ? item.category 
-              : 'technical') as 'technical' | 'gameplay' | 'account' | 'billing' | 'feature_request',
-            created_at: item.created_at,
-            updated_at: item.updated_at || item.created_at,
-            user_email: item.user_email || undefined,
-            assigned_to: item.assigned_to || undefined
-          }));
-        }
-
-        return [];
-      } catch (error) {
-        console.error('Error fetching tickets:', error);
-        return [];
-      }
-    },
-    staleTime: 2 * 60 * 1000,
-    retry: 1
-  });
-
-  const getPriorityColor = (priority: string) => {
-    const colors = {
-      low: 'bg-flu-verde/20 text-flu-verde',
-      medium: 'bg-yellow-100 text-yellow-800',
-      high: 'bg-orange-100 text-orange-800',
-      urgent: 'bg-destructive/20 text-destructive'
-    };
-    return colors[priority as keyof typeof colors] || 'bg-muted text-muted-foreground';
-  };
-
-  const getStatusColor = (status: string) => {
-    const colors = {
-      open: 'bg-blue-100 text-blue-800',
-      in_progress: 'bg-yellow-100 text-yellow-800',
-      resolved: 'bg-flu-verde/20 text-flu-verde',
-      closed: 'bg-muted text-muted-foreground'
-    };
-    return colors[status as keyof typeof colors] || 'bg-muted text-muted-foreground';
-  };
-
-  const getCategoryIcon = (category: string) => {
-    const icons = {
-      technical: AlertCircle,
-      gameplay: MessageCircle,
-      account: User,
-      billing: Clock,
-      feature_request: CheckCircle
-    };
-    const IconComponent = icons[category as keyof typeof icons] || AlertCircle;
-    return <IconComponent className="w-4 h-4" />;
-  };
+  const { supportTickets = [], isLoadingSupport: isLoading } = useReports(days);
 
   if (isLoading) {
     return (
@@ -141,13 +35,31 @@ export const SupportTicketsReport = ({ days = 30 }: SupportTicketsReportProps) =
     );
   }
 
-  const stats = {
-    total: tickets?.length || 0,
-    open: tickets?.filter(t => t.status === 'open').length || 0,
-    inProgress: tickets?.filter(t => t.status === 'in_progress').length || 0,
-    resolved: tickets?.filter(t => t.status === 'resolved').length || 0,
-    urgent: tickets?.filter(t => t.priority === 'urgent').length || 0
-  };
+  const totals = supportTickets.reduce(
+    (acc, day) => {
+      acc.total += day.new_tickets;
+      acc.resolved += day.resolved_tickets;
+      acc.pending += day.pending_tickets;
+      acc.priority.high += day.priority_breakdown.high;
+      acc.priority.medium += day.priority_breakdown.medium;
+      acc.priority.low += day.priority_breakdown.low;
+      return acc;
+    },
+    {
+      total: 0,
+      resolved: 0,
+      pending: 0,
+      priority: { high: 0, medium: 0, low: 0 }
+    }
+  );
+
+  const latestDay = supportTickets[supportTickets.length - 1];
+  const avgResolutionTime = supportTickets.length > 0
+    ? Math.round(supportTickets.reduce((sum, day) => sum + day.avg_resolution_time, 0) / supportTickets.length)
+    : 0;
+  const avgSatisfaction = supportTickets.length > 0
+    ? (supportTickets.reduce((sum, day) => sum + day.satisfaction_score, 0) / supportTickets.length).toFixed(1)
+    : "0.0";
 
   return (
     <Card>
@@ -157,88 +69,81 @@ export const SupportTicketsReport = ({ days = 30 }: SupportTicketsReportProps) =
           Support Tickets
         </CardTitle>
         <CardDescription>
-          Tickets de suporte e solicitações dos usuários
+          Visão consolidada de tickets com base em dados reais do período
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Stats Summary */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 pb-4 border-b">
           <div className="text-center">
-            <div className="text-2xl font-bold text-flu-grena">{stats.total}</div>
+            <div className="text-2xl font-bold text-flu-grena">{totals.total}</div>
             <p className="text-xs text-muted-foreground">Total</p>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-blue-600">{stats.open}</div>
-            <p className="text-xs text-muted-foreground">Abertos</p>
+            <div className="text-2xl font-bold text-blue-600">{totals.pending}</div>
+            <p className="text-xs text-muted-foreground">Pendentes</p>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-yellow-600">{stats.inProgress}</div>
-            <p className="text-xs text-muted-foreground">Em Progresso</p>
+            <div className="text-2xl font-bold text-yellow-600">{avgResolutionTime}h</div>
+            <p className="text-xs text-muted-foreground">Resolução Média</p>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-flu-verde">{stats.resolved}</div>
+            <div className="text-2xl font-bold text-flu-verde">{totals.resolved}</div>
             <p className="text-xs text-muted-foreground">Resolvidos</p>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-destructive">{stats.urgent}</div>
-            <p className="text-xs text-muted-foreground">Urgentes</p>
+            <div className="text-2xl font-bold text-destructive">{avgSatisfaction}</div>
+            <p className="text-xs text-muted-foreground">Satisfação (0-5)</p>
           </div>
         </div>
 
-        {/* Tickets List */}
-        <ScrollArea className="h-96">
-          <div className="space-y-3">
-            {tickets && tickets.length > 0 ? (
-              tickets.map((ticket) => (
-                <div key={ticket.id} className="p-4 border rounded-lg hover:bg-muted transition-colors">
-                  <div className="flex items-start justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      {getCategoryIcon(ticket.category)}
-                      <h4 className="font-medium text-sm truncate max-w-48">
-                        {ticket.title}
-                      </h4>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge className={getPriorityColor(ticket.priority)}>
-                        {ticket.priority}
-                      </Badge>
-                      <Badge className={getStatusColor(ticket.status)}>
-                        {ticket.status.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  </div>
-                  
-                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                    {ticket.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <div className="flex items-center gap-4">
-                      {ticket.user_email && (
-                        <span className="flex items-center gap-1">
-                          <User className="w-3 h-3" />
-                          {ticket.user_email}
-                        </span>
-                      )}
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {new Date(ticket.created_at).toLocaleDateString('pt-BR')}
-                      </span>
-                    </div>
-                    <Button variant="ghost" size="sm">
-                      Ver Detalhes
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <LifeBuoy className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                <p>Nenhum ticket de suporte encontrado</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 border rounded-lg space-y-3">
+            <h4 className="font-medium flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 text-orange-500" />
+              Prioridade
+            </h4>
+            <div className="space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <Badge className="bg-orange-100 text-orange-800">Alta</Badge>
+                <span className="font-semibold">{totals.priority.high}</span>
               </div>
+              <div className="flex items-center justify-between">
+                <Badge className="bg-yellow-100 text-yellow-800">Média</Badge>
+                <span className="font-semibold">{totals.priority.medium}</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <Badge className="bg-flu-verde/20 text-flu-verde">Baixa</Badge>
+                <span className="font-semibold">{totals.priority.low}</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-4 border rounded-lg space-y-3">
+            <h4 className="font-medium flex items-center gap-2">
+              <Clock className="w-4 h-4 text-blue-500" />
+              Status diário (último dia do período)
+            </h4>
+            {latestDay ? (
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center justify-between">
+                  <span>Novo tickets</span>
+                  <span className="font-semibold">{latestDay.new_tickets}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Resolvidos</span>
+                  <span className="font-semibold text-flu-verde">{latestDay.resolved_tickets}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Pendentes</span>
+                  <span className="font-semibold text-orange-600">{latestDay.pending_tickets}</span>
+                </div>
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground">Sem dados para o período selecionado.</p>
             )}
           </div>
-        </ScrollArea>
+        </div>
       </CardContent>
     </Card>
   );
