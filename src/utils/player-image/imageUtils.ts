@@ -13,7 +13,7 @@ const isValidImageUrl = (url: string): boolean => {
   
   // Verificar se começa com http/https ou é um caminho local válido
   if (!url.startsWith('http') && !url.startsWith('https') && !url.startsWith('/')) {
-    console.warn('🚨 URL de imagem inválida (protocolo):', url);
+    logger.warn('URL de imagem inválida (protocolo)', 'PLAYER_IMAGE', { url });
     return false;
   }
   
@@ -22,11 +22,13 @@ const isValidImageUrl = (url: string): boolean => {
     /chat_\d+_ss\.png/, // Padrão de erro identificado
     /undefined/i,
     /null/i,
+    /encrypted-tbn\d+\.gstatic\.com/i, // Thumbnails do Google (podem ser QR codes)
+    /gstatic\.com\/images/i, // Imagens genéricas do Google
   ];
   
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(url)) {
-      logger.warn('🚨 URL de imagem com padrão suspeito:', url);
+      logger.warn('URL de imagem com padrão suspeito', 'PLAYER_IMAGE', { url });
       return false;
     }
   }

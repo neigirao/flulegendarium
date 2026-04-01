@@ -104,7 +104,7 @@ export const UsersTable = ({
                           alt={user.full_name || 'Avatar'}
                           className="w-10 h-10 rounded-full object-cover"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/placeholder.svg';
+                            (e.target as HTMLImageElement).src = '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png';
                           }}
                         />
                       ) : (

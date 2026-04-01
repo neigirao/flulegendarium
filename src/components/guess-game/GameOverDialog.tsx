@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Trophy, RotateCcw, Home, Star, Award } from "lucide-react";
-import { RankingForm } from "./RankingForm";
 import { SocialShare } from "@/components/social/SocialShare";
 import { ChallengeResult } from "@/components/social/ChallengeResult";
 
@@ -79,7 +78,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [showRankingForm, setShowRankingForm] = useState(false);
   const [showShareOptions, setShowShareOptions] = useState(false);
   const [autoSaved, setAutoSaved] = useState(false);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
@@ -160,9 +158,9 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     || user?.user_metadata?.full_name?.trim()
     || user?.user_metadata?.name?.trim()
     || user?.email?.split('@')[0]?.trim()
-    || '';
+    || 'Tricolor Anônimo';
 
-  // Auto-save for users with an available name (guest or logged-in)
+  // Auto-save for all players
   useEffect(() => {
     const autoSaveToRanking = async () => {
       if (
@@ -182,7 +180,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
           toast.success('Pontuação salva automaticamente no ranking!');
         } catch (error) {
           console.error('Error auto-saving to ranking:', error);
-          setShowRankingForm(true);
+          toast.error('Erro ao salvar pontuação. Tente jogar novamente.');
         } finally {
           setIsAutoSaving(false);
           autoSaveInFlightRef.current = false;
@@ -198,7 +196,6 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     if (!open) {
       setAutoSaved(false);
       setIsAutoSaving(false);
-      setShowRankingForm(false);
       setShowShareOptions(false);
       setShowChallengeResult(false);
       setHasActiveChallenge(false);
@@ -213,16 +210,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     sessionStorage.removeItem('active_challenge');
   };
 
-  const handleSaveToRanking = async (name: string) => {
-    if (onSaveToRanking) {
-      await onSaveToRanking(name, score, difficultyLevel);
-    }
-    setShowRankingForm(false);
-    setShowShareOptions(true);
-  };
-
   const handleNewGame = () => {
-    setShowRankingForm(false);
     setShowShareOptions(false);
     setAutoSaved(false);
     clearAllImageCache();
@@ -232,17 +220,11 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   };
 
   const handleGoHome = () => {
-    setShowRankingForm(false);
     setShowShareOptions(false);
     setAutoSaved(false);
     clearAllImageCache();
     onClose();
     navigate('/', { replace: true });
-  };
-
-  const handleSkipRanking = () => {
-    setShowRankingForm(false);
-    setShowShareOptions(true);
   };
 
   const getScoreMessage = () => {
@@ -252,8 +234,8 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     return `Você conseguiu ${score} pontos!`;
   };
 
-  // Determine if we should show the initial state (not auto-saved, not showing form, not showing share)
-  const showInitialState = !showRankingForm && !showShareOptions && !autoSaved && !isAutoSaving;
+  // Show action buttons when not auto-saving and not showing share options
+  const showActionButtons = !isAutoSaving && !showShareOptions && !autoSaved;
 
   return (
     <>
@@ -375,86 +357,46 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                 </motion.div>
               )}
 
-              {showInitialState && (
+              {showActionButtons && (
                 <motion.div 
-                  key="initial"
-                  className="space-y-4"
+                  key="actions"
+                  className="space-y-3"
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
                   exit="exit"
                 >
-                  {/* Primary Actions */}
-                  <motion.div className="space-y-3" variants={itemVariants}>
-                    {score > 0 && (
-                      <motion.div
-                        variants={buttonVariants}
-                        initial="rest"
-                        whileHover="hover"
-                        whileTap="tap"
-                      >
-                        <Button
-                          onClick={() => setShowRankingForm(true)}
-                          className="w-full bg-primary hover:bg-primary/90"
-                        >
-                          <Trophy className="w-4 h-4 mr-2" />
-                          Salvar no Ranking
-                        </Button>
-                      </motion.div>
-                    )}
-                    
-                    <motion.div
-                      variants={buttonVariants}
-                      initial="rest"
-                      whileHover="hover"
-                      whileTap="tap"
+                  <motion.div
+                    variants={buttonVariants}
+                    initial="rest"
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <Button
+                      onClick={handleNewGame}
+                      variant="outline"
+                      className="w-full"
                     >
-                      <Button
-                        onClick={handleNewGame}
-                        variant="outline"
-                        className="w-full"
-                      >
-                        <RotateCcw className="w-4 h-4 mr-2" />
-                        Jogar Novamente
-                      </Button>
-                    </motion.div>
-                    
-                    <motion.div
-                      variants={buttonVariants}
-                      initial="rest"
-                      whileHover="hover"
-                      whileTap="tap"
-                    >
-                      <Button
-                        variant="ghost"
-                        className="w-full"
-                        onClick={handleGoHome}
-                      >
-                        <Home className="w-4 h-4 mr-2" />
-                        Voltar ao Início
-                      </Button>
-                    </motion.div>
-
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Jogar Novamente
+                    </Button>
                   </motion.div>
-                </motion.div>
-              )}
-
-              {showRankingForm && (
-                <motion.div
-                  key="ranking"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <RankingForm
-                    score={score}
-                    onSaved={handleSaveToRanking}
-                    onCancel={handleSkipRanking}
-                    isAuthenticated={isAuthenticated}
-                    gameMode={gameMode}
-                    difficultyLevel={difficultyLevel}
-                  />
+                  
+                  <motion.div
+                    variants={buttonVariants}
+                    initial="rest"
+                    whileHover="hover"
+                    whileTap="tap"
+                  >
+                    <Button
+                      variant="ghost"
+                      className="w-full"
+                      onClick={handleGoHome}
+                    >
+                      <Home className="w-4 h-4 mr-2" />
+                      Voltar ao Início
+                    </Button>
+                  </motion.div>
                 </motion.div>
               )}
 

@@ -1,0 +1,15 @@
+# Long-lived immutable cache for fingerprinted build artifacts
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Long-lived cache for static media served by the app
+/lovable-uploads/*
+  Cache-Control: public, max-age=2592000, stale-while-revalidate=604800
+
+# Keep HTML fresh to avoid stale deploys
+/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Improve cache for first-party analytics script (not fingerprinted)
+/~flock.js
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800

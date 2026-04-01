@@ -1,13 +1,11 @@
-
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 
-// Render app first, then lazy-load monitoring
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Root element not found");
+  throw new Error('Root element not found');
 }
 
 const root = createRoot(rootElement);
@@ -18,11 +16,25 @@ root.render(
   </React.StrictMode>
 );
 
-// Lazy-load Sentry after first render to reduce blocking time
-const initSentry = () => import('./utils/sentry').then(m => m.initializeSentry());
-if (window.requestIdleCallback) {
-  window.requestIdleCallback(() => initSentry());
-} else {
-  setTimeout(() => initSentry(), 0);
-}
+// Lazy-load Sentry well after initial render to reduce critical-chain JS
+const scheduleSentryInit = () => {
+  if (!import.meta.env.PROD) return;
 
+  const initSentry = () => import('./utils/sentry').then(m => m.initializeSentry());
+
+  const run = () => {
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(() => initSentry(), { timeout: 12000 });
+    } else {
+      setTimeout(() => initSentry(), 8000);
+    }
+  };
+
+  if (document.readyState === 'complete') {
+    setTimeout(run, 6000);
+  } else {
+    window.addEventListener('load', () => setTimeout(run, 6000), { once: true });
+  }
+};
+
+scheduleSentryInit();

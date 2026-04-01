@@ -60,7 +60,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
       case 'healthy':
         return <CheckCircle className="w-4 h-4 text-flu-verde" />;
       case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
+        return <AlertTriangle className="w-4 h-4 text-warning" />;
       case 'critical':
         return <AlertTriangle className="w-4 h-4 text-destructive" />;
       default:
@@ -86,7 +86,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
       case 'healthy':
         return 'bg-flu-verde/20 text-flu-verde';
       case 'warning':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-warning/20 text-warning';
       case 'critical':
         return 'bg-destructive/20 text-destructive';
       default:
@@ -101,9 +101,9 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
     <div className="space-y-6">
       {/* Alertas Críticos */}
       {criticalMetrics.length > 0 && (
-        <Alert className="border-red-200 bg-red-50">
-          <AlertTriangle className="h-4 w-4 text-red-600" />
-          <AlertDescription className="text-red-800">
+        <Alert className="border-destructive/50 bg-destructive/10">
+          <AlertTriangle className="h-4 w-4 text-destructive" />
+          <AlertDescription className="text-destructive">
             <strong>Atenção:</strong> {criticalMetrics.length} métrica(s) crítica(s) detectada(s). 
             Ação imediata necessária.
           </AlertDescription>
@@ -119,7 +119,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-flu-grena">{businessMetrics.daily_active_users}</div>
+              <div className="text-2xl font-bold text-primary">{businessMetrics.daily_active_users}</div>
               <p className="text-xs text-muted-foreground">Usuários ativos diários</p>
             </CardContent>
           </Card>
@@ -141,7 +141,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
               <Target className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{businessMetrics.retention_rate}%</div>
+              <div className="text-2xl font-bold text-accent-foreground">{businessMetrics.retention_rate}%</div>
               <p className="text-xs text-muted-foreground">Taxa de retenção</p>
             </CardContent>
           </Card>
@@ -152,7 +152,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-purple-600">{businessMetrics.avg_session_duration}m</div>
+              <div className="text-2xl font-bold text-secondary-foreground">{businessMetrics.avg_session_duration}m</div>
               <p className="text-xs text-muted-foreground">Duração média</p>
             </CardContent>
           </Card>
@@ -163,7 +163,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Activity className="w-5 h-5 text-flu-grena" />
+            <Activity className="w-5 h-5 text-primary" />
             Métricas Operacionais em Tempo Real
             <Badge variant="secondary" className="ml-auto">
               {minutesSinceLastUpdate !== null
@@ -191,7 +191,7 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
               <div className="grid grid-cols-3 gap-4 mb-3">
                 <div>
                   <p className="text-sm text-muted-foreground">Valor Atual</p>
-                  <p className="text-xl font-bold text-flu-grena">{metric.current_value}</p>
+                  <p className="text-xl font-bold text-primary">{metric.current_value}</p>
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Valor Anterior</p>
@@ -242,34 +242,34 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-amber-600" />
+              <AlertTriangle className="w-5 h-5 text-warning" />
               Central de Alertas
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {criticalMetrics.map((metric, index) => (
-              <div key={`critical-${index}`} className="flex items-center gap-3 p-3 bg-red-50 rounded-lg border border-red-200">
-                <AlertTriangle className="w-5 h-5 text-red-600" />
+              <div key={`critical-${index}`} className="flex items-center gap-3 p-3 bg-destructive/10 rounded-lg border border-destructive/30">
+                <AlertTriangle className="w-5 h-5 text-destructive" />
                 <div className="flex-1">
-                  <p className="font-medium text-red-800">{metric.metric_name}</p>
-                  <p className="text-sm text-red-600">
+                  <p className="font-medium text-destructive">{metric.metric_name}</p>
+                  <p className="text-sm text-destructive/80">
                     Valor atual ({metric.current_value}) está abaixo do limite crítico
                   </p>
                 </div>
-                <Badge className="bg-red-100 text-red-800">CRÍTICO</Badge>
+                <Badge className="bg-destructive/20 text-destructive">CRÍTICO</Badge>
               </div>
             ))}
             
             {warningMetrics.map((metric, index) => (
-              <div key={`warning-${index}`} className="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                <AlertTriangle className="w-5 h-5 text-yellow-600" />
+              <div key={`warning-${index}`} className="flex items-center gap-3 p-3 bg-warning/10 rounded-lg border border-warning/30">
+                <AlertTriangle className="w-5 h-5 text-warning" />
                 <div className="flex-1">
-                  <p className="font-medium text-yellow-800">{metric.metric_name}</p>
-                  <p className="text-sm text-yellow-600">
+                  <p className="font-medium text-warning">{metric.metric_name}</p>
+                  <p className="text-sm text-warning/80">
                     Monitoramento necessário - tendência de {metric.trend === 'down' ? 'queda' : 'atenção'}
                   </p>
                 </div>
-                <Badge className="bg-yellow-100 text-yellow-800">ATENÇÃO</Badge>
+                <Badge className="bg-warning/20 text-warning">ATENÇÃO</Badge>
               </div>
             ))}
           </CardContent>

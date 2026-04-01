@@ -1,4 +1,6 @@
 import type { Jersey } from "@/types/jersey-game";
+import { logger } from "@/utils/logger";
+import { jerseyDefaultImage } from "./constants";
 
 /**
  * Cache para imagens de camisas
@@ -9,7 +11,7 @@ const jerseyImageCache = new Map<string, { url: string; loaded: boolean }>();
  * Obtém URL confiável da imagem da camisa
  */
 const getJerseyImageUrl = (jersey: Jersey): string => {
-  return jersey.image_url || '/placeholder.svg';
+  return jersey.image_url || jerseyDefaultImage;
 };
 
 /**
@@ -17,7 +19,7 @@ const getJerseyImageUrl = (jersey: Jersey): string => {
  */
 export const clearJerseyImageCache = (): void => {
   jerseyImageCache.clear();
-  console.log('Jersey image cache cleared');
+  logger.debug('Jersey image cache cleared', 'JERSEY_IMAGE');
 };
 
 /**
@@ -31,7 +33,7 @@ export const preloadJerseyImages = (jerseys: Jersey[]): void => {
     8
   );
   
-  console.log(`Precarregando ${preloadCount} imagens de camisas`);
+  logger.debug(`Precarregando ${preloadCount} imagens de camisas`, 'JERSEY_IMAGE');
   
   const preloadSequentially = (index = 0): void => {
     if (index >= preloadCount || index >= jerseys.length) return;
@@ -49,7 +51,7 @@ export const preloadJerseyImages = (jerseys: Jersey[]): void => {
     
     img.onload = loadNextImage;
     img.onerror = () => {
-      console.warn(`Falha ao pré-carregar imagem da camisa ${jersey.years.join('/')}`);
+      logger.warn(`Falha ao pré-carregar imagem da camisa ${jersey.years.join('/')}`, 'JERSEY_IMAGE');
       loadNextImage();
     };
     
@@ -81,12 +83,12 @@ export const preloadNextJersey = (nextJersey: Jersey | null): void => {
       img.fetchPriority = 'low';
       
       img.onload = () => {
-        console.log(`Imagem da próxima camisa (${nextJersey.years.join('/')}) pré-carregada`);
+        logger.debug(`Imagem da próxima camisa (${nextJersey.years.join('/')}) pré-carregada`, 'JERSEY_IMAGE');
         jerseyImageCache.set(nextJersey.id, { url: imageUrl, loaded: true });
       };
       
       img.onerror = () => {
-        console.warn(`Falha ao pré-carregar próxima camisa (${nextJersey.years.join('/')})`);
+        logger.warn(`Falha ao pré-carregar próxima camisa (${nextJersey.years.join('/')})`, 'JERSEY_IMAGE');
       };
       
       img.src = imageUrl;
@@ -117,7 +119,7 @@ export const prepareNextJerseyBatch = (
   }
   
   if (nextBatch.length > 0) {
-    console.log(`Preparando próximo lote de ${nextBatch.length} camisas em background`);
+    logger.debug(`Preparando próximo lote de ${nextBatch.length} camisas em background`, 'JERSEY_IMAGE');
     
     setTimeout(() => {
       nextBatch.forEach((jersey, index) => {

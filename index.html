@@ -10,20 +10,14 @@
     <!-- LCP OPTIMIZATION: Preload critical hero image (valid PNG asset) -->
     <link rel="preload" href="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png" as="image" fetchpriority="high" type="image/png">
     
-    <!-- Critical resource preconnects -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://uodxnuimxhmlqxoqxqaz.supabase.co" crossorigin>
-    
     <!-- DNS prefetch for non-critical third-party domains -->
     <link rel="dns-prefetch" href="https://uodxnuimxhmlqxoqxqaz.supabase.co">
     <link rel="dns-prefetch" href="https://www.googletagmanager.com">
     <link rel="dns-prefetch" href="https://static.hotjar.com">
     <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com">
     
-    <!-- Font loading optimized with display swap -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'; this.onload=null;">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    <!-- Font loading -->
+    <!-- External Google Fonts removed from critical path to avoid render-blocking chain -->
     
     <!-- Geo tags -->
     <meta name="geo.region" content="BR-RJ" />
@@ -171,20 +165,40 @@
           o.head.appendChild(r);
         })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
         
-        // AdSense
-        var adsScript = document.createElement('script');
-        adsScript.async = true;
-        adsScript.crossOrigin = 'anonymous';
-        adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8001132507261536';
-        document.head.appendChild(adsScript);
+        // AdSense (deferred further to reduce critical-chain contention)
+        function loadAds() {
+          var adsScript = document.createElement('script');
+          adsScript.async = true;
+          adsScript.crossOrigin = 'anonymous';
+          adsScript.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8001132507261536';
+          document.head.appendChild(adsScript);
+        }
+
+        if (document.visibilityState === 'hidden') {
+          loadAds();
+        } else {
+          setTimeout(function() {
+            if ('requestIdleCallback' in window) {
+              requestIdleCallback(loadAds, { timeout: 7000 });
+            } else {
+              setTimeout(loadAds, 2500);
+            }
+          }, 3000);
+        }
       }
       
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(loadThirdPartyScripts);
+      function scheduleThirdPartyScripts() {
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadThirdPartyScripts, { timeout: 4000 });
+        } else {
+          setTimeout(loadThirdPartyScripts, 2000);
+        }
+      }
+
+      if (document.readyState === 'complete') {
+        scheduleThirdPartyScripts();
       } else {
-        window.addEventListener('load', function() {
-          setTimeout(loadThirdPartyScripts, 1000);
-        });
+        window.addEventListener('load', scheduleThirdPartyScripts, { once: true });
       }
     </script>
   </head>

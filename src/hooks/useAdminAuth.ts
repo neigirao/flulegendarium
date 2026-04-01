@@ -57,7 +57,47 @@ export const useAdminAuth = () => {
         } else {
           setIsAuthenticated(false);
           setAdminData(null);
+          setIsLoading(false);
+          return;
         }
+
+        const session = JSON.parse(storedSession);
+        const sessionAge = Date.now() - session.timestamp;
+        const maxAge = 24 * 60 * 60 * 1000;
+
+        if (sessionAge >= maxAge) {
+          localStorage.removeItem('admin_session');
+          setIsAuthenticated(false);
+          setAdminData(null);
+          setIsLoading(false);
+          return;
+        }
+
+        // Re-validate server-side: verify the admin user still exists by ID
+        const { data: adminRows, error: rpcError } = await supabase
+          .from('admin_users')
+          .select('id, username')
+          .eq('id', session.user?.id)
+          .limit(1);
+
+        // Note: RLS on admin_users blocks direct SELECT (USING false),
+        // but we have a permissive policy "Admin users são públicos para leitura" (USING true).
+        // If both policies exist, the permissive one wins for SELECT.
+
+        if (rpcError || !adminRows || adminRows.length === 0) {
+          logger.warn('Admin session invalid - user no longer exists', 'ADMIN_AUTH');
+          localStorage.removeItem('admin_session');
+          setIsAuthenticated(false);
+          setAdminData(null);
+          setIsLoading(false);
+          return;
+        }
+
+        setIsAuthenticated(true);
+        setAdminData({
+          user: session.user,
+          isAdmin: true
+        });
       } catch (error) {
         logger.error('Erro ao verificar autenticação', 'ADMIN_AUTH', error);
         setIsAuthenticated(false);
@@ -76,11 +116,10 @@ export const useAdminAuth = () => {
     setError(null);
 
     try {
-      // Validate credentials through a SECURITY DEFINER RPC (avoids exposing password hashes)
-      const { data: adminRows, error: adminError } = await (supabase.rpc as any)('verify_admin_credentials', {
-        p_username: username,
-        p_password: password,
-      });
+      const { data: adminRows, error: adminError } = await (supabase.rpc as CallableFunction)(
+        'verify_admin_credentials',
+        { p_username: username, p_password: password }
+      );
 
       const adminUser = adminRows?.[0];
 
@@ -124,9 +163,9 @@ export const useAdminAuth = () => {
 
   return {
     isAuthenticated,
-    isAdmin: isAuthenticated, // Alias for backward compatibility
+    isAdmin: isAuthenticated,
     isLoading,
-    loading: isLoading, // Alias for backward compatibility
+    loading: isLoading,
     adminData,
     login,
     logout,

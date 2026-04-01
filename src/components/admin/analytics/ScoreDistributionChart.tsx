@@ -96,13 +96,13 @@ export const ScoreDistributionChart = ({ data, isLoading }: ScoreDistributionCha
                 <p className="text-xs text-muted-foreground">Total de Jogos</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-flu-verde">
                   {dataWithPercent.find(d => d.range === '1000+')?.count || 0}
                 </p>
                 <p className="text-xs text-muted-foreground">Elite (1000+)</p>
               </div>
               <div className="text-center">
-                <p className="text-2xl font-bold text-yellow-600">
+                <p className="text-2xl font-bold text-warning">
                   {dataWithPercent.filter(d => d.range === '301-500' || d.range === '501-800')
                     .reduce((sum, d) => sum + d.count, 0)}
                 </p>

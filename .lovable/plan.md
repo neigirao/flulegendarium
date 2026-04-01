@@ -1,39 +1,39 @@
 
 
-## Fix: Player image not displaying due to broken CSS height chain
+# Revisão: Perfil, Conquistas e Bug da Imagem QR Code
 
-### Root Cause
-In `UnifiedPlayerImage.tsx`, when `difficulty` is set (always the case in the quiz), the image container uses `h-full` but its parent and grandparent divs lack `h-full`. This breaks the CSS percentage height chain, causing the image container to collapse to 0px height. All children are absolutely positioned, so nothing provides intrinsic height.
+## Achados
 
-```text
-AdaptivePlayerImage container:  w-56 h-56 (224px) ✓
-  └─ UnifiedPlayerImage outer:  w-full max-w-md    ✗ height=auto
-      └─ Inner wrapper:         relative            ✗ height=auto
-          └─ Image container:   w-full h-full       ✗ h-full of auto = 0
-              └─ img:           absolute inset-0    → invisible
-```
+### 1. BUG CRÍTICO — QR Code de doação como fallback de camisa
+Em `src/utils/fallback-images/index.ts` linha 21, `DEFAULT_JERSEY_IMAGE` aponta para `/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png` — que é a **imagem do QR Code PIX de doação** usada em `Donations.tsx`. Embora `DEFAULT_JERSEY_IMAGE` não esteja sendo importada atualmente em nenhum componente, sua existência é perigosa e deve ser corrigida para apontar ao SVG de camisa inline ou ao escudo do clube.
 
-### Fix (1 file)
+Além disso, a validação em `src/utils/player-image/imageUtils.ts` **não bloqueia URLs do tipo gstatic** (que são thumbnails do Google e podem parecer QR codes). Apenas o jersey imageUtils tem essa proteção. Precisamos adicionar o mesmo bloqueio no player imageUtils.
 
-**`src/components/player-image/UnifiedPlayerImage.tsx`**
+### 2. Perfil (`ProfilePage.tsx`) — 100% dados reais, OK
+- Todas as estatísticas vêm de `use-user-profile.ts` que consulta `user_game_history`, `rankings` e `user_challenges` no Supabase
+- Nenhum dado mockado encontrado
+- Empty states bem tratados
+- **Sem problemas**
 
-1. **Line 384** — Add `h-full` when difficulty is set:
-   ```tsx
-   <div className={cn("w-full max-w-md md:max-w-lg lg:max-w-xl mx-auto", difficulty && "h-full", className)}>
-   ```
+### 3. Conquistas (`Conquistas.tsx` + `AchievementsGrid.tsx`) — 100% dados reais, OK
+- Progresso calculado a partir de `user_game_history` real via Supabase
+- Achievements desbloqueados vêm de `user_achievements` table
+- `calculateRealProgress` mapeia IDs de achievement para estatísticas reais do banco
+- **Sem problemas de dados mockados**
 
-2. **Line 385-389** — Add `h-full` when difficulty is set:
-   ```tsx
-   <div className={cn(
-     "relative rounded-lg overflow-hidden bg-muted/10",
-     difficulty && "h-full",
-     effects?.borderColor && `border-4 ${effects.borderColor}`,
-     ...
-   )}>
-   ```
+### 4. Conquistas — Pequeno bug de progresso
+O `calculateRealProgress` não cobre todos os achievement IDs definidos em `ACHIEVEMENTS`. IDs como `coracao_tricolor`, `primeiro_campeao`, `hat_trick_tricolor`, `titulo_em_casa`, `lenda_viva`, `heroi_copacabana`, `campeao_america`, etc. não têm case no switch — retornam 0 sempre. Os cases existentes usam IDs antigos (`first_game`, `streak_5`, `games_10`, etc.) que não existem mais.
 
-This restores the height chain so `h-full` on the image container correctly inherits from the 224px parent in `AdaptivePlayerImage`.
+---
 
-### Secondary cleanup (same file)
-- Change `fetchPriority` to `fetchpriority` (line 449) to fix the React DOM warning visible in console logs.
+## Plano de Execução
+
+### 1. Corrigir `DEFAULT_JERSEY_IMAGE` (fallback-images/index.ts)
+Substituir a URL do QR code pela referência ao SVG inline de camisa (`fluminenseJerseySvg`), eliminando qualquer chance de mostrar QR code como fallback.
+
+### 2. Adicionar bloqueio de gstatic no player imageUtils
+Adicionar os patterns `encrypted-tbn0.gstatic.com` e `gstatic.com/images` à lista de `suspiciousPatterns` em `src/utils/player-image/imageUtils.ts`, igual já existe no jersey imageUtils.
+
+### 3. Corrigir `calculateRealProgress` no AchievementsGrid
+Atualizar o switch para usar os IDs reais definidos em `ACHIEVEMENTS` (`coracao_tricolor`, `primeiro_campeao`, `hat_trick_tricolor`, `titulo_em_casa`, `lenda_viva`, `heroi_copacabana`, `campeao_america`, `guerreiro_laranjeiras`, `filho_do_maraca`, `maquina_tricolor`, `raio_laranjeiras`), mapeando cada um para a estatística correta do banco.
 

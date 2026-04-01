@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAnalytics } from '@/hooks/analytics';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { logger } from '@/utils/logger';
 
 declare global {
   interface Window {
@@ -29,6 +30,7 @@ export const useGoogleOneTap = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const isOneTapRoute = location.pathname === '/auth' || location.pathname === '/login';
   const initializedRef = useRef(false);
   const oneTapLoginSucceededRef = useRef(false);
   const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
@@ -55,7 +57,7 @@ export const useGoogleOneTap = () => {
   }, [redirectAfterLogin, user]);
 
   useEffect(() => {
-    if (user || !clientId || initializedRef.current) return;
+    if (user || !clientId || initializedRef.current || !isOneTapRoute) return;
 
     const loadAndInit = () => {
       // Don't load if already present
@@ -93,13 +95,13 @@ export const useGoogleOneTap = () => {
           : undefined;
 
         if (momentType === 'display') {
-          console.log('[OneTap] Prompt displayed');
+          logger.debug('Prompt displayed', 'ONE_TAP');
           trackOneTapDisplayed();
         } else if (momentType === 'skipped') {
-          console.log('[OneTap] Prompt skipped');
+          logger.debug('Prompt skipped', 'ONE_TAP');
           trackOneTapSkipped();
         } else if (momentType === 'dismissed') {
-          console.log('[OneTap] Prompt dismissed');
+          logger.debug('Prompt dismissed', 'ONE_TAP');
           trackOneTapSkipped();
         }
       });
@@ -113,33 +115,44 @@ export const useGoogleOneTap = () => {
         });
 
         if (error) {
-          console.error('[OneTap] Auth error:', error.message);
+          logger.error('Auth error', 'ONE_TAP', { message: error.message });
           trackOneTapError(error.message);
         } else {
-          console.log('[OneTap] Login successful');
+          logger.info('Login successful', 'ONE_TAP');
           trackOneTapCompleted();
           oneTapLoginSucceededRef.current = true;
           redirectAfterLogin();
         }
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'unknown';
-        console.error('[OneTap] Unexpected error:', msg);
+        logger.error('Unexpected error', 'ONE_TAP', { message: msg });
         trackOneTapError(msg);
       }
     };
 
-    // Defer loading to not block main thread
-    if ('requestIdleCallback' in window) {
-      (window as Window & { requestIdleCallback: (cb: () => void) => number })
-        .requestIdleCallback(loadAndInit);
+    // Defer loading so One Tap doesn't compete with initial paint/LCP
+    const scheduleOneTap = () => {
+      if ('requestIdleCallback' in window) {
+        (window as Window & { requestIdleCallback: (cb: () => void, options?: { timeout: number }) => number })
+          .requestIdleCallback(loadAndInit, { timeout: 5000 });
+        return;
+      }
+
+      globalThis.setTimeout(loadAndInit, 3500);
+    };
+
+    if (document.readyState === 'complete') {
+      scheduleOneTap();
     } else {
-      globalThis.setTimeout(loadAndInit, 2000);
+      window.addEventListener('load', scheduleOneTap, { once: true });
     }
 
     return () => {
+      window.removeEventListener('load', scheduleOneTap);
+
       if (window.google?.accounts?.id) {
         window.google.accounts.id.cancel();
       }
     };
-  }, [user, clientId, location.state, navigate, redirectAfterLogin, trackOneTapCompleted, trackOneTapDisplayed, trackOneTapError, trackOneTapSkipped]);
+  }, [user, clientId, isOneTapRoute, location.state, navigate, redirectAfterLogin, trackOneTapCompleted, trackOneTapDisplayed, trackOneTapError, trackOneTapSkipped]);
 };

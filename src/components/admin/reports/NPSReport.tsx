@@ -58,8 +58,8 @@ export const NPSReport = ({ days = 30 }: NPSReportProps) => {
         </CardHeader>
         <CardContent>
           <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-gray-200 rounded w-20"></div>
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
+            <div className="h-8 bg-muted rounded w-20"></div>
+            <div className="h-4 bg-muted rounded w-full"></div>
           </div>
         </CardContent>
       </Card>
@@ -68,16 +68,16 @@ export const NPSReport = ({ days = 30 }: NPSReportProps) => {
 
   const getTrendIcon = () => {
     switch (npsData?.trend) {
-      case 'up': return <TrendingUp className="w-4 h-4 text-green-600" />;
-      case 'down': return <TrendingDown className="w-4 h-4 text-red-600" />;
-      default: return <Minus className="w-4 h-4 text-gray-600" />;
+      case 'up': return <TrendingUp className="w-4 h-4 text-flu-verde" />;
+      case 'down': return <TrendingDown className="w-4 h-4 text-destructive" />;
+      default: return <Minus className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 50) return 'text-green-600';
-    if (score >= 0) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 50) return 'text-flu-verde';
+    if (score >= 0) return 'text-warning';
+    return 'text-destructive';
   };
 
   const getScoreLabel = (score: number) => {
@@ -115,8 +115,8 @@ export const NPSReport = ({ days = 30 }: NPSReportProps) => {
         {safeTotal > 0 ? (
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Promotores (9-10)</span>
-              <span className="text-sm font-medium text-green-600">
+              <span className="text-sm text-muted-foreground">Promotores (9-10)</span>
+              <span className="text-sm font-medium text-flu-verde">
                 {safePromoters} ({Math.round((safePromoters / safeTotal) * 100)}%)
               </span>
             </div>
@@ -126,8 +126,8 @@ export const NPSReport = ({ days = 30 }: NPSReportProps) => {
             />
 
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Neutros (7-8)</span>
-              <span className="text-sm font-medium text-yellow-600">
+              <span className="text-sm text-muted-foreground">Neutros (7-8)</span>
+              <span className="text-sm font-medium text-warning">
                 {safePassives} ({Math.round((safePassives / safeTotal) * 100)}%)
               </span>
             </div>
@@ -137,8 +137,8 @@ export const NPSReport = ({ days = 30 }: NPSReportProps) => {
             />
 
             <div className="flex justify-between items-center">
-              <span className="text-sm text-gray-600">Detratores (0-6)</span>
-              <span className="text-sm font-medium text-red-600">
+              <span className="text-sm text-muted-foreground">Detratores (0-6)</span>
+              <span className="text-sm font-medium text-destructive">
                 {safeDetractors} ({Math.round((safeDetractors / safeTotal) * 100)}%)
               </span>
             </div>
@@ -148,13 +148,13 @@ export const NPSReport = ({ days = 30 }: NPSReportProps) => {
             />
           </div>
         ) : (
-          <div className="text-center py-4 text-gray-500">
+          <div className="text-center py-4 text-muted-foreground">
             <p>Nenhum feedback recebido ainda</p>
           </div>
         )}
 
         <div className="pt-4 border-t">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-muted-foreground">
             Total de respostas: <span className="font-medium">{safeTotal}</span>
           </p>
         </div>
