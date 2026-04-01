@@ -94,6 +94,17 @@ export const ErrorMetricsReport = ({ days = 7 }: ErrorMetricsReportProps) => {
 
   const totalErrors = normalizedErrorMetrics.reduce((sum, metric) => sum + metric.count, 0);
   const highSeverityErrors = normalizedErrorMetrics.filter(m => m.severity === 'high').length;
+  const latestQuality = dailyErrorMetrics[dailyErrorMetrics.length - 1]?.data_quality ?? 'empty';
+  const qualityLabel =
+    latestQuality === 'real' ? 'Real' :
+    latestQuality === 'partial' ? 'Parcial' :
+    'Sem dados';
+  const qualityClassName =
+    latestQuality === 'real'
+      ? 'bg-flu-verde/20 text-flu-verde'
+      : latestQuality === 'partial'
+      ? 'bg-yellow-100 text-yellow-800'
+      : 'bg-muted text-muted-foreground';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -102,6 +113,7 @@ export const ErrorMetricsReport = ({ days = 7 }: ErrorMetricsReportProps) => {
           <CardTitle className="flex items-center gap-2">
             <AlertTriangle className="w-5 h-5" />
             Resumo de Erros
+            <Badge className={`ml-auto ${qualityClassName}`}>{qualityLabel}</Badge>
           </CardTitle>
           <CardDescription>
             Frequência e tipos de erros nos últimos {days} dias

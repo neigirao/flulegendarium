@@ -11,6 +11,7 @@ import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBounda
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
 import { RoutePrefetchProvider } from "@/components/performance/RoutePrefetchProvider";
+import { AdminRouteGuard } from "@/components/admin/AdminRouteGuard";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
@@ -120,7 +121,9 @@ function App() {
                               path="/admin"
                               element={
                                 <AdminErrorBoundary>
-                                  <LazyAdmin />
+                                  <AdminRouteGuard>
+                                    <LazyAdmin />
+                                  </AdminRouteGuard>
                                 </AdminErrorBoundary>
                               }
                             />
@@ -128,7 +131,9 @@ function App() {
                               path="/admin/dashboard"
                               element={
                                 <AdminErrorBoundary>
-                                  <LazyAdmin />
+                                  <AdminRouteGuard>
+                                    <LazyAdmin />
+                                  </AdminRouteGuard>
                                 </AdminErrorBoundary>
                               }
                             />

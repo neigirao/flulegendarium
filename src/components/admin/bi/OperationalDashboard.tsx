@@ -23,6 +23,21 @@ interface OperationalDashboardProps {
 }
 
 export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: OperationalDashboardProps) => {
+  const getMinutesSinceLastUpdate = () => {
+    const lastUpdated = metrics
+      .map((metric) => metric.last_updated)
+      .filter(Boolean)
+      .sort()
+      .at(-1);
+
+    if (!lastUpdated) return null;
+
+    const diffMs = Date.now() - new Date(lastUpdated).getTime();
+    return Math.max(0, Math.floor(diffMs / (1000 * 60)));
+  };
+
+  const minutesSinceLastUpdate = getMinutesSinceLastUpdate();
+
   if (isLoading) {
     return (
       <div className="space-y-6">
@@ -151,7 +166,9 @@ export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: Op
             <Activity className="w-5 h-5 text-flu-grena" />
             Métricas Operacionais em Tempo Real
             <Badge variant="secondary" className="ml-auto">
-              Atualizado há {Math.floor(Math.random() * 5 + 1)}min
+              {minutesSinceLastUpdate !== null
+                ? `Atualizado há ${minutesSinceLastUpdate}min`
+                : "Atualização indisponível"}
             </Badge>
           </CardTitle>
         </CardHeader>

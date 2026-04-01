@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Navigate, Link } from "react-router-dom";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { Button } from "@/components/ui/button";
@@ -12,13 +12,6 @@ const AdminLogin = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { isAdmin, login, loading, error } = useAdminAuth();
-
-  useEffect(() => {
-    if (isAdmin) {
-      // Redirect to admin page if already logged in
-      window.location.href = "/admin";
-    }
-  }, [isAdmin]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

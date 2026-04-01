@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
-import { User } from '@supabase/supabase-js';
 import { logger } from '@/utils/logger';
 
+interface AdminSessionUser {
+  id: string;
+  username: string;
+}
+
 interface AdminAuth {
-  user: User;
+  user: AdminSessionUser;
   isAdmin: boolean;
 }
 
@@ -73,25 +77,20 @@ export const useAdminAuth = () => {
         return;
       }
 
-      // Create a mock user object for admin
-      const mockUser = {
+      const adminUserSession: AdminSessionUser = {
         id: adminUser.id,
-        email: `${username}@admin.local`,
-        user_metadata: { username },
-        app_metadata: { role: 'admin' },
-        aud: 'authenticated',
-        created_at: new Date().toISOString()
-      } as unknown as User;
+        username: adminUser.username ?? username,
+      };
 
       setIsAuthenticated(true);
       setAdminData({
-        user: mockUser,
+        user: adminUserSession,
         isAdmin: true
       });
       
       // Store admin session in localStorage
       localStorage.setItem('admin_session', JSON.stringify({
-        user: mockUser,
+        user: adminUserSession,
         timestamp: Date.now()
       }));
 
