@@ -13,6 +13,20 @@ interface AdminAuth {
   isAdmin: boolean;
 }
 
+const ADMIN_SESSION_KEY = 'admin_session';
+const ADMIN_SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+const isValidAdminSessionUser = (user: unknown): user is AdminSessionUser => {
+  return Boolean(
+    user &&
+      typeof user === 'object' &&
+      'id' in user &&
+      'username' in user &&
+      typeof (user as { id: unknown }).id === 'string' &&
+      typeof (user as { username: unknown }).username === 'string'
+  );
+};
+
 export const useAdminAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -24,21 +38,19 @@ export const useAdminAuth = () => {
     const checkAuth = async () => {
       try {
         // Check for stored admin session
-        const storedSession = localStorage.getItem('admin_session');
+        const storedSession = localStorage.getItem(ADMIN_SESSION_KEY);
         if (storedSession) {
           const session = JSON.parse(storedSession);
-          // Check if session is still valid (24 hours)
-          const sessionAge = Date.now() - session.timestamp;
-          const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+          const sessionAge = Date.now() - Number(session?.timestamp ?? 0);
           
-          if (sessionAge < maxAge) {
+          if (sessionAge < ADMIN_SESSION_MAX_AGE_MS && isValidAdminSessionUser(session?.user)) {
             setIsAuthenticated(true);
             setAdminData({
               user: session.user,
               isAdmin: true
             });
           } else {
-            localStorage.removeItem('admin_session');
+            localStorage.removeItem(ADMIN_SESSION_KEY);
             setIsAuthenticated(false);
             setAdminData(null);
           }
@@ -89,7 +101,7 @@ export const useAdminAuth = () => {
       });
       
       // Store admin session in localStorage
-      localStorage.setItem('admin_session', JSON.stringify({
+      localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
         user: adminUserSession,
         timestamp: Date.now()
       }));
@@ -104,7 +116,7 @@ export const useAdminAuth = () => {
   };
 
   const logout = async () => {
-    localStorage.removeItem('admin_session');
+    localStorage.removeItem(ADMIN_SESSION_KEY);
     setIsAuthenticated(false);
     setAdminData(null);
     navigate('/admin/login-administrador');

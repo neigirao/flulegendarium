@@ -22,21 +22,21 @@ interface OperationalDashboardProps {
   isLoading?: boolean;
 }
 
+const getMinutesSinceLastUpdate = (metrics: OperationalMetric[]): number | null => {
+  const latestTimestamp = metrics
+    .map((metric) => metric.last_updated)
+    .filter((value): value is string => Boolean(value))
+    .sort()
+    .at(-1);
+
+  if (!latestTimestamp) return null;
+
+  const diffMs = Date.now() - new Date(latestTimestamp).getTime();
+  return Math.max(0, Math.floor(diffMs / (1000 * 60)));
+};
+
 export const OperationalDashboard = ({ metrics, businessMetrics, isLoading }: OperationalDashboardProps) => {
-  const getMinutesSinceLastUpdate = () => {
-    const lastUpdated = metrics
-      .map((metric) => metric.last_updated)
-      .filter(Boolean)
-      .sort()
-      .at(-1);
-
-    if (!lastUpdated) return null;
-
-    const diffMs = Date.now() - new Date(lastUpdated).getTime();
-    return Math.max(0, Math.floor(diffMs / (1000 * 60)));
-  };
-
-  const minutesSinceLastUpdate = getMinutesSinceLastUpdate();
+  const minutesSinceLastUpdate = getMinutesSinceLastUpdate(metrics);
 
   if (isLoading) {
     return (
