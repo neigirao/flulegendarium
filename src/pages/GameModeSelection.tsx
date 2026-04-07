@@ -3,11 +3,11 @@ import { RootLayout } from "@/components/RootLayout";
 import { SEOManager } from "@/components/seo/SEOManager";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, LogIn, Trophy, Star, Settings, ChevronRight } from "lucide-react";
+import { ArrowLeft, LogIn, Trophy, Star, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAnalytics } from "@/hooks/analytics";
-import { TimerSelector } from "@/components/game-settings/TimerSelector";
+
 
 // Custom SVG Icons
 const BrainIcon = () => (
@@ -118,10 +118,6 @@ const GameModeSelection = () => {
                 Voltar ao Início
               </Button>
               
-              <div className="flex items-center gap-2">
-                <Settings className="w-4 h-4 text-muted-foreground" />
-                <TimerSelector compact />
-              </div>
             </div>
 
             {/* Login Banner */}

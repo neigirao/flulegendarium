@@ -9,7 +9,7 @@ interface GameTimerProps {
   maxTime?: number;
 }
 
-export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 45 }: GameTimerProps) => {
+export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 60 }: GameTimerProps) => {
   const [shake, setShake] = useState(false);
   const lastVibrated = useRef<number>(-1);
   const isCritical = timeRemaining <= 5 && !gameOver;

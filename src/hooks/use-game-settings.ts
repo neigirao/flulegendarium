@@ -1,41 +1,31 @@
+/**
+ * Configurações do jogo.
+ * 
+ * Nota: O timer foi fixado em 60 segundos por rodada para todos os modos.
+ * Este hook é mantido para futuras configurações do jogo.
+ */
+
 import { useState, useEffect, useCallback } from 'react';
 import { logger } from '@/utils/logger';
 
 const STORAGE_KEY = 'lendas-flu-game-settings';
 
-export type TimerDuration = 20 | 30 | 45;
-
 export interface GameSettings {
-  timerDuration: TimerDuration;
+  // Futuras configurações podem ser adicionadas aqui
 }
 
-const DEFAULT_SETTINGS: GameSettings = {
-  timerDuration: 45,
-};
+const DEFAULT_SETTINGS: GameSettings = {};
 
-export const TIMER_OPTIONS: { value: TimerDuration; label: string; description: string }[] = [
-  { value: 20, label: '20s', description: 'Desafiador' },
-  { value: 30, label: '30s', description: 'Padrão' },
-  { value: 45, label: '45s', description: 'Relaxado' },
-];
-
-/**
- * Hook para gerenciar configurações do jogo com persistência em localStorage.
- */
 export const useGameSettings = () => {
   const [settings, setSettings] = useState<GameSettings>(DEFAULT_SETTINGS);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Carregar configurações do localStorage
   useEffect(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored) as Partial<GameSettings>;
-        setSettings({
-          ...DEFAULT_SETTINGS,
-          ...parsed,
-        });
+        setSettings({ ...DEFAULT_SETTINGS, ...parsed });
         logger.debug('Game settings loaded', 'SETTINGS', parsed);
       }
     } catch (error) {
@@ -44,7 +34,6 @@ export const useGameSettings = () => {
     setIsLoaded(true);
   }, []);
 
-  // Salvar configurações no localStorage
   const saveSettings = useCallback((newSettings: Partial<GameSettings>) => {
     setSettings(prev => {
       const updated = { ...prev, ...newSettings };
@@ -58,32 +47,9 @@ export const useGameSettings = () => {
     });
   }, []);
 
-  const setTimerDuration = useCallback((duration: TimerDuration) => {
-    saveSettings({ timerDuration: duration });
-  }, [saveSettings]);
-
   return {
     settings,
     isLoaded,
-    setTimerDuration,
     saveSettings,
   };
-};
-
-/**
- * Função utilitária para obter duração do timer do localStorage (sem hook).
- */
-export const getStoredTimerDuration = (): TimerDuration => {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored) as Partial<GameSettings>;
-      if (parsed.timerDuration && [20, 30, 45].includes(parsed.timerDuration)) {
-        return parsed.timerDuration;
-      }
-    }
-  } catch {
-    // Ignorar erros de parse
-  }
-  return DEFAULT_SETTINGS.timerDuration;
 };

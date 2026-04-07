@@ -27,7 +27,7 @@ const getMinutesSinceLastUpdate = (metrics: OperationalMetric[]): number | null 
     .map((metric) => metric.last_updated)
     .filter((value): value is string => Boolean(value))
     .sort()
-    .at(-1);
+    .pop();
 
   if (!latestTimestamp) return null;
 

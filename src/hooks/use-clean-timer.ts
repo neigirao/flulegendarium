@@ -1,15 +1,17 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { logger } from "@/utils/logger";
-import { getStoredTimerDuration, TimerDuration } from "./use-game-settings";
 
-// Mantido para compatibilidade, mas agora usa valor do localStorage
-export const TIME_LIMIT_SECONDS: number = 30;
+/**
+ * Timer fixo de 60 segundos por rodada.
+ * Regra: ao acertar, o jogador recebe 60 segundos para a próxima rodada.
+ * Não é configurável pelo usuário.
+ */
+export const TIME_LIMIT_SECONDS = 60;
 
 interface UseCleanTimerReturn {
   timeRemaining: number;
   isRunning: boolean;
   isPaused: boolean;
-  timerDuration: TimerDuration;
   startTimer: () => void;
   stopTimer: () => void;
   pauseTimer: () => void;
@@ -21,19 +23,10 @@ export const useCleanTimer = (
   gameOver: boolean, 
   onTimeUp: () => void
 ): UseCleanTimerReturn => {
-  // Obter duração do timer do localStorage
-  const timerDuration = getStoredTimerDuration();
-  
-  const [timeRemaining, setTimeRemaining] = useState<number>(timerDuration);
+  const [timeRemaining, setTimeRemaining] = useState<number>(TIME_LIMIT_SECONDS);
   const [isRunning, setIsRunning] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const timerRef = useRef<number | null>(null);
-  const durationRef = useRef<TimerDuration>(timerDuration);
-
-  // Atualizar duração quando mudar no localStorage
-  useEffect(() => {
-    durationRef.current = timerDuration;
-  }, [timerDuration]);
 
   const clearGameTimer = useCallback((): void => {
     if (timerRef.current !== null) {
@@ -47,15 +40,11 @@ export const useCleanTimer = (
   const startTimer = useCallback((): void => {
     if (gameOver) return;
     
-    // Sempre obter valor mais recente do localStorage
-    const currentDuration = getStoredTimerDuration();
-    durationRef.current = currentDuration;
-    
-    logger.debug('Timer started', 'TIMER', { timeRemaining: currentDuration });
+    logger.debug('Timer started', 'TIMER', { timeRemaining: TIME_LIMIT_SECONDS });
     
     clearGameTimer();
     
-    setTimeRemaining(currentDuration);
+    setTimeRemaining(TIME_LIMIT_SECONDS);
     setIsRunning(true);
     setIsPaused(false);
     
@@ -107,7 +96,7 @@ export const useCleanTimer = (
   const stopTimer = useCallback((): void => {
     logger.debug('Timer stopped');
     clearGameTimer();
-    setTimeRemaining(durationRef.current);
+    setTimeRemaining(TIME_LIMIT_SECONDS);
   }, [clearGameTimer]);
 
   useEffect(() => {
@@ -124,7 +113,6 @@ export const useCleanTimer = (
     timeRemaining,
     isRunning,
     isPaused,
-    timerDuration,
     startTimer,
     stopTimer,
     pauseTimer,

@@ -1,13 +1,17 @@
-
 import { useState, useRef, useCallback, useEffect } from "react";
 
+/**
+ * Timer fixo de 60 segundos para o modo Década.
+ * Regra: ao acertar, o jogador recebe 60 segundos para a próxima rodada.
+ */
+const DECADE_TIME_LIMIT = 60;
+
 interface UseDecadeGameTimerProps {
-  initialTime: number;
   onTimeUp: () => void;
 }
 
-export const useDecadeGameTimer = ({ initialTime = 60, onTimeUp }: UseDecadeGameTimerProps) => {
-  const [timeRemaining, setTimeRemaining] = useState(initialTime);
+export const useDecadeGameTimer = ({ onTimeUp }: UseDecadeGameTimerProps) => {
+  const [timeRemaining, setTimeRemaining] = useState(DECADE_TIME_LIMIT);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
   const timerRef = useRef<number | null>(null);
 
@@ -21,6 +25,7 @@ export const useDecadeGameTimer = ({ initialTime = 60, onTimeUp }: UseDecadeGame
 
   const startTimer = useCallback(() => {
     clearTimer();
+    setTimeRemaining(DECADE_TIME_LIMIT);
     setIsTimerRunning(true);
     
     timerRef.current = window.setInterval(() => {
@@ -41,8 +46,8 @@ export const useDecadeGameTimer = ({ initialTime = 60, onTimeUp }: UseDecadeGame
 
   const resetTimer = useCallback(() => {
     clearTimer();
-    setTimeRemaining(initialTime);
-  }, [clearTimer, initialTime]);
+    setTimeRemaining(DECADE_TIME_LIMIT);
+  }, [clearTimer]);
 
   useEffect(() => {
     return clearTimer;
