@@ -1,39 +1,53 @@
 
 
-# Revisão: Perfil, Conquistas e Bug da Imagem QR Code
+# Fixar Timer em 60 Segundos para Todos os Jogos
 
-## Achados
+## Problema Atual
 
-### 1. BUG CRÍTICO — QR Code de doação como fallback de camisa
-Em `src/utils/fallback-images/index.ts` linha 21, `DEFAULT_JERSEY_IMAGE` aponta para `/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png` — que é a **imagem do QR Code PIX de doação** usada em `Donations.tsx`. Embora `DEFAULT_JERSEY_IMAGE` não esteja sendo importada atualmente em nenhum componente, sua existência é perigosa e deve ser corrigida para apontar ao SVG de camisa inline ou ao escudo do clube.
+Existem **3 regras de timer diferentes** no código:
 
-Além disso, a validação em `src/utils/player-image/imageUtils.ts` **não bloqueia URLs do tipo gstatic** (que são thumbnails do Google e podem parecer QR codes). Apenas o jersey imageUtils tem essa proteção. Precisamos adicionar o mesmo bloqueio no player imageUtils.
+1. **Década**: Usa `useDecadeGameTimer` com `initialTime: 60` — **correto**
+2. **Adaptativo**: Usa `useCleanTimer` que lê do `localStorage` via `getStoredTimerDuration()` — retorna 20, 30 ou 45
+3. **Camisas**: Usa `useCleanTimer` — mesmo problema, 20/30/45
 
-### 2. Perfil (`ProfilePage.tsx`) — 100% dados reais, OK
-- Todas as estatísticas vêm de `use-user-profile.ts` que consulta `user_game_history`, `rankings` e `user_challenges` no Supabase
-- Nenhum dado mockado encontrado
-- Empty states bem tratados
-- **Sem problemas**
-
-### 3. Conquistas (`Conquistas.tsx` + `AchievementsGrid.tsx`) — 100% dados reais, OK
-- Progresso calculado a partir de `user_game_history` real via Supabase
-- Achievements desbloqueados vêm de `user_achievements` table
-- `calculateRealProgress` mapeia IDs de achievement para estatísticas reais do banco
-- **Sem problemas de dados mockados**
-
-### 4. Conquistas — Pequeno bug de progresso
-O `calculateRealProgress` não cobre todos os achievement IDs definidos em `ACHIEVEMENTS`. IDs como `coracao_tricolor`, `primeiro_campeao`, `hat_trick_tricolor`, `titulo_em_casa`, `lenda_viva`, `heroi_copacabana`, `campeao_america`, etc. não têm case no switch — retornam 0 sempre. Os cases existentes usam IDs antigos (`first_game`, `streak_5`, `games_10`, etc.) que não existem mais.
-
----
+Além disso, existe um **TimerSelector** na tela de seleção de modo que permite o jogador alterar o tempo. A regra do usuário é clara: **sempre 60 segundos, sem opção de mudança**.
 
 ## Plano de Execução
 
-### 1. Corrigir `DEFAULT_JERSEY_IMAGE` (fallback-images/index.ts)
-Substituir a URL do QR code pela referência ao SVG inline de camisa (`fluminenseJerseySvg`), eliminando qualquer chance de mostrar QR code como fallback.
+### 1. `use-clean-timer.ts` — Fixar em 60 segundos
+- Remover a dependência de `getStoredTimerDuration()` e `use-game-settings`
+- Alterar `TIME_LIMIT_SECONDS` para `60`
+- Usar `60` diretamente como valor inicial e em `startTimer`/`stopTimer`
+- Remover `timerDuration` do retorno (não é mais configurável)
 
-### 2. Adicionar bloqueio de gstatic no player imageUtils
-Adicionar os patterns `encrypted-tbn0.gstatic.com` e `gstatic.com/images` à lista de `suspiciousPatterns` em `src/utils/player-image/imageUtils.ts`, igual já existe no jersey imageUtils.
+### 2. `use-game-settings.ts` — Remover sistema de timer configurável
+- Remover `TimerDuration`, `TIMER_OPTIONS`, `setTimerDuration`, `getStoredTimerDuration`
+- Manter o hook se houver outras configurações futuras, ou deletar se só servia para o timer
 
-### 3. Corrigir `calculateRealProgress` no AchievementsGrid
-Atualizar o switch para usar os IDs reais definidos em `ACHIEVEMENTS` (`coracao_tricolor`, `primeiro_campeao`, `hat_trick_tricolor`, `titulo_em_casa`, `lenda_viva`, `heroi_copacabana`, `campeao_america`, `guerreiro_laranjeiras`, `filho_do_maraca`, `maquina_tricolor`, `raio_laranjeiras`), mapeando cada um para a estatística correta do banco.
+### 3. `TimerSelector.tsx` — Deletar componente
+- Remover o arquivo inteiro
+
+### 4. `GameModeSelection.tsx` — Remover referência ao TimerSelector
+- Remover import e uso do `TimerSelector` da tela de seleção de modo
+
+### 5. `GameTimer.tsx` — Fixar `maxTime` em 60
+- Alterar default de `maxTime` de `45` para `60`
+
+### 6. `DecadeGameContainer.tsx` — Já correto
+- Nenhuma alteração (já usa `initialTime: 60`)
+
+### 7. Containers Adaptativo e Camisas — Sem alteração
+- Já usam `useCleanTimer`, que será corrigido no passo 1
+
+### 8. `use-decade-game-timer.ts` — Forçar 60
+- Remover parâmetro `initialTime` configurável, usar `60` fixo internamente
+
+### 9. Build errors — Corrigir `.at(-1)` em `OperationalDashboard.tsx`
+- Substituir `.at(-1)` por `[arr.length - 1]` para compatibilidade com target ES2021
+
+### 10. Build errors — Edge Functions (Supabase)
+- Os erros de tipo em `collect-players-data/index.ts` são de tipagem Supabase (não relacionados ao timer) — adicionar `// @ts-ignore` ou cast `as any` nos pontos de incompatibilidade de tipo para destravar o build
+
+### 11. Atualizar documentação inline
+- Adicionar JSDoc no `use-clean-timer.ts` documentando a regra: "Timer fixo de 60 segundos por rodada em todos os modos de jogo"
 
