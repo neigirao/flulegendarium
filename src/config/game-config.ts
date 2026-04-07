@@ -9,14 +9,11 @@
 
 /**
  * Configurações do timer do jogo.
- * Nota: O timer agora é customizável pelo usuário (20s, 30s, 45s).
- * Estes valores são usados como referência para cálculo de bônus.
+ * Timer fixo de 60 segundos por rodada em todos os modos.
  */
 export const TIMER_CONFIG = {
-  /** Duração padrão do timer em segundos (padrão: 30s) */
-  DURATION: 30,
-  /** Opções de duração disponíveis */
-  DURATION_OPTIONS: [20, 30, 45] as const,
+  /** Duração fixa do timer em segundos */
+  DURATION: 60,
   /** Intervalo de atualização em milissegundos */
   UPDATE_INTERVAL: 1000,
   /** Percentual do tempo considerado "rápido" para bônus (>66% restante) */
