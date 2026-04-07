@@ -56,7 +56,6 @@ export const DecadeGameContainer = () => {
   const {
     timeRemaining, isTimerRunning, startTimer, stopTimer, resetTimer,
   } = useDecadeGameTimer({
-    initialTime: 60,
     onTimeUp: () => { endGame(); resetStreak(); },
   });
 
