@@ -247,6 +247,132 @@ export type Database = {
           },
         ]
       }
+      cms_audit_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          new_data: Json | null
+          old_data: Json | null
+          record_id: string | null
+          table_name: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          table_name: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          new_data?: Json | null
+          old_data?: Json | null
+          record_id?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
+      cms_media: {
+        Row: {
+          alt_text: string | null
+          caption: string | null
+          created_at: string
+          created_by: string
+          credit: string | null
+          file_path: string
+          height: number | null
+          id: string
+          mime_type: string | null
+          public_url: string
+          size_bytes: number | null
+          tags: string[]
+          updated_at: string
+          width: number | null
+        }
+        Insert: {
+          alt_text?: string | null
+          caption?: string | null
+          created_at?: string
+          created_by: string
+          credit?: string | null
+          file_path: string
+          height?: number | null
+          id?: string
+          mime_type?: string | null
+          public_url: string
+          size_bytes?: number | null
+          tags?: string[]
+          updated_at?: string
+          width?: number | null
+        }
+        Update: {
+          alt_text?: string | null
+          caption?: string | null
+          created_at?: string
+          created_by?: string
+          credit?: string | null
+          file_path?: string
+          height?: number | null
+          id?: string
+          mime_type?: string | null
+          public_url?: string
+          size_bytes?: number | null
+          tags?: string[]
+          updated_at?: string
+          width?: number | null
+        }
+        Relationships: []
+      }
+      cms_templates: {
+        Row: {
+          category: string | null
+          created_at: string
+          created_by: string | null
+          html_content: string
+          id: string
+          is_active: boolean
+          is_system: boolean
+          label: string
+          name: string
+          summary: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          html_content: string
+          id?: string
+          is_active?: boolean
+          is_system?: boolean
+          label: string
+          name: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          html_content?: string
+          id?: string
+          is_active?: boolean
+          is_system?: boolean
+          label?: string
+          name?: string
+          summary?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       daily_challenges: {
         Row: {
           challenge_type: string
@@ -884,6 +1010,116 @@ export type Database = {
           id?: string
           name?: string
           slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      noticia_metricas_diarias: {
+        Row: {
+          ad_impressions: number
+          ad_revenue: number
+          avg_read_time_seconds: number
+          metric_date: string
+          noticia_id: string
+          pageviews: number
+          unique_visitors: number
+          updated_at: string
+        }
+        Insert: {
+          ad_impressions?: number
+          ad_revenue?: number
+          avg_read_time_seconds?: number
+          metric_date?: string
+          noticia_id: string
+          pageviews?: number
+          unique_visitors?: number
+          updated_at?: string
+        }
+        Update: {
+          ad_impressions?: number
+          ad_revenue?: number
+          avg_read_time_seconds?: number
+          metric_date?: string
+          noticia_id?: string
+          pageviews?: number
+          unique_visitors?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "noticia_metricas_diarias_noticia_id_fkey"
+            columns: ["noticia_id"]
+            isOneToOne: false
+            referencedRelation: "noticias"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      noticias: {
+        Row: {
+          author_id: string | null
+          conteudo: string | null
+          cover_image_url: string | null
+          created_at: string
+          id: string
+          meta_description: string | null
+          meta_title: string | null
+          published_at: string | null
+          resumo: string | null
+          scheduled_for: string | null
+          seo_canonical_url: string | null
+          seo_focus_keyword: string | null
+          seo_noindex: boolean
+          seo_og_image_url: string | null
+          slug: string
+          status: string
+          tag_destaque: string | null
+          tipo_evento: Database["public"]["Enums"]["tipo_evento"] | null
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          author_id?: string | null
+          conteudo?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          resumo?: string | null
+          scheduled_for?: string | null
+          seo_canonical_url?: string | null
+          seo_focus_keyword?: string | null
+          seo_noindex?: boolean
+          seo_og_image_url?: string | null
+          slug: string
+          status?: string
+          tag_destaque?: string | null
+          tipo_evento?: Database["public"]["Enums"]["tipo_evento"] | null
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string | null
+          conteudo?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          id?: string
+          meta_description?: string | null
+          meta_title?: string | null
+          published_at?: string | null
+          resumo?: string | null
+          scheduled_for?: string | null
+          seo_canonical_url?: string | null
+          seo_focus_keyword?: string | null
+          seo_noindex?: boolean
+          seo_og_image_url?: string | null
+          slug?: string
+          status?: string
+          tag_destaque?: string | null
+          tipo_evento?: Database["public"]["Enums"]["tipo_evento"] | null
+          titulo?: string
           updated_at?: string
         }
         Relationships: []
@@ -1752,6 +1988,7 @@ export type Database = {
         Returns: string
       }
       is_admin: { Args: never; Returns: boolean }
+      publish_scheduled_noticias: { Args: never; Returns: number }
       verify_admin_credentials: {
         Args: { p_password: string; p_username: string }
         Returns: {
@@ -1761,7 +1998,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      tipo_evento: "gol" | "lesao" | "contratacao" | "escalacao" | "bastidor"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1888,6 +2125,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      tipo_evento: ["gol", "lesao", "contratacao", "escalacao", "bastidor"],
+    },
   },
 } as const
