@@ -12,6 +12,7 @@ import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBounda
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
 import { RoutePrefetchProvider } from "@/components/performance/RoutePrefetchProvider";
 import { AdminRouteGuard } from "@/components/admin/AdminRouteGuard";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
@@ -144,6 +145,7 @@ function App() {
                     </RootLayout>
 
                     <Toaster />
+                    <SpeedInsights />
                   </TooltipProvider>
                 </UXProvider>
               </AuthProvider>
