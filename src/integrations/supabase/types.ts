@@ -1987,6 +1987,8 @@ export type Database = {
         Args: { user_uuid: string }
         Returns: string
       }
+      get_user_game_stats: { Args: { p_user_id: string }; Returns: Json }
+      get_user_ranking_position: { Args: { p_user_id: string }; Returns: Json }
       is_admin: { Args: never; Returns: boolean }
       publish_scheduled_noticias: { Args: never; Returns: number }
       verify_admin_credentials: {
