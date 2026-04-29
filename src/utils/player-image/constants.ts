@@ -1,6 +1,6 @@
 import { playerSilhouetteSvg } from '@/utils/fallback-images/fluminenseSvg';
 
-export const CACHE_EXPIRATION = 10 * 60 * 1000; // 10 minutes
+export const CACHE_EXPIRATION = 24 * 60 * 60 * 1000; // 24 hours — imagens de jogadores raramente mudam
 
 // Imagem padrão do storage (primeiro fallback)
 export const defaultImage = "/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png";
