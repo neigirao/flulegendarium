@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { useAdaptivePlayerSelection } from "./use-adaptive-player-selection";
+import { usePlayerSessionHistory } from "./use-player-session-history";
 import { useCleanTimer } from "./use-clean-timer";
 import { useAdaptiveGameMetrics } from "./use-adaptive-game-metrics";
 import { useToast } from "@/components/ui/use-toast";
@@ -135,6 +136,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
 
   // Hooks
   const { selectPlayerByDifficulty } = useAdaptivePlayerSelection();
+  const { getRecentIds, recordPlayer, clearHistory } = usePlayerSessionHistory();
 
   const {
     startMetricsTracking,
@@ -235,19 +237,20 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
       }
     );
     
-    // IMPORTANTE: Esta função usa selectPlayerByDifficulty que:
-    // 1. PRIORIZA jogadores com difficulty_level exato do banco de dados
-    // 2. Usa fallback para dificuldades próximas se necessário
-    // 3. Garante que a dificuldade do banco seja respeitada sempre que possível
-    const selectedPlayer = selectPlayerByDifficulty(
-      players, 
-      currentDifficulty.level as Player['difficulty_level'],
-      usedPlayerIds.current
-    );
-    
+    // Estratégia de seleção em duas etapas:
+    // 1ª tentativa: exclui jogadores usados NESTA sessão + histórico cross-sessão (evita repetição entre partidas)
+    // 2ª tentativa (fallback): exclui apenas jogadores usados nesta sessão (comportamento original)
+    const recentIds = getRecentIds();
+    const usedPlusRecent = new Set([...usedPlayerIds.current, ...recentIds]);
+
+    const selectedPlayer =
+      selectPlayerByDifficulty(players, currentDifficulty.level as Player['difficulty_level'], usedPlusRecent) ??
+      selectPlayerByDifficulty(players, currentDifficulty.level as Player['difficulty_level'], usedPlayerIds.current);
+
     if (selectedPlayer) {
-      // Adicionar ao set de jogadores usados
+      // Adicionar ao set de jogadores usados nesta sessão e ao histórico persistido
       usedPlayerIds.current.add(selectedPlayer.id);
+      recordPlayer(selectedPlayer.id);
       setCurrentPlayer(selectedPlayer);
       setGameKey(prev => prev + 1);
       
@@ -382,6 +385,15 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     selectRandomPlayer();
   }, [selectRandomPlayer]);
 
+  // Trata pulos explícitos: quebra o streak e ajusta dificuldade como um erro,
+  // depois avança para o próximo jogador sem encerrar o jogo.
+  const handleSkipPlayer = useCallback(() => {
+    if (gameOver || isProcessingGuess) return;
+    setCurrentStreak(0);
+    adjustDifficulty(false);
+    selectRandomPlayer();
+  }, [gameOver, isProcessingGuess, adjustDifficulty, selectRandomPlayer]);
+
   const resetScore = useCallback(() => {
     setScore(0);
     setCurrentStreak(0);
@@ -397,8 +409,9 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     setDifficultyChangeInfo(null);
     setCurrentPlayer(null);
     
-    // Limpar histórico de jogadores usados ao resetar o jogo
+    // Limpar histórico da sessão e cross-sessão ao resetar o jogo
     usedPlayerIds.current.clear();
+    clearHistory();
     
     // Forçar nova chave para re-render completo
     setGameKey(Date.now());
@@ -409,7 +422,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     setTimeout(() => {
       selectRandomPlayer();
     }, 100);
-  }, [selectRandomPlayer, resetMetrics]);
+  }, [selectRandomPlayer, resetMetrics, clearHistory]);
 
   const clearDifficultyChange = useCallback(() => {
     setDifficultyChangeInfo(null);
@@ -445,6 +458,7 @@ export const useAdaptiveGuessGame = (players: Player[]) => {
     // Actions
     handleGuess,
     selectRandomPlayer,
+    handleSkipPlayer,
     forceRefresh,
     handlePlayerImageFixed,
     startGameForPlayer,
