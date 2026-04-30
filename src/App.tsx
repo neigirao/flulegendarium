@@ -10,6 +10,7 @@ import { MobileViewport } from "@/components/mobile/MobileViewport";
 import { RootErrorBoundary } from "@/components/error-boundaries/RootErrorBoundary";
 import { GameErrorBoundary } from "@/components/error-boundaries/GameErrorBoundary";
 import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoundary";
+import { RouteErrorBoundary } from "@/components/error-boundaries/RouteErrorBoundary";
 import { RoutePrefetchProvider } from "@/components/performance/RoutePrefetchProvider";
 import { AdminRouteGuard } from "@/components/admin/AdminRouteGuard";
 import { SpeedInsights } from "@vercel/speed-insights/react";
@@ -76,6 +77,7 @@ function App() {
                     <RootLayout>
                       <div className="min-h-screen bg-background font-sans antialiased">
                         <Suspense fallback={<AppRouteFallback />}>
+                          <RouteErrorBoundary>
                           <Routes>
                             <Route path="/" element={<Index />} />
                             <Route path="/auth" element={<LazyAuth />} />
@@ -140,6 +142,7 @@ function App() {
                             />
                             <Route path="*" element={<NotFound />} />
                           </Routes>
+                          </RouteErrorBoundary>
                         </Suspense>
                       </div>
                     </RootLayout>

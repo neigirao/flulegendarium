@@ -28,7 +28,7 @@ const AdaptiveGameContainer = () => {
   const {
     currentPlayer, gameKey, currentDifficulty, difficultyProgress,
     score, gameOver, timeRemaining,
-    handleGuess: originalHandleGuess, selectRandomPlayer,
+    handleGuess: originalHandleGuess, selectRandomPlayer, handleSkipPlayer: gameHandleSkip,
     handlePlayerImageFixed, isProcessingGuess,
     startGameForPlayer, isTimerRunning, resetScore,
     gamesPlayed, currentStreak, maxStreak,
@@ -45,7 +45,7 @@ const AdaptiveGameContainer = () => {
     isTimerRunning, isProcessingGuess, timeRemaining,
     startGame: startGameForPlayer,
     resetGame: resetScore,
-    selectNext: selectRandomPlayer,
+    selectNext: gameHandleSkip,
     dataReady: !!(players && players.length > 0),
     clearImageCache: clearAllImageCache,
   });

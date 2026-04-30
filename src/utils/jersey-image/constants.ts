@@ -4,8 +4,8 @@ import { fluminenseJerseySvg } from '@/utils/fallback-images/fluminenseSvg';
  * Constantes para gerenciamento de imagens de camisas
  */
 
-// Tempo de expiração do cache de imagens (10 minutos)
-export const JERSEY_CACHE_EXPIRATION = 10 * 60 * 1000;
+// Tempo de expiração do cache de imagens (24 horas — camisas raramente mudam)
+export const JERSEY_CACHE_EXPIRATION = 24 * 60 * 60 * 1000;
 
 // SVG inline que NUNCA falha (fallback final garantido)
 export const guaranteedJerseyFallback = fluminenseJerseySvg;
