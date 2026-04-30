@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,16 @@ import { JerseyForm } from "./JerseyForm";
 import type { Jersey, JerseyType } from "@/types/jersey-game";
 import type { DifficultyLevel } from "@/types/guess-game";
 import { SearchWithFilters, FilterConfig, DIFFICULTY_LABELS } from "@/components/admin/shared";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+
+const ITEMS_PER_PAGE = 24;
 
 const TYPE_LABELS: Record<JerseyType, string> = {
   home: 'Principal',
@@ -26,6 +36,7 @@ export const JerseysManagement = () => {
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
   const [editingJersey, setEditingJersey] = useState<Jersey | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: jerseys = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-jerseys'],
@@ -101,6 +112,15 @@ export const JerseysManagement = () => {
     
     return matchesSearch && matchesDifficulty && matchesType && matchesDecade;
   });
+
+  const totalPages = Math.max(1, Math.ceil(filteredJerseys.length / ITEMS_PER_PAGE));
+  const paginatedJerseys = useMemo(
+    () => filteredJerseys.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE),
+    [filteredJerseys, currentPage]
+  );
+
+  useEffect(() => { setCurrentPage(1); }, [searchTerm, activeFilters]);
+  useEffect(() => { if (currentPage > totalPages) setCurrentPage(totalPages); }, [currentPage, totalPages]);
 
   const handleFilterChange = (key: string, value: string) => {
     setActiveFilters(prev => ({ ...prev, [key]: value }));
@@ -204,7 +224,7 @@ export const JerseysManagement = () => {
       </SearchWithFilters>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {filteredJerseys.map((jersey) => (
+        {paginatedJerseys.map((jersey) => (
           <Card key={jersey.id}>
             <CardHeader className="pb-3">
               <div className="flex items-start gap-3">
@@ -287,6 +307,41 @@ export const JerseysManagement = () => {
       {filteredJerseys.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
           {searchTerm ? 'Nenhuma camisa encontrada.' : 'Nenhuma camisa cadastrada. Clique em "Nova Camisa" para adicionar.'}
+        </div>
+      )}
+
+      {totalPages > 1 && (
+        <div className="flex flex-col items-center gap-2 pt-4">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    onClick={() => setCurrentPage(page)}
+                    isActive={currentPage === page}
+                    className="cursor-pointer"
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+          <p className="text-xs text-muted-foreground">
+            Página {currentPage} de {totalPages} — {filteredJerseys.length} camisas
+          </p>
         </div>
       )}
     </div>
