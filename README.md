@@ -25,6 +25,21 @@ npm run build
 npm run preview
 ```
 
+## Variáveis de ambiente
+
+Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+
+| Variável | Obrigatória | Descrição |
+|---|---|---|
+| `VITE_SUPABASE_URL` | ✅ | URL do projeto Supabase (ex: `https://<id>.supabase.co`) |
+| `VITE_SUPABASE_PUBLISHABLE_KEY` | ✅ | Chave anon/pública do Supabase |
+| `VITE_SUPABASE_PROJECT_ID` | ✅ | ID do projeto Supabase (usado em scripts de admin) |
+| `VITE_GOOGLE_CLIENT_ID` | ✅ | Client ID do Google OAuth para autenticação via One Tap |
+| `VITE_GA4_ID` | ❌ | ID do Google Analytics 4 (fallback para `G-X2VE77MEYC` se ausente) |
+| `VITE_ENABLE_DESIGN_SYSTEM` | ❌ | Define `"true"` para ativar o design system em produção (ativo por padrão em `DEV`) |
+
+> **Segurança:** As chaves Supabase expostas aqui são a chave `anon` (pública), segura para uso client-side. Nunca exponha a `service_role` key no frontend.
+
 ## Documentação essencial
 
 - Arquitetura e limites de responsabilidade: `docs/ARCHITECTURE.md`

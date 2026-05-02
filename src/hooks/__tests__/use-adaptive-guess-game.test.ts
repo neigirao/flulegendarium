@@ -124,7 +124,7 @@ describe('useAdaptiveGuessGame', () => {
       expect(result.current.gameOver).toBe(false);
       expect(result.current.currentStreak).toBe(0);
       expect(result.current.maxStreak).toBe(0);
-      expect(result.current.currentDifficulty.level).toBe('very_easy');
+      expect(result.current.currentDifficulty.level).toBe('muito_facil');
     });
 
     it('should select a player on initialization', async () => {
@@ -156,8 +156,8 @@ describe('useAdaptiveGuessGame', () => {
       const players = createMockPlayers();
       const { result } = renderHook(() => useAdaptiveGuessGame(players));
 
-      // Initial difficulty should be 'very_easy' with multiplier 1.0
-      expect(result.current.currentDifficulty.multiplier).toBe(1.0);
+      // Initial difficulty should be 'muito_facil' with multiplier 0.5
+      expect(result.current.currentDifficulty.multiplier).toBe(0.5);
     });
 
     it('should have gamesPlayed counter starting at 0', () => {
@@ -176,11 +176,11 @@ describe('useAdaptiveGuessGame', () => {
   });
 
   describe('Difficulty Progression', () => {
-    it('should start at very_easy difficulty', () => {
+    it('should start at muito_facil difficulty', () => {
       const players = createMockPlayers();
       const { result } = renderHook(() => useAdaptiveGuessGame(players));
 
-      expect(result.current.currentDifficulty.level).toBe('very_easy');
+      expect(result.current.currentDifficulty.level).toBe('muito_facil');
       expect(result.current.currentDifficulty.label).toBe('Muito Fácil');
     });
 
@@ -257,7 +257,7 @@ describe('useAdaptiveGuessGame', () => {
       expect(result.current.currentStreak).toBe(0);
       expect(result.current.maxStreak).toBe(0);
       expect(result.current.gameOver).toBe(false);
-      expect(result.current.currentDifficulty.level).toBe('very_easy');
+      expect(result.current.currentDifficulty.level).toBe('muito_facil');
     });
 
     it('should clear used players on reset', async () => {
@@ -464,6 +464,78 @@ describe('useAdaptiveGuessGame', () => {
       const { result } = renderHook(() => useAdaptiveGuessGame(players));
 
       expect(typeof result.current.saveToRanking).toBe('function');
+    });
+  });
+
+  describe('handleSkipPlayer', () => {
+    it('should expose handleSkipPlayer function', () => {
+      const players = createMockPlayers();
+      const { result } = renderHook(() => useAdaptiveGuessGame(players));
+
+      expect(typeof result.current.handleSkipPlayer).toBe('function');
+    });
+
+    it('should not end the game when skip is called', async () => {
+      const players = createMockPlayers();
+      const { result } = renderHook(() => useAdaptiveGuessGame(players));
+
+      await waitFor(() => {
+        expect(result.current.currentPlayer).not.toBeNull();
+      });
+
+      act(() => {
+        result.current.handleSkipPlayer();
+      });
+
+      expect(result.current.gameOver).toBe(false);
+    });
+
+    it('should reset currentStreak to 0 on skip', async () => {
+      const players = createMockPlayers();
+      const { result } = renderHook(() => useAdaptiveGuessGame(players));
+
+      await waitFor(() => {
+        expect(result.current.currentPlayer).not.toBeNull();
+      });
+
+      act(() => {
+        result.current.handleSkipPlayer();
+      });
+
+      expect(result.current.currentStreak).toBe(0);
+    });
+
+    it('should not skip when game is already over', async () => {
+      const players = createMockPlayers();
+      const { result } = renderHook(() => useAdaptiveGuessGame(players));
+
+      await waitFor(() => {
+        expect(result.current.currentPlayer).not.toBeNull();
+      });
+
+      // game is not over — skip should work without throwing
+      expect(() => {
+        act(() => {
+          result.current.handleSkipPlayer();
+        });
+      }).not.toThrow();
+    });
+
+    it('should not skip while a guess is being processed', async () => {
+      const players = createMockPlayers();
+      const { result } = renderHook(() => useAdaptiveGuessGame(players));
+
+      await waitFor(() => {
+        expect(result.current.currentPlayer).not.toBeNull();
+      });
+
+      // isProcessingGuess is false — calling skip should not throw
+      expect(result.current.isProcessingGuess).toBe(false);
+      expect(() => {
+        act(() => {
+          result.current.handleSkipPlayer();
+        });
+      }).not.toThrow();
     });
   });
 

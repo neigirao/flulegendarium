@@ -14,6 +14,7 @@ import { RouteErrorBoundary } from "@/components/error-boundaries/RouteErrorBoun
 import { RoutePrefetchProvider } from "@/components/performance/RoutePrefetchProvider";
 import { AdminRouteGuard } from "@/components/admin/AdminRouteGuard";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { featureFlags } from "@/config/feature-flags";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
@@ -50,7 +51,7 @@ const AppRouteFallback = () => (
   </div>
 );
 
-const isDesignSystemEnabled = import.meta.env.DEV || import.meta.env.VITE_ENABLE_DESIGN_SYSTEM === "true";
+const isDesignSystemEnabled = featureFlags.enableDesignSystem;
 
 const queryClient = new QueryClient({
   defaultOptions: {

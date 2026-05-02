@@ -7,6 +7,34 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Unreleased]
 
+### 🛠️ Melhorias de Engenharia e Qualidade (2026-05-02)
+
+#### Added
+- ✅ `RouteErrorBoundary` — Error boundary com reset automático por pathname, envolve todas as rotas lazy
+- ✅ `usePlayerSessionHistory` — Persiste até 30 IDs de jogadores recentes no `localStorage` para evitar repetição entre sessões
+- ✅ `handleSkipPlayer` em `useAdaptiveGuessGame` — Pulos agora quebram o streak e ajustam dificuldade como erro
+- ✅ ADR 008 — Histórico cross-sessão de jogadores
+- ✅ ADR 009 — Paginação client-side no admin
+- ✅ ADR 010 — Ativação de `strictNullChecks`
+- ✅ Scripts de teste adicionados ao `package.json`: `test`, `test:watch`, `test:coverage`, `test:e2e`
+- ✅ 8 testes unitários para `usePlayerSessionHistory`
+
+#### Changed
+- ⚡ Cache TTL de imagens de jogadores: 10min → 24h (`CACHE_EXPIRATION`)
+- ⚡ Cache TTL de imagens de camisas: 10min → 24h (`JERSEY_CACHE_EXPIRATION`)
+- 🔄 `PlayersManagement` — Paginação de 24 itens por página com reset automático ao filtrar
+- 🔄 `JerseysManagement` — Paginação de 24 itens por página com reset automático ao filtrar
+- 🔄 `tsconfig.json` e `tsconfig.app.json` — `strictNullChecks: true` ativado (zero erros de compilação)
+
+#### Removed
+- ❌ `@sentry/tracing` removido de `dependencies` (nunca importado)
+- ❌ `bcryptjs` e `@types/bcryptjs` removidos de `dependencies` (nunca importados)
+
+#### Fixed
+- 🐛 Pulos (`SkipPlayerButton`) não zeravam o streak nem afetavam o sistema de dificuldade adaptativa — corrigido com `handleSkipPlayer` dedicado
+
+---
+
 ### 👕 Quiz das Camisas - Múltipla Escolha (2025-01-XX)
 
 #### Added
