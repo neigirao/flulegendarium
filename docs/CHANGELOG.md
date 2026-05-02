@@ -7,17 +7,46 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Unreleased]
 
+### 🏗️ Plano de Melhoria — Fases 1, 2 e 3 (2026-05-02)
+
+#### Fase 1 — Documentação e Qualidade
+
+##### Added
+- ✅ `.env.example` — Modelo de variáveis de ambiente com descrições e classificação de obrigatoriedade
+- ✅ `README.md` — Seção de variáveis de ambiente com tabela completa (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID`, `VITE_GOOGLE_CLIENT_ID`, `VITE_GA4_ID`, `VITE_ENABLE_DESIGN_SYSTEM`)
+- ✅ ADR 008 — Histórico cross-sessão de jogadores via `localStorage`
+- ✅ ADR 009 — Paginação client-side no admin dashboard
+- ✅ ADR 010 — Ativação de `strictNullChecks` com zero erros de compilação
+- ✅ Scripts de teste adicionados ao `package.json`: `test`, `test:watch`, `test:coverage`, `test:ui`, `test:e2e`, `test:e2e:ui`, `test:e2e:debug`
+
+#### Fase 2 — Cobertura de Testes
+
+##### Added
+- ✅ 8 testes unitários para `usePlayerSessionHistory` (localStorage rolling window)
+- ✅ 5 testes para `handleSkipPlayer` em `useAdaptiveGuessGame` (não encerra o jogo, zera streak, não trava ao pullar)
+- ✅ 20 testes para `jerseyService` — cobertura de `selectJerseyByDifficulty`, `selectRandomJersey`, `calculatePoints`, `checkGuess`, `generateOptions`, `checkOptionSelection`
+
+##### Fixed
+- 🐛 4 testes em `use-adaptive-guess-game.test.ts` estavam com valores errados (`very_easy`/`1.0`) — corrigidos para `muito_facil`/`0.5` (valores reais da config)
+
+#### Fase 3 — Arquitetura e Contratos
+
+##### Added
+- ✅ `src/types/adaptive-game.ts` — Tipos explícitos `AdaptiveGameState`, `AdaptiveGameActions` e `AdaptiveGame` para `useAdaptiveGuessGame`
+- ✅ `src/config/feature-flags.ts` — Feature flags centralizados (`enableDesignSystem`, `enableSentry`, `enableAnalytics`, `showErrorDetails`)
+- ✅ `scripts/audit-docs.sh` — Script que detecta arquivos `.md` sem commit há mais de N dias (padrão: 90)
+
+##### Changed
+- 🔄 `src/App.tsx` — Passou a consumir `featureFlags.enableDesignSystem` em vez de inline `import.meta.env`
+
+---
+
 ### 🛠️ Melhorias de Engenharia e Qualidade (2026-05-02)
 
 #### Added
 - ✅ `RouteErrorBoundary` — Error boundary com reset automático por pathname, envolve todas as rotas lazy
 - ✅ `usePlayerSessionHistory` — Persiste até 30 IDs de jogadores recentes no `localStorage` para evitar repetição entre sessões
 - ✅ `handleSkipPlayer` em `useAdaptiveGuessGame` — Pulos agora quebram o streak e ajustam dificuldade como erro
-- ✅ ADR 008 — Histórico cross-sessão de jogadores
-- ✅ ADR 009 — Paginação client-side no admin
-- ✅ ADR 010 — Ativação de `strictNullChecks`
-- ✅ Scripts de teste adicionados ao `package.json`: `test`, `test:watch`, `test:coverage`, `test:e2e`
-- ✅ 8 testes unitários para `usePlayerSessionHistory`
 
 #### Changed
 - ⚡ Cache TTL de imagens de jogadores: 10min → 24h (`CACHE_EXPIRATION`)
