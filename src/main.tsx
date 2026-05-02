@@ -2,6 +2,7 @@ import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
+import { featureFlags } from './config/feature-flags'
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -18,7 +19,7 @@ root.render(
 
 // Lazy-load Sentry well after initial render to reduce critical-chain JS
 const scheduleSentryInit = () => {
-  if (!import.meta.env.PROD) return;
+  if (!featureFlags.enableSentry) return;
 
   const initSentry = () => import('./utils/sentry').then(m => m.initializeSentry());
 
