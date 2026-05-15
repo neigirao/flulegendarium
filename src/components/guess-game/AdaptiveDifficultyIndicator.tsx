@@ -7,6 +7,7 @@ interface AdaptiveDifficultyIndicatorProps {
   currentDifficulty: DifficultyLevel;
   progress: number;
   vertical?: boolean;
+  variant?: 'vertical' | 'horizontal' | 'horizontal-4';
 }
 
 const difficultyLevels: { key: DifficultyLevel; label: string; color: string }[] = [
@@ -25,14 +26,56 @@ const difficultyToNumber: Record<DifficultyLevel, number> = {
   muito_dificil: 5,
 };
 
+// Maps 5-level system to 4 mockup segments
+const segments4: { label: string; color: string; levels: DifficultyLevel[] }[] = [
+  { label: "Fácil",   color: "bg-difficulty-very-easy", levels: ["muito_facil", "facil"] },
+  { label: "Médio",   color: "bg-difficulty-medium",    levels: ["medio"] },
+  { label: "Difícil", color: "bg-difficulty-hard",      levels: ["dificil"] },
+  { label: "Expert",  color: "bg-difficulty-very-hard", levels: ["muito_dificil"] },
+];
+
 export const AdaptiveDifficultyIndicator = ({
   currentDifficulty,
   progress,
   vertical = true,
+  variant,
 }: AdaptiveDifficultyIndicatorProps) => {
   const currentNum = difficultyToNumber[currentDifficulty];
+  const resolvedVariant = variant ?? (vertical ? 'vertical' : 'horizontal');
 
-  if (!vertical) {
+  if (resolvedVariant === 'horizontal-4') {
+    const activeSegment = segments4.findIndex(s => s.levels.includes(currentDifficulty));
+    return (
+      <div className="flex flex-col gap-1">
+        <div className="flex gap-1">
+          {segments4.map((seg, i) => (
+            <div
+              key={seg.label}
+              className={cn(
+                "flex-1 h-2 rounded-full transition-all duration-300",
+                i <= activeSegment ? seg.color : "bg-muted/30"
+              )}
+            />
+          ))}
+        </div>
+        <div className="flex justify-between px-0.5">
+          {segments4.map((seg, i) => (
+            <span
+              key={seg.label}
+              className={cn(
+                "text-[9px] font-medium transition-colors duration-300",
+                i === activeSegment ? "text-foreground font-bold" : "text-muted-foreground"
+              )}
+            >
+              {seg.label}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (resolvedVariant === 'horizontal') {
     return (
       <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-card border border-border shadow-sm">
         <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Nível</span>

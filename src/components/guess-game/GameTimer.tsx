@@ -13,7 +13,7 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 60 }: 
   const [shake, setShake] = useState(false);
   const lastVibrated = useRef<number>(-1);
   const isCritical = timeRemaining <= 5 && !gameOver;
-  const isUrgent = timeRemaining <= 10 && !gameOver;
+  const isUrgent = timeRemaining <= 15 && !gameOver;
 
   useEffect(() => {
     if (isCritical && isRunning) {
@@ -36,10 +36,10 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 60 }: 
   }, [timeRemaining, isCritical, isRunning]);
 
   const progress = Math.max(0, timeRemaining / maxTime);
-  const radius = 42;
+  const radius = 28;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference * (1 - progress);
-  const strokeWidth = isCritical ? 8 : 6;
+  const strokeWidth = isCritical ? 5 : 4;
 
   const getStrokeColor = () => {
     if (isCritical) return "hsl(var(--destructive))";
@@ -52,17 +52,17 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 60 }: 
       "relative inline-flex items-center justify-center",
       shake && "animate-shake"
     )}>
-      <svg width="88" height="88" viewBox="0 0 100 100" className="transform -rotate-90">
+      <svg width="64" height="64" viewBox="0 0 64 64" className="transform -rotate-90">
         {/* Background ring */}
         <circle
-          cx="50" cy="50" r={radius}
+          cx="32" cy="32" r={radius}
           stroke="hsl(var(--muted) / 0.3)"
           strokeWidth={strokeWidth}
           fill="none"
         />
         {/* Progress ring */}
         <circle
-          cx="50" cy="50" r={radius}
+          cx="32" cy="32" r={radius}
           stroke={getStrokeColor()}
           strokeWidth={strokeWidth}
           fill="none"
@@ -71,7 +71,7 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 60 }: 
           strokeDashoffset={strokeDashoffset}
           className="transition-all duration-1000 ease-linear"
           style={{
-            filter: isCritical ? "drop-shadow(0 0 6px hsl(var(--destructive) / 0.6))" : 
+            filter: isCritical ? "drop-shadow(0 0 6px hsl(var(--destructive) / 0.6))" :
                    isUrgent ? "drop-shadow(0 0 4px hsl(var(--warning) / 0.4))" :
                    "drop-shadow(0 0 4px hsl(var(--secondary) / 0.4))"
           }}
@@ -80,12 +80,12 @@ export const GameTimer = ({ timeRemaining, isRunning, gameOver, maxTime = 60 }: 
       {/* Center text */}
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className={cn(
-          "font-display text-2xl leading-none tabular-nums transition-all duration-300",
+          "font-display text-xl leading-none tabular-nums transition-all duration-300",
           isCritical ? "text-destructive animate-pulse scale-110" : isUrgent ? "text-warning" : "text-foreground"
         )}>
           {timeRemaining}
         </span>
-        <span className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">seg</span>
+        <span className="text-[8px] text-muted-foreground font-medium uppercase tracking-wider">seg</span>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useRef, useEffect } from "react";
 import type { DifficultyLevel } from "@/types/guess-game";
 import { useAdaptiveGuessGame } from "@/hooks/game";
 import { useGameOrchestration } from "@/hooks/game/use-game-orchestration";
@@ -19,6 +19,9 @@ import { GuessHistoryPanel } from "./GuessHistoryPanel";
 import { KeyboardShortcutsHint } from "@/components/game/KeyboardShortcutsHint";
 import { AchievementNotification } from "@/components/achievements/AchievementNotification";
 import { SEOManager } from "@/components/seo/SEOManager";
+import { QuizFeedbackZone, type FeedbackState } from "./QuizFeedbackZone";
+import { ProgressDots } from "./ProgressDots";
+import { GameTimer } from "./GameTimer";
 import { clearAllImageCache } from "@/utils/player-image/cache";
 import { prepareNextBatch } from "@/utils/player-image/preloadUtils";
 
@@ -28,10 +31,10 @@ const AdaptiveGameContainer = () => {
   const {
     currentPlayer, gameKey, currentDifficulty, difficultyProgress,
     score, gameOver, timeRemaining,
-    handleGuess: originalHandleGuess, selectRandomPlayer, handleSkipPlayer: gameHandleSkip,
+    handleGuess: originalHandleGuess, handleSkipPlayer: gameHandleSkip,
     handlePlayerImageFixed, isProcessingGuess,
     startGameForPlayer, isTimerRunning, resetScore,
-    gamesPlayed, currentStreak, maxStreak,
+    gamesPlayed, currentStreak,
     difficultyChangeInfo: adaptiveDiffChange, clearDifficultyChange,
     saveToRanking
   } = useAdaptiveGuessGame(players);
@@ -50,7 +53,45 @@ const AdaptiveGameContainer = () => {
     clearImageCache: clearAllImageCache,
   });
 
-  const handleGuess = orch.wrapGuess(originalHandleGuess);
+  // Feedback state for inline zone and image border
+  const [feedbackState, setFeedbackState] = useState<FeedbackState>('idle');
+  const [lastPoints, setLastPoints] = useState(0);
+  const [lastPlayerName, setLastPlayerName] = useState('');
+  const [correctCount, setCorrectCount] = useState(0);
+  const [wrongCount, setWrongCount] = useState(0);
+  const prevScoreRef = useRef(score);
+  const pendingWrongCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Detect score increases (correct guess)
+  useEffect(() => {
+    if (score !== prevScoreRef.current) {
+      const delta = score - prevScoreRef.current;
+      prevScoreRef.current = score;
+      if (delta > 0) {
+        if (pendingWrongCheckRef.current) {
+          clearTimeout(pendingWrongCheckRef.current);
+          pendingWrongCheckRef.current = null;
+        }
+        setFeedbackState('correct');
+        setLastPoints(delta);
+        setLastPlayerName(currentPlayer?.name ?? '');
+        setCorrectCount(c => c + 1);
+      }
+    }
+  }, [score, currentPlayer]);
+
+  const handleGuess = orch.wrapGuess((guess: string) => {
+    const scoreBefore = prevScoreRef.current;
+    originalHandleGuess(guess);
+    // After a short delay, if score didn't change, it was wrong
+    pendingWrongCheckRef.current = setTimeout(() => {
+      if (prevScoreRef.current === scoreBefore && !gameOver) {
+        setFeedbackState('wrong');
+        setWrongCount(c => c + 1);
+      }
+      pendingWrongCheckRef.current = null;
+    }, 300);
+  });
 
   const handleImageLoaded = useCallback(() => {
     orch.handleImageLoaded();
@@ -80,36 +121,107 @@ const AdaptiveGameContainer = () => {
         showDebug={orch.showDebug}
         debugContent={orch.showDebug ? <DebugInfo show imageUrl={currentPlayer?.image_url} /> : null}
       >
-        <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} />
-
         {currentPlayer && (
-          <div className="mt-6 space-y-6">
-            {/* Image + vertical difficulty bar side by side */}
-            <div className="flex justify-center items-start gap-3">
-              <AdaptivePlayerImage key={`${gameKey}-${currentPlayer.id}`} player={currentPlayer} onImageFixed={handleImageLoaded} difficulty={currentDifficulty.level as DifficultyLevel} />
-              <AdaptiveDifficultyIndicator currentDifficulty={currentDifficulty.level as DifficultyLevel} progress={difficultyProgress} vertical />
+          <div className="mt-4 grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-6 md:gap-8 items-start">
+            {/* LEFT COLUMN — photo + progress dots */}
+            <div className="flex flex-col items-center gap-4">
+              <AdaptivePlayerImage
+                key={`${gameKey}-${currentPlayer.id}`}
+                player={currentPlayer}
+                onImageFixed={handleImageLoaded}
+                difficulty={currentDifficulty.level as DifficultyLevel}
+                feedbackState={feedbackState}
+              />
+              <ProgressDots total={10} correct={correctCount} wrong={wrongCount} />
             </div>
 
-            {/* Form controls below image */}
-            <div className="flex flex-col items-center space-y-3 w-full max-w-sm mx-auto">
-              <GuessForm onSubmitGuess={handleGuess} disabled={gameOver || isProcessingGuess} isProcessing={isProcessingGuess} />
+            {/* RIGHT COLUMN — HUD */}
+            <div className="flex flex-col gap-4">
+              {/* Score + Streak */}
+              <GameHeader
+                score={score}
+                currentStreak={currentStreak}
+                onDebugClick={() => orch.setShowDebug(!orch.showDebug)}
+              />
+
+              {/* Timer */}
               <div className="flex justify-center">
-                <SkipPlayerButton onSkip={orch.handleSkipPlayer} skipsUsed={orch.skipsUsed} maxSkips={orch.maxSkips} canSkip={orch.canSkip} skipPenalty={orch.skipPenalty} disabled={gameOver || isProcessingGuess || !isTimerRunning} />
+                <GameTimer
+                  timeRemaining={timeRemaining}
+                  isRunning={!gameOver && isTimerRunning}
+                  gameOver={gameOver}
+                />
               </div>
-              {!gameOver && (
-                <div className="flex justify-center">
-                  <ImageFeedbackButton itemName={currentPlayer.name} itemType="player" imageUrl={currentPlayer.image_url} itemId={currentPlayer.id} onReportSent={() => resetScore()} />
+
+              {/* 4-segment difficulty bar */}
+              <AdaptiveDifficultyIndicator
+                currentDifficulty={currentDifficulty.level as DifficultyLevel}
+                progress={difficultyProgress}
+                variant="horizontal-4"
+              />
+
+              {/* Inline feedback zone */}
+              <QuizFeedbackZone
+                state={feedbackState}
+                playerName={lastPlayerName}
+                points={lastPoints}
+                onIdle={() => setFeedbackState('idle')}
+              />
+
+              {/* Guess input */}
+              <GuessForm
+                onSubmitGuess={handleGuess}
+                disabled={gameOver || isProcessingGuess}
+                isProcessing={isProcessingGuess}
+              />
+
+              {/* Skip + report actions */}
+              <div className="flex items-center gap-2">
+                <div className="flex-1">
+                  <SkipPlayerButton
+                    onSkip={orch.handleSkipPlayer}
+                    skipsUsed={orch.skipsUsed}
+                    maxSkips={orch.maxSkips}
+                    canSkip={orch.canSkip}
+                    skipPenalty={orch.skipPenalty}
+                    disabled={gameOver || isProcessingGuess || !isTimerRunning}
+                  />
                 </div>
-              )}
+                {!gameOver && (
+                  <ImageFeedbackButton
+                    itemName={currentPlayer.name}
+                    itemType="player"
+                    imageUrl={currentPlayer.image_url}
+                    itemId={currentPlayer.id}
+                    onReportSent={() => resetScore()}
+                  />
+                )}
+              </div>
             </div>
           </div>
         )}
 
-        {orch.history.length > 0 && <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact />}
+        {orch.history.length > 0 && (
+          <div className="mt-6">
+            <GuessHistoryPanel history={orch.history} stats={orch.getStats()} compact />
+          </div>
+        )}
         <KeyboardShortcutsHint shortcuts={orch.shortcuts} show={!orch.showGuestNameForm && currentPlayer !== null} />
       </BaseGameContainer>
 
-      <GameOverDialog open={gameOver} onClose={() => {}} playerName={currentPlayer?.name || ''} score={score} onResetScore={resetScore} isAuthenticated={!!orch.user} onSaveToRanking={saveToRanking} gameMode="adaptive" difficultyLevel={currentDifficulty.label} unlockedAchievementIds={orch.unlockedAchievementIds} rankingPlayerName={orch.guestName} />
+      <GameOverDialog
+        open={gameOver}
+        onClose={() => {}}
+        playerName={currentPlayer?.name || ''}
+        score={score}
+        onResetScore={resetScore}
+        isAuthenticated={!!orch.user}
+        onSaveToRanking={saveToRanking}
+        gameMode="adaptive"
+        difficultyLevel={currentDifficulty.label}
+        unlockedAchievementIds={orch.unlockedAchievementIds}
+        rankingPlayerName={orch.guestName}
+      />
 
       {orch.showGuestNameForm && (
         <GuestNameForm onNameSubmitted={orch.handleGuestNameSubmit} onCancel={orch.onGuestCancel} />

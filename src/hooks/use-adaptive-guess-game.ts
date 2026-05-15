@@ -10,20 +10,8 @@ import { processPlayerName } from "@/utils/name-processor";
 import { logger } from "@/utils/logger";
 import { DIFFICULTY_LEVELS, type DifficultyLevelConfig } from "@/config/difficulty-levels";
 import type { Player } from "@/types/guess-game";
+import type { AdaptiveGame, DifficultyChangeInfo } from "@/types/adaptive-game";
 
-/**
- * Informações sobre uma mudança de dificuldade ocorrida.
- */
-interface DifficultyChangeInfo {
-  /** Nível de dificuldade anterior */
-  oldLevel: string;
-  /** Novo nível de dificuldade */
-  newLevel: string;
-  /** Razão da mudança (ex: "3 acertos consecutivos") */
-  reason: string;
-  /** Timestamp da mudança */
-  timestamp: number;
-}
 
 /**
  * Hook principal do jogo adaptativo.
@@ -80,7 +68,7 @@ interface DifficultyChangeInfo {
  * @see {@link useAdaptiveGameMetrics} Sistema de métricas do jogo
  * @see {@link useCleanTimer} Gerenciamento do timer
  */
-export const useAdaptiveGuessGame = (players: Player[]) => {
+export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
   // Game state
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [gameKey, setGameKey] = useState(0);
