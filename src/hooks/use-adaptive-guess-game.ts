@@ -73,6 +73,7 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [gameKey, setGameKey] = useState(0);
   const [attempts, setAttempts] = useState(0);
+  const [attemptsOnPlayer, setAttemptsOnPlayer] = useState(0);
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [isProcessingGuess, setIsProcessingGuess] = useState(false);
@@ -295,23 +296,24 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
         setCurrentStreak(newStreak);
         setMaxStreak(prev => Math.max(prev, newStreak));
         setAttempts(1);
+        setAttemptsOnPlayer(0);
         setGamesPlayed(prev => prev + 1);
-        
+
         recordCorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
         adjustDifficulty(true);
-        
-        logger.debug(`Correct answer! +${pointsEarned} points`, 'GUESS', { 
+
+        logger.debug(`Correct answer! +${pointsEarned} points`, 'GUESS', {
           multiplier: currentDifficulty.multiplier,
-          playerName: currentPlayer.name 
+          playerName: currentPlayer.name
         });
-        
+
         toast({
           title: "Correto!",
           description: `+${pointsEarned} pontos! (${currentDifficulty.label})`,
         });
-        
+
         stopTimer();
-        
+
         // Continue to next player and restart timer
         setTimeout(() => {
           selectRandomPlayer();
@@ -320,38 +322,69 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
           }, 100);
           setIsProcessingGuess(false);
         }, 1500);
-        
+
       } else {
-        logger.debug(`Incorrect answer`, 'GUESS', { correctAnswer: currentPlayer.name });
-        
-        setGameOver(true);
-        setHasLost(true);
-        setCurrentStreak(0);
-        stopTimer();
-        
+        const newAttemptsOnPlayer = attemptsOnPlayer + 1;
+        setAttemptsOnPlayer(newAttemptsOnPlayer);
+
         recordIncorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
         adjustDifficulty(false);
-        
-        toast({
-          variant: "destructive",
-          title: "Incorreto!",
-          description: `Era ${currentPlayer.name}. Sua pontuação final: ${score}`,
-        });
 
-        // Save game data
-        saveGameData(score, currentDifficulty.level, currentDifficulty.multiplier);
-        setIsProcessingGuess(false);
+        if (newAttemptsOnPlayer >= 3) {
+          // 3rd wrong — reveal player, advance (no game over)
+          setCurrentStreak(0);
+          stopTimer();
+          logger.debug(`3rd incorrect answer — advancing`, 'GUESS', { correctAnswer: currentPlayer.name });
+
+          toast({
+            variant: "destructive",
+            title: `Era ${currentPlayer.name}!`,
+            description: "Avançando para o próximo jogador...",
+          });
+
+          saveGameData(score, currentDifficulty.level, currentDifficulty.multiplier);
+
+          setTimeout(() => {
+            setAttemptsOnPlayer(0);
+            selectRandomPlayer();
+            setTimeout(() => startTimer(), 100);
+            setIsProcessingGuess(false);
+          }, 2000);
+        } else if (newAttemptsOnPlayer === 2) {
+          // 2nd wrong — deduct 2 pts, last chance
+          setScore(prev => Math.max(0, prev - 2));
+          logger.debug(`2nd incorrect answer — last chance`, 'GUESS', { correctAnswer: currentPlayer.name });
+
+          toast({
+            variant: "destructive",
+            title: "Incorreto!",
+            description: `Última tentativa! −2 pts`,
+          });
+          setIsProcessingGuess(false);
+        } else {
+          // 1st wrong — warn only
+          const remaining = 3 - newAttemptsOnPlayer;
+          logger.debug(`1st incorrect answer — ${remaining} attempts left`, 'GUESS', { correctAnswer: currentPlayer.name });
+
+          toast({
+            variant: "destructive",
+            title: "Incorreto!",
+            description: `Ainda ${remaining} tentativa${remaining > 1 ? 's' : ''} restante${remaining > 1 ? 's' : ''}`,
+          });
+          setIsProcessingGuess(false);
+        }
       }
     } catch (error) {
       logger.error('Error processing adaptive guess', 'GUESS', error);
       setIsProcessingGuess(false);
     }
   }, [
-    currentPlayer, 
-    gameOver, 
-    isProcessingGuess, 
-    score, 
-    currentStreak, 
+    currentPlayer,
+    gameOver,
+    isProcessingGuess,
+    score,
+    currentStreak,
+    attemptsOnPlayer,
     currentDifficulty,
     recordCorrectGuess,
     recordIncorrectGuess,
@@ -390,6 +423,7 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
     setGameOver(false);
     setHasLost(false);
     setAttempts(0);
+    setAttemptsOnPlayer(0);
     setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
     setDifficultyProgress(0);
     setCorrectSequence(0);
@@ -428,6 +462,7 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
     currentPlayer,
     gameKey,
     attempts,
+    attemptsOnPlayer,
     score,
     gameOver,
     timeRemaining,

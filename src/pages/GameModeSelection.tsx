@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { DailyChallengeWidget } from "@/components/challenges/DailyChallengeWidget";
+import { usePlayStreak } from "@/hooks/use-play-streak";
 
 const DECADES = [
   { num: '60s', lab: 'Tricampeão' },
@@ -64,6 +65,7 @@ const GameModeSelection = () => {
     navigate(path);
   }, [trackGameModeClick, navigate]);
 
+  const { streak, bestStreak } = usePlayStreak();
   const initial = user?.user_metadata?.full_name?.[0]?.toUpperCase() ?? 'T';
   const userName = user?.user_metadata?.full_name || 'Tricolor';
 
@@ -116,12 +118,20 @@ const GameModeSelection = () => {
                   Sua pontuação será salva automaticamente no ranking
                 </div>
               </div>
-              {userBest?.total ? (
-                <div className="text-right flex-shrink-0">
-                  <div className="font-display text-[24px] text-primary leading-none">{userBest.total.toLocaleString('pt-BR')}</div>
-                  <div className="text-[9px] text-muted-foreground uppercase tracking-[0.1em] font-bold mt-0.5">Total geral</div>
-                </div>
-              ) : null}
+              <div className="flex items-center gap-3 flex-shrink-0">
+                {streak > 0 && (
+                  <div className="text-center" title={`Melhor sequência: ${bestStreak} dias`}>
+                    <div className="font-display text-[22px] text-accent leading-none">🔥 {streak}</div>
+                    <div className="text-[9px] text-muted-foreground uppercase tracking-[0.1em] font-bold mt-0.5">Dias seguidos</div>
+                  </div>
+                )}
+                {userBest?.total ? (
+                  <div className="text-right">
+                    <div className="font-display text-[24px] text-primary leading-none">{userBest.total.toLocaleString('pt-BR')}</div>
+                    <div className="text-[9px] text-muted-foreground uppercase tracking-[0.1em] font-bold mt-0.5">Total geral</div>
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             {/* Mode cards grid */}
