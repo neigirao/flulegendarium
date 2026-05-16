@@ -53,7 +53,6 @@ const AdaptiveGameContainer = () => {
     clearImageCache: clearAllImageCache,
   });
 
-  // Feedback state for inline zone and image border
   const [feedbackState, setFeedbackState] = useState<FeedbackState>('idle');
   const [lastPoints, setLastPoints] = useState(0);
   const [lastPlayerName, setLastPlayerName] = useState('');
@@ -62,7 +61,14 @@ const AdaptiveGameContainer = () => {
   const prevScoreRef = useRef(score);
   const pendingWrongCheckRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Detect score increases (correct guess)
+  useEffect(() => {
+    return () => {
+      if (pendingWrongCheckRef.current) clearTimeout(pendingWrongCheckRef.current);
+    };
+  }, []);
+
+  const handleFeedbackIdle = useCallback(() => setFeedbackState('idle'), []);
+
   useEffect(() => {
     if (score !== prevScoreRef.current) {
       const delta = score - prevScoreRef.current;
@@ -123,7 +129,6 @@ const AdaptiveGameContainer = () => {
       >
         {currentPlayer && (
           <div className="mt-4 grid grid-cols-1 md:grid-cols-[1.4fr_1fr] gap-6 md:gap-8 items-start">
-            {/* LEFT COLUMN — photo + progress dots */}
             <div className="flex flex-col items-center gap-4">
               <AdaptivePlayerImage
                 key={`${gameKey}-${currentPlayer.id}`}
@@ -135,16 +140,13 @@ const AdaptiveGameContainer = () => {
               <ProgressDots total={10} correct={correctCount} wrong={wrongCount} />
             </div>
 
-            {/* RIGHT COLUMN — HUD */}
             <div className="flex flex-col gap-4">
-              {/* Score + Streak */}
               <GameHeader
                 score={score}
                 currentStreak={currentStreak}
                 onDebugClick={() => orch.setShowDebug(!orch.showDebug)}
               />
 
-              {/* Timer */}
               <div className="flex justify-center">
                 <GameTimer
                   timeRemaining={timeRemaining}
@@ -153,29 +155,25 @@ const AdaptiveGameContainer = () => {
                 />
               </div>
 
-              {/* 4-segment difficulty bar */}
               <AdaptiveDifficultyIndicator
                 currentDifficulty={currentDifficulty.level as DifficultyLevel}
                 progress={difficultyProgress}
                 variant="horizontal-4"
               />
 
-              {/* Inline feedback zone */}
               <QuizFeedbackZone
                 state={feedbackState}
                 playerName={lastPlayerName}
                 points={lastPoints}
-                onIdle={() => setFeedbackState('idle')}
+                onIdle={handleFeedbackIdle}
               />
 
-              {/* Guess input */}
               <GuessForm
                 onSubmitGuess={handleGuess}
                 disabled={gameOver || isProcessingGuess}
                 isProcessing={isProcessingGuess}
               />
 
-              {/* Skip + report actions */}
               <div className="flex items-center gap-2">
                 <div className="flex-1">
                   <SkipPlayerButton

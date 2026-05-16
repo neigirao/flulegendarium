@@ -8,54 +8,37 @@ import { getReliableJerseyImageUrl, jerseyDefaultImage } from '@/utils/jersey-im
 import { reportJerseyImageProblem } from '@/utils/jersey-image/problemTracking';
 import { logger } from '@/utils/logger';
 
+export type JerseyFeedbackState = 'idle' | 'correct' | 'wrong';
 
 interface JerseyImageProps {
   jersey: Jersey;
   onImageLoaded: () => void;
   difficulty: DifficultyLevel;
   priority?: boolean;
+  feedbackState?: JerseyFeedbackState;
 }
 
-const difficultyEffects = {
-  muito_facil: {
-    filter: "brightness(1) contrast(1) saturate(1)",
-    borderColor: "border-difficulty-very-easy",
-    glowColor: "shadow-difficulty-very-easy/20"
-  },
-  facil: {
-    filter: "brightness(0.95) contrast(1.05) saturate(0.95)",
-    borderColor: "border-difficulty-easy",
-    glowColor: "shadow-difficulty-easy/20"
-  },
-  medio: {
-    filter: "brightness(0.9) contrast(1.1) saturate(0.9)",
-    borderColor: "border-difficulty-medium",
-    glowColor: "shadow-difficulty-medium/20"
-  },
-  dificil: {
-    filter: "brightness(0.85) contrast(1.15) saturate(0.85)",
-    borderColor: "border-difficulty-hard",
-    glowColor: "shadow-difficulty-hard/20"
-  },
-  muito_dificil: {
-    filter: "brightness(0.8) contrast(1.2) saturate(0.8)",
-    borderColor: "border-difficulty-very-hard",
-    glowColor: "shadow-difficulty-very-hard/20"
-  }
+const difficultyEffects: Record<DifficultyLevel, string> = {
+  muito_facil: "brightness(1) contrast(1) saturate(1)",
+  facil: "brightness(0.95) contrast(1.05) saturate(0.95)",
+  medio: "brightness(0.9) contrast(1.1) saturate(0.9)",
+  dificil: "brightness(0.85) contrast(1.15) saturate(0.85)",
+  muito_dificil: "brightness(0.8) contrast(1.2) saturate(0.8)",
 };
 
 const jerseyTypeLabels: Record<string, string> = {
   home: 'Titular',
   away: 'Reserva',
   third: 'Terceiro',
-  special: 'Especial'
+  special: 'Especial',
 };
 
 export const JerseyImage = ({
   jersey,
   onImageLoaded,
   difficulty,
-  priority = true
+  priority = true,
+  feedbackState = 'idle',
 }: JerseyImageProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -63,22 +46,14 @@ export const JerseyImage = ({
   const [triedFallback, setTriedFallback] = useState(false);
   const [currentSrc, setCurrentSrc] = useState<string>('');
   const containerRef = useRef<HTMLDivElement>(null);
-  
-  const effects = difficultyEffects[difficulty] || difficultyEffects.medio;
 
-  // Get reliable image URL with fallback system
+  const filter = difficultyEffects[difficulty] ?? difficultyEffects.medio;
   const reliableUrl = getReliableJerseyImageUrl(jersey);
-  
-  // Optimized image URL with Supabase transforms
   const optimizedSrc = isSupabaseStorageUrl(reliableUrl)
-    ? getTransformedImageUrl(reliableUrl, { width: 384, height: 384, quality: 85 })
+    ? getTransformedImageUrl(reliableUrl, { width: 384, height: 480, quality: 85 })
     : reliableUrl;
+  const srcSet = isSupabaseStorageUrl(reliableUrl) ? getResponsiveSrcSet(reliableUrl) : undefined;
 
-  const srcSet = isSupabaseStorageUrl(reliableUrl)
-    ? getResponsiveSrcSet(reliableUrl)
-    : undefined;
-
-  // Initialize currentSrc when optimizedSrc changes
   useEffect(() => {
     setCurrentSrc(optimizedSrc);
     setTriedFallback(false);
@@ -86,26 +61,13 @@ export const JerseyImage = ({
     setIsLoading(true);
   }, [optimizedSrc]);
 
-  // Intersection Observer for lazy loading (when not priority)
   useEffect(() => {
     if (priority || inView) return;
-
     const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            setInView(true);
-            observer.disconnect();
-          }
-        });
-      },
+      (entries) => { entries.forEach(e => { if (e.isIntersecting) { setInView(true); observer.disconnect(); } }); },
       { rootMargin: '100px 0px', threshold: 0.01 }
     );
-
-    if (containerRef.current) {
-      observer.observe(containerRef.current);
-    }
-
+    if (containerRef.current) observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, [priority, inView]);
 
@@ -117,112 +79,72 @@ export const JerseyImage = ({
 
   const handleError = useCallback(() => {
     logger.error(`❌ Erro ao carregar imagem da camisa ${jersey.years.join('/')}`, 'JERSEY_IMAGE', {
-      jerseyId: jersey.id,
-      originalUrl: jersey.image_url,
-      optimizedUrl: currentSrc,
-      triedFallback
+      jerseyId: jersey.id, originalUrl: jersey.image_url, optimizedUrl: currentSrc, triedFallback
     });
-    
-    // Se ainda não tentou fallback, tentar imagem padrão
     if (!triedFallback) {
-      logger.info(`🔄 Tentando fallback para camisa ${jersey.years.join('/')}`, 'JERSEY_IMAGE');
       setTriedFallback(true);
       setCurrentSrc(jerseyDefaultImage);
       return;
     }
-    
-    // Reportar problema para tracking
-    reportJerseyImageProblem(
-      jersey.id,
-      jersey.years,
-      jersey.image_url,
-      currentSrc,
-      'Failed to load even after fallback'
-    );
-    
+    reportJerseyImageProblem(jersey.id, jersey.years, jersey.image_url, currentSrc, 'Failed to load even after fallback');
     setIsLoading(false);
     setHasError(true);
-    // Still call onImageLoaded to prevent game from stalling
     onImageLoaded();
   }, [jersey, currentSrc, triedFallback, onImageLoaded]);
 
+  const frameClass = cn(
+    "relative rounded-[18px] border-[3px] p-6 flex flex-col transition-all duration-300 w-full",
+    feedbackState === 'correct'
+      ? "border-[#22C55E] shadow-[0_8px_32px_rgba(34,197,94,0.2)]"
+      : feedbackState === 'wrong'
+      ? "border-destructive shadow-[0_8px_32px_rgba(239,68,68,0.15)]"
+      : "border-accent shadow-[0_8px_32px_rgba(196,148,74,0.15)]",
+    "bg-card"
+  );
+
   return (
-    <div className="flex flex-col items-center space-y-6">
-      <div 
-        ref={containerRef}
-        className={cn(
-          "relative p-1 rounded-3xl border-4 transition-all duration-500 shadow-2xl",
-          effects.borderColor,
-          effects.glowColor
-        )}
-      >
-        <div 
-          className="relative rounded-2xl overflow-hidden bg-card w-80 h-80 md:w-96 md:h-96"
-          style={{ filter: effects.filter }}
-        >
-          {isLoading && (
-            <div className="absolute inset-0 z-10">
-              <UnifiedSkeleton variant="player-image" />
-            </div>
-          )}
-          
-          {hasError ? (
-            <div className="w-full h-full flex items-center justify-center bg-muted">
-              <div className="text-center text-muted-foreground">
-                <img 
-                  src={jerseyDefaultImage} 
-                  alt="Camisa não disponível"
-                  className="w-24 h-24 mx-auto mb-2 opacity-50"
-                />
-                <p className="text-sm">Imagem não disponível</p>
-              </div>
-            </div>
-          ) : (inView || priority) && currentSrc && (
-            <img
-              src={currentSrc}
-              srcSet={!triedFallback ? srcSet : undefined}
-              sizes="(max-width: 640px) 320px, 384px"
-              alt="Camisa histórica do Fluminense"
-              className={cn(
-                "w-full h-full object-contain transition-opacity duration-300",
-                isLoading ? "opacity-0" : "opacity-100"
-              )}
-              onLoad={handleLoad}
-              onError={handleError}
-              loading={priority ? "eager" : "lazy"}
-              decoding={priority ? "sync" : "async"}
-              fetchPriority={priority ? "high" : "auto"}
-              data-testid="jersey-image"
-              data-lcp-critical={priority ? "true" : undefined}
-              style={{
-                containIntrinsicSize: '384px 384px',
-                contentVisibility: priority ? 'visible' : 'auto'
-              }}
-            />
-          )}
+    <div ref={containerRef} className={frameClass} style={{ aspectRatio: '1/1.15' }}>
+      {/* Badges row */}
+      <div className="absolute top-4 left-4 right-4 flex justify-between z-10">
+        <div className="text-[10px] font-bold uppercase tracking-[0.06em] px-2.5 py-1.5 rounded-lg bg-secondary/90 text-white backdrop-blur-sm">
+          👕 {jerseyTypeLabels[jersey.type] ?? jersey.type}
         </div>
-        
-        {/* Jersey type indicator overlay */}
-        <div className="absolute -top-2 -right-2 px-3 py-1 bg-card rounded-full shadow-lg border-2 border-border">
-          <span className="text-sm font-bold text-foreground">
-            {jerseyTypeLabels[jersey.type] || jersey.type.toUpperCase()}
-          </span>
-        </div>
-        
-        {/* Manufacturer badge if available */}
         {jersey.manufacturer && (
-          <div className="absolute -bottom-2 -left-2 px-3 py-1 bg-card rounded-full shadow-lg border-2 border-border">
-            <span className="text-xs text-muted-foreground">
-              {jersey.manufacturer}
-            </span>
+          <div className="text-[10px] font-bold uppercase tracking-[0.06em] px-2.5 py-1.5 rounded-lg bg-white/90 text-foreground border border-border backdrop-blur-sm">
+            {jersey.manufacturer}
           </div>
         )}
       </div>
 
-      <div className="text-center">
-        <p className="text-lg text-muted-foreground">
-          De que ano é essa camisa?
-        </p>
+      {/* Image area */}
+      <div className="flex-1 flex items-center justify-center mt-6 overflow-hidden rounded-xl" style={{ filter }}>
+        {isLoading && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <UnifiedSkeleton variant="player-image" />
+          </div>
+        )}
+        {hasError ? (
+          <div className="flex flex-col items-center text-muted-foreground">
+            <img src={jerseyDefaultImage} alt="Camisa não disponível" className="w-24 h-24 opacity-50 mb-2" />
+            <p className="text-sm">Imagem não disponível</p>
+          </div>
+        ) : (inView || priority) && currentSrc ? (
+          <img
+            src={currentSrc}
+            srcSet={!triedFallback ? srcSet : undefined}
+            sizes="(max-width: 640px) 320px, 384px"
+            alt="Camisa histórica do Fluminense"
+            className={cn("w-full h-full object-contain transition-opacity duration-300", isLoading ? "opacity-0" : "opacity-100")}
+            onLoad={handleLoad}
+            onError={handleError}
+            loading={priority ? "eager" : "lazy"}
+            decoding={priority ? "sync" : "async"}
+            fetchPriority={priority ? "high" : "auto"}
+            data-testid="jersey-image"
+            data-lcp-critical={priority ? "true" : undefined}
+            style={{ containIntrinsicSize: '384px 480px', contentVisibility: priority ? 'visible' : 'auto' }}
+          />
+        ) : null}
       </div>
     </div>
   );
