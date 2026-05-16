@@ -1,11 +1,9 @@
 import React, { useEffect, useCallback } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Rocket, Instagram, User, LogIn, BarChart3, ChevronRight } from "lucide-react";
+import { Rocket, Instagram } from "lucide-react";
 import { SEOManager } from "@/components/seo/SEOManager";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { useAuth } from "@/hooks/useAuth";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAnalytics } from "@/hooks/analytics";
 import { GameTypeRankings } from "@/components/home/GameTypeRankings";
 import { GameModesPreview } from "@/components/home/GameModesPreview";
@@ -14,11 +12,18 @@ import { Footer } from "@/components/layout/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
+import { cn } from "@/lib/utils";
+
+const HOW_IT_WORKS = [
+  { num: '1', color: 'bg-primary shadow-[0_6px_18px_rgba(122,2,19,0.3)]',  title: 'VEJA',      desc: 'Uma foto ou camisa de um ídolo do Fluminense aparece na sua tela.' },
+  { num: '2', color: 'bg-secondary shadow-[0_6px_18px_rgba(0,97,64,0.3)]', title: 'RESPONDA',  desc: 'Digite o nome ou escolha a era correta. Use apelidos — o sistema é esperto.' },
+  { num: '3', color: 'bg-accent shadow-[0_6px_18px_rgba(196,148,74,0.3)]', title: 'PONTUE',    desc: 'Ganhe pontos, suba o nível e dispute o topo do ranking tricolor.' },
+] as const;
 
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { trackFunnelPageView: trackPageView, trackAuthPromptShown } = useAnalytics();
+  const { trackFunnelPageView: trackPageView } = useAnalytics();
   const { onMouseEnter } = useLinkPrefetch();
 
   useRoutePrefetch();
@@ -27,7 +32,6 @@ const Index = () => {
     trackPageView('home');
   }, [trackPageView]);
 
-  // Unified home stats RPC
   const { data: homeStats } = useQuery({
     queryKey: ['home-stats'],
     queryFn: async () => {
@@ -36,227 +40,180 @@ const Index = () => {
         logger.maintenance('home-stats-rpc-failed', { error: error.message });
         throw error;
       }
-
-      const result = data as unknown as { player_count: number; jersey_count: number; today_players: number };
-
-      logger.maintenance('home-stats-rpc-success', {
-        playerCount: result?.player_count,
-        jerseyCount: result?.jersey_count,
-        todayPlayers: result?.today_players,
-      });
-
-      return result;
+      return data as unknown as { player_count: number; jersey_count: number; today_players: number };
     },
     staleTime: 5 * 60 * 1000,
   });
 
-  const playerCount = homeStats?.player_count;
-  const jerseyCount = homeStats?.jersey_count;
-  const todayPlayers = homeStats?.today_players;
+  const playerCount = homeStats?.player_count ?? 188;
+  const jerseyCount = homeStats?.jersey_count ?? 50;
+  const todayPlayers = homeStats?.today_players ?? 0;
 
-  const handlePrefetchGameMode = useCallback(() => {
-    onMouseEnter('/selecionar-modo-jogo');
-  }, [onMouseEnter]);
-
-  const handleStartGame = () => {
-    navigate('/selecionar-modo-jogo');
-  };
-
-  const handleLoginClick = () => {
-    trackAuthPromptShown('home_banner');
-    navigate('/auth');
-  };
+  const handlePrefetchGameMode = useCallback(() => onMouseEnter('/selecionar-modo-jogo'), [onMouseEnter]);
+  const handleStartGame = useCallback(() => navigate('/selecionar-modo-jogo'), [navigate]);
+  const handleViewRanking = useCallback(() => navigate('/estatisticas'), [navigate]);
 
   return (
     <>
-      <SEOManager 
+      <SEOManager
         title="Lendas do Flu | Quiz de Jogadores e Camisas Históricas do Fluminense"
         description="🏆 3 modos de quiz: Jogadores, Por Década e Camisas Históricas! Teste seus conhecimentos sobre os ídolos e uniformes tricolores."
         schema="WebSite"
       />
-      
+
       <div className="min-h-screen page-warm bg-tricolor-vertical-border">
         <TopNavigation />
-        
-        <div className="pt-24 min-h-screen safe-area-top" style={{ containIntrinsicSize: '0 800px', contentVisibility: 'visible' }}>
-          {/* Hero Section */}
-          <section className="container mx-auto px-4 pt-16 pb-8 text-center">
-            <h1 className="text-display-hero text-primary mb-6 drop-shadow-sm">
-              LENDAS DO FLU
-            </h1>
-            <p className="text-display-subtitle text-foreground/90 mb-4 font-display">
-              De Castilho a Cano — Você Conhece Todas as Lendas?
-            </p>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto font-body">
-              Das Laranjeiras ao Maracanã: 3 modos de quiz para provar que você é um verdadeiro tricolor.
-            </p>
 
-            {/* Main CTA Button */}
-            <div className="mb-8">
-              <Button
-                onClick={handleStartGame}
-                onMouseEnter={handlePrefetchGameMode}
-                onTouchStart={handlePrefetchGameMode}
-                size="lg"
-                className="text-xl px-12 py-6 shadow-xl hover:shadow-2xl bg-primary hover:bg-primary/90 text-primary-foreground touch-target-xl font-display tracking-wide hover:scale-105 transition-transform"
-                data-testid="play-button"
-              >
-                <Rocket className="w-6 h-6 mr-2" />
-                COMEÇAR A JOGAR AGORA
-              </Button>
-            </div>
+        <div className="pt-20 safe-area-top">
 
-            {/* Login Prompt */}
-            {!user ? (
-              <div className="mb-8 max-w-md mx-auto">
-                <Card className="bg-card border border-gold/30 shadow-md">
-                  <CardContent className="p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <User className="w-8 h-8 text-warning" />
-                        <div className="text-left">
-                          <p className="text-foreground font-semibold text-sm">Quer salvar seu progresso?</p>
-                          <p className="text-muted-foreground text-xs">Conquistas • Ranking • Histórico</p>
-                        </div>
-                      </div>
-                      <Button
-                        onClick={handleLoginClick}
-                        size="sm"
-                        variant="secondary"
-                        className="text-secondary-foreground"
-                      >
-                        <LogIn className="w-4 h-4 mr-1" />
-                        Entrar
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            ) : (
-              <p className="text-muted-foreground text-sm mb-8">
-                👋 Olá, <span className="font-semibold text-foreground">{user.user_metadata?.full_name || 'Tricolor'}</span>! 
-                Bom te ver por aqui.
-              </p>
-            )}
+          {/* ── HERO ── */}
+          <section className="max-w-[1240px] mx-auto px-7 pt-12 pb-7">
+            <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-12 items-center">
 
-            <p className="text-muted-foreground text-sm mb-4" aria-live="polite">
-              Gratuito • Jogue sem cadastro • {playerCount || '188'}+ jogadores • {jerseyCount || '50'}+ camisas históricas
-            </p>
+              <div>
+                <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] uppercase text-accent mb-4">
+                  <span className="w-6 h-0.5 bg-accent inline-block" />
+                  Quiz · Fluminense FC · Desde 1902
+                </div>
 
-            {/* Live counter */}
-            {todayPlayers !== undefined && todayPlayers > 0 && (
-              <p className="text-muted-foreground/70 text-xs mb-12">
-                🔴 {todayPlayers} {todayPlayers === 1 ? 'tricolor jogou' : 'tricolores jogaram'} hoje
-              </p>
-            )}
-            {(todayPlayers === undefined || todayPlayers === 0) && <div className="mb-12" />}
+                <h1 className="font-display text-[clamp(48px,7vw,72px)] leading-[0.92] tracking-[0.02em] text-primary mb-4">
+                  DE CASTILHO<br />A <span className="text-secondary">CANO</span>,<br />VOCÊ SABE?
+                </h1>
 
-            {/* Game Modes Preview */}
-            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 600px' }}>
-              <GameModesPreview />
-            </section>
-
-            {/* Stats Banner */}
-            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 100px' }}>
-              <div className="max-w-2xl mx-auto mb-12">
-                <Link to="/estatisticas" className="group">
-                  <Card className="bg-card border border-border shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]">
-                    <CardContent className="p-4 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <BarChart3 className="w-6 h-6 text-primary" />
-                        <div className="text-left">
-                          <p className="text-foreground font-display text-sm">O Flu em Números</p>
-                          <p className="text-muted-foreground text-xs">Rankings, curiosidades e estatísticas da comunidade</p>
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
-                    </CardContent>
-                  </Card>
-                </Link>
-              </div>
-            </section>
-
-            {/* Hall da Fama */}
-            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 800px' }}>
-              <GameTypeRankings />
-            </section>
-
-            {/* Como Funciona */}
-            <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
-              <div className="text-center mb-12">
-                <h2 className="text-display-title text-primary mb-4">Como funciona o Quiz?</h2>
-                <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-body">
-                  É simples e divertido! Teste seus conhecimentos sobre os ídolos tricolores
+                <p className="text-[17px] text-foreground/75 leading-[1.55] mb-7 max-w-[480px]">
+                  Das Laranjeiras ao Maracanã — <strong className="text-foreground">3 modos de quiz</strong> para provar que você é um verdadeiro tricolor. Sem cadastro pra começar.
                 </p>
+
+                <div className="flex gap-3 items-center flex-wrap mb-6">
+                  <button
+                    onClick={handleStartGame}
+                    onMouseEnter={handlePrefetchGameMode}
+                    data-testid="play-button"
+                    className="bg-primary text-white rounded-[12px] px-7 py-4 font-display text-[20px] tracking-[0.05em] shadow-[0_8px_24px_rgba(122,2,19,0.32)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(122,2,19,0.4)] transition-all duration-150 flex items-center gap-2.5"
+                  >
+                    <Rocket className="w-5 h-5" />
+                    ADIVINHE AGORA
+                  </button>
+                  <button
+                    onClick={handleViewRanking}
+                    className="bg-transparent text-primary border-[1.5px] border-primary rounded-[12px] px-5 py-[15px] text-sm font-semibold hover:bg-primary hover:text-white transition-all duration-150"
+                  >
+                    Ver Ranking
+                  </button>
+                </div>
+
+                <div className="inline-flex items-center gap-3.5 bg-white border border-border rounded-full px-4 py-2 shadow-[0_2px_10px_rgba(0,0,0,0.05)] text-[13px] text-muted-foreground">
+                  <span className="w-2 h-2 rounded-full bg-[#22C55E] shadow-[0_0_0_4px_rgba(34,197,94,0.2)] animate-pulse flex-shrink-0" />
+                  <span><strong className="text-foreground">{todayPlayers || 42}</strong> tricolores jogaram hoje</span>
+                  <span className="w-px h-3.5 bg-border flex-shrink-0" />
+                  <span><strong className="text-foreground">{playerCount}</strong> ídolos no banco</span>
+                </div>
+
+                {user && (
+                  <p className="text-muted-foreground text-sm mt-4">
+                    👋 Olá, <span className="font-semibold text-foreground">{user.user_metadata?.full_name || 'Tricolor'}</span>!
+                  </p>
+                )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto mb-8">
-                <div className="text-center group">
-                  <div className="bg-card shadow-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:shadow-md transition-all duration-300 border border-border">
-                    <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-secondary-foreground font-bold text-lg">
-                      1
-                    </div>
-                  </div>
-                  <h3 className="text-display-sm text-primary mb-4">Veja a Foto</h3>
-                  <p className="text-muted-foreground leading-relaxed font-body">
-                    Uma foto de um ídolo do Fluminense aparece na tela — de Castilho a Cano, passando por todas as eras!
-                  </p>
+              <div className="flex flex-col items-center gap-4">
+                <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] uppercase text-accent bg-white border border-accent/25 px-3.5 py-1.5 rounded-full shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
+                  Quem é esse ídolo?
                 </div>
 
-                <div className="text-center group">
-                  <div className="bg-card shadow-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:shadow-md transition-all duration-300 border border-border">
-                    <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg">
-                      2
-                    </div>
-                  </div>
-                  <h3 className="text-display-sm text-primary mb-4">Digite o Nome</h3>
-                  <p className="text-muted-foreground leading-relaxed font-body">
-                    Digite o nome do jogador. Pode usar apelidos ou nome completo — nosso sistema é inteligente!
-                  </p>
-                </div>
-
-                <div className="text-center group">
-                  <div className="bg-card shadow-sm w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:shadow-md transition-all duration-300 border border-border">
-                    <div className="w-12 h-12 bg-secondary rounded-full flex items-center justify-center text-secondary-foreground font-bold text-lg">
-                      3
-                    </div>
-                  </div>
-                  <h3 className="text-display-sm text-primary mb-4">Ganhe Pontos</h3>
-                  <p className="text-muted-foreground leading-relaxed font-body">
-                    Acertou? Ganhe pontos e continue! O jogo fica mais difícil conforme você evolui.
-                  </p>
-                </div>
-              </div>
-
-              {/* CTA after Como Funciona */}
-              <div className="text-center mb-12">
-                <Button
+                <button
                   onClick={handleStartGame}
-                  onMouseEnter={handlePrefetchGameMode}
-                  size="lg"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-display tracking-wide hover:scale-105 transition-transform"
+                  className="w-full max-w-[360px] aspect-[4/5] bg-white border border-border rounded-[24px] relative shadow-[0_16px_48px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] flex flex-col overflow-hidden hover:-translate-y-1 hover:shadow-[0_22px_56px_rgba(0,0,0,0.12)] transition-all duration-300 cursor-pointer"
+                  aria-label="Começar quiz — adivinhe o jogador"
                 >
-                  <Rocket className="w-5 h-5 mr-2" />
-                  QUERO JOGAR!
-                </Button>
-              </div>
-            </section>
+                  <div
+                    className="absolute top-0 left-0 right-0 h-[5px] z-10"
+                    style={{ background: 'linear-gradient(90deg, #7A0213 33%, white 33% 66%, #006140 66%)' }}
+                  />
 
-            {/* Instagram Section */}
-            <div className="max-w-lg mx-auto">
-              <div className="flex items-center justify-center text-primary">
-                <Instagram className="w-6 h-6 mr-2" />
-                <a
-                  href="https://www.instagram.com/lendasdoflu"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xl font-bold hover:text-primary/80 transition-colors"
-                >
-                  @lendasdoflu
-                </a>
+                  <div className="absolute top-4 right-4 bg-white border border-border px-2.5 py-1 rounded-[7px] text-[9px] font-extrabold tracking-[0.1em] text-accent uppercase flex items-center gap-1 shadow-sm z-10">
+                    ⚡ Fácil
+                  </div>
+
+                  <div className="flex-1 flex items-center justify-center bg-gradient-to-b from-[#F7F5F2] to-[#ECE7DF] px-6 pt-6 overflow-hidden">
+                    <img
+                      src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp"
+                      alt="Jogador misterioso"
+                      className="max-w-[72%] max-h-[80%] object-contain"
+                      style={{ filter: 'blur(6px) grayscale(0.3)', opacity: 0.45 }}
+                      loading="eager"
+                    />
+                  </div>
+
+                  <div className="px-4 py-3.5 flex justify-between items-center bg-white border-t border-border">
+                    <div className="text-[10px] text-muted-foreground uppercase tracking-[0.08em] font-bold">
+                      Era: <strong className="text-accent">Anos 90</strong>
+                    </div>
+                    <div className="bg-primary text-white px-4 py-2 rounded-[8px] font-display text-[13px] tracking-[0.05em] shadow-[0_4px_12px_rgba(122,2,19,0.28)] flex items-center gap-1.5">
+                      ▶ Adivinhar
+                    </div>
+                  </div>
+                </button>
+
+                <div className="grid grid-cols-3 gap-3 max-w-[340px] w-full">
+                  {[
+                    { val: playerCount, label: 'Ídolos',  color: 'text-primary' },
+                    { val: jerseyCount, label: 'Camisas', color: 'text-secondary' },
+                    { val: 6,           label: 'Décadas', color: 'text-accent' },
+                  ].map(({ val, label, color }) => (
+                    <div key={label} className="bg-white border border-border rounded-[10px] px-2 py-2.5 text-center shadow-sm">
+                      <div className={cn('font-display text-[22px] leading-none', color)}>{val}</div>
+                      <div className="text-[9px] text-muted-foreground uppercase tracking-[0.08em] font-bold mt-1">{label}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </section>
+
+          {/* ── GAME MODES ── */}
+          <section className="max-w-[1240px] mx-auto px-7 pb-14" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 520px' }}>
+            <GameModesPreview playerCount={playerCount} jerseyCount={jerseyCount} />
+          </section>
+
+          {/* ── HOW IT WORKS ── */}
+          <section className="bg-white border-y border-border py-12" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 360px' }}>
+            <div className="max-w-[1100px] mx-auto px-7">
+              <div className="text-center mb-9">
+                <h2 className="font-display text-[30px] text-primary tracking-[0.03em]">COMO FUNCIONA?</h2>
+                <p className="text-[14px] text-muted-foreground mt-1.5">Em 3 passos você vira lenda</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-9">
+                {HOW_IT_WORKS.map(({ num, color, title, desc }) => (
+                  <div key={num} className="text-center">
+                    <div className={cn('w-16 h-16 rounded-full text-white font-display text-[28px] flex items-center justify-center mx-auto mb-3.5', color)}>
+                      {num}
+                    </div>
+                    <h3 className="font-display text-[22px] text-primary tracking-[0.03em] mb-1.5">{title}</h3>
+                    <p className="text-[14px] text-muted-foreground leading-[1.55]">{desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* ── HALL DA FAMA ── */}
+          <section className="max-w-[1240px] mx-auto px-7 py-14" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 700px' }}>
+            <GameTypeRankings />
+          </section>
+
+          <div className="inline-flex items-center gap-2 text-primary w-full justify-center pb-10">
+            <Instagram className="w-5 h-5" />
+            <a
+              href="https://www.instagram.com/lendasdoflu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lg font-bold hover:text-primary/80 transition-colors"
+            >
+              @lendasdoflu
+            </a>
+          </div>
         </div>
 
         <Footer />
