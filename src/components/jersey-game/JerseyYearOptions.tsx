@@ -67,25 +67,22 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
 
         const yearColor = cn(
           'font-display text-[38px] leading-none flex-shrink-0 min-w-[74px]',
-          isCorrectReveal && 'text-[#22C55E]',
-          isWrongSelected && 'text-destructive',
-          !showResult && isPending && 'text-primary',
-          !showResult && !isPending && 'text-primary',
+          isCorrectReveal ? 'text-[#22C55E]' : isWrongSelected ? 'text-destructive' : 'text-primary',
         );
 
         return (
           <button
             key={option.year}
             type="button"
+            aria-label={`Era ${option.year} — ${tag}`}
+            aria-pressed={isPending}
             data-testid={`year-option-${option.year}`}
             onClick={() => handleClick(option.year)}
-            disabled={disabled || isProcessing || showResult}
+            disabled={disabled || isProcessing}
             className={cardClass}
           >
-            {/* Year */}
             <div className={yearColor}>{option.year}</div>
 
-            {/* Body */}
             <div className="flex-1 min-w-0">
               <span className={cn(
                 'inline-block text-[9px] font-bold uppercase tracking-[0.08em] px-2 py-1 rounded-md mb-1.5',
@@ -98,9 +95,8 @@ export const JerseyYearOptions: React.FC<JerseyYearOptionsProps> = ({
               </div>
             </div>
 
-            {/* Icon / result indicator */}
             <div className="text-lg flex-shrink-0 opacity-40">
-              {showResult && isCorrectReveal ? '✓' : showResult && isWrongSelected ? '✕' : icon}
+              {showResult ? (isCorrectReveal ? '✓' : isWrongSelected ? '✕' : null) : icon}
             </div>
           </button>
         );
