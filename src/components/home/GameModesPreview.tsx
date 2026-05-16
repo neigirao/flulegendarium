@@ -1,10 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Brain, Calendar, Shirt, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
 const useCollectionCounts = () => {
   const { data: playerCount } = useQuery({
@@ -28,101 +26,105 @@ const useCollectionCounts = () => {
   return { playerCount: playerCount || 0, jerseyCount: jerseyCount || 0 };
 };
 
+interface ModeCardProps {
+  href: string;
+  accent: 'grena' | 'verde' | 'gold';
+  icon: React.ReactNode;
+  pill: string;
+  name: string;
+  description: string;
+  cta: string;
+}
+
+const accentStyles = {
+  grena: {
+    stripe: 'bg-primary',
+    iconBg: 'bg-primary/8',
+    pillBg: 'bg-primary/8 text-primary',
+    cta: 'text-primary',
+  },
+  verde: {
+    stripe: 'bg-secondary',
+    iconBg: 'bg-secondary/8',
+    pillBg: 'bg-secondary/8 text-secondary',
+    cta: 'text-secondary',
+  },
+  gold: {
+    stripe: 'bg-accent',
+    iconBg: 'bg-accent/12',
+    pillBg: 'bg-accent text-white',
+    cta: 'text-accent',
+  },
+};
+
+const ModeCard: React.FC<ModeCardProps> = ({ href, accent, icon, pill, name, description, cta }) => {
+  const s = accentStyles[accent];
+  return (
+    <Link
+      to={href}
+      className="group bg-white border border-border rounded-[14px] px-5 py-[22px] cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(0,0,0,0.08)] transition-all duration-200 relative overflow-hidden flex flex-col"
+    >
+      {/* top color stripe */}
+      <div className={cn('absolute top-0 left-0 right-0 h-1', s.stripe)} />
+
+      <div className="flex items-center justify-between mb-3.5 mt-1">
+        <div className={cn('w-[46px] h-[46px] rounded-[12px] flex items-center justify-center text-[22px]', s.iconBg)}>
+          {icon}
+        </div>
+        <span className={cn('text-[9px] font-extrabold tracking-[0.08em] uppercase px-2 py-1 rounded-[5px]', s.pillBg)}>
+          {pill}
+        </span>
+      </div>
+
+      <div className="font-display text-[22px] tracking-[0.02em] text-foreground mb-1.5 leading-[1.1]">{name}</div>
+      <p className="text-[13px] text-muted-foreground leading-[1.5] mb-3.5 flex-1">{description}</p>
+      <div className={cn('text-[12px] font-bold flex items-center gap-1.5', s.cta)}>
+        {cta} <span className="group-hover:translate-x-0.5 transition-transform inline-block">→</span>
+      </div>
+    </Link>
+  );
+};
+
 export const GameModesPreview = () => {
   const { playerCount, jerseyCount } = useCollectionCounts();
 
-  const gameModes = [
-    {
-      id: "adaptive",
-      title: "Advinhe o Jogador",
-      description: "Veja a foto e digite o nome. A dificuldade aumenta conforme você acerta!",
-      icon: Brain,
-      badge: playerCount > 0 ? `${playerCount}+ jogadores` : "188+ jogadores",
-      badgeVariant: "secondary" as const,
-      href: "/quiz-adaptativo",
-      iconBg: "bg-primary/10",
-      iconColor: "text-primary"
-    },
-    {
-      id: "decade",
-      title: "Advinhe o Jogador por Década",
-      description: "Escolha uma época: 60s, 70s, 80s, 90s, 2000s ou 2010s+ e teste seu conhecimento!",
-      icon: Calendar,
-      badge: "6 décadas",
-      badgeVariant: "outline" as const,
-      href: "/quiz-decada",
-      iconBg: "bg-secondary/10",
-      iconColor: "text-secondary"
-    },
-    {
-      id: "jersey",
-      title: "Quiz das Camisas",
-      description: "Veja a camisa histórica e escolha o ano correto entre 3 opções!",
-      icon: Shirt,
-      badge: jerseyCount > 0 ? `${jerseyCount} camisas` : "Popular",
-      badgeVariant: "default" as const,
-      href: "/quiz-camisas",
-      iconBg: "bg-gold/10",
-      iconColor: "text-gold",
-      isPopular: true
-    }
-  ];
-
   return (
-    <div className="mb-16">
-      <div className="text-center mb-8">
-        <h2 className="text-display-title text-primary mb-3">
-          Escolha seu Modo de Jogo
-        </h2>
-        <p className="text-muted-foreground text-lg max-w-2xl mx-auto font-body">
-          3 formas diferentes de testar seu conhecimento tricolor
-        </p>
+    <div>
+      <div className="flex items-baseline justify-between mb-5">
+        <h2 className="font-display text-[30px] text-primary tracking-[0.03em]">ESCOLHA SEU MODO</h2>
+        <Link to="/tutorial" className="text-[13px] text-secondary font-semibold hover:text-secondary/80 flex items-center gap-1 transition-colors">
+          Ver tutorial →
+        </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-        {gameModes.map((mode) => {
-          const Icon = mode.icon;
-          
-          return (
-            <Link key={mode.id} to={mode.href} className="group">
-              <Card className={`h-full bg-card border border-border shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-105 ${mode.isPopular ? 'ring-2 ring-gold/40' : ''}`}>
-                <CardHeader className="text-center pb-2">
-                  <div className={`mx-auto p-4 rounded-full ${mode.iconBg} mb-3 group-hover:scale-110 transition-transform ${mode.iconColor}`}>
-                    <Icon className="w-10 h-10" />
-                  </div>
-                  
-                  <div className="flex items-center justify-center gap-2">
-                    <CardTitle className="text-foreground font-display text-lg">
-                      {mode.title}
-                    </CardTitle>
-                    {mode.isPopular && (
-                      <Badge variant={mode.badgeVariant}>
-                        {mode.badge}
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                
-                <CardContent className="text-center">
-                  <CardDescription className="text-muted-foreground font-body mb-4">
-                    {mode.description}
-                  </CardDescription>
-                  
-                  {!mode.isPopular && (
-                    <Badge variant={mode.badgeVariant} className="text-xs">
-                      {mode.badge}
-                    </Badge>
-                  )}
-                  
-                  <div className="mt-4 flex items-center justify-center text-primary group-hover:text-primary/80 transition-colors">
-                    <span className="text-sm font-medium">Jogar agora</span>
-                    <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          );
-        })}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <ModeCard
+          href="/quiz-adaptativo"
+          accent="grena"
+          icon="🏆"
+          pill="Adaptável"
+          name="ADIVINHE O JOGADOR"
+          description={`Veja a foto, digite o nome. A dificuldade aumenta conforme você acerta — de Castilho a Cano. ${playerCount > 0 ? `${playerCount}+ jogadores.` : ''}`}
+          cta="Jogar agora"
+        />
+        <ModeCard
+          href="/quiz-decada"
+          accent="verde"
+          icon="📅"
+          pill="6 Décadas"
+          name="POR DÉCADA"
+          description="Escolha uma era: anos 60, 70, 80, 90, 2000 ou 2010+. Cada época tem seus ídolos."
+          cta="Escolher década"
+        />
+        <ModeCard
+          href="/quiz-camisas"
+          accent="gold"
+          icon="👕"
+          pill="Novo!"
+          name="QUIZ DAS CAMISAS"
+          description={`Veja a camisa histórica e descubra de qual era ela é — entre 3 opções com contexto. ${jerseyCount > 0 ? `${jerseyCount} camisas.` : ''}`}
+          cta="Jogar agora"
+        />
       </div>
     </div>
   );
