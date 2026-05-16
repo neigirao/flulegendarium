@@ -7,6 +7,49 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Unreleased]
 
+### 🔐 Autenticação obrigatória para jogar (2026-05-16)
+
+#### Added
+- ✅ `src/components/guards/ProtectedRoute.tsx` — Guard de rota que redireciona para `/auth` com `state.from` preservado
+
+#### Changed
+- 🔄 `src/App.tsx` — Rotas `/selecionar-modo-jogo`, `/quiz-adaptativo`, `/quiz-decada`, `/quiz-camisas` envoltas em `<ProtectedRoute>`
+- 🔄 `src/pages/GameModeSelection.tsx` — Removido banner de convidado (só usuários autenticados chegam aqui); removidos `handleAuthClick` e `trackAuthPromptShown`
+
+#### Removed
+- ❌ Botão "Jogar como convidado" em `Auth.tsx` — visitantes agora são direcionados ao cadastro/login
+
+---
+
+### 🎨 Redesign UI — 4 Páginas/Modos (2026-05-16)
+
+#### Quiz das Camisas — Nova UI
+- ✅ `JerseyHudBar` (`src/components/jersey-game/JerseyHudBar.tsx`) — HUD horizontal: score, timer SVG 56px (r=24, urgent <15s), contador de camisa, badge "Modo Camisas"
+- ✅ `JerseyEducationalReveal` (`src/components/jersey-game/JerseyEducationalReveal.tsx`) — Card pós-resposta com `fun_fact`, gradiente gold/grená
+- 🔄 `JerseyImage` — Redesign com `feedbackState: 'idle' | 'correct' | 'wrong'`; borda dourada idle, glow verde correto, vermelho errado
+- 🔄 `JerseyYearOptions` — Reescrito com two-step confirm (`pendingYear` → Confirmar), `aria-pressed`, `aria-label`
+- 🔄 `JerseyGameContainer` — Layout 2-col (`1fr / 1.3fr`), `feedbackState` derivado de `showResult + selectedOption`, `pendingYear` limpo ao mudar de rodada
+
+#### Quiz Adaptativo — Nova UI
+- ✅ `QuizFeedbackZone` (`src/components/guess-game/QuizFeedbackZone.tsx`) — Zona de feedback inline (idle/correct/wrong) com auto-reset via `onIdle` callback; substitui toasts
+- ✅ `ProgressDots` (`src/components/guess-game/ProgressDots.tsx`) — 10 pontos de progresso: verde=correto, vermelho=errado, cinza=restante
+- 🔄 `AdaptiveGameContainer` — Layout 2-col grid (`1.4fr / 1fr`), `feedbackState` state, `correctCount/wrongCount`, timeout cleanup no unmount
+- 🔄 `GameTimer` — Reduzido 88→64px (r=42→28, circumference≈175.9), urgent threshold 10→15s
+- 🔄 `GuessForm` — Removido `GuessConfirmDialog`; submit direto com feedback inline
+- 🔄 `GameHeader` — Score+streak em 2 cards side-by-side; timer movido para coluna HUD direita
+- 🔄 `AdaptiveDifficultyIndicator` — Adicionado `variant="horizontal-4"` (Fácil/Médio/Difícil/Expert)
+
+#### Home Page — Redesign
+- 🔄 `Index.tsx` — Hero 2-col (`1.15fr / 1fr`), mystery card blurred, mini-stats row, `HOW_IT_WORKS` array const
+- 🔄 `GameModesPreview` — Componente `ModeCard` com `accentStyles` lookup (grena/verde/gold); recebe `playerCount/jerseyCount` como props (eliminou `useCollectionCounts` — query duplicada)
+- 🔄 `GameTypeRankings` — Componente `Podium` para top 3; helper `useRankingQuery` unificado; type cast corrigido para `'rankings' | 'jersey_game_rankings'`
+- 🔄 `TopNavigation` — Substituído `Button` shadcn por elementos plain; removidos ícones no desktop
+
+#### Seleção de Modo de Jogo — Redesign
+- 🔄 `GameModeSelection` — 3 cards com preview 16:9 (foto desfocada, decade chips, jersey chips + "NOVO!" ribbon), stats bars com contagens e melhor pontuação do usuário, welcome strip autenticado, activity bar com contagem de jogadores do dia
+
+---
+
 ### 🏗️ Plano de Melhoria — Fases 1, 2 e 3 (2026-05-02)
 
 #### Fase 1 — Documentação e Qualidade

@@ -53,6 +53,20 @@ Sempre incluir:
 4. **Validação**: comandos e testes executados.
 5. **Rollback**: como reverter com segurança.
 
+### Checklist de documentação por tipo de mudança
+
+Ao finalizar qualquer tarefa, verificar quais docs precisam de atualização:
+
+| Tipo de mudança | Docs a atualizar |
+|---|---|
+| Novo componente | `docs/COMPONENTS_MAP.md`, `docs/CHANGELOG.md` |
+| Redesign de layout/UI | `docs/COMPONENTS_MAP.md`, `docs/GAME_FLOW.md`, `docs/CHANGELOG.md` |
+| Nova decisão arquitetural | `docs/adr/0XX-*.md`, `docs/ARCHITECTURE.md`, `docs/CHANGELOG.md` |
+| Novo padrão visual ou token | `docs/DESIGN_SYSTEM.md`, `docs/CHANGELOG.md` |
+| Mudança em hook de jogo | `docs/GAME_FLOW.md`, `docs/api/HOOKS_API.md`, `docs/CHANGELOG.md` |
+| Nova rota ou guard | `docs/AI_CODEBASE_INDEX.md`, `docs/CHANGELOG.md` |
+| Mudança em service ou schema | `docs/api/SERVICES_API.md`, `docs/CHANGELOG.md` |
+
 ## 6. Regras absolutas para assets visuais
 
 - **NUNCA gerar imagens via IA** para jogadores ou camisas.

@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 const CANONICAL_DOMAIN = "https://lendasdoflu.com";
 
-type SchemaType = 'WebSite' | 'Game' | 'Organization' | 'FAQ' | 'WebPage';
+type SchemaType = 'WebSite' | 'Game' | 'Organization' | 'FAQ' | 'WebPage' | 'Article';
 
 interface SEOManagerProps {
   title?: string;
@@ -109,6 +109,29 @@ const SCHEMA_GENERATORS: Record<SchemaType, (props: { title: string; description
       "name": "Lendas do Flu",
       "url": `${CANONICAL_DOMAIN}/`
     }
+  }),
+
+  Article: ({ title, description, url, image }) => ({
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": title,
+    "description": description,
+    "url": url,
+    "image": image,
+    "inLanguage": "pt-BR",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Lendas do Flu",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${CANONICAL_DOMAIN}/og-image.png`
+      }
+    },
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Lendas do Flu",
+      "url": `${CANONICAL_DOMAIN}/`
+    }
   })
 };
 
@@ -116,7 +139,7 @@ export const SEOManager = ({
   title = "Lendas do Flu - Teste seus conhecimentos tricolores",
   description = "Descubra se você realmente conhece as lendas do Fluminense. Adivinhe o jogador pela foto e prove que é um verdadeiro tricolor!",
   keywords = "quiz fluminense, teste fluminense, jogo fluminense, tricolor, futebol, adivinhe jogador",
-  image = "/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png",
+  image = `${CANONICAL_DOMAIN}/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png`,
   url,
   canonical,
   type = "website",

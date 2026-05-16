@@ -1,0 +1,38 @@
+# Lendas do Flu
+
+> Quiz interativo sobre jogadores e camisas históricas do Fluminense FC.
+
+## O que é
+
+Lendas do Flu é uma aplicação web de quiz para torcedores do Fluminense FC. O usuário testa seus conhecimentos sobre os ídolos e uniformes do clube através de 3 modos de jogo.
+
+## Modos de Jogo
+
+- **Adivinhe o Jogador** (`/quiz-adaptativo`): Veja a foto desfocada de um jogador e digite o nome. A dificuldade aumenta automaticamente conforme você acerta — de Castilho a Cano.
+- **Por Década** (`/quiz-decada`): Escolha uma era (anos 60, 70, 80, 90, 2000 ou 2010+) e adivinhe os ídolos daquele período.
+- **Quiz das Camisas** (`/quiz-camisas`): Veja uma camisa histórica do Fluminense e escolha entre 3 opções qual é o ano/era correto.
+
+## Funcionalidades
+
+- Ranking público com hall da fama por modo de jogo
+- Sistema de conquistas
+- Desafios diários
+- Portal de notícias sobre o Fluminense
+- Autenticação via Google OAuth ou email/senha
+
+## Informações Técnicas
+
+- Stack: React 18 + TypeScript + Vite + Tailwind CSS + Supabase
+- Domínio de produção: https://lendasdoflu.com
+- Instagram: @lendasdoflu
+
+## Rotas Principais
+
+- `/` — Página inicial
+- `/selecionar-modo-jogo` — Seleção de modo
+- `/quiz-adaptativo` — Jogo adaptativo
+- `/quiz-decada` — Jogo por década
+- `/quiz-camisas` — Quiz de camisas
+- `/estatisticas` — Ranking público
+- `/faq` — Perguntas frequentes
+- `/noticias` — Portal de notícias
