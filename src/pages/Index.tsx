@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 const HOW_IT_WORKS = [
   { num: '1', color: 'bg-primary shadow-[0_6px_18px_rgba(122,2,19,0.3)]',  title: 'VEJA',      desc: 'Uma foto ou camisa de um ídolo do Fluminense aparece na sua tela.' },
   { num: '2', color: 'bg-secondary shadow-[0_6px_18px_rgba(0,97,64,0.3)]', title: 'RESPONDA',  desc: 'Digite o nome ou escolha a era correta. Use apelidos — o sistema é esperto.' },
-  { num: '3', color: 'bg-accent shadow-[0_6px_18px_rgba(196,148,74,0.3)]', title: 'PONTUE',    desc: 'Ganhe pontos, suba o nível e dispute o topo do ranking tricolor.' },
+  { num: '3', color: 'bg-[#C4944A] shadow-[0_6px_18px_rgba(196,148,74,0.3)]', title: 'PONTUE',    desc: 'Ganhe pontos, suba o nível e dispute o topo do ranking tricolor.' },
 ] as const;
 
 const Index = () => {
@@ -117,8 +117,8 @@ const Index = () => {
               </div>
 
               <div className="flex flex-col items-center gap-4">
-                <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] uppercase text-accent bg-white border border-accent/25 px-3.5 py-1.5 rounded-full shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
+                <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] uppercase text-[#C4944A] bg-white border border-[#C4944A]/25 px-3.5 py-1.5 rounded-full shadow-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C4944A] flex-shrink-0" />
                   Quem é esse ídolo?
                 </div>
 
@@ -160,7 +160,7 @@ const Index = () => {
                   {[
                     { val: playerCount, label: 'Ídolos',  color: 'text-primary' },
                     { val: jerseyCount, label: 'Camisas', color: 'text-secondary' },
-                    { val: 6,           label: 'Décadas', color: 'text-accent' },
+                    { val: 6,           label: 'Décadas', color: 'text-[#C4944A]' },
                   ].map(({ val, label, color }) => (
                     <div key={label} className="bg-white border border-border rounded-[10px] px-2 py-2.5 text-center shadow-sm">
                       <div className={cn('font-display text-[22px] leading-none', color)}>{val}</div>

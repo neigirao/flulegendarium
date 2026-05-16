@@ -32,6 +32,7 @@ interface GameOverDialogProps {
   unlockedAchievementIds?: string[];
   rankingPlayerName?: string;
   guessHistory?: Array<'correct' | 'wrong'>;
+  maxStreak?: number;
 }
 
 // Animation variants
@@ -77,6 +78,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   unlockedAchievementIds = [],
   rankingPlayerName = '',
   guessHistory = [],
+  maxStreak = 0,
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -411,11 +413,22 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
+                  {guessHistory.length > 0 && (
+                    <div className="text-center bg-muted/40 rounded-[10px] px-4 py-3 mb-2">
+                      <div className="font-display text-[22px] tracking-[0.06em] mb-1">
+                        {guessHistory.map((r, i) => r === 'correct' ? '🟢' : '🔴').join('')}
+                        {maxStreak >= 3 && ' ⚡'}
+                      </div>
+                      <div className="text-[11px] text-muted-foreground uppercase tracking-[0.08em] font-bold">
+                        {guessHistory.filter(r => r === 'correct').length}/{guessHistory.length} acertos{maxStreak >= 3 ? ` · streak ${maxStreak}` : ''}
+                      </div>
+                    </div>
+                  )}
                   <SocialShare
                     score={score}
                     correctGuesses={Math.floor(score / 5)}
                     gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
-                    streak={0}
+                    streak={maxStreak}
                     achievements={[]}
                     guessHistory={guessHistory}
                   />

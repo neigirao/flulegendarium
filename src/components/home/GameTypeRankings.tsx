@@ -28,10 +28,10 @@ const Podium = ({ rankings }: { rankings: RankingEntry[] }) => {
       </div>
 
       {/* 1st — elevated */}
-      <div className="bg-gradient-to-b from-[rgba(196,148,74,0.06)] to-white border-[1.5px] border-accent rounded-[14px] px-3.5 py-4 text-center -translate-y-3 shadow-[0_12px_32px_rgba(196,148,74,0.18)]">
-        <div className="w-[42px] h-[42px] rounded-full mx-auto mb-2 flex items-center justify-center font-display text-[18px] text-white bg-accent">1</div>
+      <div className="bg-gradient-to-b from-[rgba(196,148,74,0.06)] to-white border-[1.5px] border-[#C4944A] rounded-[14px] px-3.5 py-4 text-center -translate-y-3 shadow-[0_12px_32px_rgba(196,148,74,0.18)]">
+        <div className="w-[42px] h-[42px] rounded-full mx-auto mb-2 flex items-center justify-center font-display text-[18px] text-white bg-[#C4944A]">1</div>
         <div className="text-[13px] font-bold text-foreground truncate">{first?.player_name ?? '—'}</div>
-        <div className="font-display text-[28px] text-accent">{first?.score?.toLocaleString('pt-BR') ?? '—'}</div>
+        <div className="font-display text-[28px] text-[#C4944A]">{first?.score?.toLocaleString('pt-BR') ?? '—'}</div>
       </div>
 
       {/* 3rd */}
