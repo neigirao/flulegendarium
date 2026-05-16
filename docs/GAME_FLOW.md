@@ -7,27 +7,42 @@ Este documento detalha o fluxo completo de uma partida no "Lendas do Flu", inclu
 ## Modos de Jogo
 
 ### 1. Quiz Adaptativo (`/quiz-adaptativo`)
-Sistema que ajusta a dificuldade automaticamente baseado no desempenho do jogador.
+Sistema que ajusta a dificuldade automaticamente baseado no desempenho do jogador. Requer autenticação — `ProtectedRoute` redireciona para `/auth` se não logado.
 
 ### 2. Quiz por Década (`/quiz-decada`)
-Jogadores filtrados por período histórico (1970s-2020s).
+Jogadores filtrados por período histórico (1960s–2010s+). Requer autenticação.
 
-### 3. Quiz das Camisas (`/quiz-camisas`) 🆕
-Adivinhe o ano das camisas históricas do Fluminense escolhendo entre 3 opções.
+### 3. Quiz das Camisas (`/quiz-camisas`)
+Adivinhe o ano das camisas históricas do Fluminense escolhendo entre 3 opções via two-step confirm. Requer autenticação.
 
 ---
 
-## Fluxo Completo do Jogo
+## Fluxo de Autenticação (pré-jogo)
+
+```mermaid
+flowchart TD
+    Start[Usuário acessa rota de jogo] --> Guard{ProtectedRoute: user?}
+    Guard -->|Não autenticado| RedirectAuth[Redireciona para /auth com state.from]
+    Guard -->|Autenticado| LoadGame[Carrega jogo]
+    RedirectAuth --> Login[Usuário faz login]
+    Login --> ReturnRoute[Redireciona de volta para state.from]
+    ReturnRoute --> LoadGame
+```
+
+**Nota**: O fluxo de "Jogar como convidado" foi removido. Todos os modos de jogo exigem conta.
+
+---
+
+## Fluxo Completo do Jogo (Quiz Adaptativo)
 
 ```mermaid
 flowchart TD
     Start[Início] --> Auth{Usuário Autenticado?}
     
-    Auth -->|Não| GuestForm[Formulário de Nome]
+    Auth -->|Não| RedirectLogin[Redireciona para /auth]
     Auth -->|Sim| LoadPlayers[Carregar Jogadores]
     
-    GuestForm --> ValidateName{Nome Válido?}
-    ValidateName -->|Não| GuestForm
+    RedirectLogin --> Auth
     ValidateName -->|Sim| LoadPlayers
     
     LoadPlayers --> SelectPlayer[Selecionar Jogador]
@@ -49,8 +64,10 @@ flowchart TD
     GuessSubmit --> ProcessGuess[Processar Palpite]
     ProcessGuess --> CheckCorrect{Correto?}
     
-    CheckCorrect -->|Não| GameOver
-    CheckCorrect -->|Sim| AddPoints[Adicionar Pontos]
+    CheckCorrect -->|Não| WrongFeedback[feedbackState=wrong — borda vermelha + shake]
+    WrongFeedback --> DecrementLife[Decrementar vida]
+    DecrementLife --> GameOver
+    CheckCorrect -->|Sim| AddPoints[Adicionar Pontos + feedbackState=correct]
     
     AddPoints --> UpdateStreak[Atualizar Streak]
     UpdateStreak --> AdjustDifficulty[Ajustar Dificuldade]
@@ -569,6 +586,47 @@ const GameStatus = memo(({ score, streak, timeLeft }) => {
   // ...
 });
 ```
+
+---
+
+## Fluxo do Quiz das Camisas (two-step confirm)
+
+```mermaid
+flowchart TD
+    Start[Nova camisa carregada] --> ShowOptions[Exibe 3 botões de era]
+    ShowOptions --> ClickOption[Usuário clica numa opção]
+    ClickOption --> SetPending[pendingYear setado — botão muda para selecionado]
+    SetPending --> ShowConfirm[Botão Confirmar aparece]
+    ShowConfirm --> Confirm[Usuário clica Confirmar]
+    Confirm --> WrapGuess[wrapGuess → handleOptionSelect]
+    WrapGuess --> CheckAnswer{Resposta correta?}
+    CheckAnswer -->|Sim| CorrectFeedback[feedbackState=correct — glow verde]
+    CheckAnswer -->|Não| WrongFeedback[feedbackState=wrong — borda vermelha]
+    CorrectFeedback --> ShowReveal[JerseyEducationalReveal com fun_fact + pontos]
+    WrongFeedback --> ShowReveal[JerseyEducationalReveal com ano correto]
+    ShowReveal --> NextJersey[Nova camisa — pendingYear resetado via gameKey]
+```
+
+### Estado local no JerseyGameContainer
+
+```typescript
+const [pendingYear, setPendingYear] = useState<number | null>(null);
+
+// Reset ao mudar de rodada
+useEffect(() => {
+  setPendingYear(null);
+}, [gameKey]);
+
+// feedbackState derivado (sem estado extra)
+const feedbackState = showResult
+  ? (selectedOption === jersey?.year ? 'correct' : 'wrong')
+  : 'idle';
+```
+
+### Feedback inline (feedbackState)
+
+Ambos os modos usam `feedbackState: 'idle' | 'correct' | 'wrong'` passado como prop para o componente de imagem/card.
+**Não usar toast** para feedback de acerto/erro em jogo — ver ADR 011.
 
 ---
 

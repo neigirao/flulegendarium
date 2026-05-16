@@ -10,15 +10,17 @@
 
 ## 2) Rotas principais e ownership
 
-| Rota | Página/container principal | Área funcional |
-|---|---|---|
-| `/` | `src/pages/Index.tsx` | Home e entrada do produto |
-| `/selecionar-modo-jogo` | `src/pages/GameModeSelection.tsx` (lazy) | Seleção de modo |
-| `/quiz-adaptativo` | `src/pages/AdaptiveGuessPlayerSimple.tsx` | Jogo adaptativo |
-| `/quiz-decada` | `src/pages/DecadeGuessPlayerSimple.tsx` | Jogo por década |
-| `/quiz-camisas` | `src/pages/JerseyQuizPage.tsx` (lazy) | Quiz de camisas |
-| `/admin` e `/admin/dashboard` | `src/pages/Admin.tsx` (lazy) | Painel administrativo |
-| `/noticias` e `/noticias/:slug` | `src/pages/NewsPortal.tsx`, `src/pages/NewsArticle.tsx` (lazy) | Portal de notícias |
+| Rota | Página/container principal | Área funcional | Guard |
+|---|---|---|---|
+| `/` | `src/pages/Index.tsx` | Home e entrada do produto | — |
+| `/auth` | `src/pages/Auth.tsx` (lazy) | Login / cadastro | — |
+| `/selecionar-modo-jogo` | `src/pages/GameModeSelection.tsx` (lazy) | Seleção de modo | ProtectedRoute |
+| `/quiz-adaptativo` | `src/pages/AdaptiveGuessPlayerSimple.tsx` | Jogo adaptativo | ProtectedRoute |
+| `/quiz-decada` | `src/pages/DecadeGuessPlayerSimple.tsx` | Jogo por década | ProtectedRoute |
+| `/quiz-camisas` | `src/pages/JerseyQuizPage.tsx` (lazy) | Quiz de camisas | ProtectedRoute |
+| `/estatisticas` | `src/pages/EstatisticasPublicas.tsx` (lazy) | Ranking público | — |
+| `/admin` e `/admin/dashboard` | `src/pages/Admin.tsx` (lazy) | Painel administrativo | AdminRouteGuard |
+| `/noticias` e `/noticias/:slug` | `src/pages/NewsPortal.tsx`, `src/pages/NewsArticle.tsx` (lazy) | Portal de notícias | — |
 
 ## 3) Mapa por responsabilidade (para diagnóstico rápido)
 
@@ -33,15 +35,22 @@
 
 ## 4) Estrutura atual (contagem aproximada de arquivos TS/TSX)
 
-- `src/components`: 258
+- `src/components`: ~252 (inclui JerseyHudBar, JerseyEducationalReveal, QuizFeedbackZone, ProgressDots, ProtectedRoute)
 - `src/hooks`: 94
 - `src/utils`: 55
-- `src/pages`: 21
+- `src/pages`: 22
 - `src/services`: 16
 - `src/schemas`: 8
 - `src/types`: 8
 - `src/stores`: 4
 - `src/integrations`: 2
+
+Novos componentes de jogo relevantes:
+- `src/components/jersey-game/JerseyHudBar.tsx` — HUD horizontal do quiz de camisas
+- `src/components/jersey-game/JerseyEducationalReveal.tsx` — card de revelação pós-resposta
+- `src/components/guess-game/QuizFeedbackZone.tsx` — feedback inline (idle/correct/wrong)
+- `src/components/guess-game/ProgressDots.tsx` — 10 pontos de progresso
+- `src/components/guards/ProtectedRoute.tsx` — guard de autenticação para rotas de jogo
 
 > Use essa proporção para estimar esforço. Mudanças em `components/` podem ter alto impacto visual; mudanças em `hooks/services` tendem a impactar regras.
 
