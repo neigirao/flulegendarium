@@ -12,11 +12,6 @@ interface RankingEntry {
   score: number;
 }
 
-const medal = {
-  0: { bg: 'bg-accent', text: 'text-white', label: '1' },
-  1: { bg: 'bg-[#A8B0BB]', text: 'text-white', label: '2' },
-  2: { bg: 'bg-[#B8754A]', text: 'text-white', label: '3' },
-};
 
 const Podium = ({ rankings }: { rankings: RankingEntry[] }) => {
   const second = rankings[1];
@@ -94,7 +89,7 @@ const useRankingQuery = (table: string, gameMode?: string) =>
   useQuery({
     queryKey: ['rankings', table, gameMode],
     queryFn: async () => {
-      let query = supabase.from(table as 'rankings').select('id, player_name, score').order('score', { ascending: false }).limit(10);
+      let query = supabase.from(table as 'rankings' | 'jersey_game_rankings').select('id, player_name, score').order('score', { ascending: false }).limit(10);
       if (gameMode) query = query.eq('game_mode', gameMode);
       const { data, error } = await query;
       if (error) throw error;

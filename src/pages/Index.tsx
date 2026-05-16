@@ -14,6 +14,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
 import { cn } from "@/lib/utils";
 
+const HOW_IT_WORKS = [
+  { num: '1', color: 'bg-primary shadow-[0_6px_18px_rgba(122,2,19,0.3)]',  title: 'VEJA',      desc: 'Uma foto ou camisa de um ídolo do Fluminense aparece na sua tela.' },
+  { num: '2', color: 'bg-secondary shadow-[0_6px_18px_rgba(0,97,64,0.3)]', title: 'RESPONDA',  desc: 'Digite o nome ou escolha a era correta. Use apelidos — o sistema é esperto.' },
+  { num: '3', color: 'bg-accent shadow-[0_6px_18px_rgba(196,148,74,0.3)]', title: 'PONTUE',    desc: 'Ganhe pontos, suba o nível e dispute o topo do ranking tricolor.' },
+] as const;
+
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -43,13 +49,9 @@ const Index = () => {
   const jerseyCount = homeStats?.jersey_count ?? 50;
   const todayPlayers = homeStats?.today_players ?? 0;
 
-  const handlePrefetchGameMode = useCallback(() => {
-    onMouseEnter('/selecionar-modo-jogo');
-  }, [onMouseEnter]);
-
-  const handleStartGame = useCallback(() => {
-    navigate('/selecionar-modo-jogo');
-  }, [navigate]);
+  const handlePrefetchGameMode = useCallback(() => onMouseEnter('/selecionar-modo-jogo'), [onMouseEnter]);
+  const handleStartGame = useCallback(() => navigate('/selecionar-modo-jogo'), [navigate]);
+  const handleViewRanking = useCallback(() => navigate('/estatisticas'), [navigate]);
 
   return (
     <>
@@ -68,7 +70,6 @@ const Index = () => {
           <section className="max-w-[1240px] mx-auto px-7 pt-12 pb-7">
             <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-12 items-center">
 
-              {/* LEFT — headline + CTA */}
               <div>
                 <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] uppercase text-accent mb-4">
                   <span className="w-6 h-0.5 bg-accent inline-block" />
@@ -83,7 +84,6 @@ const Index = () => {
                   Das Laranjeiras ao Maracanã — <strong className="text-foreground">3 modos de quiz</strong> para provar que você é um verdadeiro tricolor. Sem cadastro pra começar.
                 </p>
 
-                {/* CTA row */}
                 <div className="flex gap-3 items-center flex-wrap mb-6">
                   <button
                     onClick={handleStartGame}
@@ -95,14 +95,13 @@ const Index = () => {
                     ADIVINHE AGORA
                   </button>
                   <button
-                    onClick={() => navigate('/estatisticas')}
+                    onClick={handleViewRanking}
                     className="bg-transparent text-primary border-[1.5px] border-primary rounded-[12px] px-5 py-[15px] text-sm font-semibold hover:bg-primary hover:text-white transition-all duration-150"
                   >
                     Ver Ranking
                   </button>
                 </div>
 
-                {/* Live counter pill */}
                 <div className="inline-flex items-center gap-3.5 bg-white border border-border rounded-full px-4 py-2 shadow-[0_2px_10px_rgba(0,0,0,0.05)] text-[13px] text-muted-foreground">
                   <span className="w-2 h-2 rounded-full bg-[#22C55E] shadow-[0_0_0_4px_rgba(34,197,94,0.2)] animate-pulse flex-shrink-0" />
                   <span><strong className="text-foreground">{todayPlayers || 42}</strong> tricolores jogaram hoje</span>
@@ -110,7 +109,6 @@ const Index = () => {
                   <span><strong className="text-foreground">{playerCount}</strong> ídolos no banco</span>
                 </div>
 
-                {/* Logged-in greeting */}
                 {user && (
                   <p className="text-muted-foreground text-sm mt-4">
                     👋 Olá, <span className="font-semibold text-foreground">{user.user_metadata?.full_name || 'Tricolor'}</span>!
@@ -118,7 +116,6 @@ const Index = () => {
                 )}
               </div>
 
-              {/* RIGHT — mystery card */}
               <div className="flex flex-col items-center gap-4">
                 <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] uppercase text-accent bg-white border border-accent/25 px-3.5 py-1.5 rounded-full shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
@@ -130,18 +127,15 @@ const Index = () => {
                   className="w-full max-w-[360px] aspect-[4/5] bg-white border border-border rounded-[24px] relative shadow-[0_16px_48px_rgba(0,0,0,0.08),0_4px_12px_rgba(0,0,0,0.04)] flex flex-col overflow-hidden hover:-translate-y-1 hover:shadow-[0_22px_56px_rgba(0,0,0,0.12)] transition-all duration-300 cursor-pointer"
                   aria-label="Começar quiz — adivinhe o jogador"
                 >
-                  {/* tricolor stripe */}
                   <div
                     className="absolute top-0 left-0 right-0 h-[5px] z-10"
                     style={{ background: 'linear-gradient(90deg, #7A0213 33%, white 33% 66%, #006140 66%)' }}
                   />
 
-                  {/* difficulty tag */}
                   <div className="absolute top-4 right-4 bg-white border border-border px-2.5 py-1 rounded-[7px] text-[9px] font-extrabold tracking-[0.1em] text-accent uppercase flex items-center gap-1 shadow-sm z-10">
                     ⚡ Fácil
                   </div>
 
-                  {/* mystery photo */}
                   <div className="flex-1 flex items-center justify-center bg-gradient-to-b from-[#F7F5F2] to-[#ECE7DF] px-6 pt-6 overflow-hidden">
                     <img
                       src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp"
@@ -152,7 +146,6 @@ const Index = () => {
                     />
                   </div>
 
-                  {/* card footer */}
                   <div className="px-4 py-3.5 flex justify-between items-center bg-white border-t border-border">
                     <div className="text-[10px] text-muted-foreground uppercase tracking-[0.08em] font-bold">
                       Era: <strong className="text-accent">Anos 90</strong>
@@ -163,20 +156,17 @@ const Index = () => {
                   </div>
                 </button>
 
-                {/* mini stats */}
                 <div className="grid grid-cols-3 gap-3 max-w-[340px] w-full">
-                  <div className="bg-white border border-border rounded-[10px] px-2 py-2.5 text-center shadow-sm">
-                    <div className="font-display text-[22px] text-primary leading-none">{playerCount}</div>
-                    <div className="text-[9px] text-muted-foreground uppercase tracking-[0.08em] font-bold mt-1">Ídolos</div>
-                  </div>
-                  <div className="bg-white border border-border rounded-[10px] px-2 py-2.5 text-center shadow-sm">
-                    <div className="font-display text-[22px] text-secondary leading-none">{jerseyCount}</div>
-                    <div className="text-[9px] text-muted-foreground uppercase tracking-[0.08em] font-bold mt-1">Camisas</div>
-                  </div>
-                  <div className="bg-white border border-border rounded-[10px] px-2 py-2.5 text-center shadow-sm">
-                    <div className="font-display text-[22px] text-accent leading-none">6</div>
-                    <div className="text-[9px] text-muted-foreground uppercase tracking-[0.08em] font-bold mt-1">Décadas</div>
-                  </div>
+                  {[
+                    { val: playerCount, label: 'Ídolos',  color: 'text-primary' },
+                    { val: jerseyCount, label: 'Camisas', color: 'text-secondary' },
+                    { val: 6,           label: 'Décadas', color: 'text-accent' },
+                  ].map(({ val, label, color }) => (
+                    <div key={label} className="bg-white border border-border rounded-[10px] px-2 py-2.5 text-center shadow-sm">
+                      <div className={cn('font-display text-[22px] leading-none', color)}>{val}</div>
+                      <div className="text-[9px] text-muted-foreground uppercase tracking-[0.08em] font-bold mt-1">{label}</div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -184,7 +174,7 @@ const Index = () => {
 
           {/* ── GAME MODES ── */}
           <section className="max-w-[1240px] mx-auto px-7 pb-14" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 520px' }}>
-            <GameModesPreview />
+            <GameModesPreview playerCount={playerCount} jerseyCount={jerseyCount} />
           </section>
 
           {/* ── HOW IT WORKS ── */}
@@ -195,11 +185,7 @@ const Index = () => {
                 <p className="text-[14px] text-muted-foreground mt-1.5">Em 3 passos você vira lenda</p>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-9">
-                {[
-                  { num: '1', color: 'bg-primary shadow-[0_6px_18px_rgba(122,2,19,0.3)]', title: 'VEJA', desc: 'Uma foto ou camisa de um ídolo do Fluminense aparece na sua tela.' },
-                  { num: '2', color: 'bg-secondary shadow-[0_6px_18px_rgba(0,97,64,0.3)]', title: 'RESPONDA', desc: 'Digite o nome ou escolha a era correta. Use apelidos — o sistema é esperto.' },
-                  { num: '3', color: 'bg-accent shadow-[0_6px_18px_rgba(196,148,74,0.3)]', title: 'PONTUE', desc: 'Ganhe pontos, suba o nível e dispute o topo do ranking tricolor.' },
-                ].map(({ num, color, title, desc }) => (
+                {HOW_IT_WORKS.map(({ num, color, title, desc }) => (
                   <div key={num} className="text-center">
                     <div className={cn('w-16 h-16 rounded-full text-white font-display text-[28px] flex items-center justify-center mx-auto mb-3.5', color)}>
                       {num}
@@ -217,19 +203,16 @@ const Index = () => {
             <GameTypeRankings />
           </section>
 
-          {/* ── FOOTER INSTAGRAM ── */}
-          <div className="text-center pb-10">
-            <div className="inline-flex items-center gap-2 text-primary">
-              <Instagram className="w-5 h-5" />
-              <a
-                href="https://www.instagram.com/lendasdoflu"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-lg font-bold hover:text-primary/80 transition-colors"
-              >
-                @lendasdoflu
-              </a>
-            </div>
+          <div className="inline-flex items-center gap-2 text-primary w-full justify-center pb-10">
+            <Instagram className="w-5 h-5" />
+            <a
+              href="https://www.instagram.com/lendasdoflu"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lg font-bold hover:text-primary/80 transition-colors"
+            >
+              @lendasdoflu
+            </a>
           </div>
         </div>
 
