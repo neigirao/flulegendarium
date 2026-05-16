@@ -21,7 +21,7 @@ const DECADES = [
 const GameModeSelection = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { trackFunnelPageView: trackPageView, trackGameModeClick, trackAuthPromptShown } = useAnalytics();
+  const { trackFunnelPageView: trackPageView, trackGameModeClick } = useAnalytics();
 
   useEffect(() => {
     trackPageView('game_selection');
@@ -63,11 +63,6 @@ const GameModeSelection = () => {
     navigate(path);
   }, [trackGameModeClick, navigate]);
 
-  const handleAuthClick = useCallback(() => {
-    trackAuthPromptShown('game_selection_banner');
-    navigate('/auth');
-  }, [trackAuthPromptShown, navigate]);
-
   const initial = user?.user_metadata?.full_name?.[0]?.toUpperCase() ?? 'T';
   const userName = user?.user_metadata?.full_name || 'Tricolor';
 
@@ -106,44 +101,27 @@ const GameModeSelection = () => {
               </p>
             </div>
 
-            {/* Welcome strip (logged-in) */}
-            {user ? (
-              <div className="max-w-[680px] mx-auto mb-7 bg-white border border-border rounded-[14px] px-5 py-3.5 flex items-center gap-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-[#AF1E35] flex items-center justify-center text-white font-display text-[20px] flex-shrink-0">
-                  {initial}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[14px] font-semibold text-foreground mb-0.5">
-                    👋 Olá, <strong>{userName}</strong>!
-                  </div>
-                  <div className="text-[12px] text-muted-foreground flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                    Sua pontuação será salva automaticamente no ranking
-                  </div>
-                </div>
-                {userBest?.total ? (
-                  <div className="text-right flex-shrink-0">
-                    <div className="font-display text-[24px] text-primary leading-none">{userBest.total.toLocaleString('pt-BR')}</div>
-                    <div className="text-[9px] text-muted-foreground uppercase tracking-[0.1em] font-bold mt-0.5">Total geral</div>
-                  </div>
-                ) : null}
+            {/* Welcome strip */}
+            <div className="max-w-[680px] mx-auto mb-7 bg-white border border-border rounded-[14px] px-5 py-3.5 flex items-center gap-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+              <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-[#AF1E35] flex items-center justify-center text-white font-display text-[20px] flex-shrink-0">
+                {initial}
               </div>
-            ) : (
-              /* Tip banner for guests */
-              <div className="max-w-[680px] mx-auto mb-7 bg-gradient-to-r from-[rgba(196,148,74,0.08)] to-[rgba(122,2,19,0.04)] border border-accent/25 rounded-[14px] px-5 py-3.5 flex items-center gap-3.5">
-                <span className="text-[22px] flex-shrink-0">🏆</span>
-                <div className="flex-1 min-w-0">
-                  <div className="text-[13px] font-bold text-foreground mb-0.5">Jogue grátis, sem cadastro!</div>
-                  <div className="text-[12px] text-muted-foreground">Crie conta para salvar pontuação e subir no ranking tricolor</div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[14px] font-semibold text-foreground mb-0.5">
+                  👋 Olá, <strong>{userName}</strong>!
                 </div>
-                <button
-                  onClick={handleAuthClick}
-                  className="bg-accent text-white border-none px-3.5 py-1.5 rounded-[7px] font-display text-[13px] tracking-[0.05em] shadow-[0_3px_10px_rgba(196,148,74,0.3)] whitespace-nowrap flex-shrink-0 hover:bg-accent/90 transition-colors"
-                >
-                  CRIAR CONTA
-                </button>
+                <div className="text-[12px] text-muted-foreground flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
+                  Sua pontuação será salva automaticamente no ranking
+                </div>
               </div>
-            )}
+              {userBest?.total ? (
+                <div className="text-right flex-shrink-0">
+                  <div className="font-display text-[24px] text-primary leading-none">{userBest.total.toLocaleString('pt-BR')}</div>
+                  <div className="text-[9px] text-muted-foreground uppercase tracking-[0.1em] font-bold mt-0.5">Total geral</div>
+                </div>
+              ) : null}
+            </div>
 
             {/* Mode cards grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-[18px] mb-8">
