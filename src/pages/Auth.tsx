@@ -351,16 +351,6 @@ const Auth = () => {
                   Entrar com Google
                 </Button>
 
-                <div className="mt-6 text-center">
-                  <Button
-                    type="button"
-                    variant="link"
-                    onClick={() => navigate('/selecionar-modo-jogo')}
-                    className="text-primary hover:text-primary/80 font-body"
-                  >
-                    Jogar como convidado
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </div>

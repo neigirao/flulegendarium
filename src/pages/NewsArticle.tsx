@@ -130,11 +130,12 @@ const NewsArticle = () => {
 
   return (
     <>
-      <SEOManager 
+      <SEOManager
         title={`${article.title} - Portal de Notícias | Lendas do Flu`}
         description={article.summary || article.content.substring(0, 160)}
         keywords={`${article.category?.name || 'notícias'}, fluminense, tricolor, ${article.title}`}
         url={`https://lendasdoflu.com/noticias/${article.slug}`}
+        schema="Article"
       />
       <RootLayout>
         <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">

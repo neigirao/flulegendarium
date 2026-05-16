@@ -13,6 +13,7 @@ import { AdminErrorBoundary } from "@/components/error-boundaries/AdminErrorBoun
 import { RouteErrorBoundary } from "@/components/error-boundaries/RouteErrorBoundary";
 import { RoutePrefetchProvider } from "@/components/performance/RoutePrefetchProvider";
 import { AdminRouteGuard } from "@/components/admin/AdminRouteGuard";
+import { ProtectedRoute } from "@/components/guards/ProtectedRoute";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { featureFlags } from "@/config/feature-flags";
 
@@ -83,29 +84,35 @@ function App() {
                             <Route path="/" element={<Index />} />
                             <Route path="/auth" element={<LazyAuth />} />
                             <Route path="/reset-password" element={<LazyResetPassword />} />
-                            <Route path="/selecionar-modo-jogo" element={<LazyGameModeSelection />} />
+                            <Route path="/selecionar-modo-jogo" element={<ProtectedRoute><LazyGameModeSelection /></ProtectedRoute>} />
                             <Route
                               path="/quiz-adaptativo"
                               element={
-                                <GameErrorBoundary>
-                                  <AdaptiveGuessPlayerSimple />
-                                </GameErrorBoundary>
+                                <ProtectedRoute>
+                                  <GameErrorBoundary>
+                                    <AdaptiveGuessPlayerSimple />
+                                  </GameErrorBoundary>
+                                </ProtectedRoute>
                               }
                             />
                             <Route
                               path="/quiz-decada"
                               element={
-                                <GameErrorBoundary>
-                                  <DecadeGuessPlayerSimple />
-                                </GameErrorBoundary>
+                                <ProtectedRoute>
+                                  <GameErrorBoundary>
+                                    <DecadeGuessPlayerSimple />
+                                  </GameErrorBoundary>
+                                </ProtectedRoute>
                               }
                             />
                             <Route
                               path="/quiz-camisas"
                               element={
-                                <GameErrorBoundary>
-                                  <LazyJerseyQuizPage />
-                                </GameErrorBoundary>
+                                <ProtectedRoute>
+                                  <GameErrorBoundary>
+                                    <LazyJerseyQuizPage />
+                                  </GameErrorBoundary>
+                                </ProtectedRoute>
                               }
                             />
 

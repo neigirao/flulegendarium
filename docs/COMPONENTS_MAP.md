@@ -13,21 +13,32 @@ App.tsx
 │   ├── PWAInstallPrompt
 │   └── Routes
 │       ├── Index (Homepage)
-│       ├── GameModeSelection
-│       │   └── GameModeCard
-│       ├── AdaptiveGuessPlayerSimple
-│       │   └── AdaptiveGameContainer
-│       │       ├── GameHeader
-│       │       ├── AdaptiveTutorial
-│       │       ├── GuestNameForm
-│       │       ├── AdaptivePlayerImage
-│       │       ├── GuessForm
-│       │       ├── AdaptiveGameStatus
-│       │       ├── GameTimer
-│       │       └── GameOverDialog
-│       ├── DecadeGuessPlayerSimple
-│       │   └── DecadeGameContainer
-│       ├── Admin
+│       │   ├── GameModesPreview (3 ModeCards)
+│       │   ├── GameTypeRankings (Podium + lista)
+│       │   └── HOW_IT_WORKS section
+│       ├── ProtectedRoute (guard — redireciona para /auth se não autenticado)
+│       │   ├── GameModeSelection (3 cards 16:9 + stats bars + activity bar)
+│       │   ├── AdaptiveGuessPlayerSimple
+│       │   │   └── AdaptiveGameContainer
+│       │   │       ├── GameHeader (score + streak 2-cards)
+│       │   │       ├── AdaptiveTutorial
+│       │   │       ├── AdaptivePlayerImage (+ feedbackState prop)
+│       │   │       ├── QuizFeedbackZone (idle/correct/wrong inline) ← NOVO
+│       │   │       ├── ProgressDots (10 dots) ← NOVO
+│       │   │       ├── GuessForm (sem confirm dialog)
+│       │   │       ├── AdaptiveDifficultyIndicator (+ variant="horizontal-4")
+│       │   │       ├── GameTimer (64px, urgent ≥15s)
+│       │   │       └── GameOverDialog
+│       │   ├── DecadeGuessPlayerSimple
+│       │   │   └── DecadeGameContainer
+│       │   └── JerseyQuizPage
+│       │       └── JerseyGameContainer
+│       │           ├── JerseyHudBar (score/timer/counter HUD) ← NOVO
+│       │           ├── JerseyImage (+ feedbackState prop)
+│       │           ├── JerseyYearOptions (two-step pendingYear confirm)
+│       │           ├── JerseyEducationalReveal (fun_fact reveal) ← NOVO
+│       │           └── JerseyTutorial
+│       ├── Admin (AdminRouteGuard)
 │       │   └── AdminDashboard
 │       └── NewsPortal
 │           └── NewsGrid
@@ -568,21 +579,86 @@ src/components/
 
 ---
 
+## 🎮 Componentes do Quiz Adaptativo (novos/atualizados)
+
+### **QuizFeedbackZone**
+**Localização**: `src/components/guess-game/QuizFeedbackZone.tsx`
+
+Feedback inline após tentativa — substitui toasts. Auto-reset para `idle` via `onIdle` callback após 2s.
+
+**Props**:
+```typescript
+interface QuizFeedbackZoneProps {
+  state: 'idle' | 'correct' | 'wrong';
+  playerName?: string;
+  points?: number;
+  onIdle: () => void;
+}
+```
+
+### **ProgressDots**
+**Localização**: `src/components/guess-game/ProgressDots.tsx`
+
+10 pontos de progresso: verde=correto, vermelho=errado, cinza=restante.
+
+**Props**:
+```typescript
+interface ProgressDotsProps {
+  total?: number;  // default 10
+  correct: number;
+  wrong: number;
+}
+```
+
+### **GameTimer** (atualizado)
+SVG 64×64px, r=28, circumference≈175.9. Urgent em ≤15s (era 10s), critical em ≤5s.
+
+### **AdaptivePlayerImage** (atualizado)
+Aceita `feedbackState: 'idle' | 'correct' | 'wrong'`. Aplica borda/glow/shake conforme estado.
+
+---
+
 ## 👕 Componentes do Quiz das Camisas
 
-### **JerseyGameContainer**
-Container principal do modo Quiz das Camisas com `JerseyImage`, `JerseyYearOptions`.
+### **JerseyGameContainer** (atualizado)
+Layout 2 colunas (`1fr / 1.3fr`). `feedbackState` derivado de `showResult + selectedOption`. `pendingYear` resetado via `useEffect` ao mudar de rodada.
 
-### **JerseyYearOptions**
-Exibe 3 opções de ano em layout horizontal com feedback visual (verde/vermelho).
+### **JerseyHudBar**
+**Localização**: `src/components/jersey-game/JerseyHudBar.tsx`
+
+HUD horizontal com: score, timer SVG 56px (r=24, urgent <15s), contador "Camisa X/Y", badge "Modo Camisas".
+
+### **JerseyImage** (atualizado)
+Aceita `feedbackState: 'idle' | 'correct' | 'wrong'`. Borda dourada idle, glow verde correto, vermelho errado.
+
+### **JerseyYearOptions** (atualizado)
+Two-step confirm: click na opção seta `pendingYear` → botão "Confirmar" chama o hook. `aria-pressed` e `aria-label` adicionados.
+
+### **JerseyEducationalReveal**
+**Localização**: `src/components/jersey-game/JerseyEducationalReveal.tsx`
+
+Card pós-resposta com `fun_fact`, pontos ganhos (correto) ou ano correto (errado). Gradiente gold/grená.
 
 ### **JerseyTutorial**
 Tutorial de onboarding para novos jogadores do quiz de camisas (4 passos).
 
+---
+
 ## 🏠 Componentes da Home
 
-### **GameModesPreview**
-Exibe os 3 modos de jogo (Adaptativo, Década, Camisas) em cards com links.
+### **GameModesPreview** (atualizado)
+Três `ModeCard` com `accentStyles` lookup (grena/verde/gold). Recebe `playerCount` e `jerseyCount` como props do `Index.tsx` — não faz queries próprias.
+
+**Props**:
+```typescript
+interface GameModesPreviewProps {
+  playerCount: number;
+  jerseyCount: number;
+}
+```
+
+### **GameTypeRankings** (atualizado)
+Componente `Podium` para top 3 (silver | gold elevado | bronze). Helper `useRankingQuery` para as 3 queries. Tabs: Adaptativo / Clássico / Camisas.
 
 ## 📊 Componentes Admin Compartilhados
 
@@ -591,4 +667,20 @@ Seletor de período para relatórios (7, 14, 30, 60, 90 dias).
 
 ---
 
-**Última atualização**: 2025-01-XX
+## 🔐 Guards de Rota
+
+### **ProtectedRoute**
+**Localização**: `src/components/guards/ProtectedRoute.tsx`
+
+Redireciona para `/auth` com `state.from = location` se o usuário não estiver autenticado.
+Usado em: `/selecionar-modo-jogo`, `/quiz-adaptativo`, `/quiz-decada`, `/quiz-camisas`.
+
+```typescript
+interface ProtectedRouteProps {
+  children: ReactNode;
+}
+```
+
+---
+
+**Última atualização**: 2026-05-16

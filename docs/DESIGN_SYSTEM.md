@@ -72,6 +72,59 @@ Ela inclui:
 - Criar botão/cartão personalizado sem avaliar componente base.
 - Misturar padrões de espaçamento arbitrários.
 
+## Paleta de Marca
+
+Sempre usar os tokens semânticos abaixo. Nunca escrever hex diretamente sem justificativa técnica.
+
+| Nome | Classe Tailwind | Hex | Uso |
+|------|----------------|-----|-----|
+| Grená | `bg-primary` / `text-primary` | `#7A0213` | CTA principal, títulos de jogo, alertas de urgência |
+| Verde | `bg-secondary` / `text-secondary` | `#006140` | Sucesso, acertos, ações secundárias |
+| Gold | `bg-accent` / `text-accent` | `#C4944A` | Destaque, conquistas, novidades, tier ouro |
+
+## Tipografia de Display
+
+A fonte **Bebas Neue** está carregada e mapeada para a classe `font-display`.
+
+Usar `font-display` em: scores numéricos, timers, headings de jogo, rankings, títulos de página.
+
+Não usar `font-display` em texto de corpo, descrições ou labels de UI.
+
+## Padrões de Componente
+
+### feedbackState
+
+Componentes visuais de jogo usam `feedbackState: 'idle' | 'correct' | 'wrong'`:
+
+| Estado | Visual | Classes |
+|--------|--------|---------|
+| `idle` | Borda tricolor padrão | default |
+| `correct` | Glow verde | `border-secondary shadow-[0_0_24px_#006140]` |
+| `wrong` | Borda vermelha + shake | `animate-shake border-destructive` |
+
+**Não usar toast** para feedback de acerto/erro inline de jogo — usar este padrão.
+
+### Tricolor Stripe
+
+Barra de 5–6px no topo de cards com gradiente tricolor:
+
+```css
+background: linear-gradient(90deg, #7A0213 33%, white 33% 66%, #006140 66%);
+```
+
+### accentStyles Lookup
+
+Para cards com múltiplos temas de cor, usar objeto de lookup em vez de condicionais:
+
+```tsx
+const accentStyles = {
+  grena: { stripe: 'bg-primary', cta: 'text-primary', ... },
+  verde: { stripe: 'bg-secondary', cta: 'text-secondary', ... },
+  gold:  { stripe: 'bg-accent',   cta: 'text-accent',   ... },
+};
+const s = accentStyles[accent];
+```
+
 ## Próximos passos
 
 - Migrar ocorrências antigas de cores fixas para tokens semânticos.
