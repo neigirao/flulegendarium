@@ -99,37 +99,31 @@ export const TopNavigation = () => {
           </div>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-2">
+          <div className="hidden md:flex items-center space-x-1">
             {navigationItems.map((item) => (
               item.external ? (
-                <Button
+                <a
                   key={item.label}
-                  variant="ghost"
-                  size="sm"
-                  asChild
-                  className="text-primary hover:bg-secondary/10 hover:text-secondary transition-colors touch-target"
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-1.5 text-[13px] font-medium text-muted-foreground rounded-[7px] hover:bg-primary/6 hover:text-primary transition-colors"
                 >
-                  <a href={item.href} target="_blank" rel="noopener noreferrer">
-                    <item.icon className="h-4 w-4 mr-2" />
-                    {item.label}
-                  </a>
-                </Button>
+                  {item.label}
+                </a>
               ) : (
-                <Button
+                <button
                   key={item.label}
-                  variant="ghost"
-                  size="sm"
                   onClick={item.onClick}
                   onMouseEnter={() => handlePrefetch(item.route)}
-                  className="text-primary hover:bg-secondary/10 hover:text-secondary transition-colors touch-target"
+                  className="px-3.5 py-1.5 text-[13px] font-medium text-muted-foreground rounded-[7px] hover:bg-primary/6 hover:text-primary transition-colors"
                 >
-                  <item.icon className="h-4 w-4 mr-2" />
                   {item.label}
-                </Button>
+                </button>
               )
             ))}
-            
-            <div className="flex items-center space-x-2 ml-4 pl-4 border-l border-secondary/20">
+
+            <div className="flex items-center gap-2 ml-3 pl-3 border-l border-secondary/20">
               <AuthButton />
             </div>
           </div>
