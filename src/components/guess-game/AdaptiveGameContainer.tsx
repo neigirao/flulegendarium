@@ -34,7 +34,7 @@ const AdaptiveGameContainer = () => {
     handleGuess: originalHandleGuess, handleSkipPlayer: gameHandleSkip,
     handlePlayerImageFixed, isProcessingGuess,
     startGameForPlayer, isTimerRunning, resetScore,
-    gamesPlayed, currentStreak,
+    gamesPlayed, currentStreak, maxStreak,
     difficultyChangeInfo: adaptiveDiffChange, clearDifficultyChange,
     saveToRanking
   } = useAdaptiveGuessGame(players);
@@ -220,6 +220,7 @@ const AdaptiveGameContainer = () => {
         unlockedAchievementIds={orch.unlockedAchievementIds}
         rankingPlayerName={orch.guestName}
         guessHistory={orch.history.map(h => h.isCorrect ? 'correct' : 'wrong')}
+        maxStreak={maxStreak}
       />
 
       {orch.showGuestNameForm && (
