@@ -7,6 +7,19 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Unreleased]
 
+### 🎮 Auditoria de Game Design — Melhorias P0/P1 (2026-05-16)
+
+#### Fixed
+- 🐛 **[B-01]** Tutorial, FAQ e GameTutorial corrigidos: "30 segundos" → "60 segundos" (valor real do timer)
+
+#### Changed
+- 📤 `SocialShare.tsx` — texto de compartilhamento agora inclui emoji grid (`🟢🔴`) quando `guessHistory` disponível; formato estilo Wordle
+- 📋 `GameModeSelection.tsx` — adicionado `DailyChallengeWidget` (compact, max 2 desafios) acima do live activity bar
+
+#### Added
+- ✅ `GameOverDialog` aceita `guessHistory?: Array<'correct'|'wrong'>` e passa ao `SocialShare`
+- ✅ `AdaptiveGameContainer` deriva e passa `guessHistory` ao dialog a partir de `orch.history`
+
 ### 🔐 Autenticação obrigatória para jogar (2026-05-16)
 
 #### Added

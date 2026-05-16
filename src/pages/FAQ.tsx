@@ -132,7 +132,7 @@ const faqData = [
       },
       {
         question: "Quanto tempo tenho para responder?",
-        answer: "Você tem exatos 30 segundos para cada jogador. O cronômetro aparece na tela e quando chega a zero, é Game Over automaticamente."
+        answer: "Você tem exatos 60 segundos para cada jogador. O cronômetro aparece na tela e quando chega a zero, é Game Over automaticamente."
       },
       {
         question: "Como funciona a pontuação?",

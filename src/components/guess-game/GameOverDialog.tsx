@@ -31,6 +31,7 @@ interface GameOverDialogProps {
   difficultyLevel?: string;
   unlockedAchievementIds?: string[];
   rankingPlayerName?: string;
+  guessHistory?: Array<'correct' | 'wrong'>;
 }
 
 // Animation variants
@@ -74,7 +75,8 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   gameMode = 'classic',
   difficultyLevel,
   unlockedAchievementIds = [],
-  rankingPlayerName = ''
+  rankingPlayerName = '',
+  guessHistory = [],
 }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -415,6 +417,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                     gameMode={gameMode === 'adaptive' ? 'Adaptativo' : 'Clássico'}
                     streak={0}
                     achievements={[]}
+                    guessHistory={guessHistory}
                   />
                   
                   <div className="space-y-2">

@@ -13,19 +13,21 @@ interface SocialShareProps {
   achievements?: Achievement[];
   playerName?: string;
   showFullInterface?: boolean;
+  guessHistory?: Array<'correct' | 'wrong'>;
 }
 
-export const SocialShare = ({ 
-  score, 
-  correctGuesses, 
+export const SocialShare = ({
+  score,
+  correctGuesses,
   gameMode = "Clássico",
   streak = 0,
   achievements = [],
   playerName,
-  showFullInterface = true
+  showFullInterface = true,
+  guessHistory = [],
 }: SocialShareProps) => {
   const { toast } = useToast();
-  
+
   // If not showing full interface, return quick share button
   if (!showFullInterface) {
     return (
@@ -40,9 +42,15 @@ export const SocialShare = ({
     );
   }
 
-  const shareText = `🔥 Acabei de fazer ${correctGuesses} acertos seguidos no Lendas do Flu! 
+  const emojiGrid = guessHistory.length > 0
+    ? guessHistory.map(r => r === 'correct' ? '🟢' : '🔴').join('') + (streak >= 3 ? ' ⚡' : '')
+    : null;
+
+  const shareText = emojiGrid
+    ? `🏟️ Lendas do Flu | ${score} pts\n${emojiGrid}\n⚽ Modo ${gameMode} — você consegue superar?\n\nlendasdoflu.com`
+    : `🔥 Acabei de fazer ${correctGuesses} acertos seguidos no Lendas do Flu!
 ⚽ ${score} pontos no modo ${gameMode}
-🏆 Você consegue superar? 
+🏆 Você consegue superar?
 
 Teste seus conhecimentos sobre os ídolos tricolores:`;
   
