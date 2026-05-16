@@ -8,6 +8,7 @@ import { useAnalytics } from "@/hooks/analytics";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { DailyChallengeWidget } from "@/components/challenges/DailyChallengeWidget";
 
 const DECADES = [
   { num: '60s', lab: 'Tricampeão' },
@@ -282,6 +283,11 @@ const GameModeSelection = () => {
                   </div>
                 </div>
               </button>
+            </div>
+
+            {/* Daily Challenges */}
+            <div className="max-w-[680px] mx-auto mb-6">
+              <DailyChallengeWidget compact maxChallenges={2} />
             </div>
 
             {/* Live activity bar */}

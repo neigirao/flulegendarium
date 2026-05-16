@@ -41,7 +41,7 @@ export const GameTutorial = ({ onComplete, onSkip }: GameTutorialProps) => {
       icon: <Clock className="w-8 h-8 text-primary" />,
       content: (
         <div className="space-y-4">
-          <p>Você tem <strong>30 segundos</strong> para cada jogador!</p>
+          <p>Você tem <strong>60 segundos</strong> para cada jogador!</p>
           <p>O cronômetro aparece no canto da tela.</p>
           <p>Se o tempo acabar, é Game Over automaticamente.</p>
         </div>

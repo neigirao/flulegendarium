@@ -219,6 +219,7 @@ const AdaptiveGameContainer = () => {
         difficultyLevel={currentDifficulty.label}
         unlockedAchievementIds={orch.unlockedAchievementIds}
         rankingPlayerName={orch.guestName}
+        guessHistory={orch.history.map(h => h.isCorrect ? 'correct' : 'wrong')}
       />
 
       {orch.showGuestNameForm && (
