@@ -41,7 +41,7 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
   const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
 
   // Fixed progression difficulty state (based on total correct answers)
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[1]); // starts at facil
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]); // starts at muito_facil
   const [difficultyProgress, setDifficultyProgress] = useState(0);
 
   const { toast } = useToast();
@@ -103,19 +103,25 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
   }, [isTabVisible, isRunning, gameOver, handleTimeUp]);
 
   // Returns the difficulty config for a given number of total correct answers.
-  // Progression: 0-2 = facil, 3-5 = medio, 6-8 = dificil, 9+ = muito_dificil
+  // Thresholds = floor(pool_size / 10), proportional to each level's pool:
+  // 0-7   → muito_facil (8 rounds, pool=84)
+  // 8-16  → facil       (9 rounds, pool=96)
+  // 17    → medio       (1 round,  pool=5)
+  // 18-19 → dificil     (2 rounds, pool=23)
+  // 20+   → muito_dificil (pool=11)
   const getDifficultyForRound = useCallback((round: number): DifficultyLevelConfig => {
-    if (round < 3) return DIFFICULTY_LEVELS[1]; // facil
-    if (round < 6) return DIFFICULTY_LEVELS[2]; // medio
-    if (round < 9) return DIFFICULTY_LEVELS[3]; // dificil
-    return DIFFICULTY_LEVELS[4];               // muito_dificil
+    if (round < 8)  return DIFFICULTY_LEVELS[0]; // muito_facil
+    if (round < 17) return DIFFICULTY_LEVELS[1]; // facil
+    if (round < 18) return DIFFICULTY_LEVELS[2]; // medio
+    if (round < 20) return DIFFICULTY_LEVELS[3]; // dificil
+    return DIFFICULTY_LEVELS[4];                 // muito_dificil
   }, []);
 
   const advanceDifficulty = useCallback((newGamesPlayed: number) => {
     const newDifficulty = getDifficultyForRound(newGamesPlayed);
-    const tierStart = newGamesPlayed < 3 ? 0 : newGamesPlayed < 6 ? 3 : newGamesPlayed < 9 ? 6 : 9;
-    const tierSize = newGamesPlayed < 9 ? 3 : 1;
-    const progress = newGamesPlayed >= 9 ? 100 : Math.min(100, ((newGamesPlayed - tierStart) / tierSize) * 100);
+    const tierStart = newGamesPlayed < 8 ? 0 : newGamesPlayed < 17 ? 8 : newGamesPlayed < 18 ? 17 : newGamesPlayed < 20 ? 18 : 20;
+    const tierSize  = newGamesPlayed < 8 ? 8 : newGamesPlayed < 17 ? 9 : newGamesPlayed < 18 ? 1  : newGamesPlayed < 20 ? 2  : 1;
+    const progress  = newGamesPlayed >= 20 ? 100 : Math.min(100, ((newGamesPlayed - tierStart) / tierSize) * 100);
 
     if (newDifficulty.level !== currentDifficulty.level) {
       setDifficultyChangeInfo({
@@ -314,7 +320,7 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
     setGameOver(false);
     setHasLost(false);
     setAttempts(0);
-    setCurrentDifficulty(DIFFICULTY_LEVELS[1]); // starts at facil
+    setCurrentDifficulty(DIFFICULTY_LEVELS[0]); // starts at muito_facil
     setDifficultyProgress(0);
     setCorrectSequence(0);
     setIncorrectSequence(0);
