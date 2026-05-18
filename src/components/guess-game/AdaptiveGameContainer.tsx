@@ -209,7 +209,7 @@ const AdaptiveGameContainer = () => {
 
       <GameOverDialog
         open={gameOver}
-        onClose={() => {}}
+        onClose={resetScore}
         playerName={currentPlayer?.name || ''}
         score={score}
         onResetScore={resetScore}

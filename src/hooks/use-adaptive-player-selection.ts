@@ -158,22 +158,16 @@ export const useAdaptivePlayerSelection = () => {
       return selectedPlayer;
     }
 
-    // Sem nenhum jogador em níveis reconhecidos: fallback final para qualquer jogador disponível
-    if (availablePlayers.length > 0) {
-      const randomIndex = Math.floor(Math.random() * availablePlayers.length);
-      const selectedPlayer = availablePlayers[randomIndex];
-
+    // Pool da dificuldade pedida esgotado: repetir do mesmo nível ignorando histórico de usados
+    const fallbackPool = players.filter(p => p.difficulty_level === difficultyLevel);
+    if (fallbackPool.length > 0) {
+      const randomIndex = Math.floor(Math.random() * fallbackPool.length);
       logger.warn(
-        '⚠️ Selecionando jogador sem dificuldade reconhecida',
+        `⚠️ Pool esgotado — repetindo da dificuldade ${difficultyLevel}`,
         'PLAYER_SELECTION',
-        {
-          requestedDifficulty: difficultyLevel,
-          selectedPlayerId: selectedPlayer.id,
-          selectedPlayerDifficulty: selectedPlayer.difficulty_level || null
-        }
+        { requestedDifficulty: difficultyLevel, poolSize: fallbackPool.length }
       );
-
-      return selectedPlayer;
+      return fallbackPool[randomIndex];
     }
 
     logger.error(

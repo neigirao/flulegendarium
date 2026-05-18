@@ -12,7 +12,6 @@ export interface AdaptiveGameState {
   currentPlayer: Player | null;
   gameKey: number;
   attempts: number;
-  attemptsOnPlayer: number;
   score: number;
   gameOver: boolean;
   timeRemaining: number;
