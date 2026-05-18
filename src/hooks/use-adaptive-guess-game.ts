@@ -14,59 +14,17 @@ import type { AdaptiveGame, DifficultyChangeInfo } from "@/types/adaptive-game";
 
 
 /**
- * Hook principal do jogo adaptativo.
- * 
- * Gerencia todo o fluxo do jogo adaptativo, incluindo:
- * - Seleção de jogadores baseada em dificuldade
- * - Ajuste automático de dificuldade conforme desempenho
- * - Controle de pontuação, streaks e timer
- * - Validação de palpites com processamento de nomes
- * - Métricas e análise de jogo
- * 
- * ### Sistema de Dificuldade Adaptativa
- * - Aumenta após 3 acertos consecutivos
- * - Diminui após 2 erros consecutivos
- * - Afeta multiplicador de pontos
- * - Influencia seleção de jogadores
- * 
- * ### Controle de Jogadores
- * - Não repete jogadores na mesma partida
- * - Seleciona baseado em dificuldade atual
- * - Reinicia pool apenas ao resetar o jogo
- * 
+ * Hook principal do jogo com progressão fixa de dificuldade.
+ *
+ * Progressão linear igual para todos os jogadores:
+ * - Acertos 0-2:  Fácil
+ * - Acertos 3-5:  Médio
+ * - Acertos 6-8:  Difícil
+ * - Acertos 9+:   Muito Difícil
+ *
+ * A dificuldade nunca retroage — apenas avança conforme acertos acumulados.
+ *
  * @param {Player[]} players - Lista completa de jogadores disponíveis
- * 
- * @returns {Object} Estado e ações do jogo adaptativo
- * @returns {Player | null} currentPlayer - Jogador atual a ser adivinhado
- * @returns {number} gameKey - Chave para forçar re-render do componente
- * @returns {number} score - Pontuação total acumulada
- * @returns {boolean} gameOver - Se o jogo terminou
- * @returns {number} timeRemaining - Segundos restantes no timer
- * @returns {number} currentStreak - Sequência atual de acertos
- * @returns {DifficultyLevelConfig} currentDifficulty - Configuração da dificuldade atual
- * @returns {Function} handleGuess - Processa um palpite do usuário
- * @returns {Function} startGameForPlayer - Inicia o jogo para o jogador atual
- * @returns {Function} resetScore - Reseta todo o estado do jogo
- * 
- * @example
- * ```tsx
- * const {
- *   currentPlayer,
- *   score,
- *   handleGuess,
- *   currentDifficulty
- * } = useAdaptiveGuessGame(players);
- * 
- * // Processar palpite do usuário
- * await handleGuess("Fred");
- * 
- * // Verificar dificuldade atual
- * console.log(currentDifficulty.label); // "Médio"
- * ```
- * 
- * @see {@link useAdaptivePlayerSelection} Seleção de jogadores por dificuldade
- * @see {@link useAdaptiveGameMetrics} Sistema de métricas do jogo
- * @see {@link useCleanTimer} Gerenciamento do timer
  */
 export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
   // Game state
@@ -82,11 +40,9 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
   const [maxStreak, setMaxStreak] = useState(0);
   const [difficultyChangeInfo, setDifficultyChangeInfo] = useState<DifficultyChangeInfo | null>(null);
 
-  // Adaptive difficulty state
-  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[0]);
+  // Fixed progression difficulty state (based on total correct answers)
+  const [currentDifficulty, setCurrentDifficulty] = useState<DifficultyLevelConfig>(DIFFICULTY_LEVELS[1]); // starts at facil
   const [difficultyProgress, setDifficultyProgress] = useState(0);
-  const [correctSequence, setCorrectSequence] = useState(0);
-  const [incorrectSequence, setIncorrectSequence] = useState(0);
 
   const { toast } = useToast();
   const { isVisible: isTabVisible } = useTabVisibility();
@@ -146,64 +102,34 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
     }
   }, [isTabVisible, isRunning, gameOver, handleTimeUp]);
 
-  const adjustDifficulty = useCallback((wasCorrect: boolean) => {
-    let newCorrectSequence = correctSequence;
-    let newIncorrectSequence = incorrectSequence;
-    
-    if (wasCorrect) {
-      newCorrectSequence = correctSequence + 1;
-      newIncorrectSequence = 0;
-    } else {
-      newCorrectSequence = 0;
-      newIncorrectSequence = incorrectSequence + 1;
-    }
+  // Returns the difficulty config for a given number of total correct answers.
+  // Progression: 0-2 = facil, 3-5 = medio, 6-8 = dificil, 9+ = muito_dificil
+  const getDifficultyForRound = useCallback((round: number): DifficultyLevelConfig => {
+    if (round < 3) return DIFFICULTY_LEVELS[1]; // facil
+    if (round < 6) return DIFFICULTY_LEVELS[2]; // medio
+    if (round < 9) return DIFFICULTY_LEVELS[3]; // dificil
+    return DIFFICULTY_LEVELS[4];               // muito_dificil
+  }, []);
 
-    setCorrectSequence(newCorrectSequence);
-    setIncorrectSequence(newIncorrectSequence);
+  const advanceDifficulty = useCallback((newGamesPlayed: number) => {
+    const newDifficulty = getDifficultyForRound(newGamesPlayed);
+    const tierStart = newGamesPlayed < 3 ? 0 : newGamesPlayed < 6 ? 3 : newGamesPlayed < 9 ? 6 : 9;
+    const tierSize = newGamesPlayed < 9 ? 3 : 1;
+    const progress = newGamesPlayed >= 9 ? 100 : Math.min(100, ((newGamesPlayed - tierStart) / tierSize) * 100);
 
-    const currentIndex = DIFFICULTY_LEVELS.findIndex(d => d.level === currentDifficulty.level);
-    let newDifficultyIndex = currentIndex;
-    let changeReason = '';
-
-    // Increase difficulty after 3 consecutive correct answers
-    if (newCorrectSequence >= 3 && currentIndex < DIFFICULTY_LEVELS.length - 1) {
-      newDifficultyIndex = currentIndex + 1;
-      changeReason = `${newCorrectSequence} acertos consecutivos`;
-    }
-    // Decrease difficulty after 2 consecutive wrong answers
-    else if (newIncorrectSequence >= 2 && currentIndex > 0) {
-      newDifficultyIndex = currentIndex - 1;
-      changeReason = `${newIncorrectSequence} erros consecutivos`;
-    }
-
-    if (newDifficultyIndex !== currentIndex) {
-      const oldDifficulty = currentDifficulty;
-      const newDifficulty = DIFFICULTY_LEVELS[newDifficultyIndex];
-      
-      setCurrentDifficulty(newDifficulty);
-      setDifficultyProgress(0);
-      
-      // Show difficulty change notification
+    if (newDifficulty.level !== currentDifficulty.level) {
       setDifficultyChangeInfo({
-        oldLevel: oldDifficulty.label,
+        oldLevel: currentDifficulty.label,
         newLevel: newDifficulty.label,
-        reason: changeReason,
+        reason: `${newGamesPlayed} acertos`,
         timestamp: Date.now()
       });
-
-      logger.debug(`Difficulty changed: ${oldDifficulty.label} → ${newDifficulty.label} (${changeReason})`, 'DIFFICULTY');
-      
-      // Reset sequences after difficulty change
-      setCorrectSequence(0);
-      setIncorrectSequence(0);
-    } else {
-      // Update progress within current difficulty
-      const progress = wasCorrect ? 
-        Math.min(100, (newCorrectSequence / 3) * 100) : 
-        Math.max(0, 100 - (newIncorrectSequence / 2) * 100);
-      setDifficultyProgress(progress);
+      logger.debug(`Difficulty advanced: ${currentDifficulty.label} → ${newDifficulty.label}`, 'DIFFICULTY');
     }
-  }, [currentDifficulty, correctSequence, incorrectSequence]);
+
+    setCurrentDifficulty(newDifficulty);
+    setDifficultyProgress(progress);
+  }, [currentDifficulty, getDifficultyForRound]);
 
   const selectRandomPlayer = useCallback(() => {
     if (!players || players.length === 0) return;
@@ -291,14 +217,15 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
         const newScore = score + pointsEarned;
         const newStreak = currentStreak + 1;
         
+        const newGamesPlayed = gamesPlayed + 1;
         setScore(newScore);
         setCurrentStreak(newStreak);
         setMaxStreak(prev => Math.max(prev, newStreak));
         setAttempts(1);
-        setGamesPlayed(prev => prev + 1);
+        setGamesPlayed(newGamesPlayed);
 
         recordCorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
-        adjustDifficulty(true);
+        advanceDifficulty(newGamesPlayed);
 
         logger.debug(`Correct answer! +${pointsEarned} points`, 'GUESS', {
           multiplier: currentDifficulty.multiplier,
@@ -349,10 +276,11 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
     isProcessingGuess,
     score,
     currentStreak,
+    gamesPlayed,
     currentDifficulty,
     recordCorrectGuess,
     recordIncorrectGuess,
-    adjustDifficulty,
+    advanceDifficulty,
     saveGameData,
     stopTimer,
     startTimer,
@@ -375,9 +303,8 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
   const handleSkipPlayer = useCallback(() => {
     if (gameOver || isProcessingGuess) return;
     setCurrentStreak(0);
-    adjustDifficulty(false);
     selectRandomPlayer();
-  }, [gameOver, isProcessingGuess, adjustDifficulty, selectRandomPlayer]);
+  }, [gameOver, isProcessingGuess, selectRandomPlayer]);
 
   const resetScore = useCallback(() => {
     setScore(0);
@@ -387,7 +314,7 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
     setGameOver(false);
     setHasLost(false);
     setAttempts(0);
-    setCurrentDifficulty(DIFFICULTY_LEVELS[0]);
+    setCurrentDifficulty(DIFFICULTY_LEVELS[1]); // starts at facil
     setDifficultyProgress(0);
     setCorrectSequence(0);
     setIncorrectSequence(0);
