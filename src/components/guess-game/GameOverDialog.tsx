@@ -250,7 +250,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
         newRecord={score}
       />
       
-      <Dialog open={open} onOpenChange={() => {}}>
+      <Dialog open={open} onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
         <DialogContent data-testid="game-over-dialog" className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <motion.div
