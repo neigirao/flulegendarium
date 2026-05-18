@@ -261,7 +261,6 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
         stopTimer();
 
         recordIncorrectGuess(currentPlayer.id, currentPlayer.name, currentDifficulty.level, guessTime);
-        adjustDifficulty(false);
 
         toast({
           variant: "destructive",
@@ -322,8 +321,6 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
     setAttempts(0);
     setCurrentDifficulty(DIFFICULTY_LEVELS[0]); // starts at muito_facil
     setDifficultyProgress(0);
-    setCorrectSequence(0);
-    setIncorrectSequence(0);
     setDifficultyChangeInfo(null);
     setCurrentPlayer(null);
     
