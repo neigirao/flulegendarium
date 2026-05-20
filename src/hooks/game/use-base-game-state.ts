@@ -8,7 +8,7 @@ import { logger } from "@/utils/logger";
 export interface BaseGameConfig {
   /** Número máximo de tentativas permitidas */
   maxAttempts: number;
-  /** Se deve usar sistema de dificuldade adaptativa */
+  /** Se deve usar sistema de dificuldade adaptativa (sobe/desce por sequência) */
   useAdaptiveDifficulty: boolean;
   /** Pontos base por acerto (antes de multiplicador) */
   basePoints: number;
@@ -16,6 +16,8 @@ export interface BaseGameConfig {
   correctSequenceThreshold?: number;
   /** Sequência de erros necessária para diminuir dificuldade */
   incorrectSequenceThreshold?: number;
+  /** Usar progressão fixa proporcional ao pool de cada nível (substitui adaptativa) */
+  useFixedProgression?: boolean;
 }
 
 /**
@@ -56,6 +58,18 @@ const DEFAULT_CONFIG: BaseGameConfig = {
   basePoints: 5,
   correctSequenceThreshold: 3,
   incorrectSequenceThreshold: 2,
+  useFixedProgression: false,
+};
+
+// Thresholds: floor(pool_size / 10), minimum 1 per tier
+// 0-7  → muito_facil (pool=84), 8-16 → facil (pool=96),
+// 17   → medio (pool=5),       18-19 → dificil (pool=23), 20+ → muito_dificil
+const getDifficultyForRound = (round: number): DifficultyLevelConfig => {
+  if (round < 8)  return DIFFICULTY_LEVELS[0]; // muito_facil
+  if (round < 17) return DIFFICULTY_LEVELS[1]; // facil
+  if (round < 18) return DIFFICULTY_LEVELS[2]; // medio
+  if (round < 20) return DIFFICULTY_LEVELS[3]; // dificil
+  return DIFFICULTY_LEVELS[4];                 // muito_dificil
 };
 
 /**
@@ -108,6 +122,8 @@ export const useBaseGameState = (config: Partial<BaseGameConfig> = {}): BaseGame
   const [difficultyProgress, setDifficultyProgress] = useState(0);
   const [correctSequence, setCorrectSequence] = useState(0);
   const [incorrectSequence, setIncorrectSequence] = useState(0);
+  // Fixed progression: total correct answers in current game
+  const [correctAnswersInGame, setCorrectAnswersInGame] = useState(0);
 
   /**
    * Ajusta a dificuldade baseado no desempenho
@@ -167,20 +183,39 @@ export const useBaseGameState = (config: Partial<BaseGameConfig> = {}): BaseGame
    * Adiciona pontos ao score com multiplicador de dificuldade
    */
   const addScore = useCallback((points: number) => {
-    const multiplier = finalConfig.useAdaptiveDifficulty ? currentDifficulty.multiplier : 1;
+    const useMultiplier = finalConfig.useAdaptiveDifficulty || finalConfig.useFixedProgression;
+    const multiplier = useMultiplier ? currentDifficulty.multiplier : 1;
     const adjustedPoints = Math.round(points * multiplier);
-    
+
     setScore(prev => prev + adjustedPoints);
     setCurrentStreak(prev => {
       const newStreak = prev + 1;
       setMaxStreak(current => Math.max(current, newStreak));
       return newStreak;
     });
-    
-    if (finalConfig.useAdaptiveDifficulty) {
+
+    if (finalConfig.useFixedProgression) {
+      const newCount = correctAnswersInGame + 1;
+      setCorrectAnswersInGame(newCount);
+      const newDifficulty = getDifficultyForRound(newCount);
+      if (newDifficulty.level !== currentDifficulty.level) {
+        setCurrentDifficulty(newDifficulty);
+        setDifficultyProgress(0);
+        logger.info(`Dificuldade fixa avançada`, 'FixedProgression', {
+          from: currentDifficulty.label,
+          to: newDifficulty.label,
+          atRound: newCount
+        });
+      } else {
+        const tierStart = newCount < 8 ? 0 : newCount < 17 ? 8 : newCount < 18 ? 17 : newCount < 20 ? 18 : 20;
+        const tierSize  = newCount < 8 ? 8 : newCount < 17 ? 9 : newCount < 18 ? 1  : newCount < 20 ? 2  : 1;
+        const progress  = newCount >= 20 ? 100 : Math.min(100, ((newCount - tierStart) / tierSize) * 100);
+        setDifficultyProgress(progress);
+      }
+    } else if (finalConfig.useAdaptiveDifficulty) {
       adjustDifficulty(true);
     }
-  }, [currentDifficulty.multiplier, adjustDifficulty, finalConfig]);
+  }, [currentDifficulty, correctAnswersInGame, adjustDifficulty, finalConfig]);
 
   /**
    * Finaliza o jogo
@@ -202,6 +237,7 @@ export const useBaseGameState = (config: Partial<BaseGameConfig> = {}): BaseGame
     setDifficultyProgress(0);
     setCorrectSequence(0);
     setIncorrectSequence(0);
+    setCorrectAnswersInGame(0);
     // maxStreak e gamesPlayed persistem entre partidas
   }, []);
 
@@ -223,7 +259,7 @@ export const useBaseGameState = (config: Partial<BaseGameConfig> = {}): BaseGame
    */
   const resetStreak = useCallback(() => {
     setCurrentStreak(0);
-    if (finalConfig.useAdaptiveDifficulty) {
+    if (finalConfig.useAdaptiveDifficulty && !finalConfig.useFixedProgression) {
       adjustDifficulty(false);
     }
   }, [adjustDifficulty, finalConfig]);

@@ -32,10 +32,9 @@ import { DIFFICULTY_LEVELS } from "@/config/difficulty-levels";
 export const useDecadeGameState = () => {
   const gameState = useBaseGameState({
     maxAttempts: 1,
-    useAdaptiveDifficulty: true,
+    useAdaptiveDifficulty: false,
     basePoints: 5,
-    correctSequenceThreshold: 3,
-    incorrectSequenceThreshold: 2,
+    useFixedProgression: true,
   });
 
   return {
