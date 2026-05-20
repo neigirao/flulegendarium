@@ -7,6 +7,33 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Unreleased]
 
+### 🎮 Mecânica de Jogo & Bug Fixes (2026-05-20)
+
+#### Fixed
+- 🐛 `use-adaptive-guess-game.ts` — Removidas chamadas a `adjustDifficulty`, `setCorrectSequence` e `setIncorrectSequence` que não existiam mais após refactor da dificuldade fixa; causavam `ReferenceError` silencioso em runtime (TypeScript não detecta com `strict: false`)
+- 🐛 `GameOverDialog` — `onOpenChange={() => {}}` substituído por `onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}`; botão X agora fecha o dialog corretamente
+- 🐛 `AdaptiveGameContainer` — `onClose={() => {}}` substituído por `onClose={resetScore}`; reinicia o jogo ao fechar o dialog
+- 🐛 `use-adaptive-player-selection.ts` — Fallback final agora repete do pool da dificuldade pedida (ignorando usedPlayerIds) em vez de selecionar qualquer jogador disponível; dificuldade nunca é violada
+
+#### Changed
+- 🔄 **Progressão de dificuldade: adaptativa → fixa e proporcional ao banco**
+  - Fórmula: `threshold = floor(pool_size / 10)` por nível
+  - Muito Fácil (pool=84): 8 acertos → Fácil (pool=96): 9 acertos → Médio (pool=5): 1 acerto → Difícil (pool=23): 2 acertos → Muito Difícil (pool=11): ∞
+  - Dificuldade **nunca retrocede**; começa sempre em Muito Fácil
+  - Removido sistema adaptativo (correctSequence/incorrectSequence)
+- 🔄 `use-adaptive-guess-game.ts` — 1 erro = game over imediato (revertido sistema de 3 tentativas testado e rejeitado)
+- 🔄 `src/pages/Auth.tsx` — Simplificado para Google-only (removido email/password, tabs, dialog de reset)
+
+#### Added
+- ✅ `src/hooks/use-play-streak.ts` — Streak diário de jogo (dias consecutivos) armazenado no Supabase; exibido em `GameModeSelection`
+- ✅ Emoji grid visual (🟢🔴) no `GameOverDialog` quando `showShareOptions`; `maxStreak` conectado ao `SocialShare`
+
+#### Visual
+- 🎨 `src/pages/Index.tsx` — 4 instâncias de `text-accent`/`bg-accent` substituídas por `#C4944A` (cor era branca `0 0% 98%`)
+- 🎨 `src/components/home/GameTypeRankings.tsx` — 3 instâncias de `border-accent`/`bg-accent`/`text-accent` substituídas por `#C4944A`
+
+---
+
 ### 🎮 Auditoria de Game Design — Melhorias P0/P1 (2026-05-16)
 
 #### Fixed
