@@ -81,7 +81,7 @@ const Index = () => {
                 </h1>
 
                 <p className="text-[17px] text-foreground/75 leading-[1.55] mb-7 max-w-[480px]">
-                  Das Laranjeiras ao Maracanã — <strong className="text-foreground">3 modos de quiz</strong> para provar que você é um verdadeiro tricolor. Sem cadastro pra começar.
+                  Das Laranjeiras ao Maracanã — <strong className="text-foreground">3 modos de quiz</strong> para provar que você é um verdadeiro tricolor.
                 </p>
 
                 <div className="flex gap-3 items-center flex-wrap mb-6">
