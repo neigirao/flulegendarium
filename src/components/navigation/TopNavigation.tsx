@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { AuthButton } from "@/components/auth/AuthButton";
 import { useAuth } from "@/hooks/useAuth";
-import { Shield, HelpCircle, User, Menu, Heart, Trophy, Landmark, BarChart3 } from "lucide-react";
+import { Shield, HelpCircle, User, Menu, Heart, Trophy, Landmark, BarChart3, Sparkles } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useLinkPrefetch } from "@/hooks/use-route-prefetch";
 
@@ -37,6 +37,12 @@ export const TopNavigation = () => {
       route: '/doacoes',
       onClick: () => navigate('/doacoes'),
       icon: Heart,
+    },
+    {
+      label: "Especiais",
+      route: '/especiais',
+      onClick: () => navigate('/especiais'),
+      icon: Sparkles,
     },
     {
       label: "Tutorial",

@@ -40,7 +40,9 @@ import {
   LazyDailyChallengesPage,
   LazyJerseyQuizPage,
   LazyEstatisticasPublicas,
-  LazyDesignSystem
+  LazyDesignSystem,
+  LazyEspeciais,
+  LazyMaiorAtacante,
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
@@ -127,6 +129,8 @@ function App() {
                             <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
                             <Route path="/doacoes" element={<LazyDonations />} />
                             <Route path="/conquistas" element={<LazyConquistas />} />
+                            <Route path="/especiais" element={<LazyEspeciais />} />
+                            <Route path="/especiais/maior-atacante" element={<LazyMaiorAtacante />} />
                             <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
                             <Route
                               path="/admin"

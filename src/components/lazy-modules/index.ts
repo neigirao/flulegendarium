@@ -103,3 +103,14 @@ export const LazyDesignSystem = createLazyComponent(
   () => import('@/pages/DesignSystem'),
   React.createElement(PerformanceSkeleton, { height: 700 })
 );
+
+// Especiais Module
+export const LazyEspeciais = createLazyComponent(
+  () => import('@/pages/Especiais'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);
+
+export const LazyMaiorAtacante = createLazyComponent(
+  () => import('@/pages/specials/MaiorAtacante'),
+  React.createElement(PerformanceSkeleton, { height: 800 })
+);
