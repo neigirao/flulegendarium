@@ -299,18 +299,56 @@ export function TitulosSection() {
 }
 
 /* ── CAMPANHAS ───────────────────────────────── */
+interface BrasileiraoSeason {
+  pos: number;
+  times: number;
+  ano: string;
+}
+
 interface CampEntry {
   Libertadores: number;
   CopaBrasil: number;
-  brasileiro: { pos: number; times: number } | null;
+  Mundial?: number;
+  brasileiro: BrasileiraoSeason[] | null;
 }
 
 const CAMP_DATA: Record<string, CampEntry> = {
-  cano:       { Libertadores: 100, CopaBrasil: 60,  brasileiro: { pos: 8,  times: 20 } },
-  fred:       { Libertadores: 60,  CopaBrasil: 60,  brasileiro: { pos: 1,  times: 20 } },
-  washington: { Libertadores: 40,  CopaBrasil: 0,   brasileiro: { pos: 1,  times: 30 } },
-  magno:      { Libertadores: 0,   CopaBrasil: 40,  brasileiro: { pos: 1,  times: 20 } },
-  waldo:      { Libertadores: 0,   CopaBrasil: 0,   brasileiro: null },
+  cano: {
+    Libertadores: 100, CopaBrasil: 60, Mundial: 100,
+    brasileiro: [
+      { pos: 3, times: 20, ano: '2022' },
+      { pos: 10, times: 20, ano: '2023' },
+    ],
+  },
+  fred: {
+    Libertadores: 60, CopaBrasil: 60,
+    brasileiro: [
+      { pos: 1, times: 20, ano: '2010' },
+      { pos: 3, times: 20, ano: '2011' },
+      { pos: 1, times: 20, ano: '2012' },
+      { pos: 12, times: 20, ano: '2013' },
+      { pos: 7, times: 20, ano: '2014' },
+      { pos: 8, times: 20, ano: '2015' },
+      { pos: 9, times: 20, ano: '2021' },
+    ],
+  },
+  washington: {
+    Libertadores: 40, CopaBrasil: 0,
+    brasileiro: [
+      { pos: 1, times: 30, ano: '1984' },
+    ],
+  },
+  magno: {
+    Libertadores: 0, CopaBrasil: 40,
+    brasileiro: [
+      { pos: 10, times: 20, ano: '2001' },
+      { pos: 7, times: 20, ano: '2002' },
+    ],
+  },
+  waldo: {
+    Libertadores: 0, CopaBrasil: 0,
+    brasileiro: null,
+  },
 };
 
 const KNOCKOUT_LEGEND = [
@@ -324,7 +362,6 @@ export function CampanhasSection() {
   const playerIds = Object.keys(CAMP_DATA);
   const players = playerIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
   const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
-  const posColor = (pos: number) => pos === 1 ? '#C4944A' : pos <= 4 ? '#006140' : pos <= 10 ? '#64748B' : '#94A3B8';
 
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
@@ -335,7 +372,7 @@ export function CampanhasSection() {
           Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta.
         </p>
         <p style={{ fontSize: 13, color: '#94A3B8', marginBottom: 22, maxWidth: 640, lineHeight: 1.6 }}>
-          Nos mata-matas (Libertadores e Copa do Brasil), medimos a <strong>fase alcançada</strong>. No Brasileirão, que é por pontos corridos, mostramos a <strong>colocação final na tabela</strong>.
+          Nos mata-matas (Libertadores, Copa do Brasil e Mundial), medimos a <strong>fase alcançada</strong>. No Brasileirão, mostramos <strong>todas as temporadas</strong> com a colocação final.
         </p>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const, marginBottom: 28 }}>
           {KNOCKOUT_LEGEND.map(l => (
@@ -377,24 +414,33 @@ export function CampanhasSection() {
                       </div>
                     );
                   })}
-                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px dashed #E2E8F0' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ color: '#64748B', fontWeight: 600, fontSize: 11 }}>Brasileirão</span>
-                      {br ? (
-                        <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 5 }}>
-                          <span style={{ fontFamily: BB, fontSize: 22, color: posColor(br.pos), lineHeight: 1 }}>{br.pos}º</span>
-                          <span style={{ fontSize: 10, color: '#94A3B8' }}>de {br.times}{br.pos === 1 ? ' · Campeão 🥇' : ''}</span>
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic' }}>Era pré-Brasileirão</span>
-                      )}
-                    </div>
-                    {br && (
-                      <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', height: 16 }}>
-                        {Array.from({ length: br.times }).map((_, k) => (
-                          <div key={k} style={{ flex: 1, height: k + 1 === br.pos ? 16 : 7, borderRadius: 2, background: k + 1 === br.pos ? posColor(br.pos) : '#E2DDD5' }} />
-                        ))}
+                  {cd?.Mundial !== undefined && (
+                    <div style={{ marginBottom: 12 }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 11, marginBottom: 4 }}>
+                        <span style={{ color: '#64748B', fontWeight: 600 }}>Mundial de Clubes</span>
+                        <span style={{ color: '#C4944A', fontWeight: 700, fontSize: 11 }}>Campeão 🌍</span>
                       </div>
+                      <div style={{ height: 8, background: '#EFEAE3', borderRadius: 4, overflow: 'hidden' }}>
+                        <div style={{ width: '100%', height: 8, background: 'linear-gradient(90deg,#C4944A,#E8B560)', borderRadius: 4 }} />
+                      </div>
+                    </div>
+                  )}
+                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px dashed #E2E8F0' }}>
+                    <span style={{ color: '#64748B', fontWeight: 600, fontSize: 11, display: 'block', marginBottom: 8 }}>Brasileirão</span>
+                    {br ? (
+                      <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 5 }}>
+                        {br.map(s => {
+                          const c = s.pos === 1 ? '#C4944A' : s.pos === 2 ? '#94A3B8' : s.pos === 3 ? '#A36B00' : s.pos <= 6 ? '#006140' : '#64748B';
+                          const bg = s.pos === 1 ? 'rgba(196,148,74,0.13)' : s.pos <= 3 ? 'rgba(0,97,64,0.08)' : 'rgba(148,163,184,0.08)';
+                          return (
+                            <span key={s.ano} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '3px 8px', borderRadius: 6, border: `1px solid ${c}55`, background: bg, fontSize: 11, fontWeight: 700, color: c }}>
+                              {s.ano} · {s.pos}°{s.pos === 1 ? ' 🥇' : ''}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <span style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic' }}>Era pré-Brasileirão</span>
                     )}
                   </div>
                 </div>

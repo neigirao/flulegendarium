@@ -12,8 +12,7 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 
 /* ── CLÁSSICOS ───────────────────────────────── */
 export function ClassicosSection() {
-  const candidateIds = ['waldo', 'welfare', 'fred', 'orlando'];
-  const candidatos = candidateIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
+  const candidatos = ILF_PLAYERS;
   const [sel, setSel] = useState<ILFPlayer | null>(null);
   const activeSel = sel ?? candidatos[0];
   if (!activeSel) return null;
@@ -43,9 +42,12 @@ export function ClassicosSection() {
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{rei.classicos.Flamengo + rei.classicos.Vasco + rei.classicos.Botafogo} gols em clássicos</div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginBottom: 16 }}>
               {candidatos.map(p => (
-                <button key={p.id} onClick={() => setSel(p)} style={{ padding: '8px 14px', borderRadius: 8, border: activeSel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: activeSel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', color: activeSel.id === p.id ? '#7A0213' : '#64748B', fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>{p.nome}</button>
+                <button key={p.id} onClick={() => setSel(p)} style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 4, padding: '8px 4px', borderRadius: 10, border: activeSel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: activeSel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', cursor: 'pointer' }}>
+                  <Portrait player={p} size={36} ring={activeSel.id === p.id ? '#7A0213' : '#E2DDD5'} />
+                  <span style={{ fontSize: 9, fontWeight: 700, color: activeSel.id === p.id ? '#7A0213' : '#64748B', textAlign: 'center' as const, lineHeight: 1.2, wordBreak: 'break-word' as const }}>{p.nome}</span>
+                </button>
               ))}
             </div>
             <div style={{ marginTop: 18, display: 'flex', gap: 12 }}>
@@ -108,7 +110,7 @@ export function DecisivosSection() {
 
 /* ── PREMIAÇÕES ──────────────────────────────── */
 export function PremiacoesSection() {
-  const players = [...ILF_PLAYERS].sort((a, b) => b.scores.premiacoes - a.scores.premiacoes).slice(0, 6);
+  const players = [...ILF_PLAYERS].sort((a, b) => b.scores.premiacoes - a.scores.premiacoes);
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>

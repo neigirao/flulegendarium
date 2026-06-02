@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import { TopNavigation } from '@/components/navigation/TopNavigation';
-import { FloatRank } from '@/components/specials/maior-atacante/FloatRank';
 import { SEOManager } from '@/components/seo/SEOManager';
 import {
   HeroSection,
@@ -54,7 +53,6 @@ export default function MaiorAtacante() {
       />
       <style>{KEYFRAMES}</style>
       <TopNavigation />
-      <FloatRank />
       <div ref={finalistasRef}>
         <HeroSection onStart={scrollToFinalistas} />
         <FinalistasSection />
