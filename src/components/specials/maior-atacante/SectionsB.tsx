@@ -31,7 +31,7 @@ export function ClassicosSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="06">Categoria · Peso 10%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>OS CLÁSSICOS</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 36, alignItems: 'center' }}>
+        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 36, alignItems: 'center' }}>
           <div>
             <div style={{ background: 'linear-gradient(135deg,#7A0213,#4D000D)', borderRadius: 16, padding: 24, color: 'white', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 18 }}>
               <Portrait player={rei} size={72} ring="#E8B560" big />
@@ -340,7 +340,7 @@ export function VotacaoSection() {
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,50px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>E PRA VOCÊ, QUEM É O MAIOR?</h2>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A régua do ILF deu o veredito — mas a palavra final é da arquibancada.</p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
+        <div data-mc="vote" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
           {top3.map(p => {
             const pct = Math.round(((results[p.id] || 0) / total) * 100);
             const isVote = voted === p.id;

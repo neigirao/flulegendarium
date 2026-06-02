@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { TopNavigation } from '@/components/navigation/TopNavigation';
 import { Sparkles, ArrowRight, Trophy } from 'lucide-react';
+import { SEOManager } from '@/components/seo/SEOManager';
 
 interface SpecialCard {
   slug: string;
@@ -28,6 +29,12 @@ export default function Especiais() {
   const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-[#F7F5F2]">
+      <SEOManager
+        title="Especiais | Estudos sobre a História do Fluminense FC"
+        description="Estudos editoriais em profundidade sobre a história e os ídolos do Fluminense FC. Análises exclusivas com metodologia própria — quem foi o maior atacante, goleiro e muito mais."
+        keywords="especiais fluminense, história fluminense, ídolos fluminense, estudo fluminense, editorial fluminense"
+        schema="WebPage"
+      />
       <TopNavigation />
       <main className="pt-20 pb-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6">

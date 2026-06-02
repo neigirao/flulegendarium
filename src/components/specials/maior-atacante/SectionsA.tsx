@@ -172,7 +172,7 @@ export function MetodologiaSection() {
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>O ÍNDICE LENDAS DO FLU</h2>
         <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>Uma nota final de 0 a 100 que pondera 8 dimensões da grandeza de um atacante. Quanto maior, mais completo o ídolo.</p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: 44, alignItems: 'center' }}>
+        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: 44, alignItems: 'center' }}>
           <div style={{ position: 'relative', justifySelf: 'center' as const }}>
             <Donut segments={segs} size={280} thickness={46} />
             <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
@@ -212,7 +212,7 @@ export function ProducaoSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="03">Categoria · Peso 25%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PRODUÇÃO OFENSIVA</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'center' }}>
+        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'center' }}>
           <Reveal>
             <div style={{ background: 'linear-gradient(160deg,#0D2018,#0A1810)', borderRadius: 18, padding: 28, color: 'white', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 14, left: 0, right: 0, fontSize: 10, fontWeight: 800, letterSpacing: '0.16em', color: '#E8B560', textTransform: 'uppercase' as const }}>★ Líder da categoria</div>
