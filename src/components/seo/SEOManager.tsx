@@ -186,6 +186,14 @@ export const SEOManager = ({
     updateMeta('property', 'og:site_name', 'Lendas do Flu');
     updateMeta('property', 'og:locale', 'pt_BR');
 
+    // Article-specific Open Graph (only when type is article)
+    if (type === 'article') {
+      updateMeta('property', 'article:published_time', '2026-06-02T00:00:00-03:00');
+      updateMeta('property', 'article:modified_time', new Date().toISOString());
+      updateMeta('property', 'article:author', 'Lendas do Flu');
+      updateMeta('property', 'article:section', 'Esportes');
+    }
+
     // Twitter Card
     updateMeta('name', 'twitter:card', 'summary_large_image');
     updateMeta('name', 'twitter:title', title);

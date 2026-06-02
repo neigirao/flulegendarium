@@ -51,7 +51,7 @@ export default function MaiorAtacante() {
       <SEOManager
         title="Maior Atacante da História do Fluminense | Índice Lendas do Flu"
         description="Quem é o maior atacante da história do Fluminense? Analisamos 15 lendas tricolores — Waldo, Fred, Cano e mais — com 8 critérios em um estudo exclusivo. Descubra o vencedor."
-        keywords="maior atacante fluminense, waldo fluminense, fred fluminense, germán cano, história fluminense, lendas fluminense, índice lendas do flu"
+        keywords="maior atacante fluminense, maior artilheiro fluminense, waldo fluminense, fred fluminense, germán cano fluminense, história do fluminense, lendas fluminense, índice lendas do flu, fred vs waldo, análise atacantes flu, artilheiro histórico fluminense"
         type="article"
         schema="Article"
       />

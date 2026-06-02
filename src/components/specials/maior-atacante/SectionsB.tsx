@@ -47,7 +47,7 @@ export function ClassicosSection() {
               {candidatos.map(p => (
                 <button key={p.id} onClick={() => setSel(p)} style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 4, padding: '8px 4px', borderRadius: 10, border: activeSel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: activeSel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', cursor: 'pointer' }}>
                   <Portrait player={p} size={36} ring={activeSel.id === p.id ? '#7A0213' : '#E2DDD5'} />
-                  <span style={{ fontSize: 9, fontWeight: 700, color: activeSel.id === p.id ? '#7A0213' : '#64748B', textAlign: 'center' as const, lineHeight: 1.2, wordBreak: 'break-word' as const }}>{p.nome}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: activeSel.id === p.id ? '#7A0213' : '#64748B', textAlign: 'center' as const, lineHeight: 1.2, wordBreak: 'break-word' as const }}>{p.nome}</span>
                 </button>
               ))}
             </div>
@@ -279,14 +279,16 @@ export function VotacaoSection() {
   const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
+    let cancelled = false;
     supabase.from('ilf_votes').select('player_id').then(({ data }) => {
-      if (!data) return;
+      if (cancelled || !data) return;
       const counts: Record<string, number> = {};
       data.forEach((row: { player_id: string }) => {
         counts[row.player_id] = (counts[row.player_id] || 0) + 1;
       });
       setVoteCounts(counts);
     });
+    return () => { cancelled = true; };
   }, []);
 
   const vote = async (id: string) => {
@@ -326,8 +328,8 @@ export function VotacaoSection() {
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}><Portrait player={p} size={52} ring="rgba(255,255,255,0.25)" /></div>
                 <div style={{ fontFamily: BB, fontSize: 15, letterSpacing: '0.02em', lineHeight: 1.1 }}>{p.nome}</div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', marginTop: 3 }}>{p.apelido}</div>
-                <div style={{ marginTop: 8, fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560' }}>Votar →</div>
+                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 3 }}>{p.apelido}</div>
+                <div style={{ marginTop: 8, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560' }}>Votar →</div>
               </button>
             ))}
           </div>
