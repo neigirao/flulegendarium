@@ -72,7 +72,7 @@ export function HeroSection({ onStart }: HeroProps) {
 export function FinalistasSection() {
   const [sel, setSel] = useState<ILFPlayer | null>(null);
   return (
-    <section id="finalistas" style={{ background: '#F7F5F2', padding: '72px 32px' }}>
+    <section id="finalistas" style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 1180, margin: '0 auto' }}>
         <Kicker n="01">Os Candidatos</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>OS 15 FINALISTAS</h2>
@@ -165,7 +165,7 @@ export function FinalistasSection() {
 export function MetodologiaSection() {
   const segs = ILF_WEIGHTS.map(w => ({ value: w.weight * 100, color: w.color, label: w.label }));
   return (
-    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
+    <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="02">A Régua</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>O ÍNDICE LENDAS DO FLU</h2>
@@ -207,7 +207,7 @@ export function ProducaoSection() {
   const lider = ranked[0];
   const max = Math.max(...ranked.map(x => x.scores.producao));
   return (
-    <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
+    <section style={{ background: '#fff', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="03">Produção Ofensiva · Peso 25%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PRODUÇÃO OFENSIVA</h2>
@@ -271,7 +271,7 @@ export function TitulosSection() {
   const maxPts = Math.max(...rows.map(r => r.pts));
 
   return (
-    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
+    <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="04">Títulos Conquistados · Peso 15%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>PONTOS POR TÍTULOS CONQUISTADOS</h2>
@@ -378,7 +378,7 @@ export function CampanhasSection() {
   const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
 
   return (
-    <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
+    <section style={{ background: '#fff', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="05">Campanhas Históricas · Peso 15%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CAMPANHAS HISTÓRICAS</h2>
@@ -401,7 +401,7 @@ export function CampanhasSection() {
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 18 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(min(300px,100%),1fr))', gap: 18 }}>
           {players.map((p, idx) => {
             const cd = CAMP_DATA[p.id];
             const br = cd?.brasileiro;

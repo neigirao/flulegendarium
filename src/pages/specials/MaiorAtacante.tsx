@@ -27,9 +27,14 @@ const KEYFRAMES = `
   @keyframes revealUp { from { transform: translateY(40px) scale(0.96); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
   @keyframes bounceArrow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
   @media (max-width: 640px) {
-    [data-mc="stack"] { grid-template-columns: 1fr !important; }
-    [data-mc="vote"]  { grid-template-columns: 1fr !important; }
-    [data-mc="minfix"] { grid-template-columns: 1fr !important; }
+    [data-mc="stack"]    { grid-template-columns: 1fr !important; }
+    [data-mc="vote"]     { grid-template-columns: 1fr !important; }
+    [data-mc="minfix"]   { grid-template-columns: 1fr !important; }
+    [data-mc="cols5"]    { grid-template-columns: repeat(3, 1fr) !important; }
+    [data-mc="cols5"] span { font-size: 8px !important; }
+  }
+  @media (max-width: 400px) {
+    [data-mc="cols5"] { grid-template-columns: repeat(3, 1fr) !important; }
   }
 `;
 

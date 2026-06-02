@@ -103,4 +103,25 @@
     <priority>0.5</priority>
   </url>
 
+  <!-- Especiais (hub) -->
+  <url>
+    <loc>https://lendasdoflu.com/especiais</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Especial: Maior Atacante da História -->
+  <url>
+    <loc>https://lendasdoflu.com/especiais/maior-atacante</loc>
+    <lastmod>2026-06-02</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+    <image:image>
+      <image:loc>https://lendasdoflu.com/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png</image:loc>
+      <image:title>Maior Atacante da História do Fluminense — Índice Lendas do Flu</image:title>
+      <image:caption>Análise dos 15 maiores atacantes da história do Fluminense FC com metodologia exclusiva</image:caption>
+    </image:image>
+  </url>
+
 </urlset>

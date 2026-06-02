@@ -119,6 +119,13 @@ const SCHEMA_GENERATORS: Record<SchemaType, (props: { title: string; description
     "url": url,
     "image": image,
     "inLanguage": "pt-BR",
+    "datePublished": "2026-06-02T00:00:00-03:00",
+    "dateModified": new Date().toISOString(),
+    "author": {
+      "@type": "Organization",
+      "name": "Lendas do Flu",
+      "url": `${CANONICAL_DOMAIN}/`
+    },
     "publisher": {
       "@type": "Organization",
       "name": "Lendas do Flu",

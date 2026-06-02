@@ -29,7 +29,7 @@ export function ClassicosSection() {
   const maxVal = Math.max(...ILF_PLAYERS.map(p => Math.max(p.classicos.Flamengo, p.classicos.Vasco, p.classicos.Botafogo)));
 
   return (
-    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
+    <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="06">Clássicos · Peso 10%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>CLÁSSICOS</h2>
@@ -43,7 +43,7 @@ export function ClassicosSection() {
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{rei.classicos.Flamengo + rei.classicos.Vasco + rei.classicos.Botafogo} gols em clássicos</div>
               </div>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginBottom: 16 }}>
+            <div data-mc="cols5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginBottom: 16 }}>
               {candidatos.map(p => (
                 <button key={p.id} onClick={() => setSel(p)} style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 4, padding: '8px 4px', borderRadius: 10, border: activeSel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: activeSel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', cursor: 'pointer' }}>
                   <Portrait player={p} size={36} ring={activeSel.id === p.id ? '#7A0213' : '#E2DDD5'} />
@@ -76,7 +76,7 @@ export function DecisivosSection() {
     .sort((a, b) => b.totalDec - a.totalDec);
 
   return (
-    <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
+    <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Jogos Decisivos · Peso 10%</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>JOGOS DECISIVOS</h2>
@@ -112,7 +112,7 @@ export function DecisivosSection() {
 export function PremiacoesSection() {
   const players = [...ILF_PLAYERS].sort((a, b) => b.scores.premiacoes - a.scores.premiacoes);
   return (
-    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
+    <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="08">Premiações Individuais · Peso 10%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PREMIAÇÕES INDIVIDUAIS</h2>
@@ -241,7 +241,7 @@ export function RankingOficialSection() {
   const all = ILF_RANKING;
   const max = all[0].ilf;
   return (
-    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
+    <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}><Kicker n="✓">Resultado completo</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 8 }}>O RANKING OFICIAL ILF</h2>
@@ -312,14 +312,14 @@ export function VotacaoSection() {
   };
 
   return (
-    <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: '72px 32px' }}>
+    <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 960, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="★" light>A voz da torcida</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,50px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>E PRA VOCÊ, QUEM É O MAIOR?</h2>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A régua do ILF deu o veredito — mas a palavra final é da arquibancada.</p>
 
         {!voted ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(130px,1fr))', gap: 10, marginBottom: 28 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(130px,calc(33% - 8px)),1fr))', gap: 10, marginBottom: 28 }}>
             {ILF_RANKING.map(p => (
               <button key={p.id} onClick={() => vote(p.id)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '14px 8px', cursor: 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(232,181,96,0.5)'; }}
@@ -396,7 +396,7 @@ export function ComparadorSection() {
   );
 
   return (
-    <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
+    <section style={{ background: '#fff', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}><Kicker n="09">Cara a cara</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 36 }}>O COMPARADOR</h2>
