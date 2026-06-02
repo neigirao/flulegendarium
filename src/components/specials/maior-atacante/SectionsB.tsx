@@ -14,8 +14,9 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 export function ClassicosSection() {
   const candidateIds = ['waldo', 'welfare', 'fred', 'orlando'];
   const candidatos = candidateIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
-  if (!candidatos.length) return null;
-  const [sel, setSel] = useState<ILFPlayer>(candidatos[0]);
+  const [sel, setSel] = useState<ILFPlayer | null>(null);
+  const activeSel = sel ?? candidatos[0];
+  if (!activeSel) return null;
 
   const rei = [...ILF_PLAYERS].sort((a, b) => {
     const sa = a.classicos.Flamengo + a.classicos.Vasco + a.classicos.Botafogo;
@@ -24,7 +25,7 @@ export function ClassicosSection() {
   })[0];
 
   const axes = [{ label: 'Flamengo' }, { label: 'Vasco' }, { label: 'Botafogo' }];
-  const series = [{ color: '#7A0213', fill: 'rgba(122,2,19,0.18)', values: [sel.classicos.Flamengo, sel.classicos.Vasco, sel.classicos.Botafogo] }];
+  const series = [{ color: '#7A0213', fill: 'rgba(122,2,19,0.18)', values: [activeSel.classicos.Flamengo, activeSel.classicos.Vasco, activeSel.classicos.Botafogo] }];
   const maxVal = Math.max(...ILF_PLAYERS.map(p => Math.max(p.classicos.Flamengo, p.classicos.Vasco, p.classicos.Botafogo)));
 
   return (
@@ -44,11 +45,11 @@ export function ClassicosSection() {
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const }}>
               {candidatos.map(p => (
-                <button key={p.id} onClick={() => setSel(p)} style={{ padding: '8px 14px', borderRadius: 8, border: sel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: sel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', color: sel.id === p.id ? '#7A0213' : '#64748B', fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>{p.nome}</button>
+                <button key={p.id} onClick={() => setSel(p)} style={{ padding: '8px 14px', borderRadius: 8, border: activeSel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: activeSel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', color: activeSel.id === p.id ? '#7A0213' : '#64748B', fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>{p.nome}</button>
               ))}
             </div>
             <div style={{ marginTop: 18, display: 'flex', gap: 12 }}>
-              {[['Flamengo', sel.classicos.Flamengo], ['Vasco', sel.classicos.Vasco], ['Botafogo', sel.classicos.Botafogo]].map(([l, v]) => (
+              {[['Flamengo', activeSel.classicos.Flamengo], ['Vasco', activeSel.classicos.Vasco], ['Botafogo', activeSel.classicos.Botafogo]].map(([l, v]) => (
                 <div key={String(l)} style={{ flex: 1, background: 'white', border: '1px solid #E2E8F0', borderRadius: 10, padding: '12px 8px', textAlign: 'center' as const }}>
                   <div style={{ fontFamily: BB, fontSize: 26, color: '#7A0213', lineHeight: 1 }}>{v}</div>
                   <div style={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginTop: 2 }}>vs {l}</div>
