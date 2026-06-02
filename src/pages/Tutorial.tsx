@@ -14,7 +14,7 @@ const adaptiveTutorialSteps = [
   {
     title: "Como o sistema adaptativo funciona",
     icon: TrendingUp,
-    content: "Acertos em sequência aumentam a dificuldade; erros reduzem um pouco para equilibrar a experiência.",
+    content: "A dificuldade progride automaticamente conforme seus acertos totais — começa em Muito Fácil e avança até Muito Difícil. Nunca retrocede.",
   },
   {
     title: "Níveis de dificuldade",
@@ -325,7 +325,7 @@ export default function Tutorial() {
                       {category.category}
                     </CardTitle>
                     <CardDescription className="font-body">
-                      Dúvidas sobre {category.category.toLowerCase()}
+                      {category.category.toLowerCase().startsWith('sobre') ? category.category : `Dúvidas sobre ${category.category.toLowerCase()}`}
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="p-0">

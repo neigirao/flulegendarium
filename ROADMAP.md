@@ -17,17 +17,14 @@
 | Streak diário | `use-play-streak.ts` + display em GameModeSelection |
 | Emoji grid no resultado | 🟢🔴 com maxStreak conectado ao SocialShare |
 | Cores douradas visíveis | `#C4944A` substituindo `text-accent`/`bg-accent` brancos |
+| **Modo Por Década** | Progressão fixa aplicada via `useFixedProgression` em `use-base-game-state.ts` |
+| **og:description** | Encurtado para 157 chars em `index.html` |
 
 ---
 
 ## 🔜 Próximas prioridades
 
-### P1 — Alto impacto, baixo esforço
-
-| Item | Descrição | Arquivo(s) |
-|------|-----------|------------|
-| **Modo Por Década** | Aplicar a mesma progressão fixa de dificuldade do modo adaptativo | `src/hooks/use-decade-guess-game.ts` |
-| **og:description** | Encurtar para ≤160 chars no `index.html` (atualmente ~197 chars) | `index.html` |
+### P1 — ✅ Concluído
 
 ### P2 — Alto impacto, esforço médio
 
@@ -53,7 +50,7 @@
 | Modo | Status | Progressão dificuldade |
 |------|--------|----------------------|
 | Quiz Adaptativo | ✅ Produção | Fixa proporcional ao pool |
-| Quiz Por Década | ⚠️ Funcional, progressão antiga | Adaptativa (sobe/desce) — precisa atualizar |
+| Quiz Por Década | ✅ Produção | Fixa proporcional ao pool |
 | Quiz das Camisas | ✅ Produção | Fixa (múltipla escolha) |
 
 ---
