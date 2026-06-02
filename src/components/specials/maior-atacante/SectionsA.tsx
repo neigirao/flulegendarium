@@ -321,7 +321,7 @@ const KNOCKOUT_LEGEND = [
 ];
 
 export function CampanhasSection() {
-  const playerIds = ['cano', 'fred', 'washington', 'magno', 'waldo'];
+  const playerIds = Object.keys(CAMP_DATA);
   const players = playerIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
   const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
   const posColor = (pos: number) => pos === 1 ? '#C4944A' : pos <= 4 ? '#006140' : pos <= 10 ? '#64748B' : '#94A3B8';

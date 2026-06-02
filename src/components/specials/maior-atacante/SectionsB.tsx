@@ -14,6 +14,7 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 export function ClassicosSection() {
   const candidateIds = ['waldo', 'welfare', 'fred', 'orlando'];
   const candidatos = candidateIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
+  if (!candidatos.length) return null;
   const [sel, setSel] = useState<ILFPlayer>(candidatos[0]);
 
   const rei = [...ILF_PLAYERS].sort((a, b) => {
