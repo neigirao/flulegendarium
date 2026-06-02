@@ -245,11 +245,11 @@ const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileir
 const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Rio-SP': '🎖️', Carioca: '🏅', Recopa: '🏆' };
 
 const TITULOS_DATA = [
-  { id: 'fred',      items: [['Brasileiro', 2], ['Carioca', 3]] as [string, number][] },
-  { id: 'cano',      items: [['Libertadores', 1], ['Carioca', 2], ['Recopa', 1]] as [string, number][] },
-  { id: 'ezio',      items: [['Brasileiro', 1], ['Carioca', 2]] as [string, number][] },
-  { id: 'waldo',     items: [['Carioca', 3], ['Rio-SP', 2]] as [string, number][] },
-  { id: 'orlando',   items: [['Carioca', 2]] as [string, number][] },
+  { id: 'fred',       items: [['Brasileiro', 2], ['Carioca', 2]] as [string, number][] },
+  { id: 'cano',       items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] as [string, number][] },
+  { id: 'washington', items: [['Brasileiro', 1], ['Carioca', 3]] as [string, number][] },
+  { id: 'tele',       items: [['Carioca', 2], ['Rio-SP', 2]] as [string, number][] },
+  { id: 'hercules',   items: [['Carioca', 5]] as [string, number][] },
 ];
 
 export function TitulosSection() {
@@ -306,10 +306,10 @@ interface CampEntry {
 }
 
 const CAMP_DATA: Record<string, CampEntry> = {
-  cano:       { Libertadores: 100, CopaBrasil: 60,  brasileiro: { pos: 7,  times: 20 } },
-  fred:       { Libertadores: 80,  CopaBrasil: 60,  brasileiro: { pos: 1,  times: 20 } },
-  washington: { Libertadores: 80,  CopaBrasil: 40,  brasileiro: { pos: 14, times: 20 } },
-  ezio:       { Libertadores: 40,  CopaBrasil: 60,  brasileiro: { pos: 1,  times: 24 } },
+  cano:       { Libertadores: 100, CopaBrasil: 60,  brasileiro: { pos: 8,  times: 20 } },
+  fred:       { Libertadores: 60,  CopaBrasil: 60,  brasileiro: { pos: 1,  times: 20 } },
+  washington: { Libertadores: 40,  CopaBrasil: 0,   brasileiro: { pos: 1,  times: 30 } },
+  magno:      { Libertadores: 0,   CopaBrasil: 40,  brasileiro: { pos: 1,  times: 20 } },
   waldo:      { Libertadores: 0,   CopaBrasil: 0,   brasileiro: null },
 };
 
@@ -321,7 +321,7 @@ const KNOCKOUT_LEGEND = [
 ];
 
 export function CampanhasSection() {
-  const playerIds = ['cano', 'fred', 'washington', 'ezio', 'waldo'];
+  const playerIds = ['cano', 'fred', 'washington', 'magno', 'waldo'];
   const players = playerIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
   const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
   const posColor = (pos: number) => pos === 1 ? '#C4944A' : pos <= 4 ? '#006140' : pos <= 10 ? '#64748B' : '#94A3B8';
