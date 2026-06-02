@@ -17,6 +17,9 @@ interface SEOManagerProps {
   schema?: SchemaType;
   gameMode?: string;
   difficulty?: string;
+  articleBody?: string;
+  mentions?: Array<{ name: string; url?: string }>;
+  breadcrumbs?: Array<{ name: string; url: string }>;
 }
 
 const SCHEMA_GENERATORS: Record<SchemaType, (props: { title: string; description: string; url: string; image: string }) => Record<string, unknown>> = {
@@ -138,6 +141,10 @@ const SCHEMA_GENERATORS: Record<SchemaType, (props: { title: string; description
       "@type": "WebSite",
       "name": "Lendas do Flu",
       "url": `${CANONICAL_DOMAIN}/`
+    },
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": ["h1", "h2", "[data-speakable]"]
     }
   })
 };
@@ -152,6 +159,9 @@ export const SEOManager = ({
   type = "website",
   noindex = false,
   schema,
+  articleBody,
+  mentions,
+  breadcrumbs,
 }: SEOManagerProps) => {
   const location = useLocation();
   const resolvedUrl = url || `${CANONICAL_DOMAIN}${location.pathname}`;
@@ -211,10 +221,26 @@ export const SEOManager = ({
     }
     linkEl.setAttribute('href', resolvedCanonical);
 
-    // JSON-LD structured data (single script, replaces all previous approaches)
+    // AI indexing meta tags
+    updateMeta('name', 'ai-content-type', schema === 'Article' ? 'article' : 'webpage');
+    updateMeta('name', 'ai-index-allowed', noindex ? 'false' : 'true');
+
+    // JSON-LD: primary schema
     const schemaType = schema || 'WebPage';
     const generator = SCHEMA_GENERATORS[schemaType];
-    const structuredData = generator({ title, description, url: resolvedUrl, image });
+    const structuredData: Record<string, unknown> = generator({ title, description, url: resolvedUrl, image });
+
+    // Enrich Article schema with optional body and mentions
+    if (schemaType === 'Article') {
+      if (articleBody) structuredData['articleBody'] = articleBody;
+      if (mentions?.length) {
+        structuredData['mentions'] = mentions.map(m => ({
+          "@type": "Person",
+          "name": m.name,
+          ...(m.url ? { "url": m.url } : {}),
+        }));
+      }
+    }
 
     let jsonLdScript = document.querySelector('script[data-seo-manager]');
     if (!jsonLdScript) {
@@ -225,12 +251,34 @@ export const SEOManager = ({
     }
     jsonLdScript.textContent = JSON.stringify(structuredData);
 
+    // JSON-LD: BreadcrumbList (separate script tag)
+    let breadcrumbScript = document.querySelector('script[data-seo-breadcrumb]');
+    if (breadcrumbs?.length) {
+      if (!breadcrumbScript) {
+        breadcrumbScript = document.createElement('script');
+        breadcrumbScript.setAttribute('type', 'application/ld+json');
+        breadcrumbScript.setAttribute('data-seo-breadcrumb', 'true');
+        document.head.appendChild(breadcrumbScript);
+      }
+      breadcrumbScript.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": breadcrumbs.map((crumb, idx) => ({
+          "@type": "ListItem",
+          "position": idx + 1,
+          "name": crumb.name,
+          "item": crumb.url.startsWith('http') ? crumb.url : `${CANONICAL_DOMAIN}${crumb.url}`,
+        })),
+      });
+    } else if (breadcrumbScript) {
+      breadcrumbScript.remove();
+    }
+
     return () => {
-      // Cleanup JSON-LD on unmount
-      const script = document.querySelector('script[data-seo-manager]');
-      if (script) script.remove();
+      document.querySelector('script[data-seo-manager]')?.remove();
+      document.querySelector('script[data-seo-breadcrumb]')?.remove();
     };
-  }, [title, description, keywords, image, resolvedUrl, resolvedCanonical, type, noindex, schema]);
+  }, [title, description, keywords, image, resolvedUrl, resolvedCanonical, type, noindex, schema, articleBody, mentions, breadcrumbs]);
 
   return null;
 };

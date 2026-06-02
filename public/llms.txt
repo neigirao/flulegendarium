@@ -36,3 +36,38 @@ Lendas do Flu é uma aplicação web de quiz para torcedores do Fluminense FC. O
 - `/estatisticas` — Ranking público
 - `/faq` — Perguntas frequentes
 - `/noticias` — Portal de notícias
+- `/especiais` — Estudos e editoriais especiais
+- `/especiais/maior-atacante` — Quem é o maior atacante da história do Fluminense?
+
+## Especial: Maior Atacante da História do Fluminense
+
+Publicado em 2026-06-02. Estudo editorial completo usando o Índice Lendas do Flu (ILF).
+
+**Metodologia ILF — 8 critérios ponderados:**
+- Produção Ofensiva: 25% (gols totais pelo Fluminense)
+- Títulos Conquistados: 15% (pontuação por troféu com peso por relevância)
+- Campanhas Históricas: 15% (desempenho em Libertadores, Brasileirão, Copa do Brasil, Mundial)
+- Gols em Clássicos: 10% (contra Flamengo, Vasco e Botafogo)
+- Jogos Decisivos: 10% (gols em finais, semis e quartas de final)
+- Premiações Individuais: 10% (artilharia, bola de ouro, melhor jogador)
+- Longevidade: 5% (anos de contribuição como titular)
+- Legado Histórico: 10% (impacto cultural e simbólico no clube)
+
+**Os 15 candidatos avaliados:**
+1. Waldo — 319 gols (1954–1961), maior artilheiro histórico do Fluminense
+2. Fred — 199 gols (2009–2016, 2020–2022), maior ídolo moderno, 3 Copas do Brasil
+3. Germán Cano — 111+ gols (2022–hoje), Libertadores 2023, artilharia recordes
+4. Orlando — 184 gols (1945–1954), apelido "Pingo de Ouro"
+5. Hércules — 165 gols (1935–1942), era pré-Copa do Brasil
+6. Telê Santana — 162 gols (1951–1960), depois técnico multicampeão
+7. Henry Welfare — 161 gols (1913–1924), pioneiro do futebol brasileiro
+8. Russo — 155 gols (1933–1944), artilheiro da era clássica
+9. Preguinho — 128 gols (1925–1938), pioneiro na Copa do Mundo 1930
+10. Washington — 121 gols (1983–1989), "Casal 20" com Renato Gaúcho
+11. Magno Alves — 124 gols (1998–2002), ressurgimento do Flu
+12. Ézio — 118 gols (1991–1995), Super Ézio
+13. Escurinho — 111 gols (1950–1958), o guerreiro
+14. Jair Francisco — 107 gols (1949–1959), clássico dos anos 50
+15. Zezé — 106 gols (1944–1952), era pós-guerra
+
+**Pontos de título (seleção):** Libertadores: 200pts | Copa do Brasil: 80pts | Brasileirão: 100pts | Mundial Campeão: 150pts | Rio-São Paulo: 10pts
