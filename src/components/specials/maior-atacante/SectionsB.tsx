@@ -31,8 +31,8 @@ export function ClassicosSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="06">Categoria · Peso 10%</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>OS CLÁSSICOS</h2>
+        <Kicker n="06">Clássicos · Peso 10%</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>CLÁSSICOS</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 36, alignItems: 'center' }}>
           <div>
             <div style={{ background: 'linear-gradient(135deg,#7A0213,#4D000D)', borderRadius: 16, padding: 24, color: 'white', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 18 }}>
@@ -78,9 +78,9 @@ export function DecisivosSection() {
   return (
     <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Categoria · Peso 10%</Kicker></div>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>QUEM APARECIA QUANDO<br />O FLU MAIS PRECISAVA?</h2>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais, semifinais e quartas de final.</p>
+        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Jogos Decisivos · Peso 10%</Kicker></div>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>JOGOS DECISIVOS</h2>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais, semifinais e quartas de final — quem aparecia quando o Flu mais precisava.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.05}>
@@ -114,7 +114,7 @@ export function PremiacoesSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="08">Categoria · Peso 10%</Kicker>
+        <Kicker n="08">Premiações Individuais · Peso 10%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PREMIAÇÕES INDIVIDUAIS</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 16 }}>
           {players.map((p, i) => (
@@ -130,37 +130,6 @@ export function PremiacoesSection() {
                     ))}
                   </div>
                 </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ── LEGADO ──────────────────────────────────── */
-const LEGADO_ICONS: Record<string, string> = {
-  waldo: '👑', fred: '❤️', cano: '🏆', orlando: '⭐', hercules: '💪',
-  tele: '✨', welfare: '🛡️', russo: '⚽', preguinho: '🌍', washington: '🤝',
-  magno: '🔥', ezio: '⚡', escurinho: '⚔️', jair: '🎯', zeze: '🕊️',
-};
-
-export function LegadoSection() {
-  return (
-    <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: '72px 32px' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="09" light>Categoria · Peso 10%</Kicker></div>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8 }}>LEGADO HISTÓRICO</h2>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 44 }}>A dimensão emocional — o que cada um deixou marcado para sempre.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
-          {ILF_PLAYERS.map((p, i) => (
-            <Reveal key={p.id} delay={Math.min(i * 0.05, 0.4)}>
-              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 18, padding: 20, textAlign: 'center', height: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><Portrait player={p} size={72} ring="#E8B560" big /></div>
-                <div style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.02em', marginBottom: 4, lineHeight: 1.1 }}>{p.nome}</div>
-                <div style={{ fontSize: 12, color: '#E8B560', fontWeight: 700, marginBottom: 8 }}>{LEGADO_ICONS[p.id]} {p.apelido}</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{p.legenda}</div>
               </div>
             </Reveal>
           ))}
@@ -429,7 +398,7 @@ export function ComparadorSection() {
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center' }}><Kicker n="10">Cara a cara</Kicker></div>
+        <div style={{ textAlign: 'center' }}><Kicker n="09">Cara a cara</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 36 }}>O COMPARADOR</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 18, alignItems: 'center', marginBottom: 24 }}>
           <div style={{ textAlign: 'center' }}><Portrait player={pa} size={92} ring="#7A0213" big /><div style={{ marginTop: 10 }}><Sel value={aId} onChange={setAId} /></div></div>

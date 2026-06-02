@@ -87,7 +87,6 @@ export function FinalistasSection() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 14px 32px rgba(0,0,0,0.1)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-                <div style={{ position: 'absolute', top: 12, right: 14, fontFamily: BB, fontSize: 26, color: '#EFEAE3' }}>{String(i + 1).padStart(2, '0')}</div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
                   <Portrait player={p} size={64} ring="#C4944A" />
                   <div>
@@ -204,13 +203,13 @@ export function MetodologiaSection() {
 
 /* ── PRODUÇÃO OFENSIVA ───────────────────────── */
 export function ProducaoSection() {
-  const ranked = [...ILF_PLAYERS].sort((a, b) => b.scores.producao - a.scores.producao).slice(0, 8);
+  const ranked = [...ILF_PLAYERS].sort((a, b) => b.scores.producao - a.scores.producao);
   const lider = ranked[0];
   const max = Math.max(...ranked.map(x => x.scores.producao));
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="03">Categoria · Peso 25%</Kicker>
+        <Kicker n="03">Produção Ofensiva · Peso 25%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PRODUÇÃO OFENSIVA</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'center' }}>
           <Reveal>
@@ -240,16 +239,26 @@ export function ProducaoSection() {
 }
 
 /* ── TÍTULOS ─────────────────────────────────── */
-const TITLE_PTS: Record<string, number> = { Libertadores: 120, Brasileiro: 100, 'Rio-SP': 60, Carioca: 30, Recopa: 40 };
+const TITLE_PTS: Record<string, number> = { Libertadores: 200, Brasileiro: 100, 'Rio-SP': 10, Carioca: 30, Recopa: 40 };
 const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileiro: '#006140', 'Rio-SP': '#7A0213', Carioca: '#AF1E35', Recopa: '#E8B560' };
 const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Rio-SP': '🎖️', Carioca: '🏅', Recopa: '🏆' };
 
-const TITULOS_DATA = [
-  { id: 'fred',       items: [['Brasileiro', 2], ['Carioca', 2]] as [string, number][] },
-  { id: 'cano',       items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] as [string, number][] },
-  { id: 'washington', items: [['Brasileiro', 1], ['Carioca', 3]] as [string, number][] },
-  { id: 'tele',       items: [['Carioca', 2], ['Rio-SP', 2]] as [string, number][] },
-  { id: 'hercules',   items: [['Carioca', 5]] as [string, number][] },
+const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
+  { id: 'waldo',     items: [['Rio-SP', 1], ['Carioca', 1]] },
+  { id: 'fred',      items: [['Brasileiro', 2], ['Carioca', 2]] },
+  { id: 'cano',      items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] },
+  { id: 'orlando',   items: [['Carioca', 2]] },
+  { id: 'hercules',  items: [['Carioca', 5]] },
+  { id: 'tele',      items: [['Carioca', 2], ['Rio-SP', 2]] },
+  { id: 'welfare',   items: [['Carioca', 2]] },
+  { id: 'russo',     items: [['Carioca', 5]] },
+  { id: 'preguinho', items: [['Carioca', 2]] },
+  { id: 'washington',items: [['Brasileiro', 1], ['Carioca', 3]] },
+  { id: 'magno',     items: [['Carioca', 1]] },
+  { id: 'ezio',      items: [['Carioca', 1]] },
+  { id: 'escurinho', items: [['Carioca', 2], ['Rio-SP', 1]] },
+  { id: 'jair',      items: [['Carioca', 2], ['Rio-SP', 1]] },
+  { id: 'zeze',      items: [['Carioca', 2]] },
 ];
 
 export function TitulosSection() {
@@ -264,9 +273,9 @@ export function TitulosSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="04">Categoria · Peso 15%</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÍTULOS CONQUISTADOS</h2>
-        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Libertadores (120) · Brasileiro (100) · Rio-SP (60) · Carioca (30).</p>
+        <Kicker n="04">Títulos Conquistados · Peso 15%</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>PONTOS POR TÍTULOS CONQUISTADOS</h2>
+        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Libertadores (200) · Brasileiro (100) · Recopa (40) · Carioca (30) · Rio-SP (10).</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.05}>
@@ -320,10 +329,7 @@ interface CampEntry {
 const CAMP_DATA: Record<string, CampEntry> = {
   cano: {
     Libertadores: 100, CopaBrasil: 60,
-    mundial: [
-      { ano: '2023', v: 80 },
-      { ano: '2025', v: 65 },
-    ],
+    mundial: [{ ano: '2023', v: 80 }, { ano: '2025', v: 65 }],
     brasileiro: [
       { pos: 3, times: 20, ano: '2022' },
       { pos: 10, times: 20, ano: '2023' },
@@ -332,32 +338,31 @@ const CAMP_DATA: Record<string, CampEntry> = {
   fred: {
     Libertadores: 60, CopaBrasil: 60,
     brasileiro: [
-      { pos: 1, times: 20, ano: '2010' },
-      { pos: 3, times: 20, ano: '2011' },
-      { pos: 1, times: 20, ano: '2012' },
-      { pos: 12, times: 20, ano: '2013' },
-      { pos: 7, times: 20, ano: '2014' },
-      { pos: 8, times: 20, ano: '2015' },
+      { pos: 1, times: 20, ano: '2010' }, { pos: 3, times: 20, ano: '2011' },
+      { pos: 1, times: 20, ano: '2012' }, { pos: 12, times: 20, ano: '2013' },
+      { pos: 7, times: 20, ano: '2014' }, { pos: 8, times: 20, ano: '2015' },
       { pos: 9, times: 20, ano: '2021' },
     ],
   },
   washington: {
     Libertadores: 40, CopaBrasil: 0,
-    brasileiro: [
-      { pos: 1, times: 30, ano: '1984' },
-    ],
+    brasileiro: [{ pos: 1, times: 30, ano: '1984' }],
   },
   magno: {
     Libertadores: 0, CopaBrasil: 40,
-    brasileiro: [
-      { pos: 10, times: 20, ano: '2001' },
-      { pos: 7, times: 20, ano: '2002' },
-    ],
+    brasileiro: [{ pos: 10, times: 20, ano: '2001' }, { pos: 7, times: 20, ano: '2002' }],
   },
-  waldo: {
-    Libertadores: 0, CopaBrasil: 0,
-    brasileiro: null,
-  },
+  tele:      { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  waldo:     { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  hercules:  { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  russo:     { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  preguinho: { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  welfare:   { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  orlando:   { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  jair:      { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  escurinho: { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  zeze:      { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  ezio:      { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
 };
 
 const KNOCKOUT_LEGEND = [
@@ -369,14 +374,13 @@ const KNOCKOUT_LEGEND = [
 ];
 
 export function CampanhasSection() {
-  const playerIds = Object.keys(CAMP_DATA);
-  const players = playerIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
+  const players = [...ILF_PLAYERS].sort((a, b) => b.scores.campanhas - a.scores.campanhas);
   const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
 
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="05">Categoria · Peso 15%</Kicker>
+        <Kicker n="05">Campanhas Históricas · Peso 15%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CAMPANHAS HISTÓRICAS</h2>
         <p style={{ fontSize: 15, color: '#64748B', marginBottom: 8, maxWidth: 640, lineHeight: 1.6 }}>
           Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta.

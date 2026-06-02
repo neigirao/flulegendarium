@@ -13,7 +13,6 @@ import {
   ClassicosSection,
   DecisivosSection,
   PremiacoesSection,
-  LegadoSection,
   TransicaoSection,
   RevelacaoSection,
   RankingOficialSection,
@@ -55,15 +54,14 @@ export default function MaiorAtacante() {
       <TopNavigation />
       <div ref={finalistasRef}>
         <HeroSection onStart={scrollToFinalistas} />
-        <FinalistasSection />
         <MetodologiaSection />
+        <FinalistasSection />
         <ProducaoSection />
         <TitulosSection />
         <CampanhasSection />
         <ClassicosSection />
         <DecisivosSection />
         <PremiacoesSection />
-        <LegadoSection />
         <TransicaoSection />
         <RevelacaoSection />
         <RankingOficialSection />
