@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILFPlayer } from '@/data/maior-atacante';
 import { Portrait } from '../Portrait';
 import { Kicker } from '../Kicker';
@@ -72,8 +73,7 @@ export function ClassicosSection() {
 export function DecisivosSection() {
   const rows = [...ILF_PLAYERS]
     .map(p => ({ ...p, totalDec: p.decisivos.finais + p.decisivos.semis + p.decisivos.quartas }))
-    .sort((a, b) => b.totalDec - a.totalDec)
-    .slice(0, 6);
+    .sort((a, b) => b.totalDec - a.totalDec);
 
   return (
     <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
@@ -140,32 +140,27 @@ export function PremiacoesSection() {
 }
 
 /* ── LEGADO ──────────────────────────────────── */
-const LEGADO_CARDS = [
-  { id: 'waldo',    titulo: 'Maior artilheiro da história', icon: '👑' },
-  { id: 'fred',     titulo: 'Maior ídolo da era moderna',   icon: '❤️' },
-  { id: 'cano',     titulo: 'Herói da primeira Libertadores', icon: '🏆' },
-  { id: 'preguinho', titulo: 'Pioneiro do Brasil em Copas', icon: '⭐' },
-];
+const LEGADO_ICONS: Record<string, string> = {
+  waldo: '👑', fred: '❤️', cano: '🏆', orlando: '⭐', hercules: '💪',
+  tele: '✨', welfare: '🛡️', russo: '⚽', preguinho: '🌍', washington: '🤝',
+  magno: '🔥', ezio: '⚡', escurinho: '⚔️', jair: '🎯', zeze: '🕊️',
+};
 
 export function LegadoSection() {
-  const cards = LEGADO_CARDS.flatMap(c => {
-    const p = ILF_PLAYERS.find(x => x.id === c.id);
-    if (!p) return [];
-    return [{ ...c, p }];
-  });
   return (
     <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="09" light>Categoria · Peso 10%</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8 }}>LEGADO HISTÓRICO</h2>
         <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 44 }}>A dimensão emocional — o que cada um deixou marcado para sempre.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 18 }}>
-          {cards.map((c, i) => (
-            <Reveal key={c.id} delay={i * 0.08}>
-              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 18, padding: 24, textAlign: 'center', height: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}><Portrait player={c.p} size={84} ring="#E8B560" big /></div>
-                <div style={{ fontFamily: BB, fontSize: 24, letterSpacing: '0.02em', marginBottom: 6 }}>{c.p.nome}</div>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4 }}>{c.icon} {c.titulo}</div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
+          {ILF_PLAYERS.map((p, i) => (
+            <Reveal key={p.id} delay={Math.min(i * 0.05, 0.4)}>
+              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 18, padding: 20, textAlign: 'center', height: '100%' }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><Portrait player={p} size={72} ring="#E8B560" big /></div>
+                <div style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.02em', marginBottom: 4, lineHeight: 1.1 }}>{p.nome}</div>
+                <div style={{ fontSize: 12, color: '#E8B560', fontWeight: 700, marginBottom: 8 }}>{LEGADO_ICONS[p.id]} {p.apelido}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{p.legenda}</div>
               </div>
             </Reveal>
           ))}
@@ -309,25 +304,35 @@ export function RankingOficialSection() {
 
 /* ── VOTAÇÃO ─────────────────────────────────── */
 export function VotacaoSection() {
-  const top3 = ILF_RANKING.slice(0, 3);
-  const [voted, setVoted] = useState<string | null>(null);
-  const [results, setResults] = useState<Record<string, number>>(() => {
-    const base: Record<string, number> = { [top3[0].id]: 412, [top3[1].id]: 386, [top3[2].id]: 298 };
-    try { return JSON.parse(localStorage.getItem('ilf_votos') || 'null') || base; } catch { return base; }
+  const [voted, setVoted] = useState<string | null>(() => {
+    try { return localStorage.getItem('ilf_voted_v2'); } catch { return null; }
   });
+  const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
 
-  const vote = (id: string) => {
+  useEffect(() => {
+    supabase.from('ilf_votes').select('player_id').then(({ data }) => {
+      if (!data) return;
+      const counts: Record<string, number> = {};
+      data.forEach((row: { player_id: string }) => {
+        counts[row.player_id] = (counts[row.player_id] || 0) + 1;
+      });
+      setVoteCounts(counts);
+    });
+  }, []);
+
+  const vote = async (id: string) => {
     if (voted) return;
-    const next = { ...results, [id]: (results[id] || 0) + 1 };
-    setResults(next);
+    await supabase.from('ilf_votes').insert({ player_id: id });
+    setVoteCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     setVoted(id);
-    try { localStorage.setItem('ilf_votos', JSON.stringify(next)); } catch { /* ignore */ }
+    try { localStorage.setItem('ilf_voted_v2', id); } catch { /* ignore */ }
   };
 
-  const total = top3.reduce((s, p) => s + (results[p.id] || 0), 0) || 1;
+  const total = Object.values(voteCounts).reduce((s, v) => s + v, 0) || 1;
+  const ranked = [...ILF_RANKING].sort((a, b) => (voteCounts[b.id] || 0) - (voteCounts[a.id] || 0));
 
   const share = async () => {
-    const escolha = voted ? ILF_PLAYERS.find(p => p.id === voted)?.nome : top3[0].nome;
+    const escolha = voted ? ILF_PLAYERS.find(p => p.id === voted)?.nome : ILF_RANKING[0].nome;
     const texto = `Pra mim, o maior atacante da história do Fluminense é ${escolha}! 🏆 Vote no estudo do Lendas do Flu:`;
     const url = 'https://lendasdoflu.com/especiais/maior-atacante';
     if (navigator.share) {
@@ -339,40 +344,56 @@ export function VotacaoSection() {
 
   return (
     <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: '72px 32px' }}>
-      <div style={{ maxWidth: 760, margin: '0 auto' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="★" light>A voz da torcida</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,50px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>E PRA VOCÊ, QUEM É O MAIOR?</h2>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A régua do ILF deu o veredito — mas a palavra final é da arquibancada.</p>
 
-        <div data-mc="vote" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
-          {top3.map(p => {
-            const pct = Math.round(((results[p.id] || 0) / total) * 100);
-            const isVote = voted === p.id;
-            return (
-              <button key={p.id} onClick={() => vote(p.id)} disabled={!!voted} style={{ background: isVote ? 'rgba(232,181,96,0.15)' : 'rgba(255,255,255,0.04)', border: isVote ? '2px solid #E8B560' : '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: '22px 16px', cursor: voted ? 'default' : 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const, position: 'relative' }}
-                onMouseEnter={e => { if (!voted) e.currentTarget.style.transform = 'translateY(-3px)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><Portrait player={p} size={72} ring={isVote ? '#E8B560' : 'rgba(255,255,255,0.25)'} big={isVote} /></div>
-                <div style={{ fontFamily: BB, fontSize: 22, letterSpacing: '0.02em' }}>{p.nome}</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: voted ? 12 : 0 }}>{p.apelido}</div>
-                {voted && (
-                  <div style={{ marginTop: 8 }}>
-                    <div style={{ height: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 4, overflow: 'hidden', marginBottom: 6 }}>
-                      <div style={{ width: `${pct}%`, height: 8, background: isVote ? '#E8B560' : 'rgba(255,255,255,0.4)', borderRadius: 4, transition: 'width 0.6s ease' }} />
-                    </div>
-                    <div style={{ fontFamily: BB, fontSize: 22, color: isVote ? '#E8B560' : 'white' }}>{pct}%</div>
-                  </div>
-                )}
-                {!voted && <div style={{ marginTop: 10, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560' }}>Votar →</div>}
+        {!voted ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(130px,1fr))', gap: 10, marginBottom: 28 }}>
+            {ILF_RANKING.map(p => (
+              <button key={p.id} onClick={() => vote(p.id)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '14px 8px', cursor: 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const }}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(232,181,96,0.5)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}><Portrait player={p} size={52} ring="rgba(255,255,255,0.25)" /></div>
+                <div style={{ fontFamily: BB, fontSize: 15, letterSpacing: '0.02em', lineHeight: 1.1 }}>{p.nome}</div>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', marginTop: 3 }}>{p.apelido}</div>
+                <div style={{ marginTop: 8, fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560' }}>Votar →</div>
               </button>
-            );
-          })}
-        </div>
-        {voted && (
-          <div style={{ textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 24 }}>
-            ✓ Voto registrado em <strong style={{ color: '#E8B560' }}>{ILF_PLAYERS.find(p => p.id === voted)?.nome}</strong> · {total.toLocaleString('pt-BR')} votos
+            ))}
+          </div>
+        ) : (
+          <div style={{ marginBottom: 28 }}>
+            <div style={{ textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 20 }}>
+              ✓ Voto registrado em <strong style={{ color: '#E8B560' }}>{ILF_PLAYERS.find(p => p.id === voted)?.nome}</strong> · {total.toLocaleString('pt-BR')} votos totais
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
+              {ranked.map((p, i) => {
+                const count = voteCounts[p.id] || 0;
+                const pct = Math.round((count / total) * 100);
+                const isVoted = voted === p.id;
+                const isFirst = i === 0;
+                return (
+                  <div key={p.id} style={{ background: isVoted ? 'rgba(232,181,96,0.08)' : 'rgba(255,255,255,0.03)', border: isVoted ? '1px solid rgba(232,181,96,0.35)' : '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <div style={{ fontFamily: BB, fontSize: 20, color: isFirst ? '#E8B560' : 'rgba(255,255,255,0.25)', width: 22, textAlign: 'center' as const, flexShrink: 0 }}>{i + 1}</div>
+                    <Portrait player={p} size={36} ring={isVoted ? '#E8B560' : 'rgba(255,255,255,0.2)'} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontFamily: BB, fontSize: 15, letterSpacing: '0.02em' }}>{p.nome}{isVoted ? ' ✓' : ''}</div>
+                      <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, marginTop: 4, overflow: 'hidden' }}>
+                        <div style={{ width: `${pct}%`, height: 4, background: isVoted ? '#E8B560' : (isFirst ? '#C4944A' : 'rgba(255,255,255,0.35)'), borderRadius: 2, transition: 'width 0.8s ease' }} />
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' as const, minWidth: 52, flexShrink: 0 }}>
+                      <div style={{ fontFamily: BB, fontSize: 20, color: isVoted ? '#E8B560' : 'white', lineHeight: 1 }}>{pct}%</div>
+                      <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em' }}>{count.toLocaleString('pt-BR')} votos</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
+
         <div style={{ textAlign: 'center' }}>
           <button onClick={share} style={{ background: '#fff', color: '#0D2018', border: 'none', borderRadius: 12, padding: '14px 32px', fontFamily: BB, fontSize: 18, letterSpacing: '0.05em', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.25)', display: 'inline-flex', alignItems: 'center', gap: 10, transition: 'transform 0.15s' }}
             onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>

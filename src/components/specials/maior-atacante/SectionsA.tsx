@@ -305,16 +305,25 @@ interface BrasileiraoSeason {
   ano: string;
 }
 
+interface MundialEntry {
+  ano: string;
+  v: number;
+}
+
 interface CampEntry {
   Libertadores: number;
   CopaBrasil: number;
-  Mundial?: number;
+  mundial?: MundialEntry[];
   brasileiro: BrasileiraoSeason[] | null;
 }
 
 const CAMP_DATA: Record<string, CampEntry> = {
   cano: {
-    Libertadores: 100, CopaBrasil: 60, Mundial: 100,
+    Libertadores: 100, CopaBrasil: 60,
+    mundial: [
+      { ano: '2023', v: 80 },
+      { ano: '2025', v: 65 },
+    ],
     brasileiro: [
       { pos: 3, times: 20, ano: '2022' },
       { pos: 10, times: 20, ano: '2023' },
@@ -352,10 +361,11 @@ const CAMP_DATA: Record<string, CampEntry> = {
 };
 
 const KNOCKOUT_LEGEND = [
-  { v: 100, label: 'Campeão', color: '#C4944A' },
-  { v: 80,  label: 'Vice',    color: '#7A0213' },
+  { v: 100, label: 'Campeão',   color: '#C4944A' },
+  { v: 80,  label: 'Vice',      color: '#7A0213' },
+  { v: 65,  label: '3º Lugar',  color: '#A36B00' },
   { v: 60,  label: 'Semifinal', color: '#006140' },
-  { v: 40,  label: 'Quartas', color: '#64748B' },
+  { v: 40,  label: 'Quartas',   color: '#64748B' },
 ];
 
 export function CampanhasSection() {
@@ -414,14 +424,20 @@ export function CampanhasSection() {
                       </div>
                     );
                   })}
-                  {cd?.Mundial !== undefined && (
+                  {cd?.mundial && cd.mundial.length > 0 && (
                     <div style={{ marginBottom: 12 }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 11, marginBottom: 4 }}>
-                        <span style={{ color: '#64748B', fontWeight: 600 }}>Mundial de Clubes</span>
-                        <span style={{ color: '#C4944A', fontWeight: 700, fontSize: 11 }}>Campeão 🌍</span>
-                      </div>
-                      <div style={{ height: 8, background: '#EFEAE3', borderRadius: 4, overflow: 'hidden' }}>
-                        <div style={{ width: '100%', height: 8, background: 'linear-gradient(90deg,#C4944A,#E8B560)', borderRadius: 4 }} />
+                      <span style={{ color: '#64748B', fontWeight: 600, fontSize: 11, display: 'block', marginBottom: 6 }}>Mundial de Clubes 🌍</span>
+                      <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 5 }}>
+                        {cd.mundial.map(m => {
+                          const leg = KNOCKOUT_LEGEND.find(l => l.v === m.v);
+                          const c = leg?.color || '#64748B';
+                          const bg = `${c}18`;
+                          return (
+                            <span key={m.ano} style={{ display: 'inline-flex', alignItems: 'center', gap: 3, padding: '3px 8px', borderRadius: 6, border: `1px solid ${c}55`, background: bg, fontSize: 11, fontWeight: 700, color: c }}>
+                              {m.ano} · {leg?.label || '—'}
+                            </span>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
