@@ -74,7 +74,8 @@ export const TopNavigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-secondary/20 shadow-lg bg-tricolor-vertical-border safe-area-top">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-lg border-b border-secondary/20 shadow-lg safe-area-top">
+      <div className="absolute top-0 left-0 right-0 h-1" style={{ background: 'linear-gradient(to right, var(--stripe-grena) 0%, var(--stripe-grena) 33.33%, var(--stripe-branco) 33.33%, var(--stripe-branco) 66.66%, var(--stripe-verde) 66.66%, var(--stripe-verde) 100%)' }} />
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           {/* Logo/Brand */}
@@ -147,7 +148,8 @@ export const TopNavigation = () => {
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-80 bg-background border-l border-secondary/20 bg-tricolor-left-accent safe-area-right">
+              <SheetContent side="right" className="w-80 bg-background border-l border-secondary/20 safe-area-right">
+                <div className="absolute top-0 left-0 bottom-0 w-1" style={{ background: 'linear-gradient(to bottom, var(--stripe-grena) 0%, var(--stripe-grena) 33.33%, var(--stripe-branco) 33.33%, var(--stripe-branco) 66.66%, var(--stripe-verde) 66.66%, var(--stripe-verde) 100%)' }} />
                 <div className="flex flex-col space-y-4 mt-8">
                   <div className="flex items-center space-x-3 pb-4 border-b border-secondary/20">
                     <div className="w-12 h-12 flex items-center justify-center">
