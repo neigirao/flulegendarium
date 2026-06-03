@@ -34,16 +34,26 @@ export function HeroSection({ onStart }: HeroProps) {
           Analisamos 15 lendas tricolores com uma metodologia exclusiva para descobrir quem foi o atacante mais importante da história do clube.
         </p>
 
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 'clamp(4px,1.5vw,18px)', marginBottom: 40, flexWrap: 'wrap' as const }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: 'clamp(4px,1.5vw,16px)', marginBottom: 16, flexWrap: 'wrap' as const }}>
           {duelo.map((p, i) => {
             const center = i === 2;
             return (
-              <div key={p.id} style={{ textAlign: 'center', transform: center ? 'scale(1.18)' : 'scale(1)', zIndex: center ? 2 : 1, margin: center ? '0 8px' : 0 }}>
-                <Portrait player={p} size={center ? 92 : 72} ring={center ? '#E8B560' : 'rgba(255,255,255,0.25)'} big={center} />
-                <div style={{ fontFamily: BB, fontSize: center ? 16 : 13, marginTop: 8, color: center ? '#E8B560' : 'rgba(255,255,255,0.7)', letterSpacing: '0.03em' }}>{p.nome}</div>
+              <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 'clamp(4px,1.5vw,16px)' }}>
+                <div style={{ textAlign: 'center', transform: center ? 'scale(1.12)' : 'scale(1)', zIndex: center ? 2 : 1 }}>
+                  <Portrait player={p} size={center ? 88 : 70} ring={center ? '#E8B560' : 'rgba(255,255,255,0.3)'} big={center} />
+                  <div style={{ fontFamily: BB, fontSize: center ? 15 : 12, marginTop: 8, color: center ? '#E8B560' : 'rgba(255,255,255,0.75)', letterSpacing: '0.03em' }}>{p.nome}</div>
+                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.38)', letterSpacing: '0.04em', marginTop: 2 }}>{p.apelido}</div>
+                </div>
+                {i < duelo.length - 1 && (
+                  <div style={{ fontFamily: BB, fontSize: 'clamp(11px,1.4vw,16px)', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.06em', alignSelf: 'center', paddingBottom: 32 }}>VS</div>
+                )}
               </div>
             );
           })}
+        </div>
+
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 36, letterSpacing: '0.04em' }}>
+          ...e mais 10 lendas tricolores na disputa
         </div>
 
         <button
