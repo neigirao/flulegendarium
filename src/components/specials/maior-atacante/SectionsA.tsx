@@ -98,7 +98,7 @@ export function HeroSection({ onStart }: HeroProps) {
           </svg>
 
           <img
-            src="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png"
+            src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp"
             alt="Fluminense"
             style={{ position: 'absolute', top: '52%', left: '50%', transform: 'translate(-50%,-50%)', height: 108, filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.5))' }}
           />
