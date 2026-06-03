@@ -385,47 +385,27 @@ interface MundialEntry {
 interface CampEntry {
   Libertadores: number;
   CopaBrasil: number;
+  carioca: number;
   mundial?: MundialEntry[];
   brasileiro: BrasileiraoSeason[] | null;
 }
 
 const CAMP_DATA: Record<string, CampEntry> = {
-  cano: {
-    Libertadores: 100, CopaBrasil: 60,
-    mundial: [{ ano: '2023', v: 80 }, { ano: '2025', v: 65 }],
-    brasileiro: [
-      { pos: 3, times: 20, ano: '2022' },
-      { pos: 10, times: 20, ano: '2023' },
-    ],
-  },
-  fred: {
-    Libertadores: 60, CopaBrasil: 60,
-    brasileiro: [
-      { pos: 1, times: 20, ano: '2010' }, { pos: 3, times: 20, ano: '2011' },
-      { pos: 1, times: 20, ano: '2012' }, { pos: 12, times: 20, ano: '2013' },
-      { pos: 7, times: 20, ano: '2014' }, { pos: 8, times: 20, ano: '2015' },
-      { pos: 9, times: 20, ano: '2021' },
-    ],
-  },
-  washington: {
-    Libertadores: 40, CopaBrasil: 0,
-    brasileiro: [{ pos: 1, times: 30, ano: '1984' }],
-  },
-  magno: {
-    Libertadores: 0, CopaBrasil: 40,
-    brasileiro: [{ pos: 10, times: 20, ano: '2001' }, { pos: 7, times: 20, ano: '2002' }],
-  },
-  tele:      { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  waldo:     { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  hercules:  { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  russo:     { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  preguinho: { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  welfare:   { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  orlando:   { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  jair:      { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  escurinho: { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  zeze:      { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
-  ezio:      { Libertadores: 0, CopaBrasil: 0, brasileiro: null },
+  cano:      { Libertadores: 100, CopaBrasil: 60,  carioca: 2, mundial: [{ ano: '2023', v: 80 }, { ano: '2025', v: 65 }], brasileiro: [{ pos: 3, times: 20, ano: '2022' }, { pos: 10, times: 20, ano: '2023' }] },
+  fred:      { Libertadores: 60,  CopaBrasil: 60,  carioca: 2, brasileiro: [{ pos: 1, times: 20, ano: '2010' }, { pos: 3, times: 20, ano: '2011' }, { pos: 1, times: 20, ano: '2012' }, { pos: 12, times: 20, ano: '2013' }, { pos: 7, times: 20, ano: '2014' }, { pos: 8, times: 20, ano: '2015' }, { pos: 9, times: 20, ano: '2021' }] },
+  washington:{ Libertadores: 40,  CopaBrasil: 0,   carioca: 3, brasileiro: [{ pos: 1, times: 30, ano: '1984' }] },
+  magno:     { Libertadores: 0,   CopaBrasil: 40,  carioca: 1, brasileiro: [{ pos: 10, times: 20, ano: '2001' }, { pos: 7, times: 20, ano: '2002' }] },
+  hercules:  { Libertadores: 0,   CopaBrasil: 0,   carioca: 5, brasileiro: null },
+  russo:     { Libertadores: 0,   CopaBrasil: 0,   carioca: 5, brasileiro: null },
+  tele:      { Libertadores: 0,   CopaBrasil: 0,   carioca: 2, brasileiro: null },
+  waldo:     { Libertadores: 0,   CopaBrasil: 0,   carioca: 1, brasileiro: null },
+  orlando:   { Libertadores: 0,   CopaBrasil: 0,   carioca: 2, brasileiro: null },
+  welfare:   { Libertadores: 0,   CopaBrasil: 0,   carioca: 2, brasileiro: null },
+  preguinho: { Libertadores: 0,   CopaBrasil: 0,   carioca: 2, brasileiro: null },
+  escurinho: { Libertadores: 0,   CopaBrasil: 0,   carioca: 2, brasileiro: null },
+  jair:      { Libertadores: 0,   CopaBrasil: 0,   carioca: 2, brasileiro: null },
+  zeze:      { Libertadores: 0,   CopaBrasil: 0,   carioca: 2, brasileiro: null },
+  ezio:      { Libertadores: 0,   CopaBrasil: 0,   carioca: 1, brasileiro: null },
 };
 
 const KNOCKOUT_LEGEND = [
@@ -449,7 +429,7 @@ export function CampanhasSection() {
           Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta.
         </p>
         <p style={{ fontSize: 13, color: '#94A3B8', marginBottom: 22, maxWidth: 640, lineHeight: 1.6 }}>
-          Nos mata-matas (Libertadores, Copa do Brasil e Mundial), medimos a <strong>fase alcançada</strong>. No Brasileirão, mostramos <strong>todas as temporadas</strong> com a colocação final.
+          Nos mata-matas (Libertadores, Copa do Brasil e Mundial), medimos a <strong>fase alcançada</strong>. No Carioca, contamos os títulos conquistados. No Brasileirão, mostramos <strong>todas as temporadas</strong> com a colocação final.
         </p>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const, marginBottom: 28 }}>
           {KNOCKOUT_LEGEND.map(l => (
@@ -505,6 +485,18 @@ export function CampanhasSection() {
                             </span>
                           );
                         })}
+                      </div>
+                    </div>
+                  )}
+                  {cd && cd.carioca > 0 && (
+                    <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px dashed #E2E8F0' }}>
+                      <span style={{ color: '#64748B', fontWeight: 600, fontSize: 11, display: 'block', marginBottom: 6 }}>Carioca 🏅</span>
+                      <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 5 }}>
+                        {Array.from({ length: cd.carioca }).map((_, k) => (
+                          <span key={k} style={{ padding: '3px 8px', borderRadius: 6, border: '1px solid #AF1E3555', background: 'rgba(175,30,53,0.08)', fontSize: 11, fontWeight: 700, color: '#AF1E35' }}>
+                            🏅 Campeão
+                          </span>
+                        ))}
                       </div>
                     </div>
                   )}
