@@ -231,7 +231,7 @@ export function MetodologiaSection() {
     <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="02">A Régua</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>O ÍNDICE LENDAS DO FLU</h2>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,48px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>COMO DESCOBRIR O MAIOR ATACANTE DO FLUMINENSE?</h2>
         <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>Uma nota final de 0 a 100 que pondera 8 dimensões da grandeza de um atacante. Quanto maior, mais completo o ídolo.</p>
 
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: 44, alignItems: 'center' }}>
