@@ -14,15 +14,16 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 /* ── CLÁSSICOS ───────────────────────────────── */
 export function ClassicosSection() {
   const candidatos = ILF_PLAYERS;
-  const [sel, setSel] = useState<ILFPlayer | null>(null);
-  const activeSel = sel ?? candidatos[0];
-  if (!activeSel) return null;
 
   const rei = [...ILF_PLAYERS].sort((a, b) => {
     const sa = a.classicos.Flamengo + a.classicos.Vasco + a.classicos.Botafogo;
     const sb = b.classicos.Flamengo + b.classicos.Vasco + b.classicos.Botafogo;
     return sb - sa;
   })[0];
+
+  const [sel, setSel] = useState<ILFPlayer | null>(null);
+  const activeSel = sel ?? rei;
+  if (!activeSel) return null;
 
   const axes = [{ label: 'Flamengo' }, { label: 'Vasco' }, { label: 'Botafogo' }];
   const series = [{ color: '#7A0213', fill: 'rgba(122,2,19,0.18)', values: [activeSel.classicos.Flamengo, activeSel.classicos.Vasco, activeSel.classicos.Botafogo] }];
@@ -52,12 +53,17 @@ export function ClassicosSection() {
               ))}
             </div>
             <div style={{ marginTop: 18, display: 'flex', gap: 12 }}>
-              {[['Flamengo', activeSel.classicos.Flamengo], ['Vasco', activeSel.classicos.Vasco], ['Botafogo', activeSel.classicos.Botafogo]].map(([l, v]) => (
-                <div key={String(l)} style={{ flex: 1, background: 'white', border: '1px solid #E2E8F0', borderRadius: 10, padding: '12px 8px', textAlign: 'center' as const }}>
-                  <div style={{ fontFamily: BB, fontSize: 26, color: '#7A0213', lineHeight: 1 }}>{v}</div>
-                  <div style={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginTop: 2 }}>vs {l}</div>
-                </div>
-              ))}
+              {([['Flamengo', activeSel.classicos.Flamengo], ['Vasco', activeSel.classicos.Vasco], ['Botafogo', activeSel.classicos.Botafogo]] as [string, number][]).map(([l, v]) => {
+                const maxRival = Math.max(activeSel.classicos.Flamengo, activeSel.classicos.Vasco, activeSel.classicos.Botafogo);
+                const isTop = v === maxRival;
+                return (
+                  <div key={l} style={{ flex: 1, background: isTop ? 'rgba(122,2,19,0.06)' : 'white', border: isTop ? '1.5px solid #7A0213' : '1px solid #E2E8F0', borderRadius: 10, padding: '12px 8px', textAlign: 'center' as const, position: 'relative' as const }}>
+                    {isTop && <div style={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', background: '#7A0213', color: 'white', fontSize: 9, fontWeight: 800, padding: '2px 8px', borderRadius: 999, letterSpacing: '0.08em', whiteSpace: 'nowrap' as const }}>MAIS GOLS</div>}
+                    <div style={{ fontFamily: BB, fontSize: 26, color: isTop ? '#7A0213' : '#94A3B8', lineHeight: 1 }}>{v}</div>
+                    <div style={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginTop: 2 }}>vs {l}</div>
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -152,10 +158,12 @@ export function TransicaoSection() {
       <div style={{ maxWidth: 640, margin: '0 auto', opacity: inView ? 1 : 0, transform: inView ? 'translateY(0)' : 'translateY(24px)', transition: 'all 0.7s ease 0.15s' }}>
         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 20 }}>Fim da análise</div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,52px)', lineHeight: 1.0, letterSpacing: '0.02em', marginBottom: 18 }}>
-          OITO CATEGORIAS. <span style={{ color: '#E8B560' }}>UMA RÉGUA.</span><br />UM SÓ NOME NO TOPO.
+          {ILF_WEIGHTS.length} CATEGORIAS. <span style={{ color: '#E8B560' }}>UMA RÉGUA.</span><br />UM SÓ NOME NO TOPO.
         </h2>
         <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: 36 }}>
-          Produção, títulos, campanhas, clássicos, decisões, prêmios, longevidade e legado já foram pesados. O Índice Lendas do Flu chegou ao seu veredito.
+          {ILF_WEIGHTS.map((w, i) => (
+            <span key={w.key}>{i > 0 ? (i === ILF_WEIGHTS.length - 1 ? ' e ' : ', ') : ''}<span style={{ color: 'rgba(255,255,255,0.85)' }}>{w.label.toLowerCase()}</span></span>
+          ))} — tudo foi pesado. O Índice Lendas do Flu chegou ao seu veredito.
         </p>
         <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, fontWeight: 700 }}>
           A revelação começa abaixo
