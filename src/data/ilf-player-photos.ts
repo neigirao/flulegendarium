@@ -7,7 +7,7 @@ const BASE = 'https://hafxruwnggitvtyngedy.supabase.co/storage/v1/object/public/
  */
 export const ILF_PHOTOS: Record<string, string> = {
   fred:       `${BASE}/fred.png`,
-  cano:       '/lovable-uploads/9ebcfdf2-e75b-4bf5-bee4-6f5a1998ce33.png',
+  cano:       `${BASE}/player-1780448795427.jpg`,
   tele:       `${BASE}/tele-santana.png`,
   washington: `${BASE}/washington.png`,
   hercules:   `${BASE}/player-1780449042793.jpg`,
