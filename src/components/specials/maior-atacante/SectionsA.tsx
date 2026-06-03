@@ -18,9 +18,7 @@ export function HeroSection({ onStart }: HeroProps) {
       background: 'radial-gradient(ellipse at 50% 0%, #0F2A1E 0%, #081510 60%, #050D0A 100%)',
       color: 'white', padding: '0 0 60px', position: 'relative', overflow: 'hidden',
     }}>
-      <div style={{ height: 5, background: 'linear-gradient(90deg,#7A0213 33%,#FAFAFA 33% 66%,#006140 66%)' }} />
-
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '40px 32px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: 'clamp(80px,10vw,96px) clamp(16px,4vw,32px) 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 20 }}>
           <span style={{ width: 28, height: 2, background: '#E8B560' }} />
           Índice Lendas do Flu

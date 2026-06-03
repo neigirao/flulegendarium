@@ -26,6 +26,12 @@ const KEYFRAMES = `
   @keyframes popCount { 0% { transform: scale(0.3); opacity: 0; } 50% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
   @keyframes revealUp { from { transform: translateY(40px) scale(0.96); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
   @keyframes bounceArrow { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+
+  /* nav dark mode: blends into the hero while on this page */
+  nav { background: rgba(8,21,16,0.96) !important; border-bottom-color: rgba(255,255,255,0.08) !important; box-shadow: none !important; }
+  nav h1, nav span, nav a, nav button { color: rgba(255,255,255,0.9) !important; }
+  nav svg { color: rgba(255,255,255,0.7) !important; }
+
   @media (max-width: 640px) {
     [data-mc="stack"]    { grid-template-columns: 1fr !important; }
     [data-mc="vote"]     { grid-template-columns: 1fr !important; }
