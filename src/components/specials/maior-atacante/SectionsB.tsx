@@ -12,16 +12,13 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 
 /* ── CLÁSSICOS ───────────────────────────────── */
 export function ClassicosSection() {
-  const candidateIds = ['waldo', 'welfare', 'fred', 'orlando'];
-  const candidatos = candidateIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
-  if (!candidatos.length) return null;
-  const [sel, setSel] = useState<ILFPlayer>(candidatos[0]);
-
-  const rei = [...ILF_PLAYERS].sort((a, b) => {
+  const allByClassicos = [...ILF_PLAYERS].sort((a, b) => {
     const sa = a.classicos.Flamengo + a.classicos.Vasco + a.classicos.Botafogo;
     const sb = b.classicos.Flamengo + b.classicos.Vasco + b.classicos.Botafogo;
     return sb - sa;
-  })[0];
+  });
+  const rei = allByClassicos[0];
+  const [sel, setSel] = useState<ILFPlayer>(allByClassicos[0]);
 
   const axes = [{ label: 'Flamengo' }, { label: 'Vasco' }, { label: 'Botafogo' }];
   const series = [{ color: '#7A0213', fill: 'rgba(122,2,19,0.18)', values: [sel.classicos.Flamengo, sel.classicos.Vasco, sel.classicos.Botafogo] }];
@@ -42,9 +39,9 @@ export function ClassicosSection() {
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{rei.classicos.Flamengo + rei.classicos.Vasco + rei.classicos.Botafogo} gols em clássicos</div>
               </div>
             </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const }}>
-              {candidatos.map(p => (
-                <button key={p.id} onClick={() => setSel(p)} style={{ padding: '8px 14px', borderRadius: 8, border: sel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: sel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', color: sel.id === p.id ? '#7A0213' : '#64748B', fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>{p.nome}</button>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const }}>
+              {allByClassicos.map(p => (
+                <button key={p.id} onClick={() => setSel(p)} style={{ padding: '6px 12px', borderRadius: 8, border: sel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: sel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', color: sel.id === p.id ? '#7A0213' : '#64748B', fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>{p.nome}</button>
               ))}
             </div>
             <div style={{ marginTop: 18, display: 'flex', gap: 12 }}>
@@ -274,10 +271,11 @@ export function RankingOficialSection() {
 
 /* ── VOTAÇÃO ─────────────────────────────────── */
 export function VotacaoSection() {
-  const top3 = ILF_RANKING.slice(0, 3);
+  const allVote = ILF_RANKING;
   const [voted, setVoted] = useState<string | null>(null);
   const [results, setResults] = useState<Record<string, number>>(() => {
-    const base: Record<string, number> = { [top3[0].id]: 412, [top3[1].id]: 386, [top3[2].id]: 298 };
+    const base: Record<string, number> = {};
+    allVote.forEach((p, i) => { base[p.id] = Math.max(10, 420 - i * 28); });
     try { return JSON.parse(localStorage.getItem('ilf_votos') || 'null') || base; } catch { return base; }
   });
 
@@ -289,10 +287,10 @@ export function VotacaoSection() {
     try { localStorage.setItem('ilf_votos', JSON.stringify(next)); } catch { /* ignore */ }
   };
 
-  const total = top3.reduce((s, p) => s + (results[p.id] || 0), 0) || 1;
+  const total = allVote.reduce((s, p) => s + (results[p.id] || 0), 0) || 1;
 
   const share = async () => {
-    const escolha = voted ? ILF_PLAYERS.find(p => p.id === voted)?.nome : top3[0].nome;
+    const escolha = voted ? ILF_PLAYERS.find(p => p.id === voted)?.nome : allVote[0].nome;
     const texto = `Pra mim, o maior atacante da história do Fluminense é ${escolha}! 🏆 Vote no estudo do Lendas do Flu:`;
     const url = 'https://lendasdoflu.com/especiais/maior-atacante';
     if (navigator.share) {
@@ -304,31 +302,31 @@ export function VotacaoSection() {
 
   return (
     <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: '72px 32px' }}>
-      <div style={{ maxWidth: 760, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="★" light>A voz da torcida</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,50px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>E PRA VOCÊ, QUEM É O MAIOR?</h2>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A régua do ILF deu o veredito — mas a palavra final é da arquibancada.</p>
 
-        <div data-mc="vote" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
-          {top3.map(p => {
+        <div data-mc="vote" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))', gap: 10, marginBottom: 28 }}>
+          {allVote.map(p => {
             const pct = Math.round(((results[p.id] || 0) / total) * 100);
             const isVote = voted === p.id;
             return (
-              <button key={p.id} onClick={() => vote(p.id)} disabled={!!voted} style={{ background: isVote ? 'rgba(232,181,96,0.15)' : 'rgba(255,255,255,0.04)', border: isVote ? '2px solid #E8B560' : '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: '22px 16px', cursor: voted ? 'default' : 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const, position: 'relative' }}
+              <button key={p.id} onClick={() => vote(p.id)} disabled={!!voted} style={{ background: isVote ? 'rgba(232,181,96,0.15)' : 'rgba(255,255,255,0.04)', border: isVote ? '2px solid #E8B560' : '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '16px 10px', cursor: voted ? 'default' : 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const }}
                 onMouseEnter={e => { if (!voted) e.currentTarget.style.transform = 'translateY(-3px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><Portrait player={p} size={72} ring={isVote ? '#E8B560' : 'rgba(255,255,255,0.25)'} big={isVote} /></div>
-                <div style={{ fontFamily: BB, fontSize: 22, letterSpacing: '0.02em' }}>{p.nome}</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: voted ? 12 : 0 }}>{p.apelido}</div>
-                {voted && (
-                  <div style={{ marginTop: 8 }}>
-                    <div style={{ height: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 4, overflow: 'hidden', marginBottom: 6 }}>
-                      <div style={{ width: `${pct}%`, height: 8, background: isVote ? '#E8B560' : 'rgba(255,255,255,0.4)', borderRadius: 4, transition: 'width 0.6s ease' }} />
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}><Portrait player={p} size={54} ring={isVote ? '#E8B560' : 'rgba(255,255,255,0.2)'} big={isVote} /></div>
+                <div style={{ fontFamily: BB, fontSize: 16, letterSpacing: '0.02em', lineHeight: 1.1, marginBottom: 2 }}>{p.nome}</div>
+                {voted ? (
+                  <div style={{ marginTop: 6 }}>
+                    <div style={{ height: 5, background: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden', marginBottom: 4 }}>
+                      <div style={{ width: `${pct}%`, height: 5, background: isVote ? '#E8B560' : 'rgba(255,255,255,0.35)', borderRadius: 3, transition: 'width 0.6s ease' }} />
                     </div>
-                    <div style={{ fontFamily: BB, fontSize: 22, color: isVote ? '#E8B560' : 'white' }}>{pct}%</div>
+                    <div style={{ fontFamily: BB, fontSize: 18, color: isVote ? '#E8B560' : 'rgba(255,255,255,0.7)' }}>{pct}%</div>
                   </div>
+                ) : (
+                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560', marginTop: 4 }}>Votar →</div>
                 )}
-                {!voted && <div style={{ marginTop: 10, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560' }}>Votar →</div>}
               </button>
             );
           })}

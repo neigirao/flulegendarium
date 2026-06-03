@@ -69,7 +69,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     titulos_raw: { rio_sp: 1, carioca: 1 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_nacional: 2, artilheiro_carioca: 1 },
-    premios: ['Maior artilheiro da história do Flu (319 gols)', 'Artilheiro Rio-SP 1957 e 1960', 'Artilheiro Carioca 1956 (22 gols)', 'Pichichi La Liga 1966/67 (Valencia CF)', '23 hat-tricks pelo Fluminense', 'Recorde: 62 gols em uma temporada (1959)'],
+    premios: ['Maior artilheiro da história do Flu (319 gols)', 'Artilheiro Rio-SP 1957 e 1960', 'Artilheiro Carioca 1956 (22 gols)', '23 hat-tricks pelo Fluminense', 'Recorde: 62 gols em uma temporada (1959)'],
   },
   {
     id: 'fred',
@@ -149,7 +149,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     titulos_raw: { carioca: 2, rio_sp: 2 },
     campanhas_raw: {},
     premiacoes_raw: {},
-    premios: ['Um dos que mais jogou pelo Flu (557 jogos — 3ª marca histórica)', 'Jogador mais elegante da história segundo a torcida', 'Técnico da Seleção Brasileira (Copas 1982 e 1986)'],
+    premios: ['Um dos que mais jogou pelo Flu (557 jogos — 3ª marca histórica)', 'Jogador mais elegante da história segundo a torcida', '2× Campeão Carioca (1951, 1959)', '2× Campeão Rio-São Paulo (1957, 1960)'],
   },
   {
     id: 'welfare',
@@ -197,7 +197,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     titulos_raw: { carioca: 2 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 5, premio_historico_clube: 1 },
-    premios: ['1º gol do Brasil em Copas do Mundo (14/07/1930 vs Iugoslávia)', '1º capitão da Seleção em Mundiais', 'Artilheiro do Carioca 5× consecutivos (1928–1932)', 'Maior artilheiro das Laranjeiras (~79 gols)', 'Grande Benemérito Atleta do Fluminense (1952)'],
+    premios: ['Artilheiro do Carioca 5× consecutivos (1928–1932)', 'Maior artilheiro das Laranjeiras (~79 gols)', 'Grande Benemérito Atleta do Fluminense (1952)', '2× Campeão Carioca (1931, 1936)'],
   },
   {
     id: 'washington',

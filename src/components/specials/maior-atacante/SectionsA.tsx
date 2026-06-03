@@ -12,8 +12,6 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 interface HeroProps { onStart: () => void }
 
 export function HeroSection({ onStart }: HeroProps) {
-  const ids = ['fred', 'waldo', 'cano', 'orlando', 'hercules'];
-  const duelo = ids.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
   return (
     <section style={{
       background: 'radial-gradient(ellipse at 50% 0%, #0F2A1E 0%, #081510 60%, #050D0A 100%)',
@@ -33,16 +31,39 @@ export function HeroSection({ onStart }: HeroProps) {
           Analisamos 15 lendas tricolores com uma metodologia exclusiva para descobrir quem foi o atacante mais importante da história do clube.
         </p>
 
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', gap: 'clamp(4px,1.5vw,18px)', marginBottom: 40, flexWrap: 'wrap' as const }}>
-          {duelo.map((p, i) => {
-            const center = i === 2;
-            return (
-              <div key={p.id} style={{ textAlign: 'center', transform: center ? 'scale(1.18)' : 'scale(1)', zIndex: center ? 2 : 1, margin: center ? '0 8px' : 0 }}>
-                <Portrait player={p} size={center ? 92 : 72} ring={center ? '#E8B560' : 'rgba(255,255,255,0.25)'} big={center} />
-                <div style={{ fontFamily: BB, fontSize: center ? 16 : 13, marginTop: 8, color: center ? '#E8B560' : 'rgba(255,255,255,0.7)', letterSpacing: '0.03em' }}>{p.nome}</div>
-              </div>
-            );
-          })}
+        <div style={{ width: '100%', maxWidth: 480, margin: '0 auto 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 }}>
+          <svg viewBox="0 0 420 220" style={{ width: '100%', maxWidth: 420 }} fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="32" y="18" width="356" height="174" rx="2" fill="rgba(255,255,255,0.02)" />
+            {[56,80,104,128,152,176,200,224,248,272,296,320,344,368].map((x,i) => (
+              <line key={`v${i}`} x1={x} y1="18" x2={x} y2="192" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+            ))}
+            {[42,66,90,114,138,162].map((y,i) => (
+              <line key={`h${i}`} x1="32" y1={y} x2="388" y2={y} stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+            ))}
+            <circle cx="310" cy="52" r="30" fill="rgba(232,181,96,0.12)" />
+            <path d="M 70 190 C 100 120, 200 60, 310 52" stroke="#E8B560" strokeWidth="2.5" strokeDasharray="7 5" fill="none" opacity="0.65" />
+            {[0,40,80,120,160,200,240,280,320].map((angle,i) => {
+              const rad = (angle * Math.PI) / 180;
+              return <line key={`s${i}`} x1={310 + Math.cos(rad)*22} y1={52 + Math.sin(rad)*22} x2={310 + Math.cos(rad)*34} y2={52 + Math.sin(rad)*34} stroke="#E8B560" strokeWidth="1.5" opacity="0.4" />;
+            })}
+            <circle cx="310" cy="52" r="20" fill="#F5F0E8" />
+            <path d="M310 32 L318 41 L315 54 L305 54 L302 41 Z" fill="#1a1a2e" opacity="0.85" />
+            <path d="M302 41 L293 47 L296 58 L305 54 L302 41 Z" fill="#1a1a2e" opacity="0.85" />
+            <path d="M318 41 L327 47 L324 58 L315 54 L318 41 Z" fill="#1a1a2e" opacity="0.85" />
+            <circle cx="310" cy="52" r="20" fill="none" stroke="rgba(0,0,0,0.15)" strokeWidth="1" />
+            <line x1="32" y1="16" x2="32" y2="200" stroke="white" strokeWidth="4" strokeLinecap="round" />
+            <line x1="388" y1="16" x2="388" y2="200" stroke="white" strokeWidth="4" strokeLinecap="round" />
+            <line x1="30" y1="18" x2="390" y2="18" stroke="white" strokeWidth="4" strokeLinecap="round" />
+            <line x1="8" y1="200" x2="412" y2="200" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
+          </svg>
+
+          <img src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp" alt="Fluminense FC" style={{ width: 68, height: 68, objectFit: 'contain' }} />
+          <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: '#E8B560' }}>
+            15 LENDAS · UM TÍTULO EM DISPUTA
+          </div>
+          <div style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', fontStyle: 'italic', marginTop: -8 }}>
+            De Welfare a Cano — mais de um século de artilheiros tricolores
+          </div>
         </div>
 
         <button
@@ -227,7 +248,7 @@ export function ProducaoSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="03">Gols · 1 pt por gol</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>GOLS</h2>
-        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'center' }}>
+        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'start' }}>
           <Reveal>
             <div style={{ background: 'linear-gradient(160deg,#0D2018,#0A1810)', borderRadius: 18, padding: 28, color: 'white', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'absolute', top: 14, left: 0, right: 0, fontSize: 10, fontWeight: 800, letterSpacing: '0.16em', color: '#E8B560', textTransform: 'uppercase' as const }}>★ Líder da categoria</div>
@@ -324,103 +345,90 @@ export function TitulosSection() {
 }
 
 /* ── CAMPANHAS ───────────────────────────────── */
-interface CampEntry {
-  Libertadores: number;
-  CopaBrasil: number;
-  brasileiro: { pos: number; times: number } | null;
+const PRE_NACIONAIS = new Set(['welfare', 'preguinho', 'russo', 'hercules', 'zeze', 'orlando', 'tele', 'jair', 'escurinho', 'waldo']);
+
+function getCompPhases(p: ILFPlayer) {
+  const lib = (p.titulos_raw.libertadores || 0) > 0 ? { label: `${p.titulos_raw.libertadores}× Campeão`, color: '#C4944A' }
+    : (p.campanhas_raw.libertadores_vice || 0) > 0 ? { label: 'Vice', color: '#7A0213' }
+    : (p.campanhas_raw.libertadores_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
+    : (p.campanhas_raw.libertadores_quartas || 0) > 0 ? { label: 'Quartas de Final', color: '#64748B' }
+    : null;
+  const copa = (p.titulos_raw.copa_brasil || 0) > 0 ? { label: `${p.titulos_raw.copa_brasil}× Campeão`, color: '#C4944A' }
+    : (p.campanhas_raw.copa_brasil_vice || 0) > 0 ? { label: 'Vice', color: '#7A0213' }
+    : (p.campanhas_raw.copa_brasil_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
+    : (p.campanhas_raw.copa_brasil_quartas || 0) > 0 ? { label: 'Quartas de Final', color: '#64748B' }
+    : null;
+  const bra = (p.titulos_raw.brasileiro || 0) > 0 ? { label: `${p.titulos_raw.brasileiro}× Campeão`, color: '#C4944A' }
+    : (p.campanhas_raw.brasileiro_2 || 0) > 0 ? { label: '2º lugar', color: '#7A0213' }
+    : (p.campanhas_raw.brasileiro_3 || 0) > 0 ? { label: '3º lugar', color: '#64748B' }
+    : null;
+  const mun = (p.titulos_raw.mundial || 0) > 0 ? { label: 'Campeão', color: '#C4944A' }
+    : (p.campanhas_raw.mundial_vice || 0) > 0 ? { label: 'Vice-campeão', color: '#E8B560' }
+    : (p.campanhas_raw.mundial_3 || 0) > 0 ? { label: '3º lugar', color: '#64748B' }
+    : (p.campanhas_raw.mundial_semi || 0) > 0 ? { label: 'Semifinal', color: '#94A3B8' }
+    : null;
+  return { lib, copa, bra, mun };
 }
-
-const CAMP_DATA: Record<string, CampEntry> = {
-  cano:       { Libertadores: 100, CopaBrasil: 60,  brasileiro: { pos: 8,  times: 20 } },
-  fred:       { Libertadores: 60,  CopaBrasil: 60,  brasileiro: { pos: 1,  times: 20 } },
-  washington: { Libertadores: 40,  CopaBrasil: 0,   brasileiro: { pos: 1,  times: 30 } },
-  magno:      { Libertadores: 0,   CopaBrasil: 40,  brasileiro: { pos: 1,  times: 20 } },
-  waldo:      { Libertadores: 0,   CopaBrasil: 0,   brasileiro: null },
-};
-
-const KNOCKOUT_LEGEND = [
-  { v: 100, label: 'Campeão', color: '#C4944A' },
-  { v: 80,  label: 'Vice',    color: '#7A0213' },
-  { v: 60,  label: 'Semifinal', color: '#006140' },
-  { v: 40,  label: 'Quartas', color: '#64748B' },
-];
 
 export function CampanhasSection() {
   const players = [...ILF_PLAYERS].sort((a, b) => ILF_compute_scores(b).campanhas - ILF_compute_scores(a).campanhas);
-  const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
-  const posColor = (pos: number) => pos === 1 ? '#C4944A' : pos <= 4 ? '#006140' : pos <= 10 ? '#64748B' : '#94A3B8';
 
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="05">Campanhas Históricas</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CAMPANHAS HISTÓRICAS</h2>
-        <p style={{ fontSize: 15, color: '#64748B', marginBottom: 8, maxWidth: 640, lineHeight: 1.6 }}>
-          Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta.
+        <p style={{ fontSize: 15, color: '#64748B', marginBottom: 30, maxWidth: 640, lineHeight: 1.6 }}>
+          Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta. Libertadores (120→30pts), Copa Brasil (48→12pts), Brasileirão (60→30pts), Mundial (160→40pts).
         </p>
-        <p style={{ fontSize: 13, color: '#94A3B8', marginBottom: 22, maxWidth: 640, lineHeight: 1.6 }}>
-          Nos mata-matas (Libertadores, Copa do Brasil e Mundial), cada fase vale pontos: <strong>campeão=200/80/400</strong>, vice=120/48/160, semi=60/24/40, quartas=30/12. No Brasileirão: 1º=100pts, 2º=60pts, 3º=30pts.
-        </p>
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const, marginBottom: 28 }}>
-          {KNOCKOUT_LEGEND.map(l => (
-            <div key={l.v} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#F7F5F2', border: '1px solid #E2E8F0', borderRadius: 999, padding: '6px 14px' }}>
-              <span style={{ width: 10, height: 10, borderRadius: 3, background: l.color }} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a2e' }}>{l.label}</span>
-            </div>
-          ))}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#F7F5F2', border: '1px dashed #CBD5E0', borderRadius: 999, padding: '6px 14px' }}>
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#1a1a2e' }}>Brasileirão</span>
-            <span style={{ fontSize: 11, color: '#94A3B8' }}>colocação na tabela</span>
-          </div>
-        </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(300px,1fr))', gap: 18 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 16 }}>
           {players.map((p, idx) => {
-            const cd = CAMP_DATA[p.id];
-            const br = cd?.brasileiro;
+            const phases = getCompPhases(p);
+            const campPts = ILF_compute_scores(p).campanhas;
+            const hasAny = phases.lib || phases.copa || phases.bra || phases.mun;
             return (
-              <Reveal key={p.id} delay={idx * 0.06}>
-                <div style={{ background: '#F7F5F2', border: '1px solid #E2E8F0', borderRadius: 14, padding: 20 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                    <Portrait player={p} size={46} ring="#C4944A" />
-                    <div style={{ fontFamily: BB, fontSize: 20, color: '#1a1a2e', letterSpacing: '0.02em' }}>{p.nome}</div>
+              <Reveal key={p.id} delay={idx * 0.04}>
+                <div style={{ background: '#F7F5F2', border: '1px solid #E2E8F0', borderRadius: 14, padding: '18px 20px', height: '100%', boxSizing: 'border-box' as const }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <Portrait player={p} size={44} ring="#C4944A" />
+                      <div style={{ fontFamily: BB, fontSize: 19, color: '#1a1a2e', letterSpacing: '0.02em' }}>{p.nome}</div>
+                    </div>
+                    {campPts > 0 && <div style={{ fontFamily: BB, fontSize: 20, color: '#7A0213' }}>{campPts.toFixed(0)} pts</div>}
                   </div>
-                  {(['Libertadores', 'CopaBrasil'] as const).map(key => {
-                    const v = cd ? cd[key] : 0;
-                    const label = key === 'CopaBrasil' ? 'Copa do Brasil' : key;
-                    const color = key === 'CopaBrasil' ? '#7A0213' : '#C4944A';
-                    return (
-                      <div key={key} style={{ marginBottom: 12 }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 11, marginBottom: 4 }}>
-                          <span style={{ color: '#64748B', fontWeight: 600 }}>{label}</span>
-                          <span style={{ color: v >= 100 ? '#C4944A' : '#94A3B8', fontWeight: 700, fontSize: 11 }}>{valLabel(v)}</span>
+                  {hasAny ? (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {phases.lib && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Libertadores</span>
+                          <span style={{ background: phases.lib.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.lib.label}</span>
                         </div>
-                        <div style={{ height: 8, background: '#EFEAE3', borderRadius: 4, overflow: 'hidden' }}>
-                          <div style={{ width: `${v}%`, height: 8, background: color, borderRadius: 4, transition: 'width 1s ease' }} />
+                      )}
+                      {phases.copa && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Copa do Brasil</span>
+                          <span style={{ background: phases.copa.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.copa.label}</span>
                         </div>
-                      </div>
-                    );
-                  })}
-                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px dashed #E2E8F0' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                      <span style={{ color: '#64748B', fontWeight: 600, fontSize: 11 }}>Brasileirão</span>
-                      {br ? (
-                        <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 5 }}>
-                          <span style={{ fontFamily: BB, fontSize: 22, color: posColor(br.pos), lineHeight: 1 }}>{br.pos}º</span>
-                          <span style={{ fontSize: 10, color: '#94A3B8' }}>de {br.times}{br.pos === 1 ? ' · Campeão 🥇' : ''}</span>
-                        </span>
-                      ) : (
-                        <span style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic' }}>Era pré-Brasileirão</span>
+                      )}
+                      {phases.bra && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Brasileirão</span>
+                          <span style={{ background: phases.bra.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.bra.label}</span>
+                        </div>
+                      )}
+                      {phases.mun && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Mundial de Clubes</span>
+                          <span style={{ background: phases.mun.color, color: phases.mun.color === '#E8B560' ? '#1a1a2e' : 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.mun.label}</span>
+                        </div>
                       )}
                     </div>
-                    {br && (
-                      <div style={{ display: 'flex', gap: 2, alignItems: 'flex-end', height: 16 }}>
-                        {Array.from({ length: br.times }).map((_, k) => (
-                          <div key={k} style={{ flex: 1, height: k + 1 === br.pos ? 16 : 7, borderRadius: 2, background: k + 1 === br.pos ? posColor(br.pos) : '#E2DDD5' }} />
-                        ))}
-                      </div>
-                    )}
-                  </div>
+                  ) : (
+                    <div style={{ fontSize: 12, color: '#94A3B8', fontStyle: 'italic' }}>
+                      {PRE_NACIONAIS.has(p.id) ? 'Era anterior aos torneios nacionais' : 'Sem campanha de destaque'}
+                    </div>
+                  )}
                 </div>
               </Reveal>
             );
