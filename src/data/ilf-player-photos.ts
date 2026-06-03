@@ -6,7 +6,7 @@ const BASE = 'https://hafxruwnggitvtyngedy.supabase.co/storage/v1/object/public/
  * Jogadores sem entrada mostram as iniciais no Portrait.
  */
 export const ILF_PHOTOS: Record<string, string> = {
-  fred:       `${BASE}/fred.png`,
+  fred:       `${BASE}/b57cb1c9-be09-4fbe-a675-40140eea0890.jpg`,
   cano:       `${BASE}/player-1780448795427.jpg`,
   tele:       `${BASE}/tele-santana.png`,
   washington: `${BASE}/washington.png`,
