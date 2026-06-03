@@ -27,8 +27,8 @@ export function ClassicosSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="06">Clássicos · +0.5pt por gol</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>GOLS EM CLÁSSICOS</h2>
+        <Kicker n="02">Clássicos · +0.5pt por gol</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>CLÁSSICOS</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 36, alignItems: 'center' }}>
           <div>
             <div style={{ background: 'linear-gradient(135deg,#7A0213,#4D000D)', borderRadius: 16, padding: 24, color: 'white', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 18 }}>
@@ -80,8 +80,8 @@ export function DecisivosSection() {
   return (
     <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Jogos Decisivos · +0.5/1/2pts</Kicker></div>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>JOGOS DECISIVOS</h2>
+        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="03" light>Decisivos · +0.5/1/2pts</Kicker></div>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>DECISIVOS</h2>
         <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+2pts), semifinais (+1pt) e quartas (+0.5pt) — quem aparecia quando o Flu mais precisava.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {rows.map((p, i) => {

@@ -8,6 +8,7 @@ import {
   ProducaoSection,
   TitulosSection,
   CampanhasSection,
+  LongevidadeSection,
 } from '@/components/specials/maior-atacante/SectionsA';
 import {
   ClassicosSection,
@@ -92,10 +93,11 @@ export default function MaiorAtacante() {
         <MetodologiaSection />
         <FinalistasSection />
         <ProducaoSection />
-        <TitulosSection />
-        <CampanhasSection />
         <ClassicosSection />
         <DecisivosSection />
+        <TitulosSection />
+        <CampanhasSection />
+        <LongevidadeSection />
         <PremiacoesSection />
         <TransicaoSection />
         <RevelacaoSection />

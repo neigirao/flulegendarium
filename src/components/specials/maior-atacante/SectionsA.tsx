@@ -76,7 +76,7 @@ export function HeroSection({ onStart }: HeroProps) {
         </button>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(20px,5vw,64px)', marginTop: 48, flexWrap: 'wrap' as const }}>
-          {[['15', 'candidatos'], ['7', 'critérios'], ['100+', 'anos de história']].map(([v, l]) => (
+          {[['15', 'candidatos'], ['6', 'critérios'], ['100+', 'anos de história']].map(([v, l]) => (
             <div key={l} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: BB, fontSize: 46, color: '#E8B560', lineHeight: 1 }}>{v}</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700, marginTop: 4 }}>{l}</div>
@@ -94,8 +94,8 @@ export function FinalistasSection() {
   return (
     <section id="finalistas" style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1180, margin: '0 auto' }}>
-        <Kicker n="01">Os Candidatos</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>OS 15 FINALISTAS</h2>
+        <Kicker n="">Candidatos</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>JOGADORES ANALISADOS</h2>
         <p style={{ fontSize: 15, color: '#64748B', maxWidth: 560, marginBottom: 36 }}>De Welfare a Cano — mais de um século de artilheiros. Clique em um nome para ver os detalhes.</p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 16 }}>
@@ -192,7 +192,7 @@ export function MetodologiaSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="02">A Régua</Kicker>
+        <Kicker n="">Régua</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>COMO DESCOBRIR O MAIOR ATACANTE DO FLUMINENSE?</h2>
         <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>A soma total de pontos brutos por todas as conquistas e contribuições — sem normalização. 6 critérios, cada conquista com seu valor absoluto.</p>
 
@@ -246,7 +246,7 @@ export function ProducaoSection() {
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="03">Gols · 1 pt por gol</Kicker>
+        <Kicker n="01">Gols · 1 pt por gol</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>GOLS</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'start' }}>
           <Reveal>
@@ -310,8 +310,8 @@ export function TitulosSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="04">Títulos Conquistados</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>PONTOS POR TÍTULOS CONQUISTADOS</h2>
+        <Kicker n="04">Títulos</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÍTULOS</h2>
         <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Mundial (400) · Libertadores (200) · Brasileiro (100) · Copa do Brasil (80) · Recopa (40) · Carioca (30) · Rio-SP e Copa Rio (10).</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {rows.map((p, i) => (
@@ -376,8 +376,8 @@ export function CampanhasSection() {
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="05">Campanhas Históricas</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CAMPANHAS HISTÓRICAS</h2>
+        <Kicker n="05">Campanhas</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CAMPANHAS</h2>
         <p style={{ fontSize: 15, color: '#64748B', marginBottom: 30, maxWidth: 640, lineHeight: 1.6 }}>
           Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta. Libertadores (120→30pts), Copa Brasil (48→12pts), Brasileirão (60→30pts), Mundial (160→40pts).
         </p>
@@ -433,6 +433,42 @@ export function CampanhasSection() {
               </Reveal>
             );
           })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── LONGEVIDADE ─────────────────────────────── */
+export function LongevidadeSection() {
+  const ranked = [...ILF_PLAYERS].sort((a, b) => b.jogos - a.jogos);
+  const lider = ranked[0];
+  const max = lider.jogos;
+  return (
+    <section style={{ background: '#F7F5F2', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+        <Kicker n="06">Longevidade · 0.25 pt por jogo</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>LONGEVIDADE</h2>
+        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'start' }}>
+          <Reveal>
+            <div style={{ background: 'linear-gradient(160deg,#0D2018,#0A1810)', borderRadius: 18, padding: 28, color: 'white', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 14, left: 0, right: 0, fontSize: 10, fontWeight: 800, letterSpacing: '0.16em', color: '#E8B560', textTransform: 'uppercase' as const }}>★ Mais jogos pelo Flu</div>
+              <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', marginBottom: 14 }}><Portrait player={lider} size={104} ring="#E8B560" big /></div>
+              <div style={{ fontFamily: BB, fontSize: 34, letterSpacing: '0.02em', lineHeight: 1 }}>{lider.nome}</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 18 }}>{lider.periodo}</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 22 }}>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: '#E8B560' }}><AnimatedNumber value={lider.jogos} /></div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>jogos</div></div>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: 'white' }}>{(lider.jogos * 0.25).toFixed(0)}</div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>pts</div></div>
+              </div>
+            </div>
+          </Reveal>
+          <div>
+            {ranked.map((p, i) => (
+              <BarRow key={p.id} rank={i + 1} label={p.nome} sub={`${p.jogos} jogos · ${(p.jogos * 0.25).toFixed(0)} pts`}
+                value={p.jogos} display={p.jogos} max={max}
+                color={i === 0 ? '#C4944A' : '#94A3B8'} highlight={i === 0} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

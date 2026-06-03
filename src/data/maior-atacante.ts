@@ -45,12 +45,12 @@ export interface ILFPlayer {
 }
 
 export const ILF_WEIGHTS: ILFWeight[] = [
-  { key: 'producao',    label: 'Produção Ofensiva',    short: 'Prod',  color: '#7A0213' },
-  { key: 'classicos',   label: 'Clássicos',            short: 'Clás',  color: '#AF1E35' },
-  { key: 'decisivos',   label: 'Jogos Decisivos',      short: 'Dec',   color: '#E8B560' },
-  { key: 'titulos',     label: 'Títulos Conquistados', short: 'Títul', color: '#C4944A' },
-  { key: 'campanhas',   label: 'Campanhas Históricas', short: 'Camp',  color: '#006140' },
-  { key: 'longevidade', label: 'Longevidade',           short: 'Long',  color: '#94A3B8' },
+  { key: 'producao',    label: 'Gols',         short: 'Gols', color: '#7A0213' },
+  { key: 'classicos',   label: 'Clássicos',    short: 'Clás', color: '#AF1E35' },
+  { key: 'decisivos',   label: 'Decisivos',    short: 'Dec',  color: '#E8B560' },
+  { key: 'titulos',     label: 'Títulos',      short: 'Tít',  color: '#C4944A' },
+  { key: 'campanhas',   label: 'Campanhas',    short: 'Camp', color: '#006140' },
+  { key: 'longevidade', label: 'Longevidade',  short: 'Long', color: '#94A3B8' },
 ];
 
 export const ILF_PLAYERS: ILFPlayer[] = [
