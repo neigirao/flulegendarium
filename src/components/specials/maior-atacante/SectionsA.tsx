@@ -28,12 +28,12 @@ export function HeroSection({ onStart }: HeroProps) {
         <h1 data-speakable style={{ fontFamily: BB, fontSize: 'clamp(30px,4.6vw,56px)', lineHeight: 1.08, letterSpacing: '0.01em', margin: '0 auto 24px', maxWidth: 820 }}>
           QUEM É O <span style={{ color: '#E8B560' }}>MAIOR ATACANTE</span> DA HISTÓRIA DO FLUMINENSE?
         </h1>
-        <p style={{ fontSize: 'clamp(15px,2vw,18px)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 640, margin: '0 auto 36px' }}>
+        <p style={{ fontSize: 'clamp(15px,2vw,18px)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 640, margin: '0 auto 16px' }}>
           Analisamos 15 lendas tricolores com uma metodologia exclusiva para descobrir quem foi o atacante mais importante da história do clube.
         </p>
 
         {/* arte gol — escudo + bola no ângulo da rede */}
-        <div style={{ position: 'relative', width: 'min(420px,86vw)', height: 230, margin: '8px auto 30px' }}>
+        <div style={{ position: 'relative', width: 'min(420px,86vw)', height: 230, margin: '0 auto 24px' }}>
           <svg viewBox="0 0 420 230" width="100%" height="100%" style={{ display: 'block', overflow: 'visible' }}>
             <defs>
               <radialGradient id="heroGlow" cx="50%" cy="42%" r="60%">
