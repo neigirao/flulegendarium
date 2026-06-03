@@ -13,47 +13,102 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 interface HeroProps { onStart: () => void }
 
 export function HeroSection({ onStart }: HeroProps) {
-  const ids = ['fred', 'waldo', 'cano', 'orlando', 'hercules'];
-  const duelo = ids.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
   return (
     <section style={{
       background: 'radial-gradient(ellipse at 50% 0%, #0F2A1E 0%, #081510 60%, #050D0A 100%)',
-      color: 'white', padding: '80px 0 60px', position: 'relative', overflow: 'hidden',
+      color: 'white', padding: '0 0 60px', position: 'relative', overflow: 'hidden',
     }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '0 32px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ height: 5, background: 'linear-gradient(90deg,#7A0213 33%,#FAFAFA 33% 66%,#006140 66%)' }} />
+
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '40px 32px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 20 }}>
           <span style={{ width: 28, height: 2, background: '#E8B560' }} />
           Índice Lendas do Flu
           <span style={{ width: 28, height: 2, background: '#E8B560' }} />
         </div>
 
-        <h1 style={{ fontFamily: BB, fontSize: 'clamp(34px, 5.2vw, 64px)', lineHeight: 1.0, letterSpacing: '0.01em', margin: '0 auto 20px', maxWidth: 820 }}>
+        <h1 data-speakable style={{ fontFamily: BB, fontSize: 'clamp(30px,4.6vw,56px)', lineHeight: 1.08, letterSpacing: '0.01em', margin: '0 auto 24px', maxWidth: 820 }}>
           QUEM É O <span style={{ color: '#E8B560' }}>MAIOR ATACANTE</span> DA HISTÓRIA DO FLUMINENSE?
         </h1>
         <p style={{ fontSize: 'clamp(15px,2vw,18px)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 640, margin: '0 auto 36px' }}>
           Analisamos 15 lendas tricolores com uma metodologia exclusiva para descobrir quem foi o atacante mais importante da história do clube.
         </p>
 
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: 'clamp(4px,1.5vw,16px)', marginBottom: 16, flexWrap: 'wrap' as const }}>
-          {duelo.map((p, i) => {
-            const center = i === 2;
-            return (
-              <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 'clamp(4px,1.5vw,16px)' }}>
-                <div style={{ textAlign: 'center', transform: center ? 'scale(1.12)' : 'scale(1)', zIndex: center ? 2 : 1 }}>
-                  <Portrait player={p} size={center ? 88 : 70} ring={center ? '#E8B560' : 'rgba(255,255,255,0.3)'} big={center} />
-                  <div style={{ fontFamily: BB, fontSize: center ? 15 : 12, marginTop: 8, color: center ? '#E8B560' : 'rgba(255,255,255,0.75)', letterSpacing: '0.03em' }}>{p.nome}</div>
-                  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.38)', letterSpacing: '0.04em', marginTop: 2 }}>{p.apelido}</div>
-                </div>
-                {i < duelo.length - 1 && (
-                  <div style={{ fontFamily: BB, fontSize: 'clamp(11px,1.4vw,16px)', color: 'rgba(255,255,255,0.22)', letterSpacing: '0.06em', alignSelf: 'center', paddingBottom: 32 }}>VS</div>
-                )}
-              </div>
-            );
-          })}
+        {/* arte gol — escudo + bola no ângulo da rede */}
+        <div style={{ position: 'relative', width: 'min(420px,86vw)', height: 230, margin: '8px auto 30px' }}>
+          <svg viewBox="0 0 420 230" width="100%" height="100%" style={{ display: 'block', overflow: 'visible' }}>
+            <defs>
+              <radialGradient id="heroGlow" cx="50%" cy="42%" r="60%">
+                <stop offset="0%" stopColor="#1F5A3E" stopOpacity="0.55" />
+                <stop offset="100%" stopColor="#0A1810" stopOpacity="0" />
+              </radialGradient>
+              <pattern id="net" width="15" height="15" patternUnits="userSpaceOnUse">
+                <path d="M0 0 L15 15 M15 0 L0 15" stroke="rgba(255,255,255,0.13)" strokeWidth="0.8" />
+              </pattern>
+              <linearGradient id="postGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#FFFFFF" />
+                <stop offset="100%" stopColor="#C9CFCB" />
+              </linearGradient>
+            </defs>
+
+            <ellipse cx="210" cy="100" rx="220" ry="130" fill="url(#heroGlow)" />
+
+            <rect x="60" y="34" width="300" height="150" fill="url(#net)" />
+            <rect x="54" y="28" width="312" height="8" rx="3" fill="url(#postGrad)" />
+            <rect x="54" y="28" width="8" height="158" rx="3" fill="url(#postGrad)" />
+            <rect x="358" y="28" width="8" height="158" rx="3" fill="url(#postGrad)" />
+
+            <path d="M210 200 Q 300 150 332 56" stroke="#E8B560" strokeWidth="2.5" strokeLinecap="round" strokeDasharray="2 9" fill="none" opacity="0.7">
+              <animate attributeName="opacity" values="0.2;0.8;0.2" dur="2.4s" repeatCount="indefinite" />
+            </path>
+            {([-32,-16,0,16,32] as number[]).map((a, i) => (
+              <line key={i} x1="332" y1="52"
+                x2={332 + 26 * Math.cos((a - 90) * Math.PI / 180)}
+                y2={52  + 26 * Math.sin((a - 90) * Math.PI / 180)}
+                stroke="#E8B560" strokeWidth="2" strokeLinecap="round" opacity="0.65" />
+            ))}
+
+            <g transform="translate(332,52)">
+              <defs>
+                <radialGradient id="ballShade" cx="38%" cy="32%" r="75%">
+                  <stop offset="0%"   stopColor="#FFFFFF" />
+                  <stop offset="62%"  stopColor="#F2F2F2" />
+                  <stop offset="100%" stopColor="#C5CBC8" />
+                </radialGradient>
+              </defs>
+              <ellipse cx="2" cy="15" rx="13" ry="3.5" fill="rgba(0,0,0,0.35)" />
+              <circle r="14" fill="url(#ballShade)" stroke="#0A1810" strokeWidth="0.6" />
+              <path d="M0 -6 L5.7 -1.9 L3.5 4.9 L-3.5 4.9 L-5.7 -1.9 Z" fill="#10231A" />
+              <g stroke="#10231A" strokeWidth="1.3" strokeLinecap="round">
+                <line x1="0" y1="-6"   x2="0"    y2="-13.5" />
+                <line x1="5.7"  y1="-1.9" x2="12.8" y2="-4.4" />
+                <line x1="3.5"  y1="4.9"  x2="8.4"  y2="10.9" />
+                <line x1="-3.5" y1="4.9"  x2="-8.4" y2="10.9" />
+                <line x1="-5.7" y1="-1.9" x2="-12.8" y2="-4.4" />
+              </g>
+              <g fill="#10231A">
+                <path d="M-13.5 -3.8 L-9.5 -6.4 L-7.5 -2.2 Z" opacity="0.92" />
+                <path d="M13.5 -3.8 L9.5 -6.4 L7.5 -2.2 Z"   opacity="0.92" />
+                <path d="M0 -14 L3.4 -12 L-3.4 -12 Z"          opacity="0.92" />
+                <path d="M7.6 11.6 L4.6 13.4 L9.6 9 Z"          opacity="0.85" />
+                <path d="M-7.6 11.6 L-4.6 13.4 L-9.6 9 Z"       opacity="0.85" />
+              </g>
+              <ellipse cx="-4.5" cy="-5.5" rx="4" ry="2.6" fill="rgba(255,255,255,0.75)" transform="rotate(-30 -4.5 -5.5)" />
+            </g>
+          </svg>
+
+          <img
+            src="/lovable-uploads/1b089617-8fa2-440f-ab41-5192f292f5f3.png"
+            alt="Fluminense"
+            style={{ position: 'absolute', top: '52%', left: '50%', transform: 'translate(-50%,-50%)', height: 108, filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.5))' }}
+          />
         </div>
 
+        <div style={{ fontFamily: BB, fontSize: 17, color: '#E8B560', letterSpacing: '0.08em', marginBottom: 6 }}>
+          15 LENDAS · UM TÍTULO EM DISPUTA
+        </div>
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 36, letterSpacing: '0.04em' }}>
-          ...e mais 10 lendas tricolores na disputa
+          De Welfare a Cano — mais de um século de artilheiros tricolores
         </div>
 
         <button
