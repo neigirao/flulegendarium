@@ -22,7 +22,6 @@ export interface ILFScores {
   decisivos: number;   // decisive goal bonus pts
   titulos: number;     // title pts
   campanhas: number;   // campaign phase pts
-  premiacoes: number;  // award pts
   longevidade: number; // jogos × 0.25pt
 }
 
@@ -38,6 +37,7 @@ export interface ILFPlayer {
   gols: number; jogos: number; legenda: string;
   classicos: { Flamengo: number; Vasco: number; Botafogo: number };
   decisivos: { finais: number; semis: number; quartas: number };
+  decisivos_por_competicao: { [key: string]: number };
   titulos_raw: Partial<Record<keyof typeof TITULO_PONTOS, number>>;
   campanhas_raw: Partial<Record<keyof typeof CAMPANHA_PONTOS, number>>;
   premiacoes_raw: Partial<Record<keyof typeof PREMIACAO_PONTOS, number>>;
@@ -45,13 +45,12 @@ export interface ILFPlayer {
 }
 
 export const ILF_WEIGHTS: ILFWeight[] = [
-  { key: 'producao',    label: 'Produção Ofensiva',      short: 'Prod',  color: '#7A0213' },
-  { key: 'classicos',   label: 'Clássicos',              short: 'Clás',  color: '#AF1E35' },
-  { key: 'decisivos',   label: 'Jogos Decisivos',        short: 'Dec',   color: '#E8B560' },
-  { key: 'titulos',     label: 'Títulos Conquistados',   short: 'Títul', color: '#C4944A' },
-  { key: 'campanhas',   label: 'Campanhas Históricas',   short: 'Camp',  color: '#006140' },
-  { key: 'premiacoes',  label: 'Premiações Individuais', short: 'Prêm',  color: '#0EA5E9' },
-  { key: 'longevidade', label: 'Longevidade',             short: 'Long',  color: '#94A3B8' },
+  { key: 'producao',    label: 'Produção Ofensiva',    short: 'Prod',  color: '#7A0213' },
+  { key: 'classicos',   label: 'Clássicos',            short: 'Clás',  color: '#AF1E35' },
+  { key: 'decisivos',   label: 'Jogos Decisivos',      short: 'Dec',   color: '#E8B560' },
+  { key: 'titulos',     label: 'Títulos Conquistados', short: 'Títul', color: '#C4944A' },
+  { key: 'campanhas',   label: 'Campanhas Históricas', short: 'Camp',  color: '#006140' },
+  { key: 'longevidade', label: 'Longevidade',           short: 'Long',  color: '#94A3B8' },
 ];
 
 export const ILF_PLAYERS: ILFPlayer[] = [
@@ -66,6 +65,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'O maior artilheiro da história do Fluminense com 319 gols em 403 jogos — e nunca marcou um pênalti. Depois ganhou o Pichichi na Espanha, tornando-se o primeiro brasileiro a conquistar o prêmio.',
     classicos: { Flamengo: 30, Vasco: 26, Botafogo: 22 },
     decisivos: { finais: 14, semis: 20, quartas: 16 },
+    decisivos_por_competicao: { carioca: 28, rio_sp: 22 },
     titulos_raw: { rio_sp: 1, carioca: 1 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_nacional: 2, artilheiro_carioca: 1 },
@@ -82,6 +82,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Dois Brasileiros, dois Cariocas e 199 gols que marcaram para sempre a história tricolor. Fred é o símbolo máximo da era moderna do Fluminense — e o maior artilheiro do clube no século XXI.',
     classicos: { Flamengo: 7, Vasco: 8, Botafogo: 14 },
     decisivos: { finais: 12, semis: 18, quartas: 14 },
+    decisivos_por_competicao: { libertadores: 9, copa_brasil: 23, carioca: 12 },
     titulos_raw: { brasileiro: 2, carioca: 2 },
     campanhas_raw: { libertadores_semi: 1 },
     premiacoes_raw: { artilheiro_nacional: 1, melhor_jogador_torneio: 1 },
@@ -98,6 +99,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'O gol na final da Libertadores 2023 colocou seu nome em letras de ouro na história do Fluminense. El Monstruo argentino que se tornou eterno tricolor.',
     classicos: { Flamengo: 7, Vasco: 4, Botafogo: 3 },
     decisivos: { finais: 7, semis: 5, quartas: 6 },
+    decisivos_por_competicao: { libertadores: 9, copa_brasil: 5, carioca: 4 },
     titulos_raw: { libertadores: 1, recopa: 1, carioca: 2 },
     campanhas_raw: { copa_brasil_semi: 1, mundial_vice: 1, mundial_3: 1 },
     premiacoes_raw: { rei_america: 1, artilheiro_libertadores: 1, artilheiro_nacional: 1, bola_prata: 1 },
@@ -114,6 +116,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Pingo de Ouro — a alcunha diz tudo. O 3º maior artilheiro da história do Flu encantou as arquibancadas do Maracanã com velocidade, drible e gol na era de ouro dos anos 1940 e 50.',
     classicos: { Flamengo: 26, Vasco: 22, Botafogo: 20 },
     decisivos: { finais: 8, semis: 12, quartas: 9 },
+    decisivos_por_competicao: { carioca: 24, copa_rio: 5 },
     titulos_raw: { carioca: 2 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 1 },
@@ -130,6 +133,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Cinco Cariocas em sete anos e a segunda melhor média de gols da história do clube — 0,94 por jogo. Hércules foi uma máquina tricolor nas décadas de 30 e 40.',
     classicos: { Flamengo: 24, Vasco: 20, Botafogo: 18 },
     decisivos: { finais: 12, semis: 16, quartas: 12 },
+    decisivos_por_competicao: { carioca: 40 },
     titulos_raw: { carioca: 5 },
     campanhas_raw: {},
     premiacoes_raw: {},
@@ -146,6 +150,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Antes de ser o técnico mais amado do Brasil, Telê Santana passou 557 jogos com a camisa tricolor. O jogador mais elegante da história do clube, segundo a própria torcida.',
     classicos: { Flamengo: 14, Vasco: 12, Botafogo: 10 },
     decisivos: { finais: 10, semis: 16, quartas: 12 },
+    decisivos_por_competicao: { carioca: 25, rio_sp: 10, copa_rio: 3 },
     titulos_raw: { carioca: 2, rio_sp: 2 },
     campanhas_raw: {},
     premiacoes_raw: {},
@@ -162,6 +167,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Henry Welfare chegou ao Rio em 1913 e construiu o maior legado estrangeiro do Fluminense: 161 gols com a espantosa média de 1 gol por jogo — a melhor de todos os finalistas do ILF.',
     classicos: { Flamengo: 35, Vasco: 18, Botafogo: 28 },
     decisivos: { finais: 8, semis: 10, quartas: 8 },
+    decisivos_por_competicao: { carioca: 26 },
     titulos_raw: { carioca: 2 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 2, premio_historico_clube: 1 },
@@ -178,6 +184,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Ao lado de Hércules, Russo dominou o futebol carioca dos anos 30 e 40. Cinco Cariocas e o segundo maior artilheiro estrangeiro da história tricolor.',
     classicos: { Flamengo: 18, Vasco: 16, Botafogo: 14 },
     decisivos: { finais: 10, semis: 14, quartas: 11 },
+    decisivos_por_competicao: { carioca: 35 },
     titulos_raw: { carioca: 5 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 2 },
@@ -194,6 +201,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Marcou o primeiro gol do Brasil em Copas do Mundo e foi artilheiro do Carioca cinco vezes consecutivas. Preguinho é o elo entre o futebol pioneiro e a grandeza tricolor.',
     classicos: { Flamengo: 22, Vasco: 15, Botafogo: 20 },
     decisivos: { finais: 8, semis: 12, quartas: 9 },
+    decisivos_por_competicao: { carioca: 29 },
     titulos_raw: { carioca: 2 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 5, premio_historico_clube: 1 },
@@ -210,6 +218,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Metade do icônico "Casal 20" com Assis — a dupla fez 179 gols pelo Flu. Washington foi o centroavante do Brasileiro 1984 e do tricampeonato carioca, uma figura irreverente e eternamente amada.',
     classicos: { Flamengo: 15, Vasco: 12, Botafogo: 10 },
     decisivos: { finais: 8, semis: 12, quartas: 10 },
+    decisivos_por_competicao: { libertadores: 1, carioca: 29 },
     titulos_raw: { brasileiro: 1, carioca: 3 },
     campanhas_raw: { libertadores_quartas: 1 },
     premiacoes_raw: {},
@@ -226,6 +235,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'O símbolo da ressurreição tricolor. Magno Alves guiou o Flu de volta da Série C em 1999, tornando-se ídolo em uma das campanhas mais épicas da história do clube.',
     classicos: { Flamengo: 12, Vasco: 10, Botafogo: 8 },
     decisivos: { finais: 5, semis: 8, quartas: 6 },
+    decisivos_por_competicao: { copa_brasil: 4, carioca: 15 },
     titulos_raw: { carioca: 1 },
     campanhas_raw: { copa_brasil_quartas: 1 },
     premiacoes_raw: { artilheiro_nacional: 1 },
@@ -242,6 +252,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Super Ézio foi o grande artilheiro tricolor dos anos 1990, referência do ataque em um período de transição, coroando sua passagem com o título Carioca de 1995.',
     classicos: { Flamengo: 10, Vasco: 8, Botafogo: 7 },
     decisivos: { finais: 4, semis: 7, quartas: 5 },
+    decisivos_por_competicao: { copa_brasil: 1, carioca: 15 },
     titulos_raw: { carioca: 1 },
     campanhas_raw: {},
     premiacoes_raw: {},
@@ -258,6 +269,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Peça fundamental do histórico time do Rio-São Paulo 1957, Escurinho formou uma das linhas de ataque mais temidas da era de ouro do Fluminense junto com Telê, Waldo e Pinheiro.',
     classicos: { Flamengo: 14, Vasco: 12, Botafogo: 9 },
     decisivos: { finais: 6, semis: 10, quartas: 8 },
+    decisivos_por_competicao: { carioca: 14, rio_sp: 10 },
     titulos_raw: { carioca: 2, rio_sp: 1 },
     campanhas_raw: {},
     premiacoes_raw: {},
@@ -274,6 +286,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Jair Francisco integrou a geração dourada que trouxe o Rio-São Paulo 1957 e conquistou múltiplos títulos cariocas na era mais gloriosa do Fluminense do século XX.',
     classicos: { Flamengo: 13, Vasco: 10, Botafogo: 8 },
     decisivos: { finais: 7, semis: 11, quartas: 8 },
+    decisivos_por_competicao: { carioca: 16, rio_sp: 10 },
     titulos_raw: { carioca: 2, rio_sp: 1 },
     campanhas_raw: {},
     premiacoes_raw: {},
@@ -290,6 +303,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     legenda: 'Atacante tricolor dos anos 1940 e início dos 50, Zezé conquistou dois Cariocas e a Copa Rio de 1952, sendo parte fundamental do Fluminense no pós-guerra.',
     classicos: { Flamengo: 12, Vasco: 10, Botafogo: 8 },
     decisivos: { finais: 6, semis: 9, quartas: 7 },
+    decisivos_por_competicao: { carioca: 18, copa_rio: 4 },
     titulos_raw: { carioca: 2 },
     campanhas_raw: {},
     premiacoes_raw: {},
@@ -306,15 +320,13 @@ export function ILF_compute_scores(player: ILFPlayer): ILFScores {
     .reduce((sum, [k, n]) => sum + (n || 0) * (TITULO_PONTOS[k as keyof typeof TITULO_PONTOS] || 0), 0);
   const campanhas = Object.entries(player.campanhas_raw)
     .reduce((sum, [k, n]) => sum + (n || 0) * (CAMPANHA_PONTOS[k as keyof typeof CAMPANHA_PONTOS] || 0), 0);
-  const premiacoes = Object.entries(player.premiacoes_raw)
-    .reduce((sum, [k, n]) => sum + (n || 0) * (PREMIACAO_PONTOS[k as keyof typeof PREMIACAO_PONTOS] || 0), 0);
   const longevidade = player.jogos * 0.25;
-  return { producao, classicos, decisivos, titulos, campanhas, premiacoes, longevidade };
+  return { producao, classicos, decisivos, titulos, campanhas, longevidade };
 }
 
 export function ILF_compute(player: ILFPlayer): number {
   const s = ILF_compute_scores(player);
-  return s.producao + s.classicos + s.decisivos + s.titulos + s.campanhas + s.premiacoes + s.longevidade;
+  return s.producao + s.classicos + s.decisivos + s.titulos + s.campanhas + s.longevidade;
 }
 
 export function ILF_media(player: ILFPlayer): number {
@@ -329,7 +341,6 @@ export const ILF_MAX_SCORES: ILFScores = (() => {
     decisivos:   Math.max(...all.map(s => s.decisivos)),
     titulos:     Math.max(...all.map(s => s.titulos)),
     campanhas:   Math.max(...all.map(s => s.campanhas)),
-    premiacoes:  Math.max(...all.map(s => s.premiacoes)),
     longevidade: Math.max(...all.map(s => s.longevidade)),
   };
 })();

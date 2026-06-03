@@ -63,11 +63,19 @@ export function ClassicosSection() {
 }
 
 /* ── DECISIVOS ───────────────────────────────── */
+const COMP_LABEL: Record<string, string> = {
+  libertadores: 'Libertadores',
+  copa_brasil: 'Copa Brasil',
+  carioca: 'Carioca',
+  rio_sp: 'Rio-SP',
+  copa_rio: 'Copa Rio',
+};
+
 export function DecisivosSection() {
   const rows = [...ILF_PLAYERS]
     .map(p => ({ ...p, totalDec: p.decisivos.finais + p.decisivos.semis + p.decisivos.quartas }))
     .sort((a, b) => b.totalDec - a.totalDec)
-    .slice(0, 6);
+    .slice(0, 8);
 
   return (
     <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
@@ -76,62 +84,43 @@ export function DecisivosSection() {
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>JOGOS DECISIVOS</h2>
         <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+2pts), semifinais (+1pt) e quartas (+0.5pt) — quem aparecia quando o Flu mais precisava.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-          {rows.map((p, i) => (
-            <Reveal key={p.id} delay={i * 0.05}>
-              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ fontFamily: BB, fontSize: 26, color: i === 0 ? '#E8B560' : 'rgba(255,255,255,0.3)', width: 26, textAlign: 'center' as const }}>{i + 1}</div>
-                <Portrait player={p} size={48} ring={i === 0 ? '#E8B560' : 'rgba(255,255,255,0.25)'} />
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.02em' }}>{p.nome}</div>
-                  <div style={{ display: 'flex', gap: 14, marginTop: 4, fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
-                    <span>🏆 {p.decisivos.finais} finais</span>
-                    <span>{p.decisivos.semis} semis</span>
-                    <span>{p.decisivos.quartas} quartas</span>
+          {rows.map((p, i) => {
+            const breakdown = Object.entries(p.decisivos_por_competicao).filter(([, v]) => v > 0);
+            return (
+              <Reveal key={p.id} delay={i * 0.05}>
+                <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ fontFamily: BB, fontSize: 26, color: i === 0 ? '#E8B560' : 'rgba(255,255,255,0.3)', width: 26, textAlign: 'center' as const, flexShrink: 0 }}>{i + 1}</div>
+                  <Portrait player={p} size={48} ring={i === 0 ? '#E8B560' : 'rgba(255,255,255,0.25)'} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.02em' }}>{p.nome}</div>
+                    <div style={{ display: 'flex', gap: 10, marginTop: 5, flexWrap: 'wrap' as const }}>
+                      {breakdown.map(([comp, gols]) => (
+                        <span key={comp} style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', background: 'rgba(255,255,255,0.07)', borderRadius: 5, padding: '2px 8px', whiteSpace: 'nowrap' as const }}>
+                          <span style={{ color: '#E8B560', fontWeight: 700 }}>{gols}</span> {COMP_LABEL[comp] || comp}
+                        </span>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
+                      <span>🏆 {p.decisivos.finais} finais</span>
+                      <span>{p.decisivos.semis} semis</span>
+                      <span>{p.decisivos.quartas} quartas</span>
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'right' as const, flexShrink: 0 }}>
+                    <div style={{ fontFamily: BB, fontSize: 30, color: i === 0 ? '#E8B560' : 'white', lineHeight: 1 }}><AnimatedNumber value={p.totalDec} /></div>
+                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols decisivos</div>
                   </div>
                 </div>
-                <div style={{ textAlign: 'right' as const }}>
-                  <div style={{ fontFamily: BB, fontSize: 30, color: i === 0 ? '#E8B560' : 'white', lineHeight: 1 }}><AnimatedNumber value={p.totalDec} /></div>
-                  <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols decisivos</div>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 
-/* ── PREMIAÇÕES ──────────────────────────────── */
-export function PremiacoesSection() {
-  const players = [...ILF_PLAYERS].sort((a, b) => ILF_compute_scores(b).premiacoes - ILF_compute_scores(a).premiacoes);
-  return (
-    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="08">Premiações Individuais</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PREMIAÇÕES INDIVIDUAIS</h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 16 }}>
-          {players.map((p, i) => (
-            <Reveal key={p.id} delay={i * 0.05}>
-              <div style={{ background: 'white', border: '1px solid #E2E8F0', borderRadius: 14, padding: 20, display: 'flex', gap: 16, position: 'relative', overflow: 'hidden' }}>
-                {i === 0 && <div style={{ position: 'absolute', top: 0, right: 0, background: '#C4944A', color: 'white', fontSize: 10, fontWeight: 800, padding: '4px 12px', borderRadius: '0 0 0 10px', letterSpacing: '0.08em' }}>MAIS PREMIADO</div>}
-                <div style={{ fontSize: 30 }}>🏆</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: BB, fontSize: 22, color: '#1a1a2e', letterSpacing: '0.02em', marginBottom: 8 }}>{p.nome}</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap' as const, gap: 6 }}>
-                    {p.premios.map(pr => (
-                      <span key={pr} style={{ fontSize: 11, fontWeight: 600, padding: '4px 10px', borderRadius: 999, background: 'rgba(196,148,74,0.12)', color: '#A07628', border: '1px solid rgba(196,148,74,0.25)' }}>{pr}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+export function PremiacoesSection() { return null; }
 
 export function LegadoSection() { return null; }
 
