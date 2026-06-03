@@ -10,7 +10,7 @@ export const ILF_PHOTOS: Record<string, string> = {
   cano:       '/lovable-uploads/9ebcfdf2-e75b-4bf5-bee4-6f5a1998ce33.png',
   tele:       `${BASE}/tele-santana.png`,
   washington: `${BASE}/washington.png`,
-  hercules:   `${BASE}/player-1774721850154.png`,
+  hercules:   `${BASE}/player-1780449042793.jpg`,
   magno:      `${BASE}/5a7cb452-302b-4db1-9e65-b247740dbef8.jpg`,
   // Jogadores a seguir: adicione a URL quando as fotos forem cadastradas no sistema
   // waldo:      `${BASE}/waldo.png`,
