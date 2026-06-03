@@ -36,3 +36,38 @@ Lendas do Flu é uma aplicação web de quiz para torcedores do Fluminense FC. O
 - `/estatisticas` — Ranking público
 - `/faq` — Perguntas frequentes
 - `/noticias` — Portal de notícias
+- `/especiais` — Estudos e editoriais especiais
+- `/especiais/maior-atacante` — Quem é o maior atacante da história do Fluminense?
+
+## Especial: Maior Atacante da História do Fluminense
+
+Publicado em 2026-06-02. Estudo editorial completo usando o Índice Lendas do Flu (ILF).
+
+**Metodologia ILF — 7 critérios em pontos absolutos (sem normalização, sem pesos percentuais):**
+
+Gols: 1pt por gol marcado pelo Fluminense.
+Bônus Clássicos: +0.5pt por gol contra Flamengo, Vasco ou Botafogo.
+Bônus Decisivos: +2pt por gol em final, +1pt em semifinal, +0.5pt em quartas de final.
+Títulos: Mundial 400pts · Libertadores 200pts · Brasileiro 100pts · Copa do Brasil 80pts · Recopa 40pts · Carioca 30pts · Rio-SP e Copa Rio 10pts cada.
+Campanhas: Libertadores vice 120pts, semi 60pts, quartas 30pts, oitavas 10pts; Copa do Brasil vice 48pts, semi 24pts, quartas 12pts, oitavas 5pts; Brasileirão 2º 60pts, 3º 30pts; Mundial vice 160pts, 3º 80pts, semi 40pts.
+Premiações individuais: Rei da América 35pts · Bola de Prata/melhor jogador nacional 25pts · Artilheiro da Libertadores 25pts · Melhor jogador de torneio 20pts · Artilheiro nacional 20pts · Artilheiro Carioca 20pts · Prêmio histórico do clube 10pts.
+Longevidade: 0.25pt por jogo disputado pelo Fluminense.
+
+ILF final = soma de todos os pontos acima (sem normalização).
+
+**Os 15 candidatos avaliados:**
+1. Waldo — 319 gols (1954–1961), maior artilheiro histórico do Fluminense
+2. Fred — 199 gols (2009–2016, 2020–2022), maior ídolo moderno
+3. Germán Cano — 111+ gols (2022–hoje), Libertadores 2023, artilharia recordes
+4. Orlando — 184 gols (1945–1954), apelido "Pingo de Ouro"
+5. Hércules — 165 gols (1935–1942), era pré-Copa do Brasil
+6. Telê Santana — 162 gols (1951–1960), depois técnico multicampeão
+7. Henry Welfare — 161 gols (1913–1924), pioneiro do futebol brasileiro
+8. Russo — 155 gols (1933–1944), artilheiro da era clássica
+9. Preguinho — 128 gols (1925–1938), pioneiro na Copa do Mundo 1930
+10. Washington — 121 gols (1983–1989), "Casal 20" com Assis
+11. Magno Alves — 124 gols (1998–2002), ressurgimento do Flu
+12. Ézio — 118 gols (1991–1995), Super Ézio
+13. Escurinho — 111 gols (1950–1958), o guerreiro
+14. Jair Francisco — 107 gols (1949–1959), clássico dos anos 50
+15. Zezé — 106 gols (1944–1952), era pós-guerra

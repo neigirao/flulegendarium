@@ -162,29 +162,45 @@ export function FinalistasSection() {
 }
 
 /* ── METODOLOGIA ─────────────────────────────── */
+const CRITERION_SCALE: Record<string, string> = {
+  producao: '1pt/gol', classicos: '+0.5pt', decisivos: '+0.5–2pt',
+  titulos: '30–400pts', campanhas: '5–160pts', premiacoes: '10–35pts', longevidade: '0.25pt/jogo',
+};
+
 export function MetodologiaSection() {
-  const segs = ILF_WEIGHTS.map(w => ({ value: w.weight * 100, color: w.color, label: w.label }));
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="02">A Régua</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>O ÍNDICE LENDAS DO FLU</h2>
-        <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>Uma nota final de 0 a 100 que pondera 8 dimensões da grandeza de um atacante. Quanto maior, mais completo o ídolo.</p>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>COMO DESCOBRIR O MAIOR ATACANTE DO FLUMINENSE?</h2>
+        <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>A soma total de pontos brutos por todas as conquistas e contribuições — sem normalização. Cada conquista tem seu valor absoluto.</p>
 
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: 44, alignItems: 'center' }}>
-          <div style={{ position: 'relative', justifySelf: 'center' as const }}>
-            <Donut segments={segs} size={280} thickness={46} />
-            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-              <div style={{ fontFamily: BB, fontSize: 44, color: '#7A0213', lineHeight: 1 }}>ILF</div>
-              <div style={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.1em', fontWeight: 700 }}>0 a 100</div>
-            </div>
+          <div style={{ background: '#0A1810', borderRadius: 16, padding: 24, color: 'white' }}>
+            <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 16 }}>ESCALA DE PONTOS</div>
+            {[
+              ['Gol', '1 pt'],
+              ['Bônus clássico', '+0.5 pt'],
+              ['Bônus semifinal', '+1 pt'],
+              ['Bônus final', '+2 pt'],
+              ['Carioca', '30 pts'],
+              ['Brasileiro', '100 pts'],
+              ['Libertadores', '200 pts'],
+              ['Mundial', '400 pts'],
+              ['Por jogo', '0.25 pt'],
+            ].map(([label, val]) => (
+              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.07)', fontSize: 13 }}>
+                <span style={{ color: 'rgba(255,255,255,0.6)' }}>{label}</span>
+                <span style={{ fontFamily: BB, color: '#E8B560', fontSize: 15 }}>{val}</span>
+              </div>
+            ))}
           </div>
           <div>
             {ILF_WEIGHTS.map(w => (
               <div key={w.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0', borderBottom: '1px solid #EDE8E0' }}>
                 <span style={{ width: 12, height: 12, borderRadius: 3, background: w.color, flexShrink: 0 }} />
                 <span style={{ flex: 1, fontSize: 14, color: '#1a1a2e', fontWeight: 500 }}>{w.label}</span>
-                <span style={{ fontFamily: BB, fontSize: 20, color: w.color, letterSpacing: '0.02em' }}>{(w.weight * 100).toFixed(0)}%</span>
+                <span style={{ fontFamily: BB, fontSize: 16, color: w.color, letterSpacing: '0.02em' }}>{CRITERION_SCALE[w.key]}</span>
               </div>
             ))}
           </div>
@@ -193,7 +209,7 @@ export function MetodologiaSection() {
         <div style={{ marginTop: 40, background: '#0A1810', borderRadius: 16, padding: '28px 32px', color: 'white', overflowX: 'auto' as const }}>
           <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 14 }}>A Fórmula</div>
           <div style={{ fontFamily: BB, fontSize: 'clamp(16px,2.4vw,24px)', letterSpacing: '0.02em', lineHeight: 1.6, color: 'rgba(255,255,255,0.92)' }}>
-            NOTA = (Produção × .25) + (Títulos × .15) + (Campanhas × .15) + (Clássicos × .10) + (Decisivos × .10) + (Premiações × .10) + (Longevidade × .05) + (Legado × .10)
+            ILF = Produção + Bônus Clássicos + Bônus Decisivos + Títulos + Campanhas + Premiações + Longevidade
           </div>
         </div>
       </div>
@@ -203,14 +219,14 @@ export function MetodologiaSection() {
 
 /* ── PRODUÇÃO OFENSIVA ───────────────────────── */
 export function ProducaoSection() {
-  const ranked = [...ILF_PLAYERS].sort((a, b) => b.scores.producao - a.scores.producao).slice(0, 8);
+  const ranked = [...ILF_PLAYERS].sort((a, b) => b.gols - a.gols);
   const lider = ranked[0];
-  const max = Math.max(...ranked.map(x => x.scores.producao));
+  const max = lider.gols;
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="03">Categoria · Peso 25%</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PRODUÇÃO OFENSIVA</h2>
+        <Kicker n="03">Gols · 1 pt por gol</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>GOLS</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'center' }}>
           <Reveal>
             <div style={{ background: 'linear-gradient(160deg,#0D2018,#0A1810)', borderRadius: 18, padding: 28, color: 'white', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
@@ -228,7 +244,7 @@ export function ProducaoSection() {
           <div>
             {ranked.map((p, i) => (
               <BarRow key={p.id} rank={i + 1} label={p.nome} sub={`${p.gols} gols · ${ILF_media(p).toFixed(2)} média`}
-                value={p.scores.producao} display={p.gols} max={max}
+                value={p.gols} display={p.gols} max={max}
                 color={i === 0 ? '#C4944A' : '#7A0213'} highlight={i === 0} />
             ))}
           </div>
@@ -239,16 +255,26 @@ export function ProducaoSection() {
 }
 
 /* ── TÍTULOS ─────────────────────────────────── */
-const TITLE_PTS: Record<string, number> = { Libertadores: 120, Brasileiro: 100, 'Rio-SP': 60, Carioca: 30, Recopa: 40 };
-const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileiro: '#006140', 'Rio-SP': '#7A0213', Carioca: '#AF1E35', Recopa: '#E8B560' };
-const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Rio-SP': '🎖️', Carioca: '🏅', Recopa: '🏆' };
+const TITLE_PTS: Record<string, number> = { Libertadores: 200, Brasileiro: 100, 'Copa do Brasil': 80, Recopa: 40, Carioca: 30, 'Rio-SP': 10, 'Copa Rio': 10, Mundial: 400 };
+const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileiro: '#006140', 'Copa do Brasil': '#7A0213', 'Rio-SP': '#AF1E35', Carioca: '#AF1E35', Recopa: '#E8B560', 'Copa Rio': '#64748B', Mundial: '#E8B560' };
+const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Copa do Brasil': '🥈', 'Rio-SP': '🎖️', Carioca: '🏅', Recopa: '🏆', 'Copa Rio': '🎖️', Mundial: '🌍' };
 
-const TITULOS_DATA = [
-  { id: 'fred',       items: [['Brasileiro', 2], ['Carioca', 2]] as [string, number][] },
-  { id: 'cano',       items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] as [string, number][] },
-  { id: 'washington', items: [['Brasileiro', 1], ['Carioca', 3]] as [string, number][] },
-  { id: 'tele',       items: [['Carioca', 2], ['Rio-SP', 2]] as [string, number][] },
-  { id: 'hercules',   items: [['Carioca', 5]] as [string, number][] },
+const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
+  { id: 'waldo',     items: [['Rio-SP', 1], ['Carioca', 1]] },
+  { id: 'fred',      items: [['Brasileiro', 2], ['Carioca', 2]] },
+  { id: 'cano',      items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] },
+  { id: 'orlando',   items: [['Carioca', 2]] },
+  { id: 'hercules',  items: [['Carioca', 5]] },
+  { id: 'tele',      items: [['Carioca', 2], ['Rio-SP', 2]] },
+  { id: 'welfare',   items: [['Carioca', 2]] },
+  { id: 'russo',     items: [['Carioca', 5]] },
+  { id: 'preguinho', items: [['Carioca', 2]] },
+  { id: 'washington',items: [['Brasileiro', 1], ['Carioca', 3]] },
+  { id: 'magno',     items: [['Carioca', 1]] },
+  { id: 'ezio',      items: [['Carioca', 1]] },
+  { id: 'escurinho', items: [['Carioca', 2], ['Rio-SP', 1]] },
+  { id: 'jair',      items: [['Carioca', 2], ['Rio-SP', 1]] },
+  { id: 'zeze',      items: [['Carioca', 2]] },
 ];
 
 export function TitulosSection() {
@@ -263,9 +289,9 @@ export function TitulosSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="04">Categoria · Peso 15%</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÍTULOS CONQUISTADOS</h2>
-        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Libertadores (120) · Brasileiro (100) · Rio-SP (60) · Carioca (30).</p>
+        <Kicker n="04">Títulos Conquistados</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>PONTOS POR TÍTULOS CONQUISTADOS</h2>
+        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Mundial (400) · Libertadores (200) · Brasileiro (100) · Copa do Brasil (80) · Recopa (40) · Carioca (30) · Rio-SP e Copa Rio (10).</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.05}>
@@ -320,15 +346,14 @@ const KNOCKOUT_LEGEND = [
 ];
 
 export function CampanhasSection() {
-  const playerIds = Object.keys(CAMP_DATA);
-  const players = playerIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
+  const players = [...ILF_PLAYERS].sort((a, b) => ILF_compute_scores(b).campanhas - ILF_compute_scores(a).campanhas);
   const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
   const posColor = (pos: number) => pos === 1 ? '#C4944A' : pos <= 4 ? '#006140' : pos <= 10 ? '#64748B' : '#94A3B8';
 
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="05">Categoria · Peso 15%</Kicker>
+        <Kicker n="05">Campanhas Históricas</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CAMPANHAS HISTÓRICAS</h2>
         <p style={{ fontSize: 15, color: '#64748B', marginBottom: 8, maxWidth: 640, lineHeight: 1.6 }}>
           Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta.

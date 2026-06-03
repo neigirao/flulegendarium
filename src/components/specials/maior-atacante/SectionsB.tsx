@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILFPlayer } from '@/data/maior-atacante';
+import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILFPlayer } from '@/data/maior-atacante';
 import { Portrait } from '../Portrait';
 import { Kicker } from '../Kicker';
 import { Reveal } from '../Reveal';
@@ -30,8 +30,8 @@ export function ClassicosSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="06">Categoria · Peso 10%</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>OS CLÁSSICOS</h2>
+        <Kicker n="06">Clássicos · +0.5pt por gol</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>GOLS EM CLÁSSICOS</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 36, alignItems: 'center' }}>
           <div>
             <div style={{ background: 'linear-gradient(135deg,#7A0213,#4D000D)', borderRadius: 16, padding: 24, color: 'white', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 18 }}>
@@ -75,8 +75,8 @@ export function DecisivosSection() {
   return (
     <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Categoria · Peso 10%</Kicker></div>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>QUEM APARECIA QUANDO<br />O FLU MAIS PRECISAVA?</h2>
+        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Jogos Decisivos · +0.5/1/2pts</Kicker></div>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>JOGOS DECISIVOS</h2>
         <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais, semifinais e quartas de final.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {rows.map((p, i) => (
@@ -107,11 +107,11 @@ export function DecisivosSection() {
 
 /* ── PREMIAÇÕES ──────────────────────────────── */
 export function PremiacoesSection() {
-  const players = [...ILF_PLAYERS].sort((a, b) => b.scores.premiacoes - a.scores.premiacoes).slice(0, 6);
+  const players = [...ILF_PLAYERS].sort((a, b) => ILF_compute_scores(b).premiacoes - ILF_compute_scores(a).premiacoes);
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="08">Categoria · Peso 10%</Kicker>
+        <Kicker n="08">Premiações Individuais</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PREMIAÇÕES INDIVIDUAIS</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 16 }}>
           {players.map((p, i) => (
@@ -259,7 +259,7 @@ export function RevelacaoSection() {
             {ILF_WEIGHTS.map(w => (
               <div key={w.key} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 8px' }}>
                 <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 3 }}>{w.short}</div>
-                <div style={{ fontFamily: BB, fontSize: 22, color: '#E8B560' }}>{champ.scores[w.key]}</div>
+                <div style={{ fontFamily: BB, fontSize: 22, color: '#E8B560' }}>{ILF_compute_scores(champ)[w.key].toFixed(0)}</div>
               </div>
             ))}
           </div>
@@ -390,7 +390,7 @@ export function ComparadorSection() {
 
   const rows: [string, number | string, number | string][] = [
     ['Gols', pa.gols, pb.gols],
-    ['Títulos (nota)', pa.scores.titulos, pb.scores.titulos],
+    ['Títulos (pts)', ILF_compute_scores(pa).titulos.toFixed(0), ILF_compute_scores(pb).titulos.toFixed(0)],
     ['Clássicos (gols)', pa.classicos.Flamengo + pa.classicos.Vasco + pa.classicos.Botafogo, pb.classicos.Flamengo + pb.classicos.Vasco + pb.classicos.Botafogo],
     ['Decisivos (gols)', pa.decisivos.finais + pa.decisivos.semis + pa.decisivos.quartas, pb.decisivos.finais + pb.decisivos.semis + pb.decisivos.quartas],
     ['Nota ILF', ILF_compute(pa).toFixed(1), ILF_compute(pb).toFixed(1)],
