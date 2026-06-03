@@ -77,7 +77,7 @@ export function DecisivosSection() {
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Jogos Decisivos · +0.5/1/2pts</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>JOGOS DECISIVOS</h2>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais, semifinais e quartas de final.</p>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+2pts), semifinais (+1pt) e quartas (+0.5pt) — quem aparecia quando o Flu mais precisava.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.05}>
@@ -136,41 +136,7 @@ export function PremiacoesSection() {
   );
 }
 
-/* ── LEGADO ──────────────────────────────────── */
-const LEGADO_CARDS = [
-  { id: 'waldo',    titulo: 'Maior artilheiro da história', icon: '👑' },
-  { id: 'fred',     titulo: 'Maior ídolo da era moderna',   icon: '❤️' },
-  { id: 'cano',     titulo: 'Herói da primeira Libertadores', icon: '🏆' },
-  { id: 'preguinho', titulo: 'Pioneiro do Brasil em Copas', icon: '⭐' },
-];
-
-export function LegadoSection() {
-  const cards = LEGADO_CARDS.flatMap(c => {
-    const p = ILF_PLAYERS.find(x => x.id === c.id);
-    if (!p) return [];
-    return [{ ...c, p }];
-  });
-  return (
-    <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: '72px 32px' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="09" light>Categoria · Peso 10%</Kicker></div>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8 }}>LEGADO HISTÓRICO</h2>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 44 }}>A dimensão emocional — o que cada um deixou marcado para sempre.</p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(240px,1fr))', gap: 18 }}>
-          {cards.map((c, i) => (
-            <Reveal key={c.id} delay={i * 0.08}>
-              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 18, padding: 24, textAlign: 'center', height: '100%' }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 14 }}><Portrait player={c.p} size={84} ring="#E8B560" big /></div>
-                <div style={{ fontFamily: BB, fontSize: 24, letterSpacing: '0.02em', marginBottom: 6 }}>{c.p.nome}</div>
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.4 }}>{c.icon} {c.titulo}</div>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+export function LegadoSection() { return null; }
 
 /* ── TRANSIÇÃO ───────────────────────────────── */
 export function TransicaoSection() {
@@ -185,10 +151,12 @@ export function TransicaoSection() {
       <div style={{ maxWidth: 640, margin: '0 auto', opacity: inView ? 1 : 0, transform: inView ? 'translateY(0)' : 'translateY(24px)', transition: 'all 0.7s ease 0.15s' }}>
         <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 20 }}>Fim da análise</div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,52px)', lineHeight: 1.0, letterSpacing: '0.02em', marginBottom: 18 }}>
-          OITO CATEGORIAS. <span style={{ color: '#E8B560' }}>UMA RÉGUA.</span><br />UM SÓ NOME NO TOPO.
+          {ILF_WEIGHTS.length} CATEGORIAS. <span style={{ color: '#E8B560' }}>UMA RÉGUA.</span><br />UM SÓ NOME NO TOPO.
         </h2>
         <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: 36 }}>
-          Produção, títulos, campanhas, clássicos, decisões, prêmios, longevidade e legado já foram pesados. O Índice Lendas do Flu chegou ao seu veredito.
+          {ILF_WEIGHTS.map((w, i) => (
+            <span key={w.key}>{i > 0 ? (i === ILF_WEIGHTS.length - 1 ? ' e ' : ', ') : ''}<span style={{ color: 'rgba(255,255,255,0.85)' }}>{w.label.toLowerCase()}</span></span>
+          ))} — tudo foi contado. O Índice Lendas do Flu chegou ao seu veredito.
         </p>
         <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, fontWeight: 700 }}>
           A revelação começa abaixo

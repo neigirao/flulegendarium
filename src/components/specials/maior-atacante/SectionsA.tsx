@@ -359,7 +359,7 @@ export function CampanhasSection() {
           Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta.
         </p>
         <p style={{ fontSize: 13, color: '#94A3B8', marginBottom: 22, maxWidth: 640, lineHeight: 1.6 }}>
-          Nos mata-matas (Libertadores e Copa do Brasil), medimos a <strong>fase alcançada</strong>. No Brasileirão, que é por pontos corridos, mostramos a <strong>colocação final na tabela</strong>.
+          Nos mata-matas (Libertadores, Copa do Brasil e Mundial), cada fase vale pontos: <strong>campeão=200/80/400</strong>, vice=120/48/160, semi=60/24/40, quartas=30/12. No Brasileirão: 1º=100pts, 2º=60pts, 3º=30pts.
         </p>
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' as const, marginBottom: 28 }}>
           {KNOCKOUT_LEGEND.map(l => (
