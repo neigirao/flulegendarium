@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_media, ILFPlayer } from '@/data/maior-atacante';
+import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILF_media, ILFPlayer } from '@/data/maior-atacante';
 import { Portrait } from '../Portrait';
 import { Kicker } from '../Kicker';
 import { Reveal } from '../Reveal';
 import { AnimatedNumber } from '../AnimatedNumber';
-import { Donut } from '../charts/Donut';
 import { BarRow } from '../charts/BarRow';
 
 const BB = "'Bebas Neue', Impact, sans-serif";
@@ -56,7 +55,7 @@ export function HeroSection({ onStart }: HeroProps) {
         </button>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(20px,5vw,64px)', marginTop: 48, flexWrap: 'wrap' as const }}>
-          {[['15', 'candidatos'], ['8', 'critérios'], ['100+', 'anos de história']].map(([v, l]) => (
+          {[['15', 'candidatos'], ['7', 'critérios'], ['100+', 'anos de história']].map(([v, l]) => (
             <div key={l} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: BB, fontSize: 46, color: '#E8B560', lineHeight: 1 }}>{v}</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700, marginTop: 4 }}>{l}</div>
@@ -138,18 +137,18 @@ export function FinalistasSection() {
                   </div>
                 ))}
               </div>
-              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>Notas por critério</div>
-              {ILF_WEIGHTS.map(w => (
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>Pontuação por critério</div>
+              {(() => { const selScores = ILF_compute_scores(sel); return ILF_WEIGHTS.map(w => (
                 <div key={w.key} style={{ marginBottom: 9 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 3 }}>
                     <span style={{ color: 'rgba(255,255,255,0.65)' }}>{w.label}</span>
-                    <span style={{ fontFamily: BB, color: 'white' }}>{sel.scores[w.key]}</span>
+                    <span style={{ fontFamily: BB, color: 'white' }}>{selScores[w.key].toFixed(1)}</span>
                   </div>
                   <div style={{ height: 6, background: 'rgba(255,255,255,0.08)', borderRadius: 4, overflow: 'hidden' }}>
-                    <div style={{ width: `${sel.scores[w.key]}%`, height: '100%', background: '#C4944A', borderRadius: 4 }} />
+                    <div style={{ width: `${(selScores[w.key] / ILF_MAX_SCORES[w.key]) * 100}%`, height: '100%', background: '#C4944A', borderRadius: 4 }} />
                   </div>
                 </div>
-              ))}
+              )); })()}
               <div style={{ marginTop: 22, padding: 16, background: 'linear-gradient(135deg, rgba(196,148,74,0.18), rgba(122,2,19,0.18))', borderRadius: 12, textAlign: 'center' as const }}>
                 <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota ILF</div>
                 <div style={{ fontFamily: BB, fontSize: 48, color: '#E8B560', lineHeight: 1 }}>{ILF_compute(sel).toFixed(1)}</div>
