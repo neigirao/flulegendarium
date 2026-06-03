@@ -232,7 +232,7 @@ export function MetodologiaSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="02">A Régua</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,48px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>COMO DESCOBRIR O MAIOR ATACANTE DO FLUMINENSE?</h2>
-        <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>Uma nota final de 0 a 100 que pondera 8 dimensões da grandeza de um atacante. Quanto maior, mais completo o ídolo.</p>
+        <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>Uma nota final de 0 a 100 que pondera 7 dimensões mensuráveis da grandeza de um atacante. Quanto maior, mais completo o ídolo.</p>
 
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: 44, alignItems: 'center' }}>
           <div style={{ position: 'relative', justifySelf: 'center' as const }}>
@@ -256,7 +256,7 @@ export function MetodologiaSection() {
         <div style={{ marginTop: 40, background: '#0A1810', borderRadius: 16, padding: '28px 32px', color: 'white', overflowX: 'auto' as const }}>
           <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 14 }}>A Fórmula</div>
           <div style={{ fontFamily: BB, fontSize: 'clamp(16px,2.4vw,24px)', letterSpacing: '0.02em', lineHeight: 1.6, color: 'rgba(255,255,255,0.92)' }}>
-            NOTA = (Produção × .25) + (Títulos × .15) + (Campanhas × .15) + (Clássicos × .10) + (Decisivos × .10) + (Premiações × .10) + (Longevidade × .05) + (Legado × .10)
+            NOTA = (Produção × .30) + (Títulos × .15) + (Campanhas × .20) + (Clássicos × .10) + (Decisivos × .10) + (Premiações × .10) + (Longevidade × .05)
           </div>
         </div>
       </div>

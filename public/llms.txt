@@ -43,15 +43,16 @@ Lendas do Flu é uma aplicação web de quiz para torcedores do Fluminense FC. O
 
 Publicado em 2026-06-02. Estudo editorial completo usando o Índice Lendas do Flu (ILF).
 
-**Metodologia ILF — 8 critérios ponderados:**
-- Produção Ofensiva: 25% (gols totais pelo Fluminense)
-- Títulos Conquistados: 15% (pontuação por troféu com peso por relevância)
-- Campanhas Históricas: 15% (desempenho em Libertadores, Brasileirão, Copa do Brasil, Mundial)
-- Gols em Clássicos: 10% (contra Flamengo, Vasco e Botafogo)
+**Metodologia ILF — 7 critérios ponderados (apenas métricas mensuráveis):**
+- Produção Ofensiva: 30% (gols totais pelo Fluminense)
+- Campanhas Históricas: 20% (fase alcançada em Libertadores, Copa do Brasil, Mundial; colocação no Brasileirão)
+- Títulos Conquistados: 15% (pontuação por troféu: Libertadores 200pts, Brasileiro 100pts, Copa do Brasil 80pts, Recopa 40pts, Carioca 30pts, Rio-SP 10pts)
+- Clássicos: 10% (gols contra Flamengo, Vasco e Botafogo)
 - Jogos Decisivos: 10% (gols em finais, semis e quartas de final)
 - Premiações Individuais: 10% (artilharia, bola de ouro, melhor jogador)
 - Longevidade: 5% (anos de contribuição como titular)
-- Legado Histórico: 10% (impacto cultural e simbólico no clube)
+
+Critério removido: Legado Histórico — removido por ser subjetivo e não computável de forma objetiva.
 
 **Os 15 candidatos avaliados:**
 1. Waldo — 319 gols (1954–1961), maior artilheiro histórico do Fluminense
