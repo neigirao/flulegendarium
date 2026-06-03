@@ -266,13 +266,13 @@ export function MetodologiaSection() {
 
 /* ── PRODUÇÃO OFENSIVA ───────────────────────── */
 export function ProducaoSection() {
-  const ranked = [...ILF_PLAYERS].sort((a, b) => b.scores.producao - a.scores.producao);
+  const ranked = [...ILF_PLAYERS].sort((a, b) => b.gols - a.gols);
   const lider = ranked[0];
-  const max = Math.max(...ranked.map(x => x.scores.producao));
+  const max = lider.gols;
   return (
     <section style={{ background: '#fff', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="03">Produção Ofensiva · Peso 25%</Kicker>
+        <Kicker n="03">Gols · Peso 25%</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>GOLS</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'start' }}>
           <Reveal>
@@ -291,7 +291,7 @@ export function ProducaoSection() {
           <div>
             {ranked.map((p, i) => (
               <BarRow key={p.id} rank={i + 1} label={p.nome} sub={`${p.gols} gols · ${ILF_media(p).toFixed(2)} média`}
-                value={p.scores.producao} display={p.gols} max={max}
+                value={p.gols} display={p.gols} max={max}
                 color={i === 0 ? '#C4944A' : '#7A0213'} highlight={i === 0} />
             ))}
           </div>
