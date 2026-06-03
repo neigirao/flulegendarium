@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILFPlayer } from '@/data/maior-atacante';
+import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILFPlayer } from '@/data/maior-atacante';
 import { Portrait } from '../Portrait';
 import { Kicker } from '../Kicker';
 import { Reveal } from '../Reveal';
@@ -13,7 +12,10 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 
 /* ── CLÁSSICOS ───────────────────────────────── */
 export function ClassicosSection() {
-  const candidatos = ILF_PLAYERS;
+  const candidateIds = ['waldo', 'welfare', 'fred', 'orlando'];
+  const candidatos = candidateIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
+  if (!candidatos.length) return null;
+  const [sel, setSel] = useState<ILFPlayer>(candidatos[0]);
 
   const rei = [...ILF_PLAYERS].sort((a, b) => {
     const sa = a.classicos.Flamengo + a.classicos.Vasco + a.classicos.Botafogo;
@@ -21,18 +23,14 @@ export function ClassicosSection() {
     return sb - sa;
   })[0];
 
-  const [sel, setSel] = useState<ILFPlayer | null>(null);
-  const activeSel = sel ?? rei;
-  if (!activeSel) return null;
-
   const axes = [{ label: 'Flamengo' }, { label: 'Vasco' }, { label: 'Botafogo' }];
-  const series = [{ color: '#7A0213', fill: 'rgba(122,2,19,0.18)', values: [activeSel.classicos.Flamengo, activeSel.classicos.Vasco, activeSel.classicos.Botafogo] }];
+  const series = [{ color: '#7A0213', fill: 'rgba(122,2,19,0.18)', values: [sel.classicos.Flamengo, sel.classicos.Vasco, sel.classicos.Botafogo] }];
   const maxVal = Math.max(...ILF_PLAYERS.map(p => Math.max(p.classicos.Flamengo, p.classicos.Vasco, p.classicos.Botafogo)));
 
   return (
-    <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
+    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="06">Clássicos · Peso 10%</Kicker>
+        <Kicker n="06">Clássicos · +0.5pt por gol</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>GOLS EM CLÁSSICOS</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 36, alignItems: 'center' }}>
           <div>
@@ -44,26 +42,18 @@ export function ClassicosSection() {
                 <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{rei.classicos.Flamengo + rei.classicos.Vasco + rei.classicos.Botafogo} gols em clássicos</div>
               </div>
             </div>
-            <div data-mc="cols5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6, marginBottom: 16 }}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' as const }}>
               {candidatos.map(p => (
-                <button key={p.id} onClick={() => setSel(p)} style={{ display: 'flex', flexDirection: 'column' as const, alignItems: 'center', gap: 4, padding: '8px 4px', borderRadius: 10, border: activeSel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: activeSel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', cursor: 'pointer' }}>
-                  <Portrait player={p} size={36} ring={activeSel.id === p.id ? '#7A0213' : '#E2DDD5'} />
-                  <span style={{ fontSize: 11, fontWeight: 700, color: activeSel.id === p.id ? '#7A0213' : '#64748B', textAlign: 'center' as const, lineHeight: 1.2, wordBreak: 'break-word' as const }}>{p.nome}</span>
-                </button>
+                <button key={p.id} onClick={() => setSel(p)} style={{ padding: '8px 14px', borderRadius: 8, border: sel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: sel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', color: sel.id === p.id ? '#7A0213' : '#64748B', fontWeight: 600, fontSize: 13, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>{p.nome}</button>
               ))}
             </div>
             <div style={{ marginTop: 18, display: 'flex', gap: 12 }}>
-              {([['Flamengo', activeSel.classicos.Flamengo], ['Vasco', activeSel.classicos.Vasco], ['Botafogo', activeSel.classicos.Botafogo]] as [string, number][]).map(([l, v]) => {
-                const maxRival = Math.max(activeSel.classicos.Flamengo, activeSel.classicos.Vasco, activeSel.classicos.Botafogo);
-                const isTop = v === maxRival;
-                return (
-                  <div key={l} style={{ flex: 1, background: isTop ? 'rgba(122,2,19,0.06)' : 'white', border: isTop ? '1.5px solid #7A0213' : '1px solid #E2E8F0', borderRadius: 10, padding: '12px 8px', textAlign: 'center' as const, position: 'relative' as const }}>
-                    {isTop && <div style={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', background: '#7A0213', color: 'white', fontSize: 9, fontWeight: 800, padding: '2px 8px', borderRadius: 999, letterSpacing: '0.08em', whiteSpace: 'nowrap' as const }}>MAIS GOLS</div>}
-                    <div style={{ fontFamily: BB, fontSize: 26, color: isTop ? '#7A0213' : '#94A3B8', lineHeight: 1 }}>{v}</div>
-                    <div style={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginTop: 2 }}>vs {l}</div>
-                  </div>
-                );
-              })}
+              {[['Flamengo', sel.classicos.Flamengo], ['Vasco', sel.classicos.Vasco], ['Botafogo', sel.classicos.Botafogo]].map(([l, v]) => (
+                <div key={String(l)} style={{ flex: 1, background: 'white', border: '1px solid #E2E8F0', borderRadius: 10, padding: '12px 8px', textAlign: 'center' as const }}>
+                  <div style={{ fontFamily: BB, fontSize: 26, color: '#7A0213', lineHeight: 1 }}>{v}</div>
+                  <div style={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginTop: 2 }}>vs {l}</div>
+                </div>
+              ))}
             </div>
           </div>
           <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -79,14 +69,15 @@ export function ClassicosSection() {
 export function DecisivosSection() {
   const rows = [...ILF_PLAYERS]
     .map(p => ({ ...p, totalDec: p.decisivos.finais + p.decisivos.semis + p.decisivos.quartas }))
-    .sort((a, b) => b.totalDec - a.totalDec);
+    .sort((a, b) => b.totalDec - a.totalDec)
+    .slice(0, 6);
 
   return (
-    <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
+    <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Jogos Decisivos · Peso 10%</Kicker></div>
+        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="07" light>Jogos Decisivos · +0.5/1/2pts</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>JOGOS DECISIVOS</h2>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais, semifinais e quartas de final — quem aparecia quando o Flu mais precisava.</p>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+2pts), semifinais (+1pt) e quartas (+0.5pt) — quem aparecia quando o Flu mais precisava.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.05}>
@@ -116,11 +107,11 @@ export function DecisivosSection() {
 
 /* ── PREMIAÇÕES ──────────────────────────────── */
 export function PremiacoesSection() {
-  const players = [...ILF_PLAYERS].sort((a, b) => b.scores.premiacoes - a.scores.premiacoes);
+  const players = [...ILF_PLAYERS].sort((a, b) => ILF_compute_scores(b).premiacoes - ILF_compute_scores(a).premiacoes);
   return (
-    <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
+    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="08">Premiações Individuais · Peso 10%</Kicker>
+        <Kicker n="08">Premiações Individuais</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>PREMIAÇÕES INDIVIDUAIS</h2>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 16 }}>
           {players.map((p, i) => (
@@ -145,6 +136,8 @@ export function PremiacoesSection() {
   );
 }
 
+export function LegadoSection() { return null; }
+
 /* ── TRANSIÇÃO ───────────────────────────────── */
 export function TransicaoSection() {
   const [ref, inView] = useInView(0.4);
@@ -163,7 +156,7 @@ export function TransicaoSection() {
         <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: 36 }}>
           {ILF_WEIGHTS.map((w, i) => (
             <span key={w.key}>{i > 0 ? (i === ILF_WEIGHTS.length - 1 ? ' e ' : ', ') : ''}<span style={{ color: 'rgba(255,255,255,0.85)' }}>{w.label.toLowerCase()}</span></span>
-          ))} — tudo foi pesado. O Índice Lendas do Flu chegou ao seu veredito.
+          ))} — tudo foi contado. O Índice Lendas do Flu chegou ao seu veredito.
         </p>
         <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, fontWeight: 700 }}>
           A revelação começa abaixo
@@ -234,7 +227,7 @@ export function RevelacaoSection() {
             {ILF_WEIGHTS.map(w => (
               <div key={w.key} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 8px' }}>
                 <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 3 }}>{w.short}</div>
-                <div style={{ fontFamily: BB, fontSize: 22, color: '#E8B560' }}>{champ.scores[w.key]}</div>
+                <div style={{ fontFamily: BB, fontSize: 22, color: '#E8B560' }}>{ILF_compute_scores(champ)[w.key].toFixed(0)}</div>
               </div>
             ))}
           </div>
@@ -249,10 +242,10 @@ export function RankingOficialSection() {
   const all = ILF_RANKING;
   const max = all[0].ilf;
   return (
-    <section style={{ background: '#F7F5F2', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
+    <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}><Kicker n="✓">Resultado completo</Kicker></div>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 8 }}>O RANKING DO MAIOR ATACANTE DO FLU É</h2>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 8 }}>O RANKING OFICIAL ILF</h2>
         <p style={{ fontSize: 14, color: '#64748B', textAlign: 'center', marginBottom: 36 }}>Os 15 finalistas, ordenados pela nota final do Índice Lendas do Flu.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {all.map((p, i) => {
@@ -281,37 +274,25 @@ export function RankingOficialSection() {
 
 /* ── VOTAÇÃO ─────────────────────────────────── */
 export function VotacaoSection() {
-  const [voted, setVoted] = useState<string | null>(() => {
-    try { return localStorage.getItem('ilf_voted_v2'); } catch { return null; }
+  const top3 = ILF_RANKING.slice(0, 3);
+  const [voted, setVoted] = useState<string | null>(null);
+  const [results, setResults] = useState<Record<string, number>>(() => {
+    const base: Record<string, number> = { [top3[0].id]: 412, [top3[1].id]: 386, [top3[2].id]: 298 };
+    try { return JSON.parse(localStorage.getItem('ilf_votos') || 'null') || base; } catch { return base; }
   });
-  const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
 
-  useEffect(() => {
-    let cancelled = false;
-    supabase.from('ilf_votes').select('player_id').then(({ data }) => {
-      if (cancelled || !data) return;
-      const counts: Record<string, number> = {};
-      data.forEach((row: { player_id: string }) => {
-        counts[row.player_id] = (counts[row.player_id] || 0) + 1;
-      });
-      setVoteCounts(counts);
-    });
-    return () => { cancelled = true; };
-  }, []);
-
-  const vote = async (id: string) => {
+  const vote = (id: string) => {
     if (voted) return;
-    await supabase.from('ilf_votes').insert({ player_id: id });
-    setVoteCounts(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
+    const next = { ...results, [id]: (results[id] || 0) + 1 };
+    setResults(next);
     setVoted(id);
-    try { localStorage.setItem('ilf_voted_v2', id); } catch { /* ignore */ }
+    try { localStorage.setItem('ilf_votos', JSON.stringify(next)); } catch { /* ignore */ }
   };
 
-  const total = Object.values(voteCounts).reduce((s, v) => s + v, 0) || 1;
-  const ranked = [...ILF_RANKING].sort((a, b) => (voteCounts[b.id] || 0) - (voteCounts[a.id] || 0));
+  const total = top3.reduce((s, p) => s + (results[p.id] || 0), 0) || 1;
 
   const share = async () => {
-    const escolha = voted ? ILF_PLAYERS.find(p => p.id === voted)?.nome : ILF_RANKING[0].nome;
+    const escolha = voted ? ILF_PLAYERS.find(p => p.id === voted)?.nome : top3[0].nome;
     const texto = `Pra mim, o maior atacante da história do Fluminense é ${escolha}! 🏆 Vote no estudo do Lendas do Flu:`;
     const url = 'https://lendasdoflu.com/especiais/maior-atacante';
     if (navigator.share) {
@@ -322,57 +303,41 @@ export function VotacaoSection() {
   };
 
   return (
-    <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)' }}>
-      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+    <section style={{ background: 'linear-gradient(160deg,#0D2018,#081510)', color: 'white', padding: '72px 32px' }}>
+      <div style={{ maxWidth: 760, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="★" light>A voz da torcida</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,50px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>E PRA VOCÊ, QUEM É O MAIOR?</h2>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A régua do ILF deu o veredito — mas a palavra final é da arquibancada.</p>
 
-        {!voted ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(min(130px,calc(33% - 8px)),1fr))', gap: 10, marginBottom: 28 }}>
-            {ILF_RANKING.map(p => (
-              <button key={p.id} onClick={() => vote(p.id)} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '14px 8px', cursor: 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const }}
-                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.borderColor = 'rgba(232,181,96,0.5)'; }}
-                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}><Portrait player={p} size={52} ring="rgba(255,255,255,0.25)" /></div>
-                <div style={{ fontFamily: BB, fontSize: 15, letterSpacing: '0.02em', lineHeight: 1.1 }}>{p.nome}</div>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', marginTop: 3 }}>{p.apelido}</div>
-                <div style={{ marginTop: 8, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560' }}>Votar →</div>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <div style={{ marginBottom: 28 }}>
-            <div style={{ textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 20 }}>
-              ✓ Voto registrado em <strong style={{ color: '#E8B560' }}>{ILF_PLAYERS.find(p => p.id === voted)?.nome}</strong> · {total.toLocaleString('pt-BR')} votos totais
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-              {ranked.map((p, i) => {
-                const count = voteCounts[p.id] || 0;
-                const pct = Math.round((count / total) * 100);
-                const isVoted = voted === p.id;
-                const isFirst = i === 0;
-                return (
-                  <div key={p.id} style={{ background: isVoted ? 'rgba(232,181,96,0.08)' : 'rgba(255,255,255,0.03)', border: isVoted ? '1px solid rgba(232,181,96,0.35)' : '1px solid rgba(255,255,255,0.07)', borderRadius: 11, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
-                    <div style={{ fontFamily: BB, fontSize: 20, color: isFirst ? '#E8B560' : 'rgba(255,255,255,0.25)', width: 22, textAlign: 'center' as const, flexShrink: 0 }}>{i + 1}</div>
-                    <Portrait player={p} size={36} ring={isVoted ? '#E8B560' : 'rgba(255,255,255,0.2)'} />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontFamily: BB, fontSize: 15, letterSpacing: '0.02em' }}>{p.nome}{isVoted ? ' ✓' : ''}</div>
-                      <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, marginTop: 4, overflow: 'hidden' }}>
-                        <div style={{ width: `${pct}%`, height: 4, background: isVoted ? '#E8B560' : (isFirst ? '#C4944A' : 'rgba(255,255,255,0.35)'), borderRadius: 2, transition: 'width 0.8s ease' }} />
-                      </div>
+        <div data-mc="vote" style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 14, marginBottom: 28 }}>
+          {top3.map(p => {
+            const pct = Math.round(((results[p.id] || 0) / total) * 100);
+            const isVote = voted === p.id;
+            return (
+              <button key={p.id} onClick={() => vote(p.id)} disabled={!!voted} style={{ background: isVote ? 'rgba(232,181,96,0.15)' : 'rgba(255,255,255,0.04)', border: isVote ? '2px solid #E8B560' : '1px solid rgba(255,255,255,0.12)', borderRadius: 16, padding: '22px 16px', cursor: voted ? 'default' : 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const, position: 'relative' }}
+                onMouseEnter={e => { if (!voted) e.currentTarget.style.transform = 'translateY(-3px)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 12 }}><Portrait player={p} size={72} ring={isVote ? '#E8B560' : 'rgba(255,255,255,0.25)'} big={isVote} /></div>
+                <div style={{ fontFamily: BB, fontSize: 22, letterSpacing: '0.02em' }}>{p.nome}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginBottom: voted ? 12 : 0 }}>{p.apelido}</div>
+                {voted && (
+                  <div style={{ marginTop: 8 }}>
+                    <div style={{ height: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 4, overflow: 'hidden', marginBottom: 6 }}>
+                      <div style={{ width: `${pct}%`, height: 8, background: isVote ? '#E8B560' : 'rgba(255,255,255,0.4)', borderRadius: 4, transition: 'width 0.6s ease' }} />
                     </div>
-                    <div style={{ textAlign: 'right' as const, minWidth: 52, flexShrink: 0 }}>
-                      <div style={{ fontFamily: BB, fontSize: 20, color: isVoted ? '#E8B560' : 'white', lineHeight: 1 }}>{pct}%</div>
-                      <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.35)', letterSpacing: '0.04em' }}>{count.toLocaleString('pt-BR')} votos</div>
-                    </div>
+                    <div style={{ fontFamily: BB, fontSize: 22, color: isVote ? '#E8B560' : 'white' }}>{pct}%</div>
                   </div>
-                );
-              })}
-            </div>
+                )}
+                {!voted && <div style={{ marginTop: 10, fontSize: 11, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560' }}>Votar →</div>}
+              </button>
+            );
+          })}
+        </div>
+        {voted && (
+          <div style={{ textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 24 }}>
+            ✓ Voto registrado em <strong style={{ color: '#E8B560' }}>{ILF_PLAYERS.find(p => p.id === voted)?.nome}</strong> · {total.toLocaleString('pt-BR')} votos
           </div>
         )}
-
         <div style={{ textAlign: 'center' }}>
           <button onClick={share} style={{ background: '#fff', color: '#0D2018', border: 'none', borderRadius: 12, padding: '14px 32px', fontFamily: BB, fontSize: 18, letterSpacing: '0.05em', cursor: 'pointer', boxShadow: '0 8px 24px rgba(0,0,0,0.25)', display: 'inline-flex', alignItems: 'center', gap: 10, transition: 'transform 0.15s' }}
             onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
@@ -393,7 +358,7 @@ export function ComparadorSection() {
 
   const rows: [string, number | string, number | string][] = [
     ['Gols', pa.gols, pb.gols],
-    ['Títulos (nota)', pa.scores.titulos, pb.scores.titulos],
+    ['Títulos (pts)', ILF_compute_scores(pa).titulos.toFixed(0), ILF_compute_scores(pb).titulos.toFixed(0)],
     ['Clássicos (gols)', pa.classicos.Flamengo + pa.classicos.Vasco + pa.classicos.Botafogo, pb.classicos.Flamengo + pb.classicos.Vasco + pb.classicos.Botafogo],
     ['Decisivos (gols)', pa.decisivos.finais + pa.decisivos.semis + pa.decisivos.quartas, pb.decisivos.finais + pb.decisivos.semis + pb.decisivos.quartas],
     ['Nota ILF', ILF_compute(pa).toFixed(1), ILF_compute(pb).toFixed(1)],
@@ -406,9 +371,9 @@ export function ComparadorSection() {
   );
 
   return (
-    <section style={{ background: '#fff', padding: 'clamp(40px,8vw,72px) clamp(16px,4vw,32px)', borderTop: '1px solid #EDE8E0' }}>
+    <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 760, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center' }}><Kicker n="09">Cara a cara</Kicker></div>
+        <div style={{ textAlign: 'center' }}><Kicker n="10">Cara a cara</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 36 }}>O COMPARADOR</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 18, alignItems: 'center', marginBottom: 24 }}>
           <div style={{ textAlign: 'center' }}><Portrait player={pa} size={92} ring="#7A0213" big /><div style={{ marginTop: 10 }}><Sel value={aId} onChange={setAId} /></div></div>
