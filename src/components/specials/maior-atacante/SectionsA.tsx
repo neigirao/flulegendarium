@@ -150,8 +150,7 @@ export function FinalistasSection() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 14px 32px rgba(0,0,0,0.1)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-                <div style={{ position: 'absolute', top: 12, right: 14, fontFamily: BB, fontSize: 26, color: '#EFEAE3' }}>{String(i + 1).padStart(2, '0')}</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
+<div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
                   <Portrait player={p} size={64} ring="#C4944A" />
                   <div>
                     <div style={{ fontFamily: BB, fontSize: 22, color: '#1a1a2e', letterSpacing: '0.02em', lineHeight: 1 }}>{p.nome}</div>
