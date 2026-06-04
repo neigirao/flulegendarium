@@ -339,29 +339,50 @@ export function TitulosSection() {
 }
 
 /* ── CAMPANHAS ───────────────────────────────── */
-const PRE_NACIONAIS = new Set(['welfare', 'preguinho', 'russo', 'hercules', 'zeze', 'orlando', 'tele', 'jair', 'escurinho', 'waldo']);
+const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
+  waldo:      { carioca: '1959', rio_sp: '1957' },
+  fred:       { carioca: '2012, 2022', brasileiro: '2010, 2012' },
+  cano:       { carioca: '2022, 2023', libertadores: '2023' },
+  orlando:    { carioca: '1946, 1951' },
+  hercules:   { carioca: '1936, 1937, 1938, 1940, 1941' },
+  tele:       { carioca: '1951, 1959', rio_sp: '1957, 1960' },
+  welfare:    { carioca: '1917, 1918' },
+  russo:      { carioca: '1936, 1937, 1938, 1940, 1941' },
+  preguinho:  { carioca: '1931, 1936' },
+  washington: { carioca: '1983, 1984, 1985', brasileiro: '1984' },
+  magno:      { carioca: '2002' },
+  ezio:       { carioca: '1995' },
+  escurinho:  { carioca: '1951, 1959', rio_sp: '1957' },
+  jair:       { carioca: '1951, 1959', rio_sp: '1957' },
+  zeze:       { carioca: '1946, 1951' },
+};
 
 function getCompPhases(p: ILFPlayer) {
-  const lib = (p.titulos_raw.libertadores || 0) > 0 ? { label: `${p.titulos_raw.libertadores}× Campeão`, color: '#C4944A' }
+  const anos = TITULO_ANOS[p.id] || {};
+  const lib = (p.titulos_raw.libertadores || 0) > 0 ? { label: `${p.titulos_raw.libertadores}× Campeão${anos.libertadores ? ` (${anos.libertadores})` : ''}`, color: '#C4944A' }
     : (p.campanhas_raw.libertadores_vice || 0) > 0 ? { label: 'Vice', color: '#7A0213' }
     : (p.campanhas_raw.libertadores_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
     : (p.campanhas_raw.libertadores_quartas || 0) > 0 ? { label: 'Quartas de Final', color: '#64748B' }
     : null;
-  const copa = (p.titulos_raw.copa_brasil || 0) > 0 ? { label: `${p.titulos_raw.copa_brasil}× Campeão`, color: '#C4944A' }
+  const copa = (p.titulos_raw.copa_brasil || 0) > 0 ? { label: `${p.titulos_raw.copa_brasil}× Campeão${anos.copa_brasil ? ` (${anos.copa_brasil})` : ''}`, color: '#C4944A' }
     : (p.campanhas_raw.copa_brasil_vice || 0) > 0 ? { label: 'Vice', color: '#7A0213' }
     : (p.campanhas_raw.copa_brasil_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
     : (p.campanhas_raw.copa_brasil_quartas || 0) > 0 ? { label: 'Quartas de Final', color: '#64748B' }
     : null;
-  const bra = (p.titulos_raw.brasileiro || 0) > 0 ? { label: `${p.titulos_raw.brasileiro}× Campeão`, color: '#C4944A' }
+  const bra = (p.titulos_raw.brasileiro || 0) > 0 ? { label: `${p.titulos_raw.brasileiro}× Campeão${anos.brasileiro ? ` (${anos.brasileiro})` : ''}`, color: '#C4944A' }
     : (p.campanhas_raw.brasileiro_2 || 0) > 0 ? { label: '2º lugar', color: '#7A0213' }
     : (p.campanhas_raw.brasileiro_3 || 0) > 0 ? { label: '3º lugar', color: '#64748B' }
     : null;
-  const mun = (p.titulos_raw.mundial || 0) > 0 ? { label: 'Campeão', color: '#C4944A' }
-    : (p.campanhas_raw.mundial_vice || 0) > 0 ? { label: 'Vice-campeão', color: '#E8B560' }
-    : (p.campanhas_raw.mundial_3 || 0) > 0 ? { label: '3º lugar', color: '#64748B' }
-    : (p.campanhas_raw.mundial_semi || 0) > 0 ? { label: 'Semifinal', color: '#94A3B8' }
+  const carioca = (p.titulos_raw.carioca || 0) > 0
+    ? { label: `${p.titulos_raw.carioca}× Campeão${anos.carioca ? ` (${anos.carioca})` : ''}`, color: '#AF1E35' }
     : null;
-  return { lib, copa, bra, mun };
+  const munList: { label: string; color: string }[] = [
+    ...(Array.from({ length: p.titulos_raw.mundial || 0 }, () => ({ label: 'Campeão', color: '#C4944A' }))),
+    ...((p.campanhas_raw.mundial_vice || 0) > 0 ? [{ label: 'Vice-campeão', color: '#E8B560' }] : []),
+    ...((p.campanhas_raw.mundial_3 || 0) > 0 ? [{ label: '3º lugar', color: '#64748B' }] : []),
+    ...((p.campanhas_raw.mundial_semi || 0) > 0 ? [{ label: 'Semifinal', color: '#94A3B8' }] : []),
+  ];
+  return { lib, copa, bra, carioca, munList };
 }
 
 export function CampanhasSection() {
@@ -380,7 +401,7 @@ export function CampanhasSection() {
           {players.map((p, idx) => {
             const phases = getCompPhases(p);
             const campPts = ILF_compute_scores(p).campanhas;
-            const hasAny = phases.lib || phases.copa || phases.bra || phases.mun;
+            const hasAny = phases.lib || phases.copa || phases.bra || phases.carioca || phases.munList.length > 0;
             return (
               <Reveal key={p.id} delay={idx * 0.04}>
                 <div style={{ background: '#F7F5F2', border: '1px solid #E2E8F0', borderRadius: 14, padding: '18px 20px', height: '100%', boxSizing: 'border-box' as const }}>
@@ -393,6 +414,12 @@ export function CampanhasSection() {
                   </div>
                   {hasAny ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      {phases.carioca && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Carioca</span>
+                          <span style={{ background: phases.carioca.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.carioca.label}</span>
+                        </div>
+                      )}
                       {phases.lib && (
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Libertadores</span>
@@ -411,17 +438,15 @@ export function CampanhasSection() {
                           <span style={{ background: phases.bra.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.bra.label}</span>
                         </div>
                       )}
-                      {phases.mun && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      {phases.munList.map((mun, mi) => (
+                        <div key={mi} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Mundial de Clubes</span>
-                          <span style={{ background: phases.mun.color, color: phases.mun.color === '#E8B560' ? '#1a1a2e' : 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.mun.label}</span>
+                          <span style={{ background: mun.color, color: mun.color === '#E8B560' ? '#1a1a2e' : 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{mun.label}</span>
                         </div>
-                      )}
+                      ))}
                     </div>
                   ) : (
-                    <div style={{ fontSize: 12, color: '#94A3B8', fontStyle: 'italic' }}>
-                      {PRE_NACIONAIS.has(p.id) ? 'Era anterior aos torneios nacionais' : 'Sem campanha de destaque'}
-                    </div>
+                    <div style={{ fontSize: 12, color: '#94A3B8', fontStyle: 'italic' }}>Sem título registrado</div>
                   )}
                 </div>
               </Reveal>

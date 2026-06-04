@@ -65,9 +65,7 @@ export function ClassicosSection() {
 /* ── DECISIVOS ───────────────────────────────── */
 const COMP_LABEL: Record<string, string> = {
   libertadores: 'Libertadores',
-  copa_brasil: 'Copa Brasil',
-  carioca: 'Carioca',
-  rio_sp: 'Rio-SP',
+  copa_brasil: 'Copa do Brasil',
   copa_rio: 'Copa Rio',
 };
 
@@ -212,7 +210,7 @@ export function RevelacaoSection() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: 10, maxWidth: 720, margin: '28px auto 0' }}>
             {ILF_WEIGHTS.map(w => (
               <div key={w.key} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 8px' }}>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 3 }}>{w.short}</div>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 3 }}>{w.label}</div>
                 <div style={{ fontFamily: BB, fontSize: 22, color: '#E8B560' }}>{ILF_compute_scores(champ)[w.key].toFixed(0)}</div>
               </div>
             ))}
