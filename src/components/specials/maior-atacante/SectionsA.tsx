@@ -40,6 +40,8 @@ export function HeroSection({ onStart }: HeroProps) {
             {[42,66,90,114,138,162].map((y,i) => (
               <line key={`h${i}`} x1="32" y1={y} x2="388" y2={y} stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
             ))}
+            {/* Fluminense logo centered inside the goal net */}
+            <image href="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp" x="175" y="79" width="70" height="70" preserveAspectRatio="xMidYMid meet" opacity="0.9" />
             <circle cx="310" cy="52" r="30" fill="rgba(232,181,96,0.12)" />
             <path d="M 70 190 C 100 120, 200 60, 310 52" stroke="#E8B560" strokeWidth="2.5" strokeDasharray="7 5" fill="none" opacity="0.65" />
             {[0,40,80,120,160,200,240,280,320].map((angle,i) => {
@@ -57,7 +59,6 @@ export function HeroSection({ onStart }: HeroProps) {
             <line x1="8" y1="200" x2="412" y2="200" stroke="rgba(255,255,255,0.18)" strokeWidth="2" />
           </svg>
 
-          <img src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp" alt="Fluminense FC" style={{ width: 68, height: 68, objectFit: 'contain' }} />
           <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: '#E8B560' }}>
             15 LENDAS · UM TÍTULO EM DISPUTA
           </div>
@@ -183,9 +184,13 @@ export function FinalistasSection() {
 }
 
 /* ── METODOLOGIA ─────────────────────────────── */
-const CRITERION_SCALE: Record<string, string> = {
-  producao: '1pt/gol', classicos: '+0.5pt', decisivos: '+0.5–2pt',
-  titulos: '30–400pts', campanhas: '5–160pts', longevidade: '0.25pt/jogo',
+const CRITERION_DETAIL: Record<string, { pts: string; desc: string }> = {
+  producao:    { pts: '1 pt/gol',        desc: 'Cada gol marcado pelo clube vale 1 ponto.' },
+  classicos:   { pts: '+0.5 pt/gol',     desc: 'Gols em Fla-Flu, Flu-Vasco e Flu-Botafogo recebem bônus adicional.' },
+  decisivos:   { pts: '+0.5 · +1 · +2',  desc: 'Gols em quartas (+0.5), semifinais (+1) e finais (+2) de competições.' },
+  titulos:     { pts: '30–400 pts',       desc: 'Carioca 30 · Brasileiro 100 · Libertadores 200 · Mundial 400.' },
+  campanhas:   { pts: '5–160 pts',        desc: 'Pontos por fase alcançada em cada campeonato da temporada.' },
+  longevidade: { pts: '0.25 pt/jogo',    desc: 'Cada partida disputada pelo Fluminense contribui ao total.' },
 };
 
 export function MetodologiaSection() {
@@ -196,41 +201,30 @@ export function MetodologiaSection() {
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>COMO DESCOBRIR O MAIOR ATACANTE DO FLUMINENSE?</h2>
         <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>A soma total de pontos brutos por todas as conquistas e contribuições — sem normalização. 6 critérios, cada conquista com seu valor absoluto.</p>
 
-        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: 'minmax(240px, 320px) 1fr', gap: 44, alignItems: 'center' }}>
-          <div style={{ background: '#0A1810', borderRadius: 16, padding: 24, color: 'white' }}>
-            <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 16 }}>ESCALA DE PONTOS</div>
-            {[
-              ['Gol', '1 pt'],
-              ['Bônus clássico', '+0.5 pt'],
-              ['Bônus semifinal', '+1 pt'],
-              ['Bônus final', '+2 pt'],
-              ['Carioca', '30 pts'],
-              ['Brasileiro', '100 pts'],
-              ['Libertadores', '200 pts'],
-              ['Mundial', '400 pts'],
-              ['Por jogo', '0.25 pt'],
-            ].map(([label, val]) => (
-              <div key={label} style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: '1px solid rgba(255,255,255,0.07)', fontSize: 13 }}>
-                <span style={{ color: 'rgba(255,255,255,0.6)' }}>{label}</span>
-                <span style={{ fontFamily: BB, color: '#E8B560', fontSize: 15 }}>{val}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 14 }}>
+          {ILF_WEIGHTS.map((w, i) => {
+            const detail = CRITERION_DETAIL[w.key];
+            return (
+              <div key={w.key} style={{ background: 'white', border: '1px solid #EDE8E0', borderRadius: 14, padding: '18px 20px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: 10, background: w.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontFamily: BB, fontSize: 18, color: 'white', letterSpacing: '0.02em' }}>{String(i + 1).padStart(2, '0')}</span>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
+                    <span style={{ fontFamily: BB, fontSize: 17, color: '#1a1a2e', letterSpacing: '0.02em' }}>{w.label}</span>
+                    <span style={{ fontFamily: BB, fontSize: 14, color: w.color, letterSpacing: '0.02em', flexShrink: 0 }}>{detail.pts}</span>
+                  </div>
+                  <p style={{ fontSize: 12, color: '#64748B', lineHeight: 1.5, margin: 0 }}>{detail.desc}</p>
+                </div>
               </div>
-            ))}
-          </div>
-          <div>
-            {ILF_WEIGHTS.map(w => (
-              <div key={w.key} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '7px 0', borderBottom: '1px solid #EDE8E0' }}>
-                <span style={{ width: 12, height: 12, borderRadius: 3, background: w.color, flexShrink: 0 }} />
-                <span style={{ flex: 1, fontSize: 14, color: '#1a1a2e', fontWeight: 500 }}>{w.label}</span>
-                <span style={{ fontFamily: BB, fontSize: 16, color: w.color, letterSpacing: '0.02em' }}>{CRITERION_SCALE[w.key]}</span>
-              </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
-        <div style={{ marginTop: 40, background: '#0A1810', borderRadius: 16, padding: '28px 32px', color: 'white', overflowX: 'auto' as const }}>
+        <div style={{ marginTop: 32, background: '#0A1810', borderRadius: 16, padding: '28px 32px', color: 'white', overflowX: 'auto' as const }}>
           <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 14 }}>A Fórmula</div>
           <div style={{ fontFamily: BB, fontSize: 'clamp(16px,2.4vw,24px)', letterSpacing: '0.02em', lineHeight: 1.6, color: 'rgba(255,255,255,0.92)' }}>
-            ILF = Produção + Bônus Clássicos + Bônus Decisivos + Títulos + Campanhas + Longevidade
+            ILF = Gols + Clássicos + Decisivos + Títulos + Campanhas + Longevidade
           </div>
         </div>
       </div>
