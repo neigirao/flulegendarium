@@ -230,7 +230,7 @@ export function RankingOficialSection() {
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}><Kicker n="✓">Resultado completo</Kicker></div>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 8 }}>O RANKING OFICIAL ILF</h2>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 8 }}>OS MAIORES ATACANTES DO FLUMINENSE SÃO</h2>
         <p style={{ fontSize: 14, color: '#64748B', textAlign: 'center', marginBottom: 36 }}>Os 15 finalistas, ordenados pela nota final do Índice Lendas do Flu.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {all.map((p, i) => {
