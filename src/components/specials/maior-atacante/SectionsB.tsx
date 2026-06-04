@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILFPlayer } from '@/data/maior-atacante';
 import { Portrait } from '../Portrait';
 import { Kicker } from '../Kicker';
@@ -259,19 +260,29 @@ export function RankingOficialSection() {
 /* ── VOTAÇÃO ─────────────────────────────────── */
 export function VotacaoSection() {
   const allVote = ILF_RANKING;
-  const [voted, setVoted] = useState<string | null>(null);
-  const [results, setResults] = useState<Record<string, number>>(() => {
-    const base: Record<string, number> = {};
-    allVote.forEach((p, i) => { base[p.id] = Math.max(10, 420 - i * 28); });
-    try { return JSON.parse(localStorage.getItem('ilf_votos') || 'null') || base; } catch { return base; }
+  const [voted, setVoted] = useState<string | null>(() => {
+    try { return localStorage.getItem('ilf_voted'); } catch { return null; }
   });
+  const [results, setResults] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(true);
 
-  const vote = (id: string) => {
+  useEffect(() => {
+    supabase.from('ilf_votes').select('player_id').then(({ data }) => {
+      const counts: Record<string, number> = {};
+      (data || []).forEach((row: { player_id: string }) => {
+        counts[row.player_id] = (counts[row.player_id] || 0) + 1;
+      });
+      setResults(counts);
+      setLoading(false);
+    });
+  }, []);
+
+  const vote = async (id: string) => {
     if (voted) return;
-    const next = { ...results, [id]: (results[id] || 0) + 1 };
-    setResults(next);
+    setResults(prev => ({ ...prev, [id]: (prev[id] || 0) + 1 }));
     setVoted(id);
-    try { localStorage.setItem('ilf_votos', JSON.stringify(next)); } catch { /* ignore */ }
+    try { localStorage.setItem('ilf_voted', id); } catch { /* ignore */ }
+    await supabase.from('ilf_votes').insert({ player_id: id });
   };
 
   const total = allVote.reduce((s, p) => s + (results[p.id] || 0), 0) || 1;
@@ -294,12 +305,13 @@ export function VotacaoSection() {
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,50px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>E PRA VOCÊ, QUEM É O MAIOR?</h2>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A régua do ILF deu o veredito — mas a palavra final é da arquibancada.</p>
 
+        {loading && <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 }}>Carregando votos...</div>}
         <div data-mc="vote" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))', gap: 10, marginBottom: 28 }}>
           {allVote.map(p => {
             const pct = Math.round(((results[p.id] || 0) / total) * 100);
             const isVote = voted === p.id;
             return (
-              <button key={p.id} onClick={() => vote(p.id)} disabled={!!voted} style={{ background: isVote ? 'rgba(232,181,96,0.15)' : 'rgba(255,255,255,0.04)', border: isVote ? '2px solid #E8B560' : '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '16px 10px', cursor: voted ? 'default' : 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const }}
+              <button key={p.id} onClick={() => vote(p.id)} disabled={!!voted || loading} style={{ background: isVote ? 'rgba(232,181,96,0.15)' : 'rgba(255,255,255,0.04)', border: isVote ? '2px solid #E8B560' : '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '16px 10px', cursor: voted || loading ? 'default' : 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const }}
                 onMouseEnter={e => { if (!voted) e.currentTarget.style.transform = 'translateY(-3px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}>
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}><Portrait player={p} size={54} ring={isVote ? '#E8B560' : 'rgba(255,255,255,0.2)'} big={isVote} /></div>
@@ -320,7 +332,7 @@ export function VotacaoSection() {
         </div>
         {voted && (
           <div style={{ textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.55)', marginBottom: 24 }}>
-            ✓ Voto registrado em <strong style={{ color: '#E8B560' }}>{ILF_PLAYERS.find(p => p.id === voted)?.nome}</strong> · {total.toLocaleString('pt-BR')} votos
+            ✓ Voto registrado em <strong style={{ color: '#E8B560' }}>{ILF_PLAYERS.find(p => p.id === voted)?.nome}</strong> · {total.toLocaleString('pt-BR')} {total === 1 ? 'voto' : 'votos'} reais
           </div>
         )}
         <div style={{ textAlign: 'center' }}>
