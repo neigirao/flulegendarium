@@ -381,6 +381,17 @@ export function TitulosSection() {
 }
 
 /* ── CAMPANHAS ───────────────────────────────── */
+const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
+  fred: [
+    { ano: '2010', label: '1º Campeão', color: '#C4944A' },
+    { ano: '2011', label: '3º lugar',   color: '#64748B' },
+    { ano: '2012', label: '1º Campeão', color: '#C4944A' },
+  ],
+  washington: [
+    { ano: '1984', label: '1º Campeão', color: '#C4944A' },
+  ],
+};
+
 const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
   waldo:      { carioca: '1959', rio_sp: '1957' },
   fred:       { carioca: '2012, 2022', brasileiro: '2010, 2012' },
@@ -475,9 +486,19 @@ export function CampanhasSection() {
                         </div>
                       )}
                       {phases.bra && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Brasileirão</span>
-                          <span style={{ background: phases.bra.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.bra.label}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600, paddingTop: 3, flexShrink: 0 }}>Brasileirão</span>
+                          {BRASILEIRO_ANOS[p.id] ? (
+                            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
+                              {BRASILEIRO_ANOS[p.id].map(({ ano, label, color }) => (
+                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                  {ano} · {label}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span style={{ background: phases.bra.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.bra.label}</span>
+                          )}
                         </div>
                       )}
                       {phases.munList.map((mun, mi) => (

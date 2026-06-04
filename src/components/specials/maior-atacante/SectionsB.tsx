@@ -361,9 +361,15 @@ export function ComparadorSection() {
         <div style={{ textAlign: 'center' }}><Kicker n="10">Cara a cara</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 36 }}>O COMPARADOR</h2>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 18, alignItems: 'center', marginBottom: 24 }}>
-          <div style={{ textAlign: 'center' }}><Portrait player={pa} size={92} ring="#7A0213" big /><div style={{ marginTop: 10 }}><Sel value={aId} onChange={setAId} /></div></div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+            <Portrait player={pa} size={92} ring="#7A0213" big />
+            <Sel value={aId} onChange={setAId} />
+          </div>
           <div style={{ fontFamily: BB, fontSize: 32, color: '#C4944A' }}>VS</div>
-          <div style={{ textAlign: 'center' }}><Portrait player={pb} size={92} ring="#006140" big /><div style={{ marginTop: 10 }}><Sel value={bId} onChange={setBId} /></div></div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+            <Portrait player={pb} size={92} ring="#006140" big />
+            <Sel value={bId} onChange={setBId} />
+          </div>
         </div>
         <div style={{ background: '#F7F5F2', borderRadius: 16, padding: 20, border: '1px solid #E2E8F0' }}>
           {rows.map(([label, va, vb], i) => {
