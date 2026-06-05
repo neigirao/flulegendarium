@@ -13,50 +13,37 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 
 /* ── CLÁSSICOS ───────────────────────────────── */
 export function ClassicosSection() {
-  const allByClassicos = [...ILF_PLAYERS].sort((a, b) => {
-    const sa = a.classicos.Flamengo + a.classicos.Vasco + a.classicos.Botafogo;
-    const sb = b.classicos.Flamengo + b.classicos.Vasco + b.classicos.Botafogo;
-    return sb - sa;
-  });
-  const rei = allByClassicos[0];
-  const [sel, setSel] = useState<ILFPlayer>(allByClassicos[0]);
-
-  const axes = [{ label: 'Flamengo' }, { label: 'Vasco' }, { label: 'Botafogo' }];
-  const series = [{ color: '#7A0213', fill: 'rgba(122,2,19,0.18)', values: [sel.classicos.Flamengo, sel.classicos.Vasco, sel.classicos.Botafogo] }];
-  const maxVal = Math.max(...ILF_PLAYERS.map(p => Math.max(p.classicos.Flamengo, p.classicos.Vasco, p.classicos.Botafogo)));
+  const rows = [...ILF_PLAYERS]
+    .map(p => ({ ...p, total: p.classicos.Flamengo + p.classicos.Vasco + p.classicos.Botafogo }))
+    .sort((a, b) => b.total - a.total);
 
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+      <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         <Kicker n="02">Clássicos · +0.5pt por gol</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>CLÁSSICOS</h2>
-        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 36, alignItems: 'center' }}>
-          <div>
-            <div style={{ background: 'linear-gradient(135deg,#7A0213,#4D000D)', borderRadius: 16, padding: 24, color: 'white', marginBottom: 20, display: 'flex', alignItems: 'center', gap: 18 }}>
-              <Portrait player={rei} size={72} ring="#E8B560" big />
-              <div>
-                <div style={{ fontSize: 10, fontWeight: 800, letterSpacing: '0.14em', color: '#E8B560', textTransform: 'uppercase' as const, marginBottom: 4 }}>👑 Rei dos Clássicos</div>
-                <div style={{ fontFamily: BB, fontSize: 30, lineHeight: 0.95 }}>{rei.nome}</div>
-                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>{rei.classicos.Flamengo + rei.classicos.Vasco + rei.classicos.Botafogo} gols em clássicos</div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' as const }}>
-              {allByClassicos.map(p => (
-                <button key={p.id} onClick={() => setSel(p)} style={{ padding: '6px 12px', borderRadius: 8, border: sel.id === p.id ? '2px solid #7A0213' : '1px solid #E2E8F0', background: sel.id === p.id ? 'rgba(122,2,19,0.07)' : 'white', color: sel.id === p.id ? '#7A0213' : '#64748B', fontWeight: 600, fontSize: 12, cursor: 'pointer', fontFamily: 'Inter, sans-serif' }}>{p.nome}</button>
-              ))}
-            </div>
-            <div style={{ marginTop: 18, display: 'flex', gap: 12 }}>
-              {[['Flamengo', sel.classicos.Flamengo], ['Vasco', sel.classicos.Vasco], ['Botafogo', sel.classicos.Botafogo]].map(([l, v]) => (
-                <div key={String(l)} style={{ flex: 1, background: 'white', border: '1px solid #E2E8F0', borderRadius: 10, padding: '12px 8px', textAlign: 'center' as const }}>
-                  <div style={{ fontFamily: BB, fontSize: 26, color: '#7A0213', lineHeight: 1 }}>{v}</div>
-                  <div style={{ fontSize: 10, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginTop: 2 }}>vs {l}</div>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CLÁSSICOS</h2>
+        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 36 }}>Gols contra Flamengo, Vasco e Botafogo valem +0.5pt cada — o bônus de quem brilhou nas rivalidades que mais importam.</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {rows.map((p, i) => (
+            <Reveal key={p.id} delay={i * 0.04}>
+              <div style={{ background: 'white', border: '1px solid #E2E8F0', borderRadius: 14, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ fontFamily: BB, fontSize: 24, color: i === 0 ? '#C4944A' : '#CBD5E0', width: 28, textAlign: 'center' as const, flexShrink: 0 }}>{i + 1}</div>
+                <Portrait player={p} size={48} ring={i === 0 ? '#C4944A' : '#E2E8F0'} />
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: BB, fontSize: 19, color: '#1a1a2e', letterSpacing: '0.02em' }}>{p.nome}</div>
+                  <div style={{ display: 'flex', gap: 14, marginTop: 5, fontSize: 11, color: '#64748B' }}>
+                    <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{p.classicos.Flamengo}</span> vs Fla</span>
+                    <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{p.classicos.Vasco}</span> vs Vas</span>
+                    <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{p.classicos.Botafogo}</span> vs Bot</span>
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'center' }}>
-            <Radar axes={axes} series={series} size={320} max={maxVal || 35} />
-          </div>
+                <div style={{ textAlign: 'right' as const, flexShrink: 0 }}>
+                  <div style={{ fontFamily: BB, fontSize: 28, color: i === 0 ? '#C4944A' : '#7A0213', lineHeight: 1 }}>{p.total}</div>
+                  <div style={{ fontSize: 9, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols</div>
+                </div>
+              </div>
+            </Reveal>
+          ))}
         </div>
       </div>
     </section>
