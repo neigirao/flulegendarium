@@ -1,13 +1,13 @@
 export const TITULO_PONTOS = {
-  libertadores: 200, brasileiro: 100, copa_brasil: 80, recopa: 40,
-  carioca: 30, rio_sp: 10, copa_rio: 10, mundial: 400,
+  libertadores: 100, brasileiro: 50, copa_brasil: 40, recopa: 20,
+  carioca: 15, rio_sp: 5, copa_rio: 5, mundial: 200,
 } as const;
 
 export const CAMPANHA_PONTOS = {
-  libertadores_vice: 120, libertadores_semi: 60, libertadores_quartas: 30, libertadores_oitavas: 10,
-  copa_brasil_vice: 48, copa_brasil_semi: 24, copa_brasil_quartas: 12, copa_brasil_oitavas: 5,
-  brasileiro_2: 60, brasileiro_3: 30,
-  mundial_vice: 160, mundial_3: 80, mundial_semi: 40,
+  libertadores_vice: 60, libertadores_semi: 30, libertadores_quartas: 15, libertadores_oitavas: 5,
+  copa_brasil_vice: 24, copa_brasil_semi: 12, copa_brasil_quartas: 6, copa_brasil_oitavas: 3,
+  brasileiro_2: 30, brasileiro_3: 15,
+  mundial_vice: 80, mundial_3: 40, mundial_semi: 20,
 } as const;
 
 export const PREMIACAO_PONTOS = {
@@ -314,8 +314,8 @@ export const ILF_PLAYERS: ILFPlayer[] = [
 export function ILF_compute_scores(player: ILFPlayer): ILFScores {
   const gols_classicos = player.classicos.Flamengo + player.classicos.Vasco + player.classicos.Botafogo;
   const producao = player.gols;
-  const classicos = gols_classicos * 0.5;
-  const decisivos = player.decisivos.finais * 2 + player.decisivos.semis * 1 + player.decisivos.quartas * 0.5 + player.decisivos.oitavas * 0.25;
+  const classicos = gols_classicos * 1;
+  const decisivos = player.decisivos.finais * 20 + player.decisivos.semis * 10 + player.decisivos.quartas * 2 + player.decisivos.oitavas * 1;
   const titulos = Object.entries(player.titulos_raw)
     .reduce((sum, [k, n]) => sum + (n || 0) * (TITULO_PONTOS[k as keyof typeof TITULO_PONTOS] || 0), 0);
   const campanhas = Object.entries(player.campanhas_raw)

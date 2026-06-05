@@ -20,9 +20,9 @@ export function ClassicosSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        <Kicker n="02">Clássicos · +0.5pt por gol</Kicker>
+        <Kicker n="02">Clássicos · +1pt por gol</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CLÁSSICOS</h2>
-        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 36 }}>Gols contra Flamengo, Vasco e Botafogo valem +0.5pt cada — o bônus de quem brilhou nas rivalidades que mais importam.</p>
+        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 36 }}>Gols contra Flamengo, Vasco e Botafogo valem +1pt cada — o bônus de quem brilhou nas rivalidades que mais importam.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.04}>
@@ -66,9 +66,9 @@ export function DecisivosSection() {
   return (
     <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="03" light>Decisivos · +0.25/0.5/1/2pts</Kicker></div>
+        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="03" light>Decisivos · +1/2/10/20pts</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>DECISIVOS</h2>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+2pts), semifinais (+1pt), quartas (+0.5pt) e oitavas (+0.25pt) — quem aparecia quando o Flu mais precisava.</p>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+20pts), semifinais (+10pts), quartas (+2pts) e oitavas (+1pt) — quem aparecia quando o Flu mais precisava.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {rows.map((p, i) => {
             return (

@@ -219,10 +219,10 @@ export function FinalistasSection() {
 /* ── METODOLOGIA ─────────────────────────────── */
 const CRITERION_DETAIL: Record<string, { pts: string; desc: string }> = {
   producao:    { pts: '1 pt/gol',        desc: 'Cada gol marcado pelo clube vale 1 ponto.' },
-  classicos:   { pts: '+0.5 pt/gol',     desc: 'Gols em Fla-Flu, Flu-Vasco e Flu-Botafogo recebem bônus adicional.' },
-  decisivos:   { pts: '+0.25 · +0.5 · +1 · +2',  desc: 'Gols em oitavas (+0.25), quartas (+0.5), semifinais (+1) e finais (+2) de Copa do Brasil, Libertadores e Copa Rio.' },
-  titulos:     { pts: '30–400 pts',       desc: 'Carioca 30 · Brasileiro 100 · Libertadores 200 · Mundial 400.' },
-  campanhas:   { pts: '5–160 pts',        desc: 'Pontos por fase alcançada em cada campeonato da temporada.' },
+  classicos:   { pts: '+1 pt/gol',        desc: 'Gols em Fla-Flu, Flu-Vasco e Flu-Botafogo recebem bônus adicional.' },
+  decisivos:   { pts: '+1 · +2 · +10 · +20', desc: 'Gols em oitavas (+1), quartas (+2), semifinais (+10) e finais (+20) de Copa do Brasil, Libertadores e Copa Rio.' },
+  titulos:     { pts: '5–200 pts',        desc: 'Carioca 15 · Brasileiro 50 · Libertadores 100 · Mundial 200.' },
+  campanhas:   { pts: '3–80 pts',         desc: 'Pontos por fase alcançada em cada campeonato da temporada.' },
   longevidade: { pts: '0.25 pt/jogo',    desc: 'Cada partida disputada pelo Fluminense contribui ao total.' },
 };
 
@@ -303,7 +303,7 @@ export function ProducaoSection() {
 }
 
 /* ── TÍTULOS ─────────────────────────────────── */
-const TITLE_PTS: Record<string, number> = { Libertadores: 200, Brasileiro: 100, 'Série C': 100, 'Copa do Brasil': 80, Recopa: 40, Carioca: 30, 'Rio-SP': 10, 'Primeira Liga': 10, 'Copa Rio': 10, Mundial: 400 };
+const TITLE_PTS: Record<string, number> = { Libertadores: 100, Brasileiro: 50, 'Série C': 50, 'Copa do Brasil': 40, Recopa: 20, Carioca: 15, 'Rio-SP': 5, 'Primeira Liga': 5, 'Copa Rio': 5, Mundial: 200 };
 const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileiro: '#006140', 'Série C': '#006140', 'Copa do Brasil': '#7A0213', 'Rio-SP': '#AF1E35', 'Primeira Liga': '#AF1E35', Carioca: '#AF1E35', Recopa: '#E8B560', 'Copa Rio': '#64748B', Mundial: '#E8B560' };
 const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Série C': '🥇', 'Copa do Brasil': '🥈', 'Rio-SP': '🎖️', 'Primeira Liga': '🎖️', Carioca: '🏅', Recopa: '🏆', 'Copa Rio': '🎖️', Mundial: '🌍' };
 
@@ -339,7 +339,7 @@ export function TitulosSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="04">Títulos</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÍTULOS</h2>
-        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Mundial (400) · Libertadores (200) · Brasileiro (100) · Copa do Brasil (80) · Recopa (40) · Carioca (30) · Rio-SP e Copa Rio (10).</p>
+        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Mundial (200) · Libertadores (100) · Brasileiro (50) · Copa do Brasil (40) · Recopa (20) · Carioca (15) · Rio-SP e Copa Rio (5).</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.05}>
