@@ -324,7 +324,7 @@ const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
   { id: 'magno',     items: [['Série C', 1], ['Primeira Liga', 1], ['Carioca', 1]] },
   { id: 'ezio',      items: [['Carioca', 1]] },
   { id: 'escurinho', items: [['Carioca', 2], ['Rio-SP', 2]] },
-  { id: 'jair',      items: [['Mundial', 1], ['Carioca', 2], ['Rio-SP', 1]] },
+  { id: 'jair',      items: [['Rio-SP', 2], ['Carioca', 1]] },
   { id: 'zeze',      items: [['Mundial', 1], ['Carioca', 2]] },
 ];
 
@@ -408,6 +408,7 @@ const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color:
     { ano: '1995', label: '4º lugar', color: '#64748B' },
   ],
   escurinho: [{ ano: '1960', label: '3º lugar Taça Brasil', color: '#64748B' }],
+  jair:      [{ ano: '1960', label: '3º lugar Taça Brasil', color: '#64748B' }],
 };
 
 const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
@@ -424,7 +425,7 @@ const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
   magno:      { carioca: '2002', brasileiro: '1999', rio_sp: '2016', serie_c: '1999' },
   ezio:       { carioca: '1995' },
   escurinho:  { carioca: '1951, 1959', rio_sp: '1957, 1960' },
-  jair:       { carioca: '1951, 1959', rio_sp: '1957', mundial: '1952' },
+  jair:       { carioca: '1959', rio_sp: '1957, 1960' },
   zeze:       { carioca: '1946, 1951', mundial: '1952' },
 };
 
