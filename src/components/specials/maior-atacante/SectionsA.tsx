@@ -141,8 +141,8 @@ function FormaGol({ player }: { player: ILFPlayer }) {
   const total = player.gols;
   const BB = "'Bebas Neue', Impact, sans-serif";
 
-  const headGols = (t.cabeca || 0) + (t.olimpico || 0) + (t.peixinho || 0) + (t.sem_pulo || 0);
-  const footGols = (t.pe || 0) + (t.bicicleta || 0) + (t.carrinho || 0);
+  const headGols = (t.cabeca || 0) + (t.olimpico || 0) + (t.peixinho || 0) + (t.sem_pulo || 0) + (t.peito || 0);
+  const footGols = (t.pe || 0) + (t.bicicleta || 0) + (t.carrinho || 0) + (t.voleio || 0) + (t.calcanhar || 0) + (t.meia_bicicleta || 0) + (t.letra || 0);
   const specialGols = (t.penalti || 0) + (t.falta || 0);
   const pct = (v: number) => total > 0 ? ((v / total) * 100).toFixed(1) : '0';
 
@@ -156,6 +156,11 @@ function FormaGol({ player }: { player: ILFPlayer }) {
     { label: 'Olímpico', v: t.olimpico || 0 },
     { label: 'Peixinho', v: t.peixinho || 0 },
     { label: 'Carrinho', v: t.carrinho || 0 },
+    { label: 'Voleio', v: t.voleio || 0 },
+    { label: 'Calcanhar', v: t.calcanhar || 0 },
+    { label: 'Meia-bicicleta', v: t.meia_bicicleta || 0 },
+    { label: 'De Peito', v: t.peito || 0 },
+    { label: 'Letra', v: t.letra || 0 },
   ].filter(d => d.v > 0).sort((a, b) => b.v - a.v);
 
   const headColor = '#E8B560';
@@ -431,15 +436,15 @@ const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
   { id: 'orlando',   items: [['Mundial', 1], ['Carioca', 2]] },
   { id: 'hercules',  items: [['Rio-SP', 1], ['Carioca', 5]] },
   { id: 'tele',      items: [['Mundial', 1], ['Carioca', 2], ['Rio-SP', 2]] },
-  { id: 'welfare',   items: [['Carioca', 4]] },
-  { id: 'russo',     items: [['Carioca', 4]] },
+  { id: 'welfare',   items: [['Carioca', 3]] },
+  { id: 'russo',     items: [['Carioca', 4], ['Rio-SP', 1]] },
   { id: 'preguinho', items: [['Carioca', 3]] },
   { id: 'washington', items: [['Brasileiro', 1], ['Carioca', 3], ['Torneio Intl.', 4]] },
   { id: 'magno',     items: [['Série C', 1], ['Primeira Liga', 1], ['Carioca', 1]] },
   { id: 'ezio',      items: [['Carioca', 1]] },
   { id: 'escurinho', items: [['Carioca', 2], ['Rio-SP', 2]] },
   { id: 'jair',      items: [['Rio-SP', 2], ['Carioca', 1]] },
-  { id: 'zeze',      items: [['Mundial', 1], ['Carioca', 2]] },
+  { id: 'zeze',      items: [['Carioca', 4]] },
 ];
 
 export function TitulosSection() {
@@ -532,15 +537,15 @@ const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
   orlando:    { carioca: '1946, 1951', mundial: '1952' },
   hercules:   { carioca: '1936, 1937, 1938, 1940, 1941', rio_sp: '1940' },
   tele:       { carioca: '1951, 1959', rio_sp: '1957, 1960', mundial: '1952' },
-  welfare:    { carioca: '1917, 1918, 1919, 1924' },
-  russo:      { carioca: '1936, 1937, 1940, 1941' },
+  welfare:    { carioca: '1917, 1918, 1919' },
+  russo:      { carioca: '1936, 1937, 1940, 1941', rio_sp: '1940' },
   preguinho:  { carioca: '1936, 1937, 1938' },
   washington: { carioca: '1983, 1984, 1985', brasileiro: '1984', torneio_internacional: 'Seul 1984, Paris 1987, Kirin 1987, Kiev 1989' },
   magno:      { carioca: '2002', brasileiro: '1999', rio_sp: '2016', serie_c: '1999' },
   ezio:       { carioca: '1995' },
   escurinho:  { carioca: '1951, 1959', rio_sp: '1957, 1960' },
   jair:       { carioca: '1959', rio_sp: '1957, 1960' },
-  zeze:       { carioca: '1946, 1951', mundial: '1952' },
+  zeze:       { carioca: '1917, 1918, 1919, 1924' },
 };
 
 function getCompPhases(p: ILFPlayer) {

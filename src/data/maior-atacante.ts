@@ -55,6 +55,11 @@ export interface ILFGoalTypes {
   carrinho?: number;
   olimpico?: number;
   peixinho?: number;
+  voleio?: number;
+  calcanhar?: number;
+  meia_bicicleta?: number;
+  peito?: number;
+  letra?: number;
 }
 
 export const ILF_WEIGHTS: ILFWeight[] = [
@@ -75,7 +80,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     posicao: 'Centro-avante',
     gols: 319,
     jogos: 403,
-    legenda: 'O maior artilheiro da história do Fluminense com 319 gols em 403 jogos — e nunca marcou um pênalti. Depois ganhou o Pichichi na Espanha, tornando-se o primeiro brasileiro a conquistar o prêmio.',
+    legenda: 'O maior artilheiro da história do Fluminense com 319 gols em 403 jogos. Depois ganhou o Pichichi na Espanha, tornando-se o primeiro brasileiro a conquistar o prêmio.',
     classicos: { Flamengo: 30, Vasco: 26, Botafogo: 22 },
     decisivos: { finais: 2, semis: 2, quartas: 2, oitavas: 0 },
     decisivos_por_competicao: { copa_brasil: 3, libertadores: 3 },
@@ -83,6 +88,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { brasileiro_3: 1 },
     premiacoes_raw: { artilheiro_nacional: 2, artilheiro_carioca: 1 },
     premios: ['Maior artilheiro da história do Flu (319 gols)', 'Artilheiro Rio-SP 1957 e 1960', 'Artilheiro Carioca 1956 (22 gols)', '23 hat-tricks pelo Fluminense', 'Recorde: 62 gols em uma temporada (1959)'],
+    gols_tipos: { pe: 276, cabeca: 30, falta: 3, penalti: 3, voleio: 2, calcanhar: 1, meia_bicicleta: 1, peixinho: 1, sem_pulo: 1, letra: 1 },
   },
   {
     id: 'fred',
@@ -100,6 +106,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { libertadores_semi: 1, brasileiro_3: 2, brasileiro_5: 1, brasileiro_6: 1, brasileiro_7: 1 },
     premiacoes_raw: { artilheiro_nacional: 1, melhor_jogador_torneio: 1 },
     premios: ['Maior artilheiro do Flu no séc. XXI (199 gols)', 'Artilheiro do Flu no Brasileirão (102 gols)', 'Maior artilheiro do Flu na Copa do Brasil (37 gols)', 'Campeão Primeira Liga 2016', 'Craque do Brasileirão 2012', 'Gol mais bonito da história dos clubes brasileiros (2012)'],
+    gols_tipos: { pe: 102, cabeca: 45, penalti: 41, voleio: 3, bicicleta: 2, carrinho: 2, falta: 2, meia_bicicleta: 1, peito: 1 },
   },
   {
     id: 'cano',
@@ -184,10 +191,11 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 35, Vasco: 18, Botafogo: 28 },
     decisivos: { finais: 0, semis: 0, quartas: 0, oitavas: 0 },
     decisivos_por_competicao: {},
-    titulos_raw: { carioca: 4 },
+    titulos_raw: { carioca: 3 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 2, premio_historico_clube: 1 },
-    premios: ['Maior artilheiro estrangeiro do Flu (161 gols)', 'Maior artilheiro do Flu no Carioca (123 gols)', '4× Campeão Carioca (1917, 1918, 1919, 1924)', 'Artilheiro do Carioca 1914 e 1915', 'Membro Vitalício do Conselho Deliberativo do Flu', 'Melhor média do Melhor Atacante do Flu (~1,00 gol/jogo)'],
+    premios: ['Maior artilheiro estrangeiro do Flu (161 gols)', 'Maior artilheiro do Flu no Carioca (123 gols)', '3× Campeão Carioca (1917, 1918, 1919)', 'Artilheiro do Carioca 1914 e 1915', 'Membro Vitalício do Conselho Deliberativo do Flu', 'Melhor média do Melhor Atacante do Flu (~1,00 gol/jogo)'],
+    gols_tipos: { pe: 150, cabeca: 9, penalti: 2 },
   },
   {
     id: 'russo',
@@ -201,10 +209,11 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 18, Vasco: 16, Botafogo: 14 },
     decisivos: { finais: 0, semis: 0, quartas: 0, oitavas: 0 },
     decisivos_por_competicao: {},
-    titulos_raw: { carioca: 4 },
+    titulos_raw: { carioca: 4, rio_sp: 1 },
     campanhas_raw: { brasileiro_2: 1 },
     premiacoes_raw: { artilheiro_carioca: 2 },
-    premios: ['2º maior artilheiro estrangeiro do Flu (155 gols)', '4× Campeão Carioca (1936, 1937, 1940, 1941)', '2º lugar Torneio dos Campeões 1937', 'Artilheiro do Carioca em múltiplas edições'],
+    premios: ['2º maior artilheiro estrangeiro do Flu (155 gols)', '4× Campeão Carioca (1936, 1937, 1940, 1941)', 'Campeão Rio-São Paulo 1940', '2º lugar Torneio dos Campeões 1937', 'Artilheiro do Carioca em múltiplas edições'],
+    gols_tipos: { pe: 128, penalti: 15, cabeca: 9, falta: 3 },
   },
   {
     id: 'preguinho',
@@ -312,19 +321,20 @@ export const ILF_PLAYERS: ILFPlayer[] = [
   {
     id: 'zeze',
     nome: 'Zezé',
-    apelido: 'O Pós-Guerra',
-    periodo: '1944–1952',
+    apelido: 'O Pioneiro dos Anos 20',
+    periodo: '~1915–1925',
     posicao: 'Atacante',
     gols: 106,
-    jogos: 232,
-    legenda: 'Atacante tricolor dos anos 1940 e início dos 50, Zezé conquistou dois Cariocas e a Copa Rio de 1952, sendo parte fundamental do Fluminense no pós-guerra.',
+    jogos: 171,
+    legenda: 'Um dos grandes artilheiros do Fluminense na era pioneira do futebol carioca. Zezé conquistou quatro Campeonatos Cariocas nos anos 1910 e 1920, deixando sua marca na história tricolor.',
     classicos: { Flamengo: 12, Vasco: 10, Botafogo: 8 },
-    decisivos: { finais: 1, semis: 2, quartas: 1, oitavas: 0 },
-    decisivos_por_competicao: { copa_rio: 4 },
-    titulos_raw: { carioca: 2, mundial: 1 },
+    decisivos: { finais: 0, semis: 0, quartas: 0, oitavas: 0 },
+    decisivos_por_competicao: {},
+    titulos_raw: { carioca: 4 },
     campanhas_raw: {},
     premiacoes_raw: {},
-    premios: ['Campeão Carioca 1946 e 1951', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)', 'Artilheiro tricolor do pós-guerra'],
+    premios: ['4× Campeão Carioca (1917, 1918, 1919, 1924)', 'Um dos maiores artilheiros da era pioneira do Flu'],
+    gols_tipos: { pe: 88, penalti: 15, cabeca: 2, falta: 1 },
   },
 ];
 
