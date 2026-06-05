@@ -376,36 +376,38 @@ export function TitulosSection() {
 
 /* ── CAMPANHAS ───────────────────────────────── */
 const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
-  waldo:     [{ ano: '1960', label: 'Semi Taça Brasil', color: '#64748B' }],
+  hercules:  [{ ano: '1937', label: '2º Torneio dos Campeões', color: '#AF1E35' }],
+  russo:     [{ ano: '1937', label: '2º Torneio dos Campeões', color: '#AF1E35' }],
+  preguinho: [{ ano: '1937', label: '2º Torneio dos Campeões', color: '#AF1E35' }],
+  waldo:     [{ ano: '1960', label: '3º lugar Taça Brasil', color: '#64748B' }],
   fred: [
     { ano: '2011', label: '3º lugar', color: '#64748B' },
     { ano: '2022', label: '3º lugar', color: '#64748B' },
     { ano: '2020', label: '5º lugar', color: '#94A3B8' },
     { ano: '2014', label: '6º lugar', color: '#94A3B8' },
-    { ano: '2016', label: '7º lugar', color: '#94A3B8' },
     { ano: '2021', label: '7º lugar', color: '#94A3B8' },
   ],
   cano: [
     { ano: '2022', label: '3º lugar', color: '#64748B' },
+    { ano: '2025', label: '5º lugar', color: '#94A3B8' },
     { ano: '2023', label: '7º lugar', color: '#94A3B8' },
   ],
-  tele:      [{ ano: '1960', label: 'Semi Taça Brasil', color: '#64748B' }],
+  tele:      [{ ano: '1960', label: '3º lugar Taça Brasil', color: '#64748B' }],
   washington: [
     { ano: '1988', label: '3º lugar', color: '#64748B' },
-    { ano: '1985', label: 'Quartas', color: '#94A3B8' },
-    { ano: '1986', label: 'Quartas', color: '#94A3B8' },
+    { ano: '1986', label: '6º lugar', color: '#94A3B8' },
+    { ano: '1987', label: '7º lugar', color: '#94A3B8' },
   ],
   magno: [
-    { ano: '2001', label: '4º lugar', color: '#64748B' },
+    { ano: '2000', label: '3º lugar', color: '#64748B' },
+    { ano: '2001', label: '3º lugar', color: '#64748B' },
     { ano: '2002', label: '4º lugar', color: '#64748B' },
   ],
   ezio: [
     { ano: '1991', label: '4º lugar', color: '#64748B' },
     { ano: '1995', label: '4º lugar', color: '#64748B' },
-    { ano: '1994', label: 'Quartas', color: '#94A3B8' },
   ],
-  escurinho: [{ ano: '1960', label: 'Semi Taça Brasil', color: '#64748B' }],
-  jair:      [{ ano: '1960', label: 'Semi Taça Brasil', color: '#64748B' }],
+  escurinho: [{ ano: '1960', label: '3º lugar Taça Brasil', color: '#64748B' }],
 };
 
 const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
