@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export function useInView(threshold = 0.15): [React.RefObject<HTMLElement>, boolean] {
+export function useInView(threshold = 0.15, rootMargin = '0px'): [React.RefObject<HTMLElement>, boolean] {
   const ref = useRef<HTMLElement>(null);
   const [inView, setInView] = useState(false);
 
@@ -9,11 +9,11 @@ export function useInView(threshold = 0.15): [React.RefObject<HTMLElement>, bool
     if (!el) return;
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry.isIntersecting) setInView(true); },
-      { threshold }
+      { threshold, rootMargin }
     );
     observer.observe(el);
     return () => observer.disconnect();
-  }, [threshold]);
+  }, [threshold, rootMargin]);
 
   return [ref, inView];
 }

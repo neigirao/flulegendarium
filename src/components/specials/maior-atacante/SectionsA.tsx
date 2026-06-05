@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILF_media, ILFPlayer } from '@/data/maior-atacante';
+import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILF_media, ILFPlayer, ILF_SORTED_BY_GOLS, ILF_SORTED_BY_JOGOS, ILF_SORTED_BY_CAMPANHAS } from '@/data/maior-atacante';
 import { Portrait } from '../Portrait';
 import { Kicker } from '../Kicker';
 import { Reveal } from '../Reveal';
@@ -393,7 +393,7 @@ export function MetodologiaSection() {
 
 /* ── PRODUÇÃO OFENSIVA ───────────────────────── */
 export function ProducaoSection() {
-  const ranked = [...ILF_PLAYERS].sort((a, b) => b.gols - a.gols);
+  const ranked = ILF_SORTED_BY_GOLS;
   const lider = ranked[0];
   const max = lider.gols;
   return (
@@ -578,7 +578,9 @@ function getCompPhases(p: ILFPlayer) {
 }
 
 export function CampanhasSection() {
-  const players = [...ILF_PLAYERS].sort((a, b) => ILF_compute_scores(b).campanhas - ILF_compute_scores(a).campanhas);
+  const players = ILF_SORTED_BY_CAMPANHAS;
+  const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
+  const posColor = (pos: number) => pos === 1 ? '#C4944A' : pos <= 4 ? '#006140' : pos <= 10 ? '#64748B' : '#94A3B8';
 
   return (
     <section style={{ background: '#fff', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
@@ -656,7 +658,7 @@ export function CampanhasSection() {
 
 /* ── LONGEVIDADE ─────────────────────────────── */
 export function LongevidadeSection() {
-  const ranked = [...ILF_PLAYERS].sort((a, b) => b.jogos - a.jogos);
+  const ranked = ILF_SORTED_BY_JOGOS;
   const lider = ranked[0];
   const max = lider.jogos;
   return (

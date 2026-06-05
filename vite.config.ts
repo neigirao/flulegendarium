@@ -1,8 +1,41 @@
 
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
+import fs from "fs";
 import { componentTagger } from "lovable-tagger";
+
+function criticalCssPlugin(): Plugin {
+  return {
+    name: 'critical-css',
+    apply: 'build',
+    enforce: 'post',
+    async closeBundle() {
+      const { default: Critters } = await import('critters') as any;
+      const outDir = path.resolve(__dirname, 'dist');
+      const htmlPath = path.join(outDir, 'index.html');
+      if (!fs.existsSync(htmlPath)) return;
+
+      const html = fs.readFileSync(htmlPath, 'utf-8');
+      const critters = new Critters({
+        path: outDir,
+        publicPath: '/',
+        pruneSource: false,
+        inlineFonts: false,
+        preloadFonts: true,
+        logLevel: 'warn',
+      });
+
+      try {
+        const result = await critters.process(html);
+        fs.writeFileSync(htmlPath, result);
+        console.log('\x1b[32m✓\x1b[0m Critical CSS inlined — CSS bundle deferred');
+      } catch (e) {
+        console.warn('\x1b[33m⚠\x1b[0m Critical CSS plugin skipped:', (e as Error).message);
+      }
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -13,8 +46,8 @@ export default defineConfig(({ mode }) => ({
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' && componentTagger(),
+    mode === 'production' && criticalCssPlugin(),
   ].filter(Boolean),
   resolve: {
     alias: {
