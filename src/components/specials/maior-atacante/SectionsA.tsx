@@ -382,12 +382,7 @@ export function TitulosSection() {
 /* ── CAMPANHAS ───────────────────────────────── */
 const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
   fred: [
-    { ano: '2010', label: '1º Campeão', color: '#C4944A' },
-    { ano: '2011', label: '3º lugar',   color: '#64748B' },
-    { ano: '2012', label: '1º Campeão', color: '#C4944A' },
-  ],
-  washington: [
-    { ano: '1984', label: '1º Campeão', color: '#C4944A' },
+    { ano: '2011', label: '3º lugar', color: '#64748B' },
   ],
 };
 
@@ -410,31 +405,23 @@ const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
 };
 
 function getCompPhases(p: ILFPlayer) {
-  const anos = TITULO_ANOS[p.id] || {};
-  const lib = (p.titulos_raw.libertadores || 0) > 0 ? { label: `${p.titulos_raw.libertadores}× Campeão${anos.libertadores ? ` (${anos.libertadores})` : ''}`, color: '#C4944A' }
-    : (p.campanhas_raw.libertadores_vice || 0) > 0 ? { label: 'Vice', color: '#7A0213' }
+  const lib = (p.campanhas_raw.libertadores_vice || 0) > 0 ? { label: 'Vice-campeão', color: '#7A0213' }
     : (p.campanhas_raw.libertadores_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
     : (p.campanhas_raw.libertadores_quartas || 0) > 0 ? { label: 'Quartas de Final', color: '#64748B' }
     : null;
-  const copa = (p.titulos_raw.copa_brasil || 0) > 0 ? { label: `${p.titulos_raw.copa_brasil}× Campeão${anos.copa_brasil ? ` (${anos.copa_brasil})` : ''}`, color: '#C4944A' }
-    : (p.campanhas_raw.copa_brasil_vice || 0) > 0 ? { label: 'Vice', color: '#7A0213' }
+  const copa = (p.campanhas_raw.copa_brasil_vice || 0) > 0 ? { label: 'Vice-campeão', color: '#7A0213' }
     : (p.campanhas_raw.copa_brasil_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
     : (p.campanhas_raw.copa_brasil_quartas || 0) > 0 ? { label: 'Quartas de Final', color: '#64748B' }
     : null;
-  const bra = (p.titulos_raw.brasileiro || 0) > 0 ? { label: `${p.titulos_raw.brasileiro}× Campeão${anos.brasileiro ? ` (${anos.brasileiro})` : ''}`, color: '#C4944A' }
-    : (p.campanhas_raw.brasileiro_2 || 0) > 0 ? { label: '2º lugar', color: '#7A0213' }
+  const bra = (p.campanhas_raw.brasileiro_2 || 0) > 0 ? { label: '2º lugar', color: '#7A0213' }
     : (p.campanhas_raw.brasileiro_3 || 0) > 0 ? { label: '3º lugar', color: '#64748B' }
     : null;
-  const carioca = (p.titulos_raw.carioca || 0) > 0
-    ? { label: `${p.titulos_raw.carioca}× Campeão${anos.carioca ? ` (${anos.carioca})` : ''}`, color: '#AF1E35' }
-    : null;
   const munList: { label: string; color: string }[] = [
-    ...(Array.from({ length: p.titulos_raw.mundial || 0 }, () => ({ label: 'Campeão', color: '#C4944A' }))),
     ...((p.campanhas_raw.mundial_vice || 0) > 0 ? [{ label: 'Vice-campeão', color: '#E8B560' }] : []),
     ...((p.campanhas_raw.mundial_3 || 0) > 0 ? [{ label: '3º lugar', color: '#64748B' }] : []),
     ...((p.campanhas_raw.mundial_semi || 0) > 0 ? [{ label: 'Semifinal', color: '#94A3B8' }] : []),
   ];
-  return { lib, copa, bra, carioca, munList };
+  return { lib, copa, bra, munList };
 }
 
 export function CampanhasSection() {
@@ -453,7 +440,7 @@ export function CampanhasSection() {
           {players.map((p, idx) => {
             const phases = getCompPhases(p);
             const campPts = ILF_compute_scores(p).campanhas;
-            const hasAny = phases.lib || phases.copa || phases.bra || phases.carioca || phases.munList.length > 0;
+            const hasAny = phases.lib || phases.copa || phases.bra || phases.munList.length > 0;
             return (
               <Reveal key={p.id} delay={idx * 0.04}>
                 <div style={{ background: '#F7F5F2', border: '1px solid #E2E8F0', borderRadius: 14, padding: '18px 20px', height: '100%', boxSizing: 'border-box' as const }}>
@@ -466,12 +453,6 @@ export function CampanhasSection() {
                   </div>
                   {hasAny ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                      {phases.carioca && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Carioca</span>
-                          <span style={{ background: phases.carioca.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.carioca.label}</span>
-                        </div>
-                      )}
                       {phases.lib && (
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Libertadores</span>
