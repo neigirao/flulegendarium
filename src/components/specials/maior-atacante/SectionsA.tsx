@@ -306,26 +306,26 @@ export function ProducaoSection() {
 }
 
 /* ── TÍTULOS ─────────────────────────────────── */
-const TITLE_PTS: Record<string, number> = { Libertadores: 100, Brasileiro: 50, 'Série C': 50, 'Copa do Brasil': 40, Recopa: 20, Carioca: 15, 'Rio-SP': 5, 'Primeira Liga': 5, 'Copa Rio': 5, Mundial: 200 };
-const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileiro: '#006140', 'Série C': '#006140', 'Copa do Brasil': '#7A0213', 'Rio-SP': '#AF1E35', 'Primeira Liga': '#AF1E35', Carioca: '#AF1E35', Recopa: '#E8B560', 'Copa Rio': '#64748B', Mundial: '#E8B560' };
-const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Série C': '🥇', 'Copa do Brasil': '🥈', 'Rio-SP': '🎖️', 'Primeira Liga': '🎖️', Carioca: '🏅', Recopa: '🏆', 'Copa Rio': '🎖️', Mundial: '🌍' };
+const TITLE_PTS: Record<string, number> = { Libertadores: 100, Brasileiro: 50, 'Série C': 50, 'Copa do Brasil': 40, Recopa: 20, Carioca: 15, 'Rio-SP': 5, 'Primeira Liga': 5, 'Copa Rio': 5, Mundial: 200, 'Torneio Intl.': 5 };
+const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileiro: '#006140', 'Série C': '#006140', 'Copa do Brasil': '#7A0213', 'Rio-SP': '#AF1E35', 'Primeira Liga': '#AF1E35', Carioca: '#AF1E35', Recopa: '#E8B560', 'Copa Rio': '#64748B', Mundial: '#E8B560', 'Torneio Intl.': '#64748B' };
+const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Série C': '🥇', 'Copa do Brasil': '🥈', 'Rio-SP': '🎖️', 'Primeira Liga': '🎖️', Carioca: '🏅', Recopa: '🏆', 'Copa Rio': '🎖️', Mundial: '🌍', 'Torneio Intl.': '🎖️' };
 
 const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
   { id: 'waldo',     items: [['Rio-SP', 2], ['Carioca', 1]] },
   { id: 'fred',      items: [['Brasileiro', 2], ['Primeira Liga', 1], ['Carioca', 2]] },
   { id: 'cano',      items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] },
-  { id: 'orlando',   items: [['Copa Rio', 1], ['Carioca', 2]] },
+  { id: 'orlando',   items: [['Mundial', 1], ['Carioca', 2]] },
   { id: 'hercules',  items: [['Carioca', 5]] },
-  { id: 'tele',      items: [['Carioca', 2], ['Rio-SP', 2], ['Copa Rio', 1]] },
+  { id: 'tele',      items: [['Mundial', 1], ['Carioca', 2], ['Rio-SP', 2]] },
   { id: 'welfare',   items: [['Carioca', 4]] },
   { id: 'russo',     items: [['Carioca', 4]] },
   { id: 'preguinho', items: [['Carioca', 3]] },
-  { id: 'washington', items: [['Brasileiro', 1], ['Carioca', 3]] },
+  { id: 'washington', items: [['Brasileiro', 1], ['Carioca', 3], ['Torneio Intl.', 4]] },
   { id: 'magno',     items: [['Série C', 1], ['Primeira Liga', 1], ['Carioca', 1]] },
   { id: 'ezio',      items: [['Carioca', 1]] },
   { id: 'escurinho', items: [['Carioca', 2], ['Rio-SP', 2]] },
-  { id: 'jair',      items: [['Carioca', 2], ['Rio-SP', 1], ['Copa Rio', 1]] },
-  { id: 'zeze',      items: [['Carioca', 2], ['Copa Rio', 1]] },
+  { id: 'jair',      items: [['Mundial', 1], ['Carioca', 2], ['Rio-SP', 1]] },
+  { id: 'zeze',      items: [['Mundial', 1], ['Carioca', 2]] },
 ];
 
 export function TitulosSection() {
@@ -342,7 +342,7 @@ export function TitulosSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="04">Títulos</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÍTULOS</h2>
-        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Mundial (200) · Libertadores (100) · Brasileiro (50) · Copa do Brasil (40) · Recopa (20) · Carioca (15) · Rio-SP e Copa Rio (5).</p>
+        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Mundial (200) · Libertadores (100) · Brasileiro (50) · Copa do Brasil (40) · Recopa (20) · Carioca (15) · Rio-SP, Torneio Intl. e Copa Rio (5).</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.05}>
@@ -412,18 +412,18 @@ const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
   waldo:      { carioca: '1959', rio_sp: '1957, 1960' },
   fred:       { carioca: '2012, 2022', brasileiro: '2010, 2012' },
   cano:       { carioca: '2022, 2023', libertadores: '2023' },
-  orlando:    { carioca: '1946, 1951' },
+  orlando:    { carioca: '1946, 1951', mundial: '1952' },
   hercules:   { carioca: '1936, 1937, 1938, 1940, 1941' },
-  tele:       { carioca: '1951, 1959', rio_sp: '1957, 1960' },
+  tele:       { carioca: '1951, 1959', rio_sp: '1957, 1960', mundial: '1952' },
   welfare:    { carioca: '1917, 1918, 1919, 1924' },
   russo:      { carioca: '1936, 1937, 1940, 1941' },
   preguinho:  { carioca: '1936, 1937, 1938' },
-  washington: { carioca: '1983, 1984, 1985', brasileiro: '1984' },
+  washington: { carioca: '1983, 1984, 1985', brasileiro: '1984', torneio_internacional: 'Seul 1984, Paris 1987, Kirin 1987, Kiev 1989' },
   magno:      { carioca: '2002', brasileiro: '1999', rio_sp: '2016', serie_c: '1999' },
   ezio:       { carioca: '1995' },
   escurinho:  { carioca: '1951, 1959', rio_sp: '1957, 1960' },
-  jair:       { carioca: '1951, 1959', rio_sp: '1957' },
-  zeze:       { carioca: '1946, 1951' },
+  jair:       { carioca: '1951, 1959', rio_sp: '1957', mundial: '1952' },
+  zeze:       { carioca: '1946, 1951', mundial: '1952' },
 };
 
 function getCompPhases(p: ILFPlayer) {

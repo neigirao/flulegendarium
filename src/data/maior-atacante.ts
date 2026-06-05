@@ -1,6 +1,6 @@
 export const TITULO_PONTOS = {
   libertadores: 100, brasileiro: 50, copa_brasil: 40, recopa: 20,
-  carioca: 15, rio_sp: 5, copa_rio: 5, mundial: 200,
+  carioca: 15, rio_sp: 5, copa_rio: 5, mundial: 200, torneio_internacional: 5,
 } as const;
 
 export const CAMPANHA_PONTOS = {
@@ -117,10 +117,10 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 26, Vasco: 22, Botafogo: 20 },
     decisivos: { finais: 2, semis: 2, quartas: 1, oitavas: 0 },
     decisivos_por_competicao: { copa_rio: 5 },
-    titulos_raw: { carioca: 2, copa_rio: 1 },
+    titulos_raw: { carioca: 2, mundial: 1 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 1 },
-    premios: ['3º maior artilheiro histórico do Flu (184 gols)', 'Campeão Copa Rio 1952', 'Artilheiro do Carioca 1946', 'Artilheiro da Copa Rio 1952'],
+    premios: ['3º maior artilheiro histórico do Flu (184 gols)', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)', 'Artilheiro do Carioca 1946', 'Artilheiro da Copa Rio 1952'],
   },
   {
     id: 'hercules',
@@ -151,10 +151,10 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 14, Vasco: 12, Botafogo: 10 },
     decisivos: { finais: 2, semis: 3, quartas: 2, oitavas: 0 },
     decisivos_por_competicao: { copa_rio: 3, copa_brasil: 2, libertadores: 2 },
-    titulos_raw: { carioca: 2, rio_sp: 2, copa_rio: 1 },
+    titulos_raw: { carioca: 2, rio_sp: 2, mundial: 1 },
     campanhas_raw: { brasileiro_4: 1 },
     premiacoes_raw: {},
-    premios: ['Um dos que mais jogou pelo Flu (557 jogos — 3ª marca histórica)', 'Jogador mais elegante da história segundo a torcida', '2× Campeão Carioca (1951, 1959)', '2× Campeão Rio-São Paulo (1957, 1960)', 'Campeão Copa Rio 1952'],
+    premios: ['Um dos que mais jogou pelo Flu (557 jogos — 3ª marca histórica)', 'Jogador mais elegante da história segundo a torcida', '2× Campeão Carioca (1951, 1959)', '2× Campeão Rio-São Paulo (1957, 1960)', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)'],
   },
   {
     id: 'welfare',
@@ -219,10 +219,10 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 15, Vasco: 12, Botafogo: 10 },
     decisivos: { finais: 0, semis: 1, quartas: 0, oitavas: 0 },
     decisivos_por_competicao: { libertadores: 1 },
-    titulos_raw: { brasileiro: 1, carioca: 3 },
+    titulos_raw: { brasileiro: 1, carioca: 3, torneio_internacional: 4 },
     campanhas_raw: { brasileiro_3: 1, brasileiro_8: 2 },
     premiacoes_raw: {},
-    premios: ['Campeão Brasileiro 1984', 'Tricampeão Carioca (1983, 1984, 1985)', '3º lugar no Brasileiro 1988', '"Casal 20" com Assis — 179 gols juntos pelo Flu'],
+    premios: ['Campeão Brasileiro 1984', 'Tricampeão Carioca (1983, 1984, 1985)', 'Campeão Torneio de Seul 1984', 'Campeão Torneio de Paris 1987', 'Campeão Copa Kirin 1987', 'Campeão Torneio de Kiev 1989', '"Casal 20" com Assis — 179 gols juntos pelo Flu'],
   },
   {
     id: 'magno',
@@ -287,10 +287,10 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 13, Vasco: 10, Botafogo: 8 },
     decisivos: { finais: 2, semis: 2, quartas: 1, oitavas: 0 },
     decisivos_por_competicao: { copa_rio: 4, copa_brasil: 1 },
-    titulos_raw: { carioca: 2, rio_sp: 1, copa_rio: 1 },
+    titulos_raw: { carioca: 2, rio_sp: 1, mundial: 1 },
     campanhas_raw: { brasileiro_4: 1 },
     premiacoes_raw: {},
-    premios: ['Campeão Rio-São Paulo 1957', 'Campeão Carioca 1951 e 1959', 'Campeão Copa Rio 1952'],
+    premios: ['Campeão Rio-São Paulo 1957', 'Campeão Carioca 1951 e 1959', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)'],
   },
   {
     id: 'zeze',
@@ -304,10 +304,10 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 12, Vasco: 10, Botafogo: 8 },
     decisivos: { finais: 1, semis: 2, quartas: 1, oitavas: 0 },
     decisivos_por_competicao: { copa_rio: 4 },
-    titulos_raw: { carioca: 2, copa_rio: 1 },
+    titulos_raw: { carioca: 2, mundial: 1 },
     campanhas_raw: {},
     premiacoes_raw: {},
-    premios: ['Campeão Carioca 1946 e 1951', 'Campeão Copa Rio 1952', 'Artilheiro tricolor do pós-guerra'],
+    premios: ['Campeão Carioca 1946 e 1951', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)', 'Artilheiro tricolor do pós-guerra'],
   },
 ];
 
