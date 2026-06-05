@@ -29,6 +29,9 @@ export function Portrait({ player, size = 96, ring = '#C4944A', big }: PortraitP
           <img
             src={src}
             alt={player.nome}
+            loading="lazy"
+            width={size}
+            height={size}
             onError={() => setFailed(true)}
             style={{
               width: '100%', height: '100%',
