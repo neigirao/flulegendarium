@@ -197,7 +197,7 @@ export function RevelacaoSection() {
             </div>
           </div>
           <h2 style={{ fontFamily: BB, fontSize: 'clamp(56px,11vw,120px)', color: 'white', lineHeight: 0.9, letterSpacing: '0.02em', marginBottom: 4, textShadow: '0 0 60px rgba(232,181,96,0.3)' }}>{champ.nome}</h2>
-          <div style={{ fontSize: 15, color: '#E8B560', fontWeight: 600, marginBottom: 24 }}>{champ.apelido} · {champ.periodo}</div>
+          <div style={{ fontSize: 15, color: '#E8B560', fontWeight: 600, marginBottom: 24 }}>{champ.periodo}</div>
 
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 28, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(232,181,96,0.3)', borderRadius: 18, padding: '20px 36px', flexWrap: 'wrap' as const, justifyContent: 'center' }}>
             <div>
