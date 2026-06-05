@@ -15,5 +15,5 @@ export const ILF_PHOTOS: Record<string, string> = {
   ezio:       `${BASE}/player-1780449750057.jpg`,
   escurinho:  `${BASE}/player-1780450603658.webp`,
   jair:       `${BASE}/player-1780450640836.jpg`,
-  zeze:       `${BASE}/player-1780450678913.jpg`,
+  zeze:       `${BASE}/player-1780669685874.jpg`,
 };
