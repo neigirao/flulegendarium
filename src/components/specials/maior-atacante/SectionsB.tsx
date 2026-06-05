@@ -72,16 +72,16 @@ const COMP_LABEL: Record<string, string> = {
 
 export function DecisivosSection() {
   const rows = [...ILF_PLAYERS]
-    .map(p => ({ ...p, totalDec: p.decisivos.finais + p.decisivos.semis + p.decisivos.quartas }))
+    .map(p => ({ ...p, totalDec: p.decisivos.finais + p.decisivos.semis + p.decisivos.quartas + p.decisivos.oitavas }))
     .sort((a, b) => b.totalDec - a.totalDec)
     .slice(0, 8);
 
   return (
     <section style={{ background: 'linear-gradient(160deg,#0A1810,#0D2018)', color: 'white', padding: '72px 32px' }}>
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="03" light>Decisivos · +0.5/1/2pts</Kicker></div>
+        <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="03" light>Decisivos · +0.25/0.5/1/2pts</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(28px,4.5vw,46px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>DECISIVOS</h2>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+2pts), semifinais (+1pt) e quartas (+0.5pt) — quem aparecia quando o Flu mais precisava.</p>
+        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+2pts), semifinais (+1pt), quartas (+0.5pt) e oitavas (+0.25pt) — quem aparecia quando o Flu mais precisava.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {rows.map((p, i) => {
             const breakdown = Object.entries(p.decisivos_por_competicao).filter(([, v]) => v > 0);
@@ -103,6 +103,7 @@ export function DecisivosSection() {
                       <span>🏆 {p.decisivos.finais} finais</span>
                       <span>{p.decisivos.semis} semis</span>
                       <span>{p.decisivos.quartas} quartas</span>
+                      {p.decisivos.oitavas > 0 && <span>{p.decisivos.oitavas} oitavas</span>}
                     </div>
                   </div>
                   <div style={{ textAlign: 'right' as const, flexShrink: 0 }}>
@@ -357,7 +358,7 @@ export function ComparadorSection() {
     ['Gols', pa.gols, pb.gols],
     ['Títulos (pts)', ILF_compute_scores(pa).titulos.toFixed(0), ILF_compute_scores(pb).titulos.toFixed(0)],
     ['Clássicos (gols)', pa.classicos.Flamengo + pa.classicos.Vasco + pa.classicos.Botafogo, pb.classicos.Flamengo + pb.classicos.Vasco + pb.classicos.Botafogo],
-    ['Decisivos (gols)', pa.decisivos.finais + pa.decisivos.semis + pa.decisivos.quartas, pb.decisivos.finais + pb.decisivos.semis + pb.decisivos.quartas],
+    ['Decisivos (gols)', pa.decisivos.finais + pa.decisivos.semis + pa.decisivos.quartas + pa.decisivos.oitavas, pb.decisivos.finais + pb.decisivos.semis + pb.decisivos.quartas + pb.decisivos.oitavas],
     ['Nota ILF', ILF_compute(pa).toFixed(1), ILF_compute(pb).toFixed(1)],
   ];
 

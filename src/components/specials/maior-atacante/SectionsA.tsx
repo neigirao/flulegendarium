@@ -228,7 +228,7 @@ export function FinalistasSection() {
 const CRITERION_DETAIL: Record<string, { pts: string; desc: string }> = {
   producao:    { pts: '1 pt/gol',        desc: 'Cada gol marcado pelo clube vale 1 ponto.' },
   classicos:   { pts: '+0.5 pt/gol',     desc: 'Gols em Fla-Flu, Flu-Vasco e Flu-Botafogo recebem bônus adicional.' },
-  decisivos:   { pts: '+0.5 · +1 · +2',  desc: 'Gols em quartas (+0.5), semifinais (+1) e finais (+2) de competições.' },
+  decisivos:   { pts: '+0.25 · +0.5 · +1 · +2',  desc: 'Gols em oitavas (+0.25), quartas (+0.5), semifinais (+1) e finais (+2) de Copa do Brasil, Libertadores e Copa Rio.' },
   titulos:     { pts: '30–400 pts',       desc: 'Carioca 30 · Brasileiro 100 · Libertadores 200 · Mundial 400.' },
   campanhas:   { pts: '5–160 pts',        desc: 'Pontos por fase alcançada em cada campeonato da temporada.' },
   longevidade: { pts: '0.25 pt/jogo',    desc: 'Cada partida disputada pelo Fluminense contribui ao total.' },
