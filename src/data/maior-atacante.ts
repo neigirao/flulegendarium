@@ -273,7 +273,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     titulos_raw: { carioca: 2, rio_sp: 2 },
     campanhas_raw: {},
     premiacoes_raw: {},
-    premios: ['Campeão Rio-São Paulo 1957 e 1960', 'Campeão Carioca 1959', 'Integrante do histórico Time dos Guerreiros'],
+    premios: ['Campeão Rio-São Paulo 1957 e 1960', 'Campeão Carioca 1951 e 1959', 'Integrante do histórico Time dos Guerreiros'],
   },
   {
     id: 'jair',

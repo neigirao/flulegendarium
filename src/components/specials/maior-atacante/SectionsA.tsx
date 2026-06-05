@@ -394,7 +394,7 @@ const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
   washington: { carioca: '1983, 1984, 1985', brasileiro: '1984' },
   magno:      { carioca: '2002', brasileiro: '1999', rio_sp: '2016', serie_c: '1999' },
   ezio:       { carioca: '1995' },
-  escurinho:  { carioca: '1951, 1959', rio_sp: '1957' },
+  escurinho:  { carioca: '1951, 1959', rio_sp: '1957, 1960' },
   jair:       { carioca: '1951, 1959', rio_sp: '1957' },
   zeze:       { carioca: '1946, 1951' },
 };
