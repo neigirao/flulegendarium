@@ -150,20 +150,12 @@ export function FinalistasSection() {
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 14px 32px rgba(0,0,0,0.1)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-<div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
                   <Portrait player={p} size={64} ring="#C4944A" />
                   <div>
                     <div style={{ fontFamily: BB, fontSize: 22, color: '#1a1a2e', letterSpacing: '0.02em', lineHeight: 1 }}>{p.nome}</div>
                     <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 3 }}>{p.periodo}</div>
                   </div>
-                </div>
-                <div style={{ display: 'flex', gap: 0, borderTop: '1px dashed #E2E8F0', paddingTop: 12 }}>
-                  {[['Gols', p.gols], ['Jogos', p.jogos], ['Média', ILF_media(p).toFixed(2)]].map(([l, v], k) => (
-                    <div key={String(l)} style={{ flex: 1, textAlign: 'center' as const, borderRight: k < 2 ? '1px solid #F0EDE8' : 'none' }}>
-                      <div style={{ fontFamily: BB, fontSize: 19, color: k === 0 ? '#7A0213' : '#1a1a2e', lineHeight: 1 }}>{v}</div>
-                      <div style={{ fontSize: 9, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginTop: 2 }}>{l}</div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </Reveal>
