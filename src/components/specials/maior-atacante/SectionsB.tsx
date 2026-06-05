@@ -91,16 +91,26 @@ export function DecisivosSection() {
                   <Portrait player={p} size={48} ring={i === 0 ? '#E8B560' : 'rgba(255,255,255,0.25)'} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.02em' }}>{p.nome}</div>
-                    <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
-                      <span>🏆 {p.decisivos.finais} finais</span>
-                      <span>{p.decisivos.semis} semis</span>
-                      <span>{p.decisivos.quartas} quartas</span>
-                      {p.decisivos.oitavas > 0 && <span>{p.decisivos.oitavas} oitavas</span>}
-                    </div>
+                    {p.totalDec > 0 ? (
+                      <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
+                        {p.decisivos.finais > 0 && <span>🏆 {p.decisivos.finais} {p.decisivos.finais === 1 ? 'final' : 'finais'}</span>}
+                        {p.decisivos.semis > 0 && <span>{p.decisivos.semis} {p.decisivos.semis === 1 ? 'semi' : 'semis'}</span>}
+                        {p.decisivos.quartas > 0 && <span>{p.decisivos.quartas} quartas</span>}
+                        {p.decisivos.oitavas > 0 && <span>{p.decisivos.oitavas} oitavas</span>}
+                      </div>
+                    ) : (
+                      <div style={{ marginTop: 5, fontSize: 11, color: 'rgba(255,255,255,0.2)', fontStyle: 'italic' }}>Sem gols decisivos registrados</div>
+                    )}
                   </div>
                   <div style={{ textAlign: 'right' as const, flexShrink: 0 }}>
-                    <div style={{ fontFamily: BB, fontSize: 30, color: i === 0 ? '#E8B560' : 'white', lineHeight: 1 }}><AnimatedNumber value={p.totalDec} /></div>
-                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols decisivos</div>
+                    {p.totalDec > 0 ? (
+                      <>
+                        <div style={{ fontFamily: BB, fontSize: 30, color: i === 0 ? '#E8B560' : 'white', lineHeight: 1 }}><AnimatedNumber value={p.totalDec} /></div>
+                        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols decisivos</div>
+                      </>
+                    ) : (
+                      <div style={{ fontFamily: BB, fontSize: 20, color: 'rgba(255,255,255,0.15)', lineHeight: 1 }}>—</div>
+                    )}
                   </div>
                 </div>
               </Reveal>
