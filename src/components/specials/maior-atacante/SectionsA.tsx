@@ -309,20 +309,20 @@ const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '
 
 const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
   { id: 'waldo',     items: [['Rio-SP', 2], ['Carioca', 1]] },
-  { id: 'fred',      items: [['Brasileiro', 2], ['Carioca', 2]] },
+  { id: 'fred',      items: [['Brasileiro', 2], ['Primeira Liga', 1], ['Carioca', 2]] },
   { id: 'cano',      items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] },
-  { id: 'orlando',   items: [['Carioca', 2]] },
+  { id: 'orlando',   items: [['Copa Rio', 1], ['Carioca', 2]] },
   { id: 'hercules',  items: [['Carioca', 5]] },
-  { id: 'tele',      items: [['Carioca', 2], ['Rio-SP', 2]] },
+  { id: 'tele',      items: [['Carioca', 2], ['Rio-SP', 2], ['Copa Rio', 1]] },
   { id: 'welfare',   items: [['Carioca', 2]] },
   { id: 'russo',     items: [['Carioca', 5]] },
   { id: 'preguinho', items: [['Carioca', 2]] },
-  { id: 'washington',items: [['Brasileiro', 1], ['Carioca', 3]] },
+  { id: 'washington', items: [['Brasileiro', 1], ['Carioca', 3]] },
   { id: 'magno',     items: [['Série C', 1], ['Primeira Liga', 1], ['Carioca', 1]] },
   { id: 'ezio',      items: [['Carioca', 1]] },
-  { id: 'escurinho', items: [['Carioca', 2], ['Rio-SP', 1]] },
-  { id: 'jair',      items: [['Carioca', 2], ['Rio-SP', 1]] },
-  { id: 'zeze',      items: [['Carioca', 2]] },
+  { id: 'escurinho', items: [['Carioca', 2], ['Rio-SP', 2]] },
+  { id: 'jair',      items: [['Carioca', 2], ['Rio-SP', 1], ['Copa Rio', 1]] },
+  { id: 'zeze',      items: [['Carioca', 2], ['Copa Rio', 1]] },
 ];
 
 export function TitulosSection() {
