@@ -133,7 +133,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     titulos_raw: { carioca: 2, mundial: 1 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 1 },
-    premios: ['3º maior artilheiro histórico do Flu (184 gols)', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)', 'Artilheiro do Carioca 1946', 'Artilheiro da Copa Rio 1952'],
+    premios: ['3º maior artilheiro histórico do Flu (186 gols)', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)', 'Artilheiro do Carioca 1946', 'Artilheiro da Copa Rio 1952'],
     gols_tipos: { pe: 163, penalti: 13, cabeca: 6, bicicleta: 4 },
   },
   {
