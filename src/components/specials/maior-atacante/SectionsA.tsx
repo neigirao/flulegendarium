@@ -384,6 +384,9 @@ const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color:
   fred: [
     { ano: '2011', label: '3º lugar', color: '#64748B' },
   ],
+  cano: [
+    { ano: '2022', label: '3º lugar', color: '#64748B' },
+  ],
 };
 
 const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
