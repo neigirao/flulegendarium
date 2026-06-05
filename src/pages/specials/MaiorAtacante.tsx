@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { lazy, Suspense, useRef } from 'react';
 import { TopNavigation } from '@/components/navigation/TopNavigation';
 import { FloatRank } from '@/components/specials/maior-atacante/FloatRank';
 import { SEOManager } from '@/components/seo/SEOManager';
@@ -9,19 +9,28 @@ import {
   ProducaoSection,
   TitulosSection,
   CampanhasSection,
+  LongevidadeSection,
 } from '@/components/specials/maior-atacante/SectionsA';
-import {
-  ClassicosSection,
-  DecisivosSection,
-  PremiacoesSection,
-  LegadoSection,
-  TransicaoSection,
-  RevelacaoSection,
-  RankingOficialSection,
-  VotacaoSection,
-  ComparadorSection,
-  CTASection,
-} from '@/components/specials/maior-atacante/SectionsB';
+import { useInView } from '@/hooks/use-in-view';
+
+const LazySectionsB = lazy(async () => {
+  const mod = await import('@/components/specials/maior-atacante/SectionsB');
+  const Bundle = () => (
+    <>
+      <mod.ClassicosSection />
+      <mod.DecisivosSection />
+      <mod.PremiacoesSection />
+      <mod.LegadoSection />
+      <mod.TransicaoSection />
+      <mod.RevelacaoSection />
+      <mod.RankingOficialSection />
+      <mod.VotacaoSection />
+      <mod.ComparadorSection />
+      <mod.CTASection />
+    </>
+  );
+  return { default: Bundle };
+});
 
 const KEYFRAMES = `
   @keyframes slideInRight { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -37,6 +46,7 @@ const KEYFRAMES = `
 
 export default function MaiorAtacante() {
   const finalistasRef = useRef<HTMLDivElement>(null);
+  const [sentinelRef, shouldLoadB] = useInView(0, '800px');
 
   const scrollToFinalistas = () => {
     const el = document.getElementById('finalistas');
@@ -62,16 +72,11 @@ export default function MaiorAtacante() {
         <ProducaoSection />
         <TitulosSection />
         <CampanhasSection />
-        <ClassicosSection />
-        <DecisivosSection />
-        <PremiacoesSection />
-        <LegadoSection />
-        <TransicaoSection />
-        <RevelacaoSection />
-        <RankingOficialSection />
-        <VotacaoSection />
-        <ComparadorSection />
-        <CTASection />
+        <LongevidadeSection />
+        <div ref={sentinelRef} style={{ height: 1 }} />
+        <Suspense fallback={<div style={{ minHeight: 400 }} />}>
+          {shouldLoadB && <LazySectionsB />}
+        </Suspense>
       </div>
     </div>
   );
