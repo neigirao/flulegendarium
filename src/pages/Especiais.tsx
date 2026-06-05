@@ -17,7 +17,7 @@ const SPECIALS: SpecialCard[] = [
   {
     slug: 'maior-atacante',
     title: 'Maior Atacante da História do Fluminense',
-    subtitle: 'Índice Lendas do Flu · ILF',
+    subtitle: 'Melhor Atacante do Flu',
     description: 'Analisamos 15 lendas tricolores com uma metodologia exclusiva — 8 critérios, 100+ anos de história — para descobrir quem foi o atacante mais importante de todos os tempos.',
     badge: 'Estudo Especial',
     icon: '⚽',

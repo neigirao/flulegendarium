@@ -131,7 +131,7 @@ export function TransicaoSection() {
         <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: 36 }}>
           {ILF_WEIGHTS.map((w, i) => (
             <span key={w.key}>{i > 0 ? (i === ILF_WEIGHTS.length - 1 ? ' e ' : ', ') : ''}<span style={{ color: 'rgba(255,255,255,0.85)' }}>{w.label.toLowerCase()}</span></span>
-          ))} — tudo foi contado. O Índice Lendas do Flu chegou ao seu veredito.
+          ))} — tudo foi contado. O Melhor Atacante do Flu chegou ao seu veredito.
         </p>
         <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, fontWeight: 700 }}>
           A revelação começa abaixo
@@ -189,7 +189,7 @@ export function RevelacaoSection() {
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 28, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(232,181,96,0.3)', borderRadius: 18, padding: '20px 36px', flexWrap: 'wrap' as const, justifyContent: 'center' }}>
             <div>
               <div style={{ fontFamily: BB, fontSize: 64, color: '#E8B560', lineHeight: 1 }}><AnimatedNumber value={champ.ilf} decimals={1} /></div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota ILF</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota Melhor Atacante do Flu</div>
             </div>
             <div style={{ width: 1, height: 56, background: 'rgba(255,255,255,0.15)' }} />
             <div style={{ textAlign: 'left' as const }}>
@@ -293,7 +293,7 @@ export function VotacaoSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: 12 }}><Kicker n="★" light>A voz da torcida</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,50px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>E PRA VOCÊ, QUEM É O MAIOR?</h2>
-        <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A régua do ILF deu o veredito — mas a palavra final é da arquibancada.</p>
+        <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A análise do Melhor Atacante do Flu deu o veredito — mas a palavra final é da arquibancada.</p>
 
         {loading && <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 }}>Carregando votos...</div>}
         <div data-mc="vote" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))', gap: 10, marginBottom: 28 }}>
@@ -348,7 +348,7 @@ export function ComparadorSection() {
     ['Títulos (pts)', ILF_compute_scores(pa).titulos.toFixed(0), ILF_compute_scores(pb).titulos.toFixed(0)],
     ['Clássicos (gols)', pa.classicos.Flamengo + pa.classicos.Vasco + pa.classicos.Botafogo, pb.classicos.Flamengo + pb.classicos.Vasco + pb.classicos.Botafogo],
     ['Decisivos (gols)', pa.decisivos.finais + pa.decisivos.semis + pa.decisivos.quartas + pa.decisivos.oitavas, pb.decisivos.finais + pb.decisivos.semis + pb.decisivos.quartas + pb.decisivos.oitavas],
-    ['Nota ILF', ILF_compute(pa).toFixed(1), ILF_compute(pb).toFixed(1)],
+    ['Nota Melhor Atacante do Flu', ILF_compute(pa).toFixed(1), ILF_compute(pb).toFixed(1)],
   ];
 
   const Sel = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (

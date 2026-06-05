@@ -38,7 +38,7 @@ export function FloatRank() {
       >
         <style>{`@media (min-width: 641px) { .float-rank-panel { display: block !important; } }`}</style>
         <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
-          ⚡ Placar Parcial ILF
+          ⚡ Placar Parcial Melhor Atacante do Flu
         </div>
         {top.map((p, i) => {
           const hidden = i === 0;
