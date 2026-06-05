@@ -140,12 +140,13 @@ export const TopNavigation = () => {
             <AuthButton />
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
-                <Button 
-                  variant="ghost" 
+                <Button
+                  variant="ghost"
                   size="sm"
+                  aria-label="Abrir menu"
                   className="text-primary hover:bg-secondary/10 touch-target"
                 >
-                  <Menu className="h-5 w-5" />
+                  <Menu className="h-5 w-5" aria-hidden="true" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80 bg-background border-l border-secondary/20 safe-area-right">

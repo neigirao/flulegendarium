@@ -101,7 +101,7 @@ export function HeroSection({ onStart }: HeroProps) {
             fetchPriority="high"
             width={108}
             height={108}
-            style={{ position: 'absolute', top: '52%', left: '50%', transform: 'translate(-50%,-50%)', height: 108, filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.5))' }}
+            style={{ position: 'absolute', top: '52%', left: '50%', transform: 'translate(-50%,-50%)', width: 108, height: 108, objectFit: 'contain' as const, filter: 'drop-shadow(0 8px 24px rgba(0,0,0,0.5))' }}
           />
         </div>
 
@@ -260,7 +260,7 @@ export function FinalistasSection() {
       <div style={{ maxWidth: 1180, margin: '0 auto' }}>
         <Kicker n="">Candidatos</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>JOGADORES ANALISADOS</h2>
-        <p style={{ fontSize: 15, color: '#64748B', maxWidth: 560, marginBottom: 36 }}>De Welfare a Cano — mais de um século de artilheiros. Clique em um nome para ver os detalhes.</p>
+        <p style={{ fontSize: 15, color: '#475569', maxWidth: 560, marginBottom: 36 }}>De Welfare a Cano — mais de um século de artilheiros. Clique em um nome para ver os detalhes.</p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 16 }}>
           {ILF_PLAYERS.map((p, i) => (
@@ -275,7 +275,7 @@ export function FinalistasSection() {
                   <Portrait player={p} size={64} ring="#C4944A" />
                   <div>
                     <div style={{ fontFamily: BB, fontSize: 22, color: '#1a1a2e', letterSpacing: '0.02em', lineHeight: 1 }}>{p.nome}</div>
-                    <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 3 }}>{p.periodo}</div>
+                    <div style={{ fontSize: 11, color: '#64748B', marginTop: 3 }}>{p.periodo}</div>
                   </div>
                 </div>
               </div>
@@ -354,22 +354,26 @@ export function MetodologiaSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="">Régua</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>COMO DESCOBRIR O MAIOR ATACANTE DO FLUMINENSE?</h2>
-        <p style={{ fontSize: 15, color: '#64748B', maxWidth: 580, marginBottom: 40 }}>A soma total de pontos brutos por todas as conquistas e contribuições — sem normalização. 6 critérios, cada conquista com seu valor absoluto.</p>
+        <p style={{ fontSize: 15, color: '#475569', maxWidth: 580, marginBottom: 40 }}>A soma total de pontos brutos por todas as conquistas e contribuições — sem normalização. 6 critérios, cada conquista com seu valor absoluto.</p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 14 }}>
           {ILF_WEIGHTS.map((w, i) => {
             const detail = CRITERION_DETAIL[w.key];
+            const DARK_TEXT_BG = new Set(['#E8B560', '#C4944A', '#94A3B8']);
+            const DARK_LABEL: Record<string, string> = { '#E8B560': '#7A6A00', '#C4944A': '#7A5500', '#94A3B8': '#475569' };
+            const badgeTextColor = DARK_TEXT_BG.has(w.color) ? '#1a1a2e' : 'white';
+            const labelColor = DARK_LABEL[w.color] ?? w.color;
             return (
               <div key={w.key} style={{ background: 'white', border: '1px solid #EDE8E0', borderRadius: 14, padding: '18px 20px', display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                 <div style={{ flexShrink: 0, width: 40, height: 40, borderRadius: 10, background: w.color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontFamily: BB, fontSize: 18, color: 'white', letterSpacing: '0.02em' }}>{String(i + 1).padStart(2, '0')}</span>
+                  <span style={{ fontFamily: BB, fontSize: 18, color: badgeTextColor, letterSpacing: '0.02em' }}>{String(i + 1).padStart(2, '0')}</span>
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
                     <span style={{ fontFamily: BB, fontSize: 17, color: '#1a1a2e', letterSpacing: '0.02em' }}>{w.label}</span>
-                    <span style={{ fontFamily: BB, fontSize: 14, color: w.color, letterSpacing: '0.02em', flexShrink: 0 }}>{detail.pts}</span>
+                    <span style={{ fontFamily: BB, fontSize: 14, color: labelColor, letterSpacing: '0.02em', flexShrink: 0 }}>{detail.pts}</span>
                   </div>
-                  <p style={{ fontSize: 12, color: '#64748B', lineHeight: 1.5, margin: 0 }}>{detail.desc}</p>
+                  <p style={{ fontSize: 12, color: '#475569', lineHeight: 1.5, margin: 0 }}>{detail.desc}</p>
                 </div>
               </div>
             );
@@ -461,7 +465,7 @@ export function TitulosSection() {
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
         <Kicker n="04">Títulos</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÍTULOS</h2>
-        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Mundial (200) · Libertadores (100) · Brasileiro (50) · Copa do Brasil (40) · Recopa (20) · Carioca (15) · Rio-SP, Torneio Intl. e Copa Rio (5).</p>
+        <p style={{ fontSize: 14, color: '#475569', marginBottom: 30 }}>Cada conquista vale pontos diferentes: Mundial (200) · Libertadores (100) · Brasileiro (50) · Copa do Brasil (40) · Recopa (20) · Carioca (15) · Rio-SP, Torneio Intl. e Copa Rio (5).</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.05}>
@@ -502,20 +506,20 @@ const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color:
   fred: [
     { ano: '2011', label: '3º lugar', color: '#64748B' },
     { ano: '2022', label: '3º lugar', color: '#64748B' },
-    { ano: '2020', label: '5º lugar', color: '#94A3B8' },
-    { ano: '2014', label: '6º lugar', color: '#94A3B8' },
-    { ano: '2021', label: '7º lugar', color: '#94A3B8' },
+    { ano: '2020', label: '5º lugar', color: '#64748B' },
+    { ano: '2014', label: '6º lugar', color: '#64748B' },
+    { ano: '2021', label: '7º lugar', color: '#64748B' },
   ],
   cano: [
     { ano: '2022', label: '3º lugar', color: '#64748B' },
-    { ano: '2025', label: '5º lugar', color: '#94A3B8' },
-    { ano: '2023', label: '7º lugar', color: '#94A3B8' },
+    { ano: '2025', label: '5º lugar', color: '#64748B' },
+    { ano: '2023', label: '7º lugar', color: '#64748B' },
   ],
   tele:      [{ ano: '1960', label: '3º lugar Taça Brasil', color: '#64748B' }],
   washington: [
     { ano: '1988', label: '3º lugar', color: '#64748B' },
-    { ano: '1986', label: '6º lugar', color: '#94A3B8' },
-    { ano: '1987', label: '7º lugar', color: '#94A3B8' },
+    { ano: '1986', label: '6º lugar', color: '#64748B' },
+    { ano: '1987', label: '7º lugar', color: '#64748B' },
   ],
   magno: [
     { ano: '2000', label: '3º lugar', color: '#64748B' },
@@ -560,15 +564,15 @@ function getCompPhases(p: ILFPlayer) {
   const bra = (p.campanhas_raw.brasileiro_2 || 0) > 0 ? { label: '2º lugar', color: '#7A0213' }
     : (p.campanhas_raw.brasileiro_3 || 0) > 0 ? { label: '3º lugar', color: '#64748B' }
     : (p.campanhas_raw.brasileiro_4 || 0) > 0 ? { label: '4º lugar', color: '#64748B' }
-    : (p.campanhas_raw.brasileiro_5 || 0) > 0 ? { label: '5º lugar', color: '#94A3B8' }
-    : (p.campanhas_raw.brasileiro_6 || 0) > 0 ? { label: '6º lugar', color: '#94A3B8' }
-    : (p.campanhas_raw.brasileiro_7 || 0) > 0 ? { label: '7º lugar', color: '#94A3B8' }
-    : (p.campanhas_raw.brasileiro_8 || 0) > 0 ? { label: 'Quartas', color: '#94A3B8' }
+    : (p.campanhas_raw.brasileiro_5 || 0) > 0 ? { label: '5º lugar', color: '#64748B' }
+    : (p.campanhas_raw.brasileiro_6 || 0) > 0 ? { label: '6º lugar', color: '#64748B' }
+    : (p.campanhas_raw.brasileiro_7 || 0) > 0 ? { label: '7º lugar', color: '#64748B' }
+    : (p.campanhas_raw.brasileiro_8 || 0) > 0 ? { label: 'Quartas', color: '#64748B' }
     : null;
   const munList: { label: string; color: string }[] = [
     ...((p.campanhas_raw.mundial_vice || 0) > 0 ? [{ label: 'Vice-campeão', color: '#E8B560' }] : []),
     ...((p.campanhas_raw.mundial_3 || 0) > 0 ? [{ label: '3º lugar', color: '#64748B' }] : []),
-    ...((p.campanhas_raw.mundial_semi || 0) > 0 ? [{ label: 'Semifinal', color: '#94A3B8' }] : []),
+    ...((p.campanhas_raw.mundial_semi || 0) > 0 ? [{ label: 'Semifinal', color: '#64748B' }] : []),
   ];
   return { lib, copa, bra, munList };
 }
@@ -638,7 +642,7 @@ export function CampanhasSection() {
                       ))}
                     </div>
                   ) : (
-                    <div style={{ fontSize: 12, color: '#94A3B8', fontStyle: 'italic' }}>Sem título registrado</div>
+                    <div style={{ fontSize: 12, color: '#64748B', fontStyle: 'italic' }}>Sem título registrado</div>
                   )}
                 </div>
               </Reveal>

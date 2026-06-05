@@ -15,7 +15,7 @@ export const MobileKeyboardHandler = ({ children }: MobileKeyboardHandlerProps) 
       if (isKeyboardOpen) {
         // When keyboard opens, prevent zooming and adjust viewport
         if (viewport) {
-          viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+          viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, viewport-fit=cover');
         }
         
         // Add class to body for CSS adjustments

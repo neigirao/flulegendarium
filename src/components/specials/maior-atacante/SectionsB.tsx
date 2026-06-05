@@ -22,7 +22,7 @@ export function ClassicosSection() {
       <div style={{ maxWidth: 1000, margin: '0 auto' }}>
         <Kicker n="02">Clássicos · +1pt por gol</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CLÁSSICOS</h2>
-        <p style={{ fontSize: 14, color: '#64748B', marginBottom: 36 }}>Gols contra Flamengo, Vasco e Botafogo valem +1pt cada — o bônus de quem brilhou nas rivalidades que mais importam.</p>
+        <p style={{ fontSize: 14, color: '#475569', marginBottom: 36 }}>Gols contra Flamengo, Vasco e Botafogo valem +1pt cada — o bônus de quem brilhou nas rivalidades que mais importam.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {rows.map((p, i) => (
             <Reveal key={p.id} delay={i * 0.04}>
@@ -221,7 +221,7 @@ export function RankingOficialSection() {
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}><Kicker n="✓">Resultado completo</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 8 }}>OS MAIORES ATACANTES DO FLUMINENSE SÃO</h2>
-        <p style={{ fontSize: 14, color: '#64748B', textAlign: 'center', marginBottom: 36 }}>Os 15 finalistas, ordenados pela nota final do Índice Lendas do Flu.</p>
+        <p style={{ fontSize: 14, color: '#475569', textAlign: 'center', marginBottom: 36 }}>Os 15 finalistas, ordenados pela nota final do Índice Lendas do Flu.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {all.map((p, i) => {
             const medal = i === 0 ? '#C4944A' : i === 1 ? '#A8B0BB' : i === 2 ? '#B8754A' : null;
@@ -351,8 +351,8 @@ export function ComparadorSection() {
     ['Nota Melhor Atacante do Flu', ILF_compute(pa).toFixed(1), ILF_compute(pb).toFixed(1)],
   ];
 
-  const Sel = ({ value, onChange }: { value: string; onChange: (v: string) => void }) => (
-    <select value={value} onChange={e => onChange(e.target.value)} style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.03em', color: '#7A0213', border: '1px solid #E2E8F0', borderRadius: 8, padding: '6px 10px', background: 'white', cursor: 'pointer', maxWidth: 160 }}>
+  const Sel = ({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) => (
+    <select aria-label={label} value={value} onChange={e => onChange(e.target.value)} style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.03em', color: '#7A0213', border: '1px solid #E2E8F0', borderRadius: 8, padding: '6px 10px', background: 'white', cursor: 'pointer', maxWidth: 160 }}>
       {ILF_PLAYERS.map(p => <option key={p.id} value={p.id}>{p.nome}</option>)}
     </select>
   );
@@ -365,12 +365,12 @@ export function ComparadorSection() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 18, alignItems: 'center', marginBottom: 24 }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
             <Portrait player={pa} size={92} ring="#7A0213" big />
-            <Sel value={aId} onChange={setAId} />
+            <Sel value={aId} onChange={setAId} label="Atacante A" />
           </div>
-          <div style={{ fontFamily: BB, fontSize: 32, color: '#C4944A' }}>VS</div>
+          <div style={{ fontFamily: BB, fontSize: 32, color: '#7A5500' }}>VS</div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
             <Portrait player={pb} size={92} ring="#006140" big />
-            <Sel value={bId} onChange={setBId} />
+            <Sel value={bId} onChange={setBId} label="Atacante B" />
           </div>
         </div>
         <div style={{ background: '#F7F5F2', borderRadius: 16, padding: 20, border: '1px solid #E2E8F0' }}>
@@ -379,9 +379,9 @@ export function ComparadorSection() {
             const aWins = na > nb, bWins = nb > na;
             return (
               <div key={label} style={{ display: 'flex', alignItems: 'center', padding: '11px 0', borderBottom: i < rows.length - 1 ? '1px solid #E7E1D8' : 'none' }}>
-                <div style={{ flex: 1, textAlign: 'right' as const, fontFamily: BB, fontSize: 24, color: aWins ? '#7A0213' : '#94A3B8' }}>{va}{aWins && ' ◀'}</div>
-                <div style={{ width: 150, textAlign: 'center' as const, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em', color: '#94A3B8' }}>{label}</div>
-                <div style={{ flex: 1, textAlign: 'left' as const, fontFamily: BB, fontSize: 24, color: bWins ? '#006140' : '#94A3B8' }}>{bWins && '▶ '}{vb}</div>
+                <div style={{ flex: 1, textAlign: 'right' as const, fontFamily: BB, fontSize: 24, color: aWins ? '#7A0213' : '#64748B' }}>{va}{aWins && ' ◀'}</div>
+                <div style={{ width: 150, textAlign: 'center' as const, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em', color: '#4B5563' }}>{label}</div>
+                <div style={{ flex: 1, textAlign: 'left' as const, fontFamily: BB, fontSize: 24, color: bWins ? '#006140' : '#64748B' }}>{bWins && '▶ '}{vb}</div>
               </div>
             );
           })}
