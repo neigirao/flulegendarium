@@ -134,6 +134,119 @@ export function HeroSection({ onStart }: HeroProps) {
   );
 }
 
+/* ── FORMA DO GOL ────────────────────────────── */
+function FormaGol({ player }: { player: ILFPlayer }) {
+  if (!player.gols_tipos) return null;
+  const t = player.gols_tipos;
+  const total = player.gols;
+  const BB = "'Bebas Neue', Impact, sans-serif";
+
+  const headGols = (t.cabeca || 0) + (t.olimpico || 0) + (t.peixinho || 0) + (t.sem_pulo || 0);
+  const footGols = (t.pe || 0) + (t.bicicleta || 0) + (t.carrinho || 0);
+  const specialGols = (t.penalti || 0) + (t.falta || 0);
+  const pct = (v: number) => total > 0 ? ((v / total) * 100).toFixed(1) : '0';
+
+  const details = [
+    { label: 'Com o Pé', v: t.pe || 0 },
+    { label: 'De Cabeça', v: t.cabeca || 0 },
+    { label: 'Pênalti', v: t.penalti || 0 },
+    { label: 'Falta', v: t.falta || 0 },
+    { label: 'Bicicleta', v: t.bicicleta || 0 },
+    { label: 'Sem Pulo', v: t.sem_pulo || 0 },
+    { label: 'Olímpico', v: t.olimpico || 0 },
+    { label: 'Peixinho', v: t.peixinho || 0 },
+    { label: 'Carrinho', v: t.carrinho || 0 },
+  ].filter(d => d.v > 0).sort((a, b) => b.v - a.v);
+
+  const headColor = '#E8B560';
+  const footColor = '#C4944A';
+  const specialColor = '#AF1E35';
+
+  return (
+    <div style={{ marginTop: 22, background: 'rgba(255,255,255,0.04)', borderRadius: 12, padding: '16px 18px' }}>
+      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.4)', marginBottom: 14 }}>Forma do Gol</div>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+        <svg width="64" height="128" viewBox="0 0 64 128" fill="none" style={{ flexShrink: 0 }}>
+          {/* Head */}
+          <circle cx="32" cy="13" r="11"
+            stroke={headGols > 0 ? headColor : 'rgba(255,255,255,0.18)'}
+            strokeWidth={headGols > 0 ? 2.5 : 1.5}
+            fill={headGols > 0 ? 'rgba(232,181,96,0.15)' : 'transparent'} />
+          {/* Neck */}
+          <line x1="32" y1="24" x2="32" y2="31" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"/>
+          {/* Torso */}
+          <path d="M17 31 Q14 50 16 67 L48 67 Q50 50 47 31 Z"
+            stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" fill="rgba(255,255,255,0.02)"/>
+          {/* Left arm */}
+          <line x1="17" y1="35" x2="5" y2="57" stroke="rgba(255,255,255,0.14)" strokeWidth="1.5"/>
+          {/* Right arm */}
+          <line x1="47" y1="35" x2="59" y2="57" stroke="rgba(255,255,255,0.14)" strokeWidth="1.5"/>
+          {/* Left leg */}
+          <line x1="25" y1="67" x2="20" y2="99" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"/>
+          {/* Right leg */}
+          <line x1="39" y1="67" x2="44" y2="99" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"/>
+          {/* Left foot */}
+          <ellipse cx="16" cy="103" rx="9" ry="4"
+            stroke={footGols > 0 ? footColor : 'rgba(255,255,255,0.18)'}
+            strokeWidth={footGols > 0 ? 2.5 : 1.5}
+            fill={footGols > 0 ? 'rgba(196,148,74,0.15)' : 'transparent'} />
+          {/* Right foot */}
+          <ellipse cx="48" cy="103" rx="9" ry="4"
+            stroke={footGols > 0 ? footColor : 'rgba(255,255,255,0.18)'}
+            strokeWidth={footGols > 0 ? 2.5 : 1.5}
+            fill={footGols > 0 ? 'rgba(196,148,74,0.15)' : 'transparent'} />
+          {/* Bola parada marker on torso */}
+          {specialGols > 0 && (
+            <circle cx="32" cy="49" r="7"
+              stroke={specialColor} strokeWidth="1.5"
+              fill="rgba(122,2,19,0.18)" strokeDasharray="3 2"/>
+          )}
+        </svg>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {headGols > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 3, height: 36, background: headColor, borderRadius: 2, flexShrink: 0 }} />
+              <div>
+                <div style={{ fontSize: 9, color: headColor, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>Cabeça</div>
+                <div style={{ fontFamily: BB, fontSize: 26, color: 'white', lineHeight: 1 }}>{headGols} <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(headGols)}%</span></div>
+              </div>
+            </div>
+          )}
+          {footGols > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 3, height: 36, background: footColor, borderRadius: 2, flexShrink: 0 }} />
+              <div>
+                <div style={{ fontSize: 9, color: footColor, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>Com o Pé</div>
+                <div style={{ fontFamily: BB, fontSize: 26, color: 'white', lineHeight: 1 }}>{footGols} <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(footGols)}%</span></div>
+              </div>
+            </div>
+          )}
+          {specialGols > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{ width: 3, height: 36, background: specialColor, borderRadius: 2, flexShrink: 0 }} />
+              <div>
+                <div style={{ fontSize: 9, color: specialColor, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>Bola Parada</div>
+                <div style={{ fontFamily: BB, fontSize: 26, color: 'white', lineHeight: 1 }}>{specialGols} <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(specialGols)}%</span></div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {details.length > 1 && (
+        <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap' as const, gap: 5 }}>
+          {details.map(({ label, v }) => (
+            <span key={label} style={{ fontSize: 10, background: 'rgba(255,255,255,0.07)', borderRadius: 5, padding: '3px 7px', color: 'rgba(255,255,255,0.65)' }}>
+              {label}: <strong style={{ color: 'white' }}>{v}</strong>
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ── FINALISTAS ──────────────────────────────── */
 export function FinalistasSection() {
   const [sel, setSel] = useState<ILFPlayer | null>(null);
@@ -211,6 +324,7 @@ export function FinalistasSection() {
                 <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota Melhor Atacante do Flu</div>
                 <div style={{ fontFamily: BB, fontSize: 48, color: '#E8B560', lineHeight: 1 }}>{ILF_compute(sel).toFixed(1)}</div>
               </div>
+              <FormaGol player={sel} />
             </div>
           </div>
         </div>
@@ -315,7 +429,7 @@ const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
   { id: 'fred',      items: [['Brasileiro', 2], ['Primeira Liga', 1], ['Carioca', 2]] },
   { id: 'cano',      items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] },
   { id: 'orlando',   items: [['Mundial', 1], ['Carioca', 2]] },
-  { id: 'hercules',  items: [['Carioca', 5]] },
+  { id: 'hercules',  items: [['Rio-SP', 1], ['Carioca', 5]] },
   { id: 'tele',      items: [['Mundial', 1], ['Carioca', 2], ['Rio-SP', 2]] },
   { id: 'welfare',   items: [['Carioca', 4]] },
   { id: 'russo',     items: [['Carioca', 4]] },
@@ -416,7 +530,7 @@ const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
   fred:       { carioca: '2012, 2022', brasileiro: '2010, 2012' },
   cano:       { carioca: '2022, 2023', libertadores: '2023' },
   orlando:    { carioca: '1946, 1951', mundial: '1952' },
-  hercules:   { carioca: '1936, 1937, 1938, 1940, 1941' },
+  hercules:   { carioca: '1936, 1937, 1938, 1940, 1941', rio_sp: '1940' },
   tele:       { carioca: '1951, 1959', rio_sp: '1957, 1960', mundial: '1952' },
   welfare:    { carioca: '1917, 1918, 1919, 1924' },
   russo:      { carioca: '1936, 1937, 1940, 1941' },

@@ -42,6 +42,19 @@ export interface ILFPlayer {
   campanhas_raw: Partial<Record<keyof typeof CAMPANHA_PONTOS, number>>;
   premiacoes_raw: Partial<Record<keyof typeof PREMIACAO_PONTOS, number>>;
   premios: string[];
+  gols_tipos?: ILFGoalTypes;
+}
+
+export interface ILFGoalTypes {
+  pe?: number;
+  cabeca?: number;
+  penalti?: number;
+  falta?: number;
+  bicicleta?: number;
+  sem_pulo?: number;
+  carrinho?: number;
+  olimpico?: number;
+  peixinho?: number;
 }
 
 export const ILF_WEIGHTS: ILFWeight[] = [
@@ -111,7 +124,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     apelido: 'Pingo de Ouro',
     periodo: '1945–1954',
     posicao: 'Ponta-esquerda',
-    gols: 184,
+    gols: 186,
     jogos: 310,
     legenda: 'Pingo de Ouro — a alcunha diz tudo. O 3º maior artilheiro da história do Flu encantou as arquibancadas do Maracanã com velocidade, drible e gol na era de ouro dos anos 1940 e 50.',
     classicos: { Flamengo: 26, Vasco: 22, Botafogo: 20 },
@@ -121,6 +134,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 1 },
     premios: ['3º maior artilheiro histórico do Flu (184 gols)', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)', 'Artilheiro do Carioca 1946', 'Artilheiro da Copa Rio 1952'],
+    gols_tipos: { pe: 163, penalti: 13, cabeca: 6, bicicleta: 4 },
   },
   {
     id: 'hercules',
@@ -134,10 +148,11 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 24, Vasco: 20, Botafogo: 18 },
     decisivos: { finais: 0, semis: 0, quartas: 0, oitavas: 0 },
     decisivos_por_competicao: {},
-    titulos_raw: { carioca: 5 },
+    titulos_raw: { carioca: 5, rio_sp: 1 },
     campanhas_raw: { brasileiro_2: 1 },
     premiacoes_raw: {},
-    premios: ['4º maior artilheiro histórico do Flu (165 gols)', '2ª melhor média de gols (0,94 gols/jogo)', '5× Campeão Carioca (1936, 1937, 1938, 1940, 1941)', '2º lugar Torneio dos Campeões 1937'],
+    premios: ['4º maior artilheiro histórico do Flu (165 gols)', '2ª melhor média de gols (0,94 gols/jogo)', '5× Campeão Carioca (1936, 1937, 1938, 1940, 1941)', '2º lugar Torneio dos Campeões 1937', 'Campeão Torneio Rio-São Paulo 1940'],
+    gols_tipos: { pe: 125, penalti: 21, falta: 11, cabeca: 8 },
   },
   {
     id: 'tele',
@@ -155,6 +170,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { brasileiro_3: 1 },
     premiacoes_raw: {},
     premios: ['Um dos que mais jogou pelo Flu (557 jogos — 3ª marca histórica)', 'Jogador mais elegante da história segundo a torcida', '2× Campeão Carioca (1951, 1959)', '2× Campeão Rio-São Paulo (1957, 1960)', 'Campeão Mundial Copa Rio Internacional 1952 (Invicto)'],
+    gols_tipos: { pe: 137, cabeca: 16, penalti: 1, falta: 2, bicicleta: 1, carrinho: 1, olimpico: 1, peixinho: 1, sem_pulo: 2 },
   },
   {
     id: 'welfare',
@@ -274,6 +290,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { brasileiro_3: 1 },
     premiacoes_raw: {},
     premios: ['Campeão Rio-São Paulo 1957 e 1960', 'Campeão Carioca 1951 e 1959', 'Integrante do histórico Time dos Guerreiros', '3º lugar Taça Brasil 1960'],
+    gols_tipos: { pe: 103, cabeca: 3, sem_pulo: 3, penalti: 1, falta: 1 },
   },
   {
     id: 'jair',
