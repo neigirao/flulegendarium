@@ -168,10 +168,10 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     classicos: { Flamengo: 35, Vasco: 18, Botafogo: 28 },
     decisivos: { finais: 0, semis: 0, quartas: 0, oitavas: 0 },
     decisivos_por_competicao: {},
-    titulos_raw: { carioca: 2 },
+    titulos_raw: { carioca: 4 },
     campanhas_raw: {},
     premiacoes_raw: { artilheiro_carioca: 2, premio_historico_clube: 1 },
-    premios: ['Maior artilheiro estrangeiro do Flu (161 gols)', 'Maior artilheiro do Flu no Carioca (123 gols)', 'Artilheiro do Carioca 1914 e 1915', 'Membro Vitalício do Conselho Deliberativo do Flu', 'Melhor média do ILF (~1,00 gol/jogo)'],
+    premios: ['Maior artilheiro estrangeiro do Flu (161 gols)', 'Maior artilheiro do Flu no Carioca (123 gols)', '4× Campeão Carioca (1917, 1918, 1919, 1924)', 'Artilheiro do Carioca 1914 e 1915', 'Membro Vitalício do Conselho Deliberativo do Flu', 'Melhor média do ILF (~1,00 gol/jogo)'],
   },
   {
     id: 'russo',
