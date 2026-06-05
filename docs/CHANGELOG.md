@@ -7,6 +7,46 @@ e este projeto adere ao [Versionamento Semântico](https://semver.org/lang/pt-BR
 
 ## [Unreleased]
 
+### 🏆 Especial Maior Atacante — Revisão de Pontuação e Dados (2026-06-05)
+
+#### Changed
+- **Nova fórmula de pontuação ILF:**
+  - Títulos e Campanhas: todos os valores reduzidos à metade
+  - Clássicos: 0.5pt/gol → **1pt/gol**
+  - Decisivos: oitavas 1pt · quartas 2pt · semis **10pt** · finais **20pt** (era 0.25/0.5/1/2)
+- **CAMPANHA_PONTOS — Brasileirão expandido até 8º lugar** (Proposta A — progressão ÷2):
+  - 2º: 30 · 3º: 15 · **4º: 8 · 5º: 4 · 6º: 2 · 7º: 1 · 8º: 1**
+  - Inclui Taça Brasil (1959–1968) e Torneio Roberto Gomes Pedrosa
+
+#### Added — Novos dados de campanhas no Brasileiro/Taça Brasil por jogador:
+| Jogador | Campanha adicionada |
+|---------|---------------------|
+| Waldo | 1960 Taça Brasil — Semifinal (top 4) |
+| Telê Santana | 1960 Taça Brasil — Semifinal (top 4) |
+| Escurinho | 1960 Taça Brasil — Semifinal (top 4) |
+| Jair Francisco | 1960 Taça Brasil — Semifinal (top 4) |
+| Washington | 1988: 3º lugar · 1985/1986: Quartas |
+| Magno Alves | 2001 e 2002: 4º lugar (semifinalista) |
+| Ézio | 1991 e 1995: 4º lugar (semifinalista) · 1994: Quartas |
+| Fred | 2022: 3º lugar (total 2×) · 2020: 5º · 2014: 6º · 2016/2021: 7º |
+| Germán Cano | 2023: 7º lugar |
+
+#### Fixed — Correções históricas de títulos e campanhas (pesquisa Wikipedia):
+- Fred: +Primeira Liga 2016
+- Orlando, Telê, Jair, Zezé: +Copa Rio 1952 (estava nos textos mas não computava pontos)
+- Russo: Carioca x5 → x4 (ausente em 1938, lesionado em Paris)
+- Preguinho: Carioca x2 → x3 (1936, 1937, 1938)
+- Escurinho: período corrigido para 1954–1964, Rio-SP x1 → x2
+- Waldo: Rio-SP x1 → x2 (1957 e 1960)
+- Washington: removida campanha Libertadores quartas incorreta (saiu na fase de grupos em 1984)
+- Magno Alves: +Série C 1999 (100pts) · +Primeira Liga 2016 (10pts) · período atualizado para 1998–2002 · 2016
+- Ézio: +Copa do Brasil 1992 vice-campeão (48pts em campanhas)
+
+#### Ranking ILF final (nova pontuação):
+`Fred 863.3 · Cano 634.0 · Waldo 594.8 · Telê 464.3 · Orlando 426.5 · Washington 355.8 · Magno 354.3 · Hércules 346.0 · Russo 327.8 · Welfare 312.5 · Jair 306.3 · Escurinho 295.5 · Preguinho 273.5 · Zezé 271.0 · Ézio 268.0`
+
+
+
 ### 🎮 Mecânica de Jogo & Bug Fixes (2026-05-20)
 
 #### Fixed

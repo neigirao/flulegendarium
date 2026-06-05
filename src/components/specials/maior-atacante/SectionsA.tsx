@@ -222,7 +222,7 @@ const CRITERION_DETAIL: Record<string, { pts: string; desc: string }> = {
   classicos:   { pts: '+1 pt/gol',        desc: 'Gols em Fla-Flu, Flu-Vasco e Flu-Botafogo recebem bônus adicional.' },
   decisivos:   { pts: '+1 · +2 · +10 · +20', desc: 'Gols em oitavas (+1), quartas (+2), semifinais (+10) e finais (+20) de Copa do Brasil, Libertadores e Copa Rio.' },
   titulos:     { pts: '5–200 pts',        desc: 'Carioca 15 · Brasileiro 50 · Libertadores 100 · Mundial 200.' },
-  campanhas:   { pts: '3–80 pts',         desc: 'Pontos por fase alcançada em cada campeonato da temporada.' },
+  campanhas:   { pts: '1–80 pts',         desc: 'Pontos por fase alcançada — do vice-campeão mundial (80pts) ao 8º lugar no Brasileiro (1pt). Inclui Taça Brasil (1959–68).' },
   longevidade: { pts: '0.25 pt/jogo',    desc: 'Cada partida disputada pelo Fluminense contribui ao total.' },
 };
 
@@ -373,12 +373,36 @@ export function TitulosSection() {
 
 /* ── CAMPANHAS ───────────────────────────────── */
 const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
+  waldo:     [{ ano: '1960', label: 'Semi Taça Brasil', color: '#64748B' }],
   fred: [
     { ano: '2011', label: '3º lugar', color: '#64748B' },
+    { ano: '2022', label: '3º lugar', color: '#64748B' },
+    { ano: '2020', label: '5º lugar', color: '#94A3B8' },
+    { ano: '2014', label: '6º lugar', color: '#94A3B8' },
+    { ano: '2016', label: '7º lugar', color: '#94A3B8' },
+    { ano: '2021', label: '7º lugar', color: '#94A3B8' },
   ],
   cano: [
     { ano: '2022', label: '3º lugar', color: '#64748B' },
+    { ano: '2023', label: '7º lugar', color: '#94A3B8' },
   ],
+  tele:      [{ ano: '1960', label: 'Semi Taça Brasil', color: '#64748B' }],
+  washington: [
+    { ano: '1988', label: '3º lugar', color: '#64748B' },
+    { ano: '1985', label: 'Quartas', color: '#94A3B8' },
+    { ano: '1986', label: 'Quartas', color: '#94A3B8' },
+  ],
+  magno: [
+    { ano: '2001', label: '4º lugar', color: '#64748B' },
+    { ano: '2002', label: '4º lugar', color: '#64748B' },
+  ],
+  ezio: [
+    { ano: '1991', label: '4º lugar', color: '#64748B' },
+    { ano: '1995', label: '4º lugar', color: '#64748B' },
+    { ano: '1994', label: 'Quartas', color: '#94A3B8' },
+  ],
+  escurinho: [{ ano: '1960', label: 'Semi Taça Brasil', color: '#64748B' }],
+  jair:      [{ ano: '1960', label: 'Semi Taça Brasil', color: '#64748B' }],
 };
 
 const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
@@ -410,6 +434,11 @@ function getCompPhases(p: ILFPlayer) {
     : null;
   const bra = (p.campanhas_raw.brasileiro_2 || 0) > 0 ? { label: '2º lugar', color: '#7A0213' }
     : (p.campanhas_raw.brasileiro_3 || 0) > 0 ? { label: '3º lugar', color: '#64748B' }
+    : (p.campanhas_raw.brasileiro_4 || 0) > 0 ? { label: '4º lugar', color: '#64748B' }
+    : (p.campanhas_raw.brasileiro_5 || 0) > 0 ? { label: '5º lugar', color: '#94A3B8' }
+    : (p.campanhas_raw.brasileiro_6 || 0) > 0 ? { label: '6º lugar', color: '#94A3B8' }
+    : (p.campanhas_raw.brasileiro_7 || 0) > 0 ? { label: '7º lugar', color: '#94A3B8' }
+    : (p.campanhas_raw.brasileiro_8 || 0) > 0 ? { label: 'Quartas', color: '#94A3B8' }
     : null;
   const munList: { label: string; color: string }[] = [
     ...((p.campanhas_raw.mundial_vice || 0) > 0 ? [{ label: 'Vice-campeão', color: '#E8B560' }] : []),
@@ -428,7 +457,7 @@ export function CampanhasSection() {
         <Kicker n="05">Campanhas</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CAMPANHAS</h2>
         <p style={{ fontSize: 15, color: '#64748B', marginBottom: 30, maxWidth: 640, lineHeight: 1.6 }}>
-          Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta. Libertadores (120→30pts), Copa Brasil (48→12pts), Brasileirão (60→30pts), Mundial (160→40pts).
+          Marcar gols é importante — mas <strong style={{ color: '#1a1a2e' }}>até onde o time chegou</strong> com aquele atacante em campo também conta. Libertadores (60→5pts), Copa Brasil (24→3pts), Brasileirão/Taça Brasil (30→1pt, até o 8º lugar), Mundial (80→20pts).
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(300px,1fr))', gap: 16 }}>
