@@ -339,3 +339,21 @@ export interface ILFRankingEntry extends ILFPlayer { ilf: number; }
 export const ILF_RANKING: ILFRankingEntry[] = [...ILF_PLAYERS]
   .map(p => ({ ...p, ilf: ILF_compute(p) }))
   .sort((a, b) => b.ilf - a.ilf);
+
+export const ILF_SORTED_BY_GOLS = [...ILF_PLAYERS].sort((a, b) => b.gols - a.gols);
+
+export const ILF_SORTED_BY_JOGOS = [...ILF_PLAYERS].sort((a, b) => b.jogos - a.jogos);
+
+export const ILF_SORTED_BY_CLASSICOS = [...ILF_PLAYERS]
+  .map(p => ({ ...p, total: p.classicos.Flamengo + p.classicos.Vasco + p.classicos.Botafogo }))
+  .sort((a, b) => b.total - a.total);
+
+export const ILF_SORTED_BY_CAMPANHAS = [...ILF_PLAYERS]
+  .sort((a, b) => ILF_compute_scores(b).campanhas - ILF_compute_scores(a).campanhas);
+
+export const ILF_SORTED_BY_DECISIVOS = [...ILF_PLAYERS]
+  .sort((a, b) => {
+    const da = ILF_compute_scores(a).decisivos;
+    const db = ILF_compute_scores(b).decisivos;
+    return db - da;
+  });

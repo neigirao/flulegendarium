@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILF_media, ILFPlayer } from '@/data/maior-atacante';
+import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILF_media, ILFPlayer, ILF_SORTED_BY_GOLS, ILF_SORTED_BY_JOGOS, ILF_SORTED_BY_CAMPANHAS } from '@/data/maior-atacante';
 import { Portrait } from '../Portrait';
 import { Kicker } from '../Kicker';
 import { Reveal } from '../Reveal';
@@ -219,7 +219,7 @@ export function MetodologiaSection() {
 
 /* ── PRODUÇÃO OFENSIVA ───────────────────────── */
 export function ProducaoSection() {
-  const ranked = [...ILF_PLAYERS].sort((a, b) => b.gols - a.gols);
+  const ranked = ILF_SORTED_BY_GOLS;
   const lider = ranked[0];
   const max = lider.gols;
   return (
@@ -346,7 +346,7 @@ const KNOCKOUT_LEGEND = [
 ];
 
 export function CampanhasSection() {
-  const players = [...ILF_PLAYERS].sort((a, b) => ILF_compute_scores(b).campanhas - ILF_compute_scores(a).campanhas);
+  const players = ILF_SORTED_BY_CAMPANHAS;
   const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
   const posColor = (pos: number) => pos === 1 ? '#C4944A' : pos <= 4 ? '#006140' : pos <= 10 ? '#64748B' : '#94A3B8';
 
@@ -425,6 +425,42 @@ export function CampanhasSection() {
               </Reveal>
             );
           })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── LONGEVIDADE ─────────────────────────────── */
+export function LongevidadeSection() {
+  const ranked = ILF_SORTED_BY_JOGOS;
+  const lider = ranked[0];
+  const max = lider.jogos;
+  return (
+    <section style={{ background: '#F7F5F2', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
+        <Kicker n="06">Longevidade · 0.25 pt por jogo</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>LONGEVIDADE</h2>
+        <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'start' }}>
+          <Reveal>
+            <div style={{ background: 'linear-gradient(160deg,#0D2018,#0A1810)', borderRadius: 18, padding: 28, color: 'white', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
+              <div style={{ position: 'absolute', top: 14, left: 0, right: 0, fontSize: 10, fontWeight: 800, letterSpacing: '0.16em', color: '#E8B560', textTransform: 'uppercase' as const }}>★ Mais jogos pelo Flu</div>
+              <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', marginBottom: 14 }}><Portrait player={lider} size={104} ring="#E8B560" big /></div>
+              <div style={{ fontFamily: BB, fontSize: 34, letterSpacing: '0.02em', lineHeight: 1 }}>{lider.nome}</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 18 }}>{lider.periodo}</div>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: 22 }}>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: '#E8B560' }}><AnimatedNumber value={lider.jogos} /></div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>jogos</div></div>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: 'white' }}>{(lider.jogos * 0.25).toFixed(0)}</div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>pts</div></div>
+              </div>
+            </div>
+          </Reveal>
+          <div>
+            {ranked.map((p, i) => (
+              <BarRow key={p.id} rank={i + 1} label={p.nome} sub={`${p.jogos} jogos · ${(p.jogos * 0.25).toFixed(0)} pts`}
+                value={p.jogos} display={p.jogos} max={max}
+                color={i === 0 ? '#C4944A' : '#94A3B8'} highlight={i === 0} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

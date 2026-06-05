@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILFPlayer } from '@/data/maior-atacante';
+import { supabase } from '@/integrations/supabase/client';
+import { ILF_PLAYERS, ILF_WEIGHTS, ILF_RANKING, ILF_compute, ILF_compute_scores, ILF_MAX_SCORES, ILFPlayer, ILF_SORTED_BY_CLASSICOS } from '@/data/maior-atacante';
 import { Portrait } from '../Portrait';
 import { Kicker } from '../Kicker';
 import { Reveal } from '../Reveal';
@@ -12,20 +13,15 @@ const BB = "'Bebas Neue', Impact, sans-serif";
 
 /* ── CLÁSSICOS ───────────────────────────────── */
 export function ClassicosSection() {
+  const rows = ILF_SORTED_BY_CLASSICOS;
+  const rei = rows[0];
   const candidateIds = ['waldo', 'welfare', 'fred', 'orlando'];
   const candidatos = candidateIds.map(id => ILF_PLAYERS.find(p => p.id === id)).filter((p): p is ILFPlayer => !!p);
   if (!candidatos.length) return null;
   const [sel, setSel] = useState<ILFPlayer>(candidatos[0]);
-
-  const rei = [...ILF_PLAYERS].sort((a, b) => {
-    const sa = a.classicos.Flamengo + a.classicos.Vasco + a.classicos.Botafogo;
-    const sb = b.classicos.Flamengo + b.classicos.Vasco + b.classicos.Botafogo;
-    return sb - sa;
-  })[0];
-
   const axes = [{ label: 'Flamengo' }, { label: 'Vasco' }, { label: 'Botafogo' }];
   const series = [{ color: '#7A0213', fill: 'rgba(122,2,19,0.18)', values: [sel.classicos.Flamengo, sel.classicos.Vasco, sel.classicos.Botafogo] }];
-  const maxVal = Math.max(...ILF_PLAYERS.map(p => Math.max(p.classicos.Flamengo, p.classicos.Vasco, p.classicos.Botafogo)));
+  const maxVal = Math.max(...rows.map(p => Math.max(p.classicos.Flamengo, p.classicos.Vasco, p.classicos.Botafogo)));
 
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px' }}>
