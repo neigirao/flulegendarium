@@ -303,9 +303,9 @@ export function ProducaoSection() {
 }
 
 /* ── TÍTULOS ─────────────────────────────────── */
-const TITLE_PTS: Record<string, number> = { Libertadores: 200, Brasileiro: 100, 'Copa do Brasil': 80, Recopa: 40, Carioca: 30, 'Rio-SP': 10, 'Copa Rio': 10, Mundial: 400 };
-const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileiro: '#006140', 'Copa do Brasil': '#7A0213', 'Rio-SP': '#AF1E35', Carioca: '#AF1E35', Recopa: '#E8B560', 'Copa Rio': '#64748B', Mundial: '#E8B560' };
-const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Copa do Brasil': '🥈', 'Rio-SP': '🎖️', Carioca: '🏅', Recopa: '🏆', 'Copa Rio': '🎖️', Mundial: '🌍' };
+const TITLE_PTS: Record<string, number> = { Libertadores: 200, Brasileiro: 100, 'Série C': 100, 'Copa do Brasil': 80, Recopa: 40, Carioca: 30, 'Rio-SP': 10, 'Primeira Liga': 10, 'Copa Rio': 10, Mundial: 400 };
+const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileiro: '#006140', 'Série C': '#006140', 'Copa do Brasil': '#7A0213', 'Rio-SP': '#AF1E35', 'Primeira Liga': '#AF1E35', Carioca: '#AF1E35', Recopa: '#E8B560', 'Copa Rio': '#64748B', Mundial: '#E8B560' };
+const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Série C': '🥇', 'Copa do Brasil': '🥈', 'Rio-SP': '🎖️', 'Primeira Liga': '🎖️', Carioca: '🏅', Recopa: '🏆', 'Copa Rio': '🎖️', Mundial: '🌍' };
 
 const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
   { id: 'waldo',     items: [['Rio-SP', 1], ['Carioca', 1]] },
@@ -318,7 +318,7 @@ const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
   { id: 'russo',     items: [['Carioca', 5]] },
   { id: 'preguinho', items: [['Carioca', 2]] },
   { id: 'washington',items: [['Brasileiro', 1], ['Carioca', 3]] },
-  { id: 'magno',     items: [['Carioca', 1]] },
+  { id: 'magno',     items: [['Série C', 1], ['Primeira Liga', 1], ['Carioca', 1]] },
   { id: 'ezio',      items: [['Carioca', 1]] },
   { id: 'escurinho', items: [['Carioca', 2], ['Rio-SP', 1]] },
   { id: 'jair',      items: [['Carioca', 2], ['Rio-SP', 1]] },
@@ -392,7 +392,7 @@ const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
   russo:      { carioca: '1936, 1937, 1938, 1940, 1941' },
   preguinho:  { carioca: '1931, 1936' },
   washington: { carioca: '1983, 1984, 1985', brasileiro: '1984' },
-  magno:      { carioca: '2002' },
+  magno:      { carioca: '2002', brasileiro: '1999', rio_sp: '2016' },
   ezio:       { carioca: '1995' },
   escurinho:  { carioca: '1951, 1959', rio_sp: '1957' },
   jair:       { carioca: '1951, 1959', rio_sp: '1957' },
