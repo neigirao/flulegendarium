@@ -84,7 +84,6 @@ export function DecisivosSection() {
         <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', textAlign: 'center', marginBottom: 40 }}>Gols em finais (+2pts), semifinais (+1pt), quartas (+0.5pt) e oitavas (+0.25pt) — quem aparecia quando o Flu mais precisava.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {rows.map((p, i) => {
-            const breakdown = Object.entries(p.decisivos_por_competicao).filter(([, v]) => v > 0);
             return (
               <Reveal key={p.id} delay={i * 0.05}>
                 <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -92,13 +91,6 @@ export function DecisivosSection() {
                   <Portrait player={p} size={48} ring={i === 0 ? '#E8B560' : 'rgba(255,255,255,0.25)'} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.02em' }}>{p.nome}</div>
-                    <div style={{ display: 'flex', gap: 10, marginTop: 5, flexWrap: 'wrap' as const }}>
-                      {breakdown.map(([comp, gols]) => (
-                        <span key={comp} style={{ fontSize: 11, color: 'rgba(255,255,255,0.55)', background: 'rgba(255,255,255,0.07)', borderRadius: 5, padding: '2px 8px', whiteSpace: 'nowrap' as const }}>
-                          <span style={{ color: '#E8B560', fontWeight: 700 }}>{gols}</span> {COMP_LABEL[comp] || comp}
-                        </span>
-                      ))}
-                    </div>
                     <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
                       <span>🏆 {p.decisivos.finais} finais</span>
                       <span>{p.decisivos.semis} semis</span>
