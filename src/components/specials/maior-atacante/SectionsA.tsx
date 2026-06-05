@@ -308,7 +308,7 @@ const BADGE_COLOR: Record<string, string> = { Libertadores: '#C4944A', Brasileir
 const BADGE_ICON: Record<string, string> = { Libertadores: '🏆', Brasileiro: '🥇', 'Série C': '🥇', 'Copa do Brasil': '🥈', 'Rio-SP': '🎖️', 'Primeira Liga': '🎖️', Carioca: '🏅', Recopa: '🏆', 'Copa Rio': '🎖️', Mundial: '🌍' };
 
 const TITULOS_DATA: Array<{ id: string; items: [string, number][] }> = [
-  { id: 'waldo',     items: [['Rio-SP', 1], ['Carioca', 1]] },
+  { id: 'waldo',     items: [['Rio-SP', 2], ['Carioca', 1]] },
   { id: 'fred',      items: [['Brasileiro', 2], ['Carioca', 2]] },
   { id: 'cano',      items: [['Libertadores', 1], ['Recopa', 1], ['Carioca', 2]] },
   { id: 'orlando',   items: [['Carioca', 2]] },
@@ -382,7 +382,7 @@ const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color:
 };
 
 const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
-  waldo:      { carioca: '1959', rio_sp: '1957' },
+  waldo:      { carioca: '1959', rio_sp: '1957, 1960' },
   fred:       { carioca: '2012, 2022', brasileiro: '2010, 2012' },
   cano:       { carioca: '2022, 2023', libertadores: '2023' },
   orlando:    { carioca: '1946, 1951' },
