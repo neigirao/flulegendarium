@@ -97,7 +97,7 @@ export function HeroSection({ onStart }: HeroProps) {
           </svg>
 
           <img
-            src="/lovable-uploads/6b2888cd-7dd2-4048-b4ca-c9636e93d4a6.webp"
+            src="/lovable-uploads/flu-logo-sm.webp"
             alt="Fluminense"
             fetchPriority="high"
             width={108}
