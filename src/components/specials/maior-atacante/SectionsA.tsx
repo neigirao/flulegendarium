@@ -141,9 +141,9 @@ function FormaGol({ player }: { player: ILFPlayer }) {
   const total = player.gols;
   const BB = "'Bebas Neue', Impact, sans-serif";
 
-  const headGols = (t.cabeca || 0) + (t.olimpico || 0) + (t.peixinho || 0) + (t.sem_pulo || 0) + (t.peito || 0);
-  const footGols = (t.pe || 0) + (t.bicicleta || 0) + (t.carrinho || 0) + (t.voleio || 0) + (t.calcanhar || 0) + (t.meia_bicicleta || 0) + (t.letra || 0);
-  const specialGols = (t.penalti || 0) + (t.falta || 0);
+  const headGols = (t.cabeca || 0) + (t.olimpico || 0) + (t.peixinho || 0) + (t.sem_pulo || 0) + (t.peito || 0) + (t.barriga || 0);
+  const footGols = (t.pe || 0) + (t.bicicleta || 0) + (t.carrinho || 0) + (t.voleio || 0) + (t.calcanhar || 0) + (t.meia_bicicleta || 0) + (t.letra || 0) + (t.joelho || 0);
+  const specialGols = (t.penalti || 0) + (t.falta || 0) + (t.placa || 0);
   const pct = (v: number) => total > 0 ? ((v / total) * 100).toFixed(1) : '0';
 
   const details = [
@@ -161,6 +161,9 @@ function FormaGol({ player }: { player: ILFPlayer }) {
     { label: 'Meia-bicicleta', v: t.meia_bicicleta || 0 },
     { label: 'De Peito', v: t.peito || 0 },
     { label: 'Letra', v: t.letra || 0 },
+    { label: 'De Barriga', v: t.barriga || 0 },
+    { label: 'De Joelho', v: t.joelho || 0 },
+    { label: 'De Placa', v: t.placa || 0 },
   ].filter(d => d.v > 0).sort((a, b) => b.v - a.v);
 
   const headColor = '#E8B560';
