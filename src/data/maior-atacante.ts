@@ -5,6 +5,7 @@ export const TITULO_PONTOS = {
 
 export const CAMPANHA_PONTOS = {
   libertadores_vice: 60, libertadores_semi: 30, libertadores_quartas: 15, libertadores_oitavas: 5,
+  sulamericana_vice: 25, sulamericana_semi: 10,
   copa_brasil_vice: 24, copa_brasil_semi: 12, copa_brasil_quartas: 6, copa_brasil_oitavas: 3,
   brasileiro_2: 30, brasileiro_3: 15, brasileiro_4: 8, brasileiro_5: 4, brasileiro_6: 2, brasileiro_7: 1, brasileiro_8: 1,
   mundial_vice: 80, mundial_3: 40, mundial_semi: 20,
@@ -106,7 +107,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     decisivos: { finais: 9, semis: 13, quartas: 10, oitavas: 7 },
     decisivos_por_competicao: { libertadores: 9, copa_brasil: 30 },
     titulos_raw: { brasileiro: 2, rio_sp: 1, carioca: 2 },
-    campanhas_raw: { libertadores_semi: 1, brasileiro_3: 2, brasileiro_5: 1, brasileiro_6: 1, brasileiro_7: 1 },
+    campanhas_raw: { sulamericana_vice: 1, brasileiro_3: 2, brasileiro_5: 1, brasileiro_6: 1, brasileiro_7: 1 },
     premiacoes_raw: { artilheiro_nacional: 1, melhor_jogador_torneio: 1 },
     premios: ['Maior artilheiro do Flu no séc. XXI (199 gols)', 'Artilheiro do Flu no Brasileirão (102 gols)', 'Maior artilheiro do Flu na Copa do Brasil (37 gols)', 'Campeão Primeira Liga 2016', 'Craque do Brasileirão 2012', 'Gol mais bonito da história dos clubes brasileiros (2012)'],
     gols_tipos: { pe: 102, cabeca: 45, penalti: 41, voleio: 3, bicicleta: 2, carrinho: 2, falta: 2, meia_bicicleta: 1, peito: 1 },

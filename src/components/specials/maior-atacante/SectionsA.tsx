@@ -530,7 +530,10 @@ const MUNDIAL_ANOS: Record<string, Array<{ ano: string; label: string; color: st
 };
 
 const LIBERTADORES_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
-  fred: [{ ano: '2009', label: 'Semifinal', color: '#64748B' }],
+};
+
+const SULAMERICANA_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
+  fred: [{ ano: '2009', label: 'Vice-campeão', color: '#7A0213' }],
 };
 
 const COPA_BRASIL_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
@@ -562,6 +565,9 @@ function getCompPhases(p: ILFPlayer) {
     : (p.campanhas_raw.libertadores_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
     : (p.campanhas_raw.libertadores_quartas || 0) > 0 ? { label: 'Quartas de Final', color: '#64748B' }
     : null;
+  const sul = (p.campanhas_raw.sulamericana_vice || 0) > 0 ? { label: 'Vice-campeão', color: '#7A0213' }
+    : (p.campanhas_raw.sulamericana_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
+    : null;
   const copa = (p.campanhas_raw.copa_brasil_vice || 0) > 0 ? { label: 'Vice-campeão', color: '#7A0213' }
     : (p.campanhas_raw.copa_brasil_semi || 0) > 0 ? { label: 'Semifinal', color: '#006140' }
     : (p.campanhas_raw.copa_brasil_quartas || 0) > 0 ? { label: 'Quartas de Final', color: '#64748B' }
@@ -579,7 +585,7 @@ function getCompPhases(p: ILFPlayer) {
     ...((p.campanhas_raw.mundial_3 || 0) > 0 ? [{ label: '3º lugar', color: '#64748B' }] : []),
     ...((p.campanhas_raw.mundial_semi || 0) > 0 ? [{ label: 'Semifinal', color: '#64748B' }] : []),
   ];
-  return { lib, copa, bra, munList };
+  return { lib, sul, copa, bra, munList };
 }
 
 export function CampanhasSection() {
@@ -626,6 +632,22 @@ export function CampanhasSection() {
                             </div>
                           ) : (
                             <span style={{ background: phases.lib.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.lib.label}</span>
+                          )}
+                        </div>
+                      )}
+                      {phases.sul && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600, paddingTop: 3, flexShrink: 0 }}>Sul-Americana</span>
+                          {SULAMERICANA_ANOS[p.id] ? (
+                            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
+                              {SULAMERICANA_ANOS[p.id].map(({ ano, label, color }) => (
+                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                  {ano} · {label}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span style={{ background: phases.sul.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.sul.label}</span>
                           )}
                         </div>
                       )}
