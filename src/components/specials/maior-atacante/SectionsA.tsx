@@ -141,116 +141,87 @@ function FormaGol({ player }: { player: ILFPlayer }) {
   const total = player.gols;
   const BB = "'Bebas Neue', Impact, sans-serif";
 
+  const HEAD = '#E8B560';
+  const FOOT = '#C4944A';
+  const SPEC = '#AF1E35';
+
   const headGols = (t.cabeca || 0) + (t.olimpico || 0) + (t.peixinho || 0) + (t.sem_pulo || 0) + (t.peito || 0) + (t.barriga || 0);
   const footGols = (t.pe || 0) + (t.bicicleta || 0) + (t.carrinho || 0) + (t.voleio || 0) + (t.calcanhar || 0) + (t.meia_bicicleta || 0) + (t.letra || 0) + (t.joelho || 0);
   const specialGols = (t.penalti || 0) + (t.falta || 0) + (t.placa || 0);
+
+  const rows = [
+    { label: 'Com o Pé',       v: t.pe || 0,             color: FOOT },
+    { label: 'De Cabeça',      v: t.cabeca || 0,          color: HEAD },
+    { label: 'Pênalti',        v: t.penalti || 0,         color: SPEC },
+    { label: 'Falta',          v: t.falta || 0,           color: SPEC },
+    { label: 'Bicicleta',      v: t.bicicleta || 0,       color: FOOT },
+    { label: 'Meia-bicicleta', v: t.meia_bicicleta || 0,  color: FOOT },
+    { label: 'Voleio',         v: t.voleio || 0,          color: FOOT },
+    { label: 'Carrinho',       v: t.carrinho || 0,        color: FOOT },
+    { label: 'Calcanhar',      v: t.calcanhar || 0,       color: FOOT },
+    { label: 'Letra',          v: t.letra || 0,           color: FOOT },
+    { label: 'De Joelho',      v: t.joelho || 0,          color: FOOT },
+    { label: 'De Peito',       v: t.peito || 0,           color: HEAD },
+    { label: 'De Barriga',     v: t.barriga || 0,         color: HEAD },
+    { label: 'Peixinho',       v: t.peixinho || 0,        color: HEAD },
+    { label: 'Sem Pulo',       v: t.sem_pulo || 0,        color: HEAD },
+    { label: 'Olímpico',       v: t.olimpico || 0,        color: HEAD },
+    { label: 'De Placa',       v: t.placa || 0,           color: SPEC },
+  ].filter(r => r.v > 0).sort((a, b) => b.v - a.v);
+
+  const maxV = rows[0]?.v || 1;
   const pct = (v: number) => total > 0 ? ((v / total) * 100).toFixed(1) : '0';
-
-  const details = [
-    { label: 'Com o Pé', v: t.pe || 0 },
-    { label: 'De Cabeça', v: t.cabeca || 0 },
-    { label: 'Pênalti', v: t.penalti || 0 },
-    { label: 'Falta', v: t.falta || 0 },
-    { label: 'Bicicleta', v: t.bicicleta || 0 },
-    { label: 'Sem Pulo', v: t.sem_pulo || 0 },
-    { label: 'Olímpico', v: t.olimpico || 0 },
-    { label: 'Peixinho', v: t.peixinho || 0 },
-    { label: 'Carrinho', v: t.carrinho || 0 },
-    { label: 'Voleio', v: t.voleio || 0 },
-    { label: 'Calcanhar', v: t.calcanhar || 0 },
-    { label: 'Meia-bicicleta', v: t.meia_bicicleta || 0 },
-    { label: 'De Peito', v: t.peito || 0 },
-    { label: 'Letra', v: t.letra || 0 },
-    { label: 'De Barriga', v: t.barriga || 0 },
-    { label: 'De Joelho', v: t.joelho || 0 },
-    { label: 'De Placa', v: t.placa || 0 },
-  ].filter(d => d.v > 0).sort((a, b) => b.v - a.v);
-
-  const headColor = '#E8B560';
-  const footColor = '#C4944A';
-  const specialColor = '#AF1E35';
 
   return (
     <div style={{ marginTop: 22, background: 'rgba(255,255,255,0.04)', borderRadius: 12, padding: '16px 18px' }}>
       <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.4)', marginBottom: 14 }}>Forma do Gol</div>
-      <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-        <svg width="64" height="128" viewBox="0 0 64 128" fill="none" style={{ flexShrink: 0 }}>
-          {/* Head */}
+
+      <div style={{ display: 'flex', gap: 16 }}>
+        {/* Silhueta */}
+        <svg width="52" height="108" viewBox="0 0 64 128" fill="none" style={{ flexShrink: 0, alignSelf: 'center' }}>
           <circle cx="32" cy="13" r="11"
-            stroke={headGols > 0 ? headColor : 'rgba(255,255,255,0.18)'}
+            stroke={headGols > 0 ? HEAD : 'rgba(255,255,255,0.18)'}
             strokeWidth={headGols > 0 ? 2.5 : 1.5}
             fill={headGols > 0 ? 'rgba(232,181,96,0.15)' : 'transparent'} />
-          {/* Neck */}
           <line x1="32" y1="24" x2="32" y2="31" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"/>
-          {/* Torso */}
           <path d="M17 31 Q14 50 16 67 L48 67 Q50 50 47 31 Z"
             stroke="rgba(255,255,255,0.14)" strokeWidth="1.5" fill="rgba(255,255,255,0.02)"/>
-          {/* Left arm */}
           <line x1="17" y1="35" x2="5" y2="57" stroke="rgba(255,255,255,0.14)" strokeWidth="1.5"/>
-          {/* Right arm */}
           <line x1="47" y1="35" x2="59" y2="57" stroke="rgba(255,255,255,0.14)" strokeWidth="1.5"/>
-          {/* Left leg */}
           <line x1="25" y1="67" x2="20" y2="99" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"/>
-          {/* Right leg */}
           <line x1="39" y1="67" x2="44" y2="99" stroke="rgba(255,255,255,0.18)" strokeWidth="1.5"/>
-          {/* Left foot */}
           <ellipse cx="16" cy="103" rx="9" ry="4"
-            stroke={footGols > 0 ? footColor : 'rgba(255,255,255,0.18)'}
+            stroke={footGols > 0 ? FOOT : 'rgba(255,255,255,0.18)'}
             strokeWidth={footGols > 0 ? 2.5 : 1.5}
             fill={footGols > 0 ? 'rgba(196,148,74,0.15)' : 'transparent'} />
-          {/* Right foot */}
           <ellipse cx="48" cy="103" rx="9" ry="4"
-            stroke={footGols > 0 ? footColor : 'rgba(255,255,255,0.18)'}
+            stroke={footGols > 0 ? FOOT : 'rgba(255,255,255,0.18)'}
             strokeWidth={footGols > 0 ? 2.5 : 1.5}
             fill={footGols > 0 ? 'rgba(196,148,74,0.15)' : 'transparent'} />
-          {/* Bola parada marker on torso */}
           {specialGols > 0 && (
             <circle cx="32" cy="49" r="7"
-              stroke={specialColor} strokeWidth="1.5"
+              stroke={SPEC} strokeWidth="1.5"
               fill="rgba(122,2,19,0.18)" strokeDasharray="3 2"/>
           )}
         </svg>
 
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {headGols > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 3, height: 36, background: headColor, borderRadius: 2, flexShrink: 0 }} />
-              <div>
-                <div style={{ fontSize: 9, color: headColor, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>Cabeça</div>
-                <div style={{ fontFamily: BB, fontSize: 26, color: 'white', lineHeight: 1 }}>{headGols} <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(headGols)}%</span></div>
+        {/* Barras individuais */}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {rows.map(({ label, v, color }) => (
+            <div key={label}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 3 }}>
+                <span style={{ fontSize: 10, fontWeight: 700, color, letterSpacing: '0.04em' }}>{label}</span>
+                <span style={{ fontFamily: BB, fontSize: 14, color: 'white' }}>
+                  {v} <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(v)}%</span>
+                </span>
+              </div>
+              <div style={{ height: 5, background: 'rgba(255,255,255,0.08)', borderRadius: 3, overflow: 'hidden' }}>
+                <div style={{ width: `${(v / maxV) * 100}%`, height: '100%', background: color, borderRadius: 3, transition: 'width 0.8s ease' }} />
               </div>
             </div>
-          )}
-          {footGols > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 3, height: 36, background: footColor, borderRadius: 2, flexShrink: 0 }} />
-              <div>
-                <div style={{ fontSize: 9, color: footColor, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>Com o Pé</div>
-                <div style={{ fontFamily: BB, fontSize: 26, color: 'white', lineHeight: 1 }}>{footGols} <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(footGols)}%</span></div>
-              </div>
-            </div>
-          )}
-          {specialGols > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ width: 3, height: 36, background: specialColor, borderRadius: 2, flexShrink: 0 }} />
-              <div>
-                <div style={{ fontSize: 9, color: specialColor, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>Bola Parada</div>
-                <div style={{ fontFamily: BB, fontSize: 26, color: 'white', lineHeight: 1 }}>{specialGols} <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(specialGols)}%</span></div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-
-      {details.length > 1 && (
-        <div style={{ marginTop: 12, display: 'flex', flexWrap: 'wrap' as const, gap: 5 }}>
-          {details.map(({ label, v }) => (
-            <span key={label} style={{ fontSize: 10, background: 'rgba(255,255,255,0.07)', borderRadius: 5, padding: '3px 7px', color: 'rgba(255,255,255,0.65)' }}>
-              {label}: <strong style={{ color: 'white' }}>{v}</strong>
-            </span>
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 }
