@@ -152,15 +152,14 @@ function FormaGol({ player }: { player: ILFPlayer }) {
         { label: 'Carrinho',       v: t.carrinho || 0 },
         { label: 'Calcanhar',      v: t.calcanhar || 0 },
         { label: 'Letra',          v: t.letra || 0 },
+        { label: 'Sem Pulo',       v: t.sem_pulo || 0 },
       ].filter(i => i.v > 0),
     },
     {
       label: 'Cabeça', color: '#E8B560', bg: 'rgba(232,181,96,0.10)',
       items: [
         { label: 'De Cabeça', v: t.cabeca || 0 },
-        { label: 'Olímpico',  v: t.olimpico || 0 },
         { label: 'Peixinho',  v: t.peixinho || 0 },
-        { label: 'Sem Pulo',  v: t.sem_pulo || 0 },
       ].filter(i => i.v > 0),
     },
     {
@@ -181,6 +180,7 @@ function FormaGol({ player }: { player: ILFPlayer }) {
       items: [
         { label: 'Pênalti',   v: t.penalti || 0 },
         { label: 'Falta',     v: t.falta || 0 },
+        { label: 'Olímpico',  v: t.olimpico || 0 },
         { label: 'De Placa',  v: t.placa || 0 },
       ].filter(i => i.v > 0),
     },
