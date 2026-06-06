@@ -104,6 +104,17 @@ export const LazyDesignSystem = createLazyComponent(
   React.createElement(PerformanceSkeleton, { height: 700 })
 );
 
+// Game Pages
+export const LazyAdaptiveGuessPlayer = createLazyComponent(
+  () => import('@/pages/AdaptiveGuessPlayerSimple'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);
+
+export const LazyDecadeGuessPlayer = createLazyComponent(
+  () => import('@/pages/DecadeGuessPlayerSimple'),
+  React.createElement(PerformanceSkeleton, { height: 600 })
+);
+
 // Especiais Module
 export const LazyEspeciais = createLazyComponent(
   () => import('@/pages/Especiais'),

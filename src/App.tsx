@@ -19,8 +19,6 @@ import { featureFlags } from "@/config/feature-flags";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
-import AdaptiveGuessPlayerSimple from "@/pages/AdaptiveGuessPlayerSimple";
-import DecadeGuessPlayerSimple from "@/pages/DecadeGuessPlayerSimple";
 
 // Lazy loaded modules with optimized loading
 import {
@@ -43,6 +41,8 @@ import {
   LazyDesignSystem,
   LazyEspeciais,
   LazyMaiorAtacante,
+  LazyAdaptiveGuessPlayer,
+  LazyDecadeGuessPlayer,
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
@@ -92,7 +92,7 @@ function App() {
                               element={
                                 <ProtectedRoute>
                                   <GameErrorBoundary>
-                                    <AdaptiveGuessPlayerSimple />
+                                    <LazyAdaptiveGuessPlayer />
                                   </GameErrorBoundary>
                                 </ProtectedRoute>
                               }
@@ -102,7 +102,7 @@ function App() {
                               element={
                                 <ProtectedRoute>
                                   <GameErrorBoundary>
-                                    <DecadeGuessPlayerSimple />
+                                    <LazyDecadeGuessPlayer />
                                   </GameErrorBoundary>
                                 </ProtectedRoute>
                               }

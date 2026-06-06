@@ -16,6 +16,7 @@ export function HeroSection({ onStart }: HeroProps) {
     <section style={{
       background: 'radial-gradient(ellipse at 50% 0%, #0F2A1E 0%, #081510 60%, #050D0A 100%)',
       color: 'white', padding: '0 0 60px', position: 'relative', overflow: 'hidden',
+      minHeight: 'clamp(560px, 80vh, 760px)',
     }}>
       <div style={{ height: 5, background: 'linear-gradient(90deg,#7A0213 33%,#FAFAFA 33% 66%,#006140 66%)' }} />
 
