@@ -9,10 +9,26 @@ interface PortraitProps {
   big?: boolean;
 }
 
+function supabaseTransform(src: string, displaySize: number): string {
+  if (!src.includes('supabase.co/storage/v1/object/public/')) return src;
+  const w = Math.min(Math.ceil(displaySize * 2), 400);
+  return src.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/')
+    + `?width=${w}&quality=75&format=webp`;
+}
+
 export function Portrait({ player, size = 96, ring = '#C4944A', big }: PortraitProps) {
-  const src = ILF_PHOTOS[player.id];
+  const rawSrc = ILF_PHOTOS[player.id];
+  const [imgSrc, setImgSrc] = useState(() => rawSrc ? supabaseTransform(rawSrc, size) : rawSrc);
   const [failed, setFailed] = useState(false);
-  const showPhoto = !!src && !failed;
+  const showPhoto = !!imgSrc && !failed;
+
+  function handleError() {
+    if (rawSrc && imgSrc !== rawSrc) {
+      setImgSrc(rawSrc);
+    } else {
+      setFailed(true);
+    }
+  }
   const initials = player.nome.split(' ').map(w => w[0]).slice(0, 2).join('');
   const border = big ? 4 : 3;
 
@@ -27,12 +43,12 @@ export function Portrait({ player, size = 96, ring = '#C4944A', big }: PortraitP
       }}>
         {showPhoto ? (
           <img
-            src={src}
+            src={imgSrc}
             alt={player.nome}
             loading="lazy"
             width={size}
             height={size}
-            onError={() => setFailed(true)}
+            onError={handleError}
             style={{
               width: '100%', height: '100%',
               objectFit: 'cover', objectPosition: 'center top',
