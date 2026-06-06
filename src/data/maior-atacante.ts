@@ -60,6 +60,9 @@ export interface ILFGoalTypes {
   meia_bicicleta?: number;
   peito?: number;
   letra?: number;
+  barriga?: number;
+  joelho?: number;
+  placa?: number;
 }
 
 export const ILF_WEIGHTS: ILFWeight[] = [
@@ -124,6 +127,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { copa_brasil_semi: 1, mundial_vice: 1, mundial_3: 1, brasileiro_3: 1, brasileiro_5: 1, brasileiro_7: 1 },
     premiacoes_raw: { rei_america: 1, artilheiro_libertadores: 1, artilheiro_nacional: 1, bola_prata: 1 },
     premios: ['Artilheiro da Libertadores 2023 (13 gols)', 'Rei da América 2023', 'Artilheiro do Brasileirão 2022 (26 gols)', 'Artilheiro do Brasil em 2022 (44 gols)', 'Bola de Prata 2022', 'Maior artilheiro do Flu na Libertadores (17 gols)'],
+    gols_tipos: { pe: 79, cabeca: 20, penalti: 5, peito: 1, voleio: 1, carrinho: 1, barriga: 1, joelho: 1, placa: 2 },
   },
   {
     id: 'orlando',
@@ -231,6 +235,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { brasileiro_2: 1 },
     premiacoes_raw: { artilheiro_carioca: 5, premio_historico_clube: 1 },
     premios: ['Artilheiro do Carioca 5× consecutivos (1928–1932)', 'Maior artilheiro das Laranjeiras (~79 gols)', 'Grande Benemérito Atleta do Fluminense (1952)', '3× Campeão Carioca (1936, 1937, 1938)', '2º lugar Torneio dos Campeões 1937'],
+    gols_tipos: { pe: 103, cabeca: 10, falta: 9, penalti: 10 },
   },
   {
     id: 'washington',
@@ -248,6 +253,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { brasileiro_3: 1, brasileiro_6: 1, brasileiro_7: 1 },
     premiacoes_raw: {},
     premios: ['Campeão Brasileiro 1984', 'Tricampeão Carioca (1983, 1984, 1985)', 'Campeão Torneio de Seul 1984', 'Campeão Torneio de Paris 1987', 'Campeão Copa Kirin 1987', 'Campeão Torneio de Kiev 1989', '"Casal 20" com Assis — 179 gols juntos pelo Flu'],
+    gols_tipos: { pe: 89, cabeca: 26, carrinho: 1, meia_bicicleta: 1, peixinho: 1, penalti: 1, sem_pulo: 1 },
   },
   {
     id: 'magno',
@@ -265,6 +271,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { copa_brasil_quartas: 1, brasileiro_3: 2, brasileiro_4: 1 },
     premiacoes_raw: { artilheiro_nacional: 1 },
     premios: ['Campeão Brasileiro Série C 1999 (título histórico)', 'Campeão Primeira Liga 2016', 'Campeão Carioca 2002', 'Artilheiro da Série C 1999', 'Símbolo da reconstrução tricolor pós-rebaixamento'],
+    gols_tipos: { pe: 105, cabeca: 13, peixinho: 1, penalti: 4, voleio: 1 },
   },
   {
     id: 'ezio',
@@ -282,6 +289,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { copa_brasil_vice: 1, brasileiro_4: 2 },
     premiacoes_raw: {},
     premios: ['Campeão Carioca 1995', 'Vice-campeão Copa do Brasil 1992', 'Artilheiro do ataque tricolor nos anos 1990'],
+    gols_tipos: { pe: 81, cabeca: 18, peixinho: 1, penalti: 18 },
   },
   {
     id: 'escurinho',
@@ -317,6 +325,7 @@ export const ILF_PLAYERS: ILFPlayer[] = [
     campanhas_raw: { brasileiro_3: 1 },
     premiacoes_raw: {},
     premios: ['Campeão Rio-São Paulo 1957 e 1960', 'Campeão Carioca 1959', '3º lugar Taça Brasil 1960'],
+    gols_tipos: { pe: 103, cabeca: 3, peixinho: 1 },
   },
   {
     id: 'zeze',
