@@ -522,6 +522,23 @@ const BRASILEIRO_ANOS: Record<string, Array<{ ano: string; label: string; color:
   jair:      [{ ano: '1960', label: '3º lugar Taça Brasil', color: '#64748B' }],
 };
 
+const MUNDIAL_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
+  cano: [
+    { ano: '2023', label: 'Vice-campeão', color: '#E8B560' },
+    { ano: '2025', label: '3º lugar',     color: '#64748B' },
+  ],
+};
+
+const LIBERTADORES_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
+  fred: [{ ano: '2009', label: 'Semifinal', color: '#64748B' }],
+};
+
+const COPA_BRASIL_ANOS: Record<string, Array<{ ano: string; label: string; color: string }>> = {
+  cano: [{ ano: '2023', label: 'Semifinal',    color: '#006140' }],
+  ezio: [{ ano: '1992', label: 'Vice-campeão', color: '#E8B560' }],
+  magno:[{ ano: '2000', label: 'Quartas',      color: '#64748B' }],
+};
+
 const TITULO_ANOS: Record<string, Partial<Record<string, string>>> = {
   waldo:      { carioca: '1959', rio_sp: '1957, 1960' },
   fred:       { carioca: '2012, 2022', brasileiro: '2010, 2012' },
@@ -597,15 +614,35 @@ export function CampanhasSection() {
                   {hasAny ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                       {phases.lib && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Libertadores</span>
-                          <span style={{ background: phases.lib.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.lib.label}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600, paddingTop: 3, flexShrink: 0 }}>Libertadores</span>
+                          {LIBERTADORES_ANOS[p.id] ? (
+                            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
+                              {LIBERTADORES_ANOS[p.id].map(({ ano, label, color }) => (
+                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                  {ano} · {label}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span style={{ background: phases.lib.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.lib.label}</span>
+                          )}
                         </div>
                       )}
                       {phases.copa && (
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Copa do Brasil</span>
-                          <span style={{ background: phases.copa.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.copa.label}</span>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600, paddingTop: 3, flexShrink: 0 }}>Copa do Brasil</span>
+                          {COPA_BRASIL_ANOS[p.id] ? (
+                            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
+                              {COPA_BRASIL_ANOS[p.id].map(({ ano, label, color }) => (
+                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                  {ano} · {label}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <span style={{ background: phases.copa.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.copa.label}</span>
+                          )}
                         </div>
                       )}
                       {phases.bra && (
@@ -624,12 +661,26 @@ export function CampanhasSection() {
                           )}
                         </div>
                       )}
-                      {phases.munList.map((mun, mi) => (
-                        <div key={mi} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600 }}>Mundial de Clubes</span>
-                          <span style={{ background: mun.color, color: mun.color === '#E8B560' ? '#1a1a2e' : 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{mun.label}</span>
+                      {phases.munList.length > 0 && (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
+                          <span style={{ fontSize: 12, color: '#64748B', fontWeight: 600, paddingTop: 3, flexShrink: 0 }}>Mundial de Clubes</span>
+                          {MUNDIAL_ANOS[p.id] ? (
+                            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
+                              {MUNDIAL_ANOS[p.id].map(({ ano, label, color }) => (
+                                <span key={ano} style={{ background: color, color: color === '#E8B560' ? '#1a1a2e' : 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                  {ano} · {label}
+                                </span>
+                              ))}
+                            </div>
+                          ) : (
+                            <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
+                              {phases.munList.map((mun, mi) => (
+                                <span key={mi} style={{ background: mun.color, color: mun.color === '#E8B560' ? '#1a1a2e' : 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{mun.label}</span>
+                              ))}
+                            </div>
+                          )}
                         </div>
-                      ))}
+                      )}
                     </div>
                   ) : (
                     <div style={{ fontSize: 12, color: '#64748B', fontStyle: 'italic' }}>Sem título registrado</div>
