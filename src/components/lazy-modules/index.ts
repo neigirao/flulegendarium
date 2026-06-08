@@ -125,3 +125,8 @@ export const LazyMaiorAtacante = createLazyComponent(
   () => import('@/pages/specials/MaiorAtacante'),
   React.createElement(PerformanceSkeleton, { height: 800 })
 );
+
+export const LazyMaiorTreinador = createLazyComponent(
+  () => import('@/pages/specials/MaiorTreinador'),
+  React.createElement(PerformanceSkeleton, { height: 800 })
+);

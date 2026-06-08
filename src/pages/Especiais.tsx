@@ -23,6 +23,15 @@ const SPECIALS: SpecialCard[] = [
     icon: '⚽',
     color: '#7A0213',
   },
+  {
+    slug: 'maior-treinador',
+    title: 'Maior Treinador da História do Fluminense',
+    subtitle: 'Melhor Técnico do Flu',
+    description: 'Analisamos 15 técnicos tricolores com metodologia exclusiva — 5 critérios, 80+ anos de história — para descobrir quem foi o treinador mais importante de todos os tempos.',
+    badge: 'Estudo Especial',
+    icon: '📋',
+    color: '#006140',
+  },
 ];
 
 export default function Especiais() {

@@ -43,6 +43,7 @@ import {
   LazyMaiorAtacante,
   LazyAdaptiveGuessPlayer,
   LazyDecadeGuessPlayer,
+  LazyMaiorTreinador,
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
@@ -131,6 +132,7 @@ function App() {
                             <Route path="/conquistas" element={<LazyConquistas />} />
                             <Route path="/especiais" element={<LazyEspeciais />} />
                             <Route path="/especiais/maior-atacante" element={<LazyMaiorAtacante />} />
+                            <Route path="/especiais/maior-treinador" element={<LazyMaiorTreinador />} />
                             <Route path="/admin/login-administrador" element={<LazyAdminLogin />} />
                             <Route
                               path="/admin"
