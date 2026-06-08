@@ -83,10 +83,10 @@ export const ITF_COACHES: ITFCoach[] = [
     apelido: 'O Tricolor Eterno',
     periodo: '2005 · 2011–2013 · 2016–2018 · 2022',
     jogos: 352,
-    vitorias: 171,
+    vitorias: 174,
     empates: 77,
     derrotas: 101,
-    legenda: 'Quatro passagens, três Cariocas e o Brasileirão 2012. Abel Braga é o técnico mais identificado com o Fluminense moderno — ninguém dirigiu mais vezes o clube nas últimas duas décadas. 56,7% de aproveitamento em 352 jogos.',
+    legenda: 'Quatro passagens, três Cariocas e o Brasileirão 2012. Abel Braga é o técnico mais identificado com o Fluminense moderno — ninguém dirigiu mais vezes o clube nas últimas duas décadas. 57,1% de aproveitamento em 352 jogos.',
     classicos: {
       Flamengo: { v: 15, e: 9, d: 7 },
       Vasco:    { v: 14, e: 9, d: 8 },
@@ -94,7 +94,7 @@ export const ITF_COACHES: ITFCoach[] = [
     },
     titulos_raw: { brasileiro: 1, carioca: 3, copa_rio: 1 },
     campanhas_raw: {},
-    premios: ['Campeão Brasileiro 2012 (77 pts, 22V-11E-5D)', '3× Campeão Carioca (2005, 2012, 2022)', 'Campeão Troféu Luiz Perido 2012', '56,7% de aproveitamento em 352 jogos', 'Técnico com mais passagens pelo Flu na era moderna'],
+    premios: ['Campeão Brasileiro 2012 (77 pts, 22V-11E-5D)', '3× Campeão Carioca (2005, 2012, 2022)', 'Campeão Troféu Luiz Perido 2012', '57,1% de aproveitamento em 352 jogos', 'Técnico com mais passagens pelo Flu na era moderna'],
   },
   {
     id: 'ondino-vieira',
