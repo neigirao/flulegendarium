@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   ITF_COACHES, ITF_WEIGHTS, ITF_RANKING, ITF_compute_scores, ITF_MAX_SCORES,
-  ITFCoach, ITF_SORTED_BY_JOGOS,
+  ITFCoach, ITFRankingEntry, ITF_SORTED_BY_JOGOS,
 } from '@/data/maior-treinador';
 import { ITF_PHOTOS } from '@/data/itf-coach-photos';
+import { supabase } from '@/integrations/supabase/client';
 import { Kicker } from '../Kicker';
 import { Reveal } from '../Reveal';
 import { AnimatedNumber } from '../AnimatedNumber';
 import { BarRow } from '../charts/BarRow';
+import { useInView } from '@/hooks/use-in-view';
 
 const BB = "'Bebas Neue', Impact, sans-serif";
 
@@ -136,67 +138,142 @@ export function LongevidadeSection() {
   );
 }
 
-/* ── LEGADO ──────────────────────────────────── */
-const LEGADO_CARDS = [
-  {
-    id: 'fernando-diniz',
-    destaque: 'O Campeão da América',
-    texto: 'Em apenas 786 dias à frente do Fluminense, Fernando Diniz transformou o clube e escreveu o capítulo mais glorioso da história tricolor. A Copa Libertadores de 2023 — conquistada com um 2×1 épico sobre o Boca Juniors no Maracanã lotado — coroou um trabalho pautado em posse de bola audaciosa, liberdade criativa e uma identidade coletiva única. Diniz também venceu a Recopa Sul-Americana 2024, chegou à final do Mundial de Clubes e conquistou dois Cariocas. Nenhum técnico na história do Flu entregou tanto em tão pouco tempo.',
-    cor: '#C4944A',
-    titulo: 'Libertadores 2023 · Recopa 2024 · 2× Carioca',
-  },
-  {
-    id: 'abel-braga',
-    destaque: 'O Técnico do Coração',
-    texto: 'Quatro passagens, uma lealdade irrestrita e os títulos que a geração Fred merecia. Abel Braga foi o arquiteto do Brasileirão 2012 — o campeonato mais dominante da história recente do Flu, com 77 pontos, a sequência de 11 jogos sem derrota no início da era Fred-Thiago Silva-Marcelo e a terceira estrela dourada na camiseta. Com três Cariocas em décadas diferentes, Abel atravessou o clube em momentos de euforia e de crise, sempre voltando ao Maracanã. Nenhum técnico foi mais vezes diretor técnico do Fluminense moderno.',
-    cor: '#7A0213',
-    titulo: 'Brasileiro 2012 · 3× Carioca',
-  },
-  {
-    id: 'renato-gaucho',
-    destaque: 'O Eterno Gaúcho',
-    texto: 'Ídolo como jogador, campeão como treinador — Renato Gaúcho é um dos poucos que transcendeu as categorias do futebol tricolor. Em 2007 conquistou a Copa do Brasil, o primeiro título nacional do Flu na competição. Em 2008, levou o clube à sua primeira final de Libertadores da era moderna. E em 2025, assumiu o desafio do Mundial de Clubes, chegando à semifinal e mostrando que a paixão não envelhece. Seis passagens como técnico — sempre retornando quando o Fluminense precisava de quem o amasse de verdade.',
-    cor: '#006140',
-    titulo: 'Copa do Brasil 2007 · Vice Libertadores 2008 · Semi Mundial 2025',
-  },
-];
-
-export function LegadoSection() {
+/* ── TRANSIÇÃO ───────────────────────────────── */
+export function TransicaoSection() {
   return (
-    <section style={{ background: 'white', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="">Legado</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>OS TRÊS PILARES DA HISTÓRIA TRICOLOR</h2>
-        <p style={{ fontSize: 15, color: '#475569', maxWidth: 580, marginBottom: 40, lineHeight: 1.6 }}>
-          Entre os 15 técnicos analisados, três moldaram o clube de forma definitiva — cada um à sua maneira e em sua época.
+    <section style={{ background: '#0A1810', padding: '80px 32px', textAlign: 'center' }}>
+      <div style={{ maxWidth: 800, margin: '0 auto' }}>
+        <div style={{ fontFamily: BB, fontSize: 'clamp(28px,5vw,56px)', color: 'white', lineHeight: 1.1, letterSpacing: '0.04em', marginBottom: 20 }}>
+          5 CATEGORIAS.{' '}
+          <span style={{ color: '#E8B560' }}>UMA RÉGUA.</span>
+          <br />
+          UM SÓ NOME NO TOPO.
+        </div>
+        <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, maxWidth: 560, margin: '0 auto' }}>
+          Aproveitamento, títulos, campanhas, clássicos e longevidade — cada detalhe pesou na balança. Chegou a hora do veredicto.
         </p>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 24 }}>
-          {LEGADO_CARDS.map((card, i) => {
-            const coach = ITF_COACHES.find(c => c.id === card.id);
-            if (!coach) return null;
-            return (
-              <Reveal key={card.id} delay={i * 0.12}>
-                <div style={{ background: '#F7F5F2', border: `1.5px solid ${card.cor}22`, borderRadius: 18, overflow: 'hidden', display: 'flex', flexDirection: 'column', height: '100%' }}>
-                  <div style={{ height: 5, background: `linear-gradient(90deg, ${card.cor}, ${card.cor}88)` }} />
-                  <div style={{ padding: '24px 22px', flex: 1, display: 'flex', flexDirection: 'column', gap: 16 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                      <CoachPortrait coach={coach} size={72} ring={card.cor} big />
-                      <div>
-                        <div style={{ fontFamily: BB, fontSize: 22, color: '#1a1a2e', letterSpacing: '0.02em', lineHeight: 1 }}>{coach.nome}</div>
-                        <div style={{ fontSize: 11, color: card.cor, fontWeight: 700, marginTop: 4 }}>{card.destaque}</div>
-                        <div style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{coach.periodo}</div>
-                      </div>
-                    </div>
-                    <p style={{ fontSize: 13, color: '#475569', lineHeight: 1.65, margin: 0, flex: 1 }}>{card.texto}</p>
-                    <div style={{ fontSize: 10, fontWeight: 700, color: card.cor, letterSpacing: '0.06em', borderTop: `1px solid ${card.cor}33`, paddingTop: 10, marginTop: 'auto' }}>
-                      {card.titulo}
+      </div>
+    </section>
+  );
+}
+
+/* ── REVELAÇÃO ───────────────────────────────── */
+type Phase = 'idle' | 'counting' | 'revealed';
+
+export function RevelacaoSection() {
+  const [ref, inView] = useInView(0.5);
+  const [phase, setPhase] = useState<Phase>('idle');
+  const [count, setCount] = useState(3);
+  const triggered = useRef(false);
+
+  const champ = ITF_RANKING[0];
+  const second = ITF_RANKING[1];
+  const diff = (champ.itf - second.itf).toFixed(1);
+  const champScores = ITF_compute_scores(champ);
+
+  useEffect(() => {
+    if (inView && !triggered.current) {
+      triggered.current = true;
+      setPhase('counting');
+    }
+  }, [inView]);
+
+  useEffect(() => {
+    if (phase !== 'counting') return;
+    if (count <= 0) {
+      const t = setTimeout(() => setPhase('revealed'), 400);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => setCount(c => c - 1), 900);
+    return () => clearTimeout(t);
+  }, [phase, count]);
+
+  return (
+    <section
+      ref={ref}
+      style={{ background: 'linear-gradient(160deg,#0D2018 0%,#081510 100%)', padding: '80px 32px', color: 'white', textAlign: 'center', position: 'relative', overflow: 'hidden' }}
+    >
+      <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(ellipse at 50% 40%,rgba(196,148,74,0.08),transparent 70%)', pointerEvents: 'none' }} />
+
+      <div style={{ maxWidth: 700, margin: '0 auto', position: 'relative' }}>
+        <Kicker n="✦">A Revelação</Kicker>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#E8B560', letterSpacing: '0.02em', marginBottom: 40 }}>
+          O MAIOR TREINADOR DO FLUMINENSE É…
+        </h2>
+
+        {/* Countdown */}
+        {phase === 'idle' && (
+          <div style={{ fontFamily: BB, fontSize: 80, color: 'rgba(255,255,255,0.08)', lineHeight: 1 }}>…</div>
+        )}
+
+        {phase === 'counting' && (
+          <div
+            key={count}
+            style={{
+              fontFamily: BB, fontSize: 'clamp(100px,20vw,160px)', color: '#E8B560', lineHeight: 1,
+              animation: 'popCount 0.5s ease forwards',
+            }}
+          >
+            {count > 0 ? count : '!'}
+          </div>
+        )}
+
+        {/* Reveal */}
+        {phase === 'revealed' && (
+          <div style={{ animation: 'revealUp 0.7s ease forwards' }}>
+            {/* Champion portrait */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 24 }}>
+              <div style={{ position: 'relative' }}>
+                <CoachPortrait coach={champ} size={144} ring="#E8B560" big />
+                <div style={{
+                  position: 'absolute', bottom: -10, left: '50%', transform: 'translateX(-50%)',
+                  background: '#E8B560', color: '#0A1810', fontFamily: BB, fontSize: 13,
+                  letterSpacing: '0.1em', padding: '3px 14px', borderRadius: 999, whiteSpace: 'nowrap' as const,
+                }}>
+                  👑 ITF CAMPEÃO
+                </div>
+              </div>
+            </div>
+
+            <div style={{ fontFamily: BB, fontSize: 'clamp(36px,7vw,64px)', color: 'white', letterSpacing: '0.02em', lineHeight: 1, marginTop: 24 }}>
+              {champ.nome.toUpperCase()}
+            </div>
+            <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', marginTop: 6, marginBottom: 28 }}>{champ.periodo}</div>
+
+            {/* ITF Score */}
+            <div style={{ display: 'inline-block', background: 'rgba(196,148,74,0.15)', border: '1px solid rgba(196,148,74,0.3)', borderRadius: 16, padding: '20px 36px', marginBottom: 32 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 4 }}>Nota ITF</div>
+              <div style={{ fontFamily: BB, fontSize: 64, color: '#E8B560', lineHeight: 1 }}>
+                {champ.itf.toFixed(1)}
+              </div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>
+                +{diff} pts acima de {second.nome}
+              </div>
+            </div>
+
+            {/* Category bars */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: 12, maxWidth: 560, margin: '0 auto 32px' }}>
+              {ITF_WEIGHTS.map(w => {
+                const v = champScores[w.key];
+                const maxV = ITF_MAX_SCORES[w.key] || 1;
+                const pct = Math.round((v / maxV) * 100);
+                return (
+                  <div key={w.key} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: '12px 10px', textAlign: 'center' as const }}>
+                    <div style={{ fontFamily: BB, fontSize: 22, color: w.color, lineHeight: 1 }}>{v.toFixed(0)}</div>
+                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.08em', marginTop: 4 }}>{w.label}</div>
+                    <div style={{ marginTop: 6, height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, overflow: 'hidden' }}>
+                      <div style={{ width: `${pct}%`, height: '100%', background: w.color, borderRadius: 2, transition: 'width 1.2s ease' }} />
                     </div>
                   </div>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
+                );
+              })}
+            </div>
+
+            <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.55)', lineHeight: 1.7, maxWidth: 500, margin: '0 auto' }}>
+              {champ.legenda}
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
@@ -230,7 +307,7 @@ export function RankingOficialSection() {
                   <CoachPortrait coach={c} size={i < 3 ? 50 : 42} ring={medal || '#CBD5E0'} />
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: BB, fontSize: i < 3 ? 20 : 17, color: '#1a1a2e', letterSpacing: '0.02em' }}>{c.nome}</div>
-                    <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{c.apelido}</div>
+                    <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{c.periodo}</div>
                     {/* Mini-barras por categoria */}
                     <div style={{ display: 'flex', gap: 6, marginTop: 7, flexWrap: 'wrap' as const }}>
                       {ITF_WEIGHTS.map(w => {
@@ -343,6 +420,127 @@ export function ComparadorSection() {
             );
           })}
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── VOTAÇÃO ─────────────────────────────────── */
+export function VotacaoSection() {
+  const [voted, setVoted] = useState<string | null>(() => {
+    try { return localStorage.getItem('itf_voted'); } catch { return null; }
+  });
+  const [votes, setVotes] = useState<Record<string, number>>({});
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    supabase
+      .from('itf_votes')
+      .select('coach_id')
+      .then(({ data }) => {
+        if (!data) return;
+        const counts: Record<string, number> = {};
+        data.forEach((r: { coach_id: string }) => {
+          counts[r.coach_id] = (counts[r.coach_id] || 0) + 1;
+        });
+        setVotes(counts);
+        setTotal(data.length);
+      });
+  }, [voted]);
+
+  async function vote(coachId: string) {
+    if (voted || loading) return;
+    setLoading(true);
+    const { error } = await supabase.from('itf_votes').insert({ coach_id: coachId });
+    if (!error) {
+      try { localStorage.setItem('itf_voted', coachId); } catch {}
+      setVoted(coachId);
+    }
+    setLoading(false);
+  }
+
+  function shareResult() {
+    const champ = ITF_RANKING[0];
+    const text = `Meu voto no maior treinador do Fluminense: ${champ.nome}! Confira o ranking completo em lendasdoflu.com/especiais/maior-treinador`;
+    if (navigator.share) {
+      navigator.share({ text }).catch(() => {});
+    } else {
+      navigator.clipboard?.writeText(text).catch(() => {});
+    }
+  }
+
+  return (
+    <section style={{ background: 'white', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center' }}><Kicker n="🗳">Votação</Kicker></div>
+        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 8 }}>
+          NA SUA OPINIÃO, QUEM É O MAIOR?
+        </h2>
+        <p style={{ fontSize: 14, color: '#475569', textAlign: 'center', marginBottom: 32 }}>
+          {voted ? `Você votou em ${ITF_COACHES.find(c => c.id === voted)?.nome || voted}. Veja os resultados abaixo.` : 'Vote no técnico que você considera o maior da história do Fluminense.'}
+        </p>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+          {ITF_RANKING.map(c => {
+            const pct = total > 0 ? Math.round(((votes[c.id] || 0) / total) * 100) : 0;
+            const isVoted = voted === c.id;
+            const isWinner = voted && Object.keys(votes).length > 0 && votes[c.id] === Math.max(...Object.values(votes));
+            return (
+              <button
+                key={c.id}
+                onClick={() => vote(c.id)}
+                disabled={!!voted || loading}
+                style={{
+                  background: isVoted ? 'linear-gradient(135deg,#7A0213,#A0021C)' : '#F7F5F2',
+                  border: isVoted ? '2px solid #C4944A' : isWinner && voted ? '2px solid #E8B560' : '1px solid #E2E8F0',
+                  borderRadius: 14, padding: '14px 16px', cursor: voted ? 'default' : 'pointer',
+                  transition: 'transform 0.15s, box-shadow 0.15s',
+                  textAlign: 'left' as const,
+                  position: 'relative', overflow: 'hidden',
+                }}
+                onMouseEnter={e => { if (!voted) { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.1)'; } }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+              >
+                {/* Progress bar background */}
+                {voted && (
+                  <div style={{
+                    position: 'absolute', left: 0, top: 0, bottom: 0,
+                    width: `${pct}%`, background: isVoted ? 'rgba(255,255,255,0.08)' : 'rgba(196,148,74,0.08)',
+                    transition: 'width 1s ease',
+                  }} />
+                )}
+                <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <CoachPortrait coach={c} size={44} ring={isVoted ? '#E8B560' : '#C4944A'} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontFamily: BB, fontSize: 15, color: isVoted ? 'white' : '#1a1a2e', letterSpacing: '0.02em', lineHeight: 1.1 }}>{c.nome}</div>
+                    {voted && (
+                      <div style={{ fontFamily: BB, fontSize: 18, color: isVoted ? '#E8B560' : '#7A0213', lineHeight: 1, marginTop: 3 }}>
+                        {pct}%
+                        {isWinner && !isVoted && <span style={{ fontSize: 12, marginLeft: 4 }}>👑</span>}
+                      </div>
+                    )}
+                  </div>
+                  {isVoted && <span style={{ fontSize: 16 }}>✓</span>}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {voted && (
+          <div style={{ marginTop: 28, textAlign: 'center' }}>
+            <div style={{ fontSize: 13, color: '#64748B', marginBottom: 16 }}>
+              {total} {total === 1 ? 'voto' : 'votos'} registrados
+            </div>
+            <button
+              onClick={shareResult}
+              style={{ background: '#006140', color: 'white', border: 'none', borderRadius: 10, padding: '12px 28px', fontFamily: BB, fontSize: 18, letterSpacing: '0.05em', cursor: 'pointer' }}
+            >
+              📤 COMPARTILHAR
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

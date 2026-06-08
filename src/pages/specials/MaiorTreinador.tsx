@@ -17,9 +17,11 @@ const LazySectionsB = lazy(async () => {
   const Bundle = () => (
     <>
       <mod.LongevidadeSection />
-      <mod.LegadoSection />
+      <mod.TransicaoSection />
+      <mod.RevelacaoSection />
       <mod.RankingOficialSection />
       <mod.ComparadorSection />
+      <mod.VotacaoSection />
       <mod.CTASection />
     </>
   );

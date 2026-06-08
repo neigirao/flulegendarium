@@ -304,7 +304,6 @@ export function FinalistasSection() {
                   <CoachPortrait coach={c} size={64} ring="#C4944A" />
                   <div>
                     <div style={{ fontFamily: BB, fontSize: 18, color: '#1a1a2e', letterSpacing: '0.02em', lineHeight: 1.1 }}>{c.nome}</div>
-                    <div style={{ fontSize: 10, color: '#C4944A', fontWeight: 700, marginTop: 2 }}>{c.apelido}</div>
                     <div style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>{c.periodo}</div>
                   </div>
                 </div>
@@ -330,7 +329,6 @@ export function FinalistasSection() {
                 <CoachPortrait coach={sel} size={88} ring="#E8B560" big />
                 <div>
                   <div style={{ fontFamily: BB, fontSize: 28, letterSpacing: '0.02em', lineHeight: 0.95 }}>{sel.nome}</div>
-                  <div style={{ fontSize: 12, color: '#E8B560', fontWeight: 600 }}>{sel.apelido}</div>
                   <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{sel.periodo}</div>
                 </div>
               </div>
