@@ -12,7 +12,7 @@ export const ITF_PHOTOS: Record<string, string> = {
   // renato-gaucho.jpg
   // fernando-diniz.jpg
   // tim.jpg
-  // nelsinho-baptista.jpg
+  // nelsinho-rosa.jpg
   // silvio-pirilo.jpg
   // parreira.jpg
   // levir-culpi.jpg
@@ -28,7 +28,7 @@ export const ITF_PHOTOS: Record<string, string> = {
   'renato-gaucho':     `${BASE}/renato-gaucho.jpg`,
   'fernando-diniz':    'https://hafxruwnggitvtyngedy.supabase.co/storage/v1/object/public/players/a815a36d-b18b-4380-97e0-da6c86af233c.jpg',
   'tim':               `${BASE}/tim.jpg`,
-  'nelsinho-baptista': `${BASE}/nelsinho-baptista.jpg`,
+  'nelsinho-rosa':     `${BASE}/nelsinho-rosa.jpg`,
   'silvio-pirilo':     `${BASE}/silvio-pirilo.jpg`,
   'parreira':          `${BASE}/parreira.jpg`,
   'levir-culpi':       `${BASE}/levir-culpi.jpg`,

@@ -181,7 +181,7 @@ export const ITF_COACHES: ITFCoach[] = [
     premios: ['Campeão Carioca 1964', 'Campeão Taça Guanabara 1966', 'Campeão Torneio Pará-Guanabara 1966', '50% de aproveitamento em 170 jogos'],
   },
   {
-    id: 'nelsinho-baptista',
+    id: 'nelsinho-rosa',
     nome: 'Nelsinho',
     apelido: 'O Campeão dos Anos 80',
     periodo: '1979–1993',
