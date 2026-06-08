@@ -18,6 +18,7 @@ export const ITF_PHOTOS: Record<string, string> = {
   // levir-culpi.jpg
   // paulo-autuori.jpg
   // muricy-ramalho.jpg
+  // joel-santana.jpg
   // cristovao-borges.jpg
   // luis-vinhaes.jpg
   // oswaldo-oliveira.jpg
@@ -34,6 +35,7 @@ export const ITF_PHOTOS: Record<string, string> = {
   'levir-culpi':       `${BASE}/levir-culpi.jpg`,
   'paulo-autuori':     `${BASE}/paulo-autuori.jpg`,
   'muricy-ramalho':    `${BASE}/muricy-ramalho.jpg`,
+  'joel-santana':      `${BASE}/joel-santana.jpg`,
   'cristovao-borges':  `${BASE}/cristovao-borges.jpg`,
   'luis-vinhaes':      `${BASE}/luis-vinhaes.jpg`,
   'oswaldo-oliveira':  `${BASE}/oswaldo-oliveira.jpg`,
