@@ -95,7 +95,7 @@ export function LongevidadeSection() {
   return (
     <section style={{ background: '#F7F5F2', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
       <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="05">Longevidade · 0.25 pt por jogo</Kicker>
+        <Kicker n="05">Longevidade · 1 pt por jogo</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 30 }}>LONGEVIDADE</h2>
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'start' }}>
           <Reveal>
@@ -115,7 +115,7 @@ export function LongevidadeSection() {
                 </div>
                 <div>
                   <div style={{ fontFamily: BB, fontSize: 36, color: 'white', lineHeight: 1 }}>
-                    {(lider.jogos * 0.25).toFixed(0)}
+                    {lider.jogos}
                   </div>
                   <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>pts</div>
                 </div>
@@ -126,7 +126,7 @@ export function LongevidadeSection() {
             {ranked.map((c, i) => (
               <BarRow
                 key={c.id} rank={i + 1} label={c.nome}
-                sub={`${c.jogos} jogos · ${(c.jogos * 0.25).toFixed(0)} pts`}
+                sub={`${c.jogos} jogos · ${c.jogos} pts`}
                 value={c.jogos} display={c.jogos} max={max}
                 color={i === 0 ? '#C4944A' : '#94A3B8'} highlight={i === 0}
               />

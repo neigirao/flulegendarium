@@ -20,7 +20,7 @@ export interface ITFScores {
   titulos:        number;
   campanhas:      number;
   classicos:      number;  // classics win% × 1pt
-  longevidade:    number;  // jogos × 0.25
+  longevidade:    number;  // jogos × 1
 }
 
 export interface ITFWeight {
@@ -371,7 +371,7 @@ export function ITF_compute_scores(coach: ITFCoach): ITFScores {
   const campanhas = Object.entries(coach.campanhas_raw)
     .reduce((sum, [k, n]) => sum + (n || 0) * (CAMPANHA_PONTOS_T[k as keyof typeof CAMPANHA_PONTOS_T] || 0), 0);
 
-  const longevidade = coach.jogos * 0.25;
+  const longevidade = coach.jogos * 1;
 
   return { aproveitamento, titulos, campanhas, classicos, longevidade };
 }
