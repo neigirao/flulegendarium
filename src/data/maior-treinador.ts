@@ -323,11 +323,11 @@ export const ITF_COACHES: ITFCoach[] = [
     nome: 'Oswaldo de Oliveira',
     apelido: 'O Retornante',
     periodo: '2001–2002 · 2006 · 2019',
-    jogos: 83,
+    jogos: 85,
     vitorias: 40,
-    empates: 22,
+    empates: 24,
     derrotas: 21,
-    legenda: 'Três passagens diferentes pelo Fluminense ao longo de quase duas décadas. Oswaldo de Oliveira é um dos técnicos com melhor aproveitamento geral pelo clube, sem nunca ter conquistado um título.',
+    legenda: 'Três passagens pelo Fluminense ao longo de quase duas décadas (2001–2019). Oswaldo de Oliveira manteve 56,5% de aproveitamento em 85 jogos sem jamais conquistar um título — um dos maiores índices entre técnicos sem taças no clube.',
     classicos: {
       Flamengo: { v: 3, e: 2, d: 1 },
       Vasco:    { v: 3, e: 2, d: 1 },
@@ -335,7 +335,7 @@ export const ITF_COACHES: ITFCoach[] = [
     },
     titulos_raw: {},
     campanhas_raw: { copa_brasil_semi: 1 },
-    premios: ['83 jogos com 57% de aproveitamento', 'Semifinalista Copa do Brasil 2006', 'Semifinalista Brasileirão 2001', 'Três passagens pelo Flu (2001-02, 2006 e 2019)'],
+    premios: ['85 jogos com 56,5% de aproveitamento', 'Semifinalista Copa do Brasil 2006', 'Três passagens pelo Flu (2001-02, 2006 e 2019)'],
   },
   {
     id: 'luis-vinhaes',
