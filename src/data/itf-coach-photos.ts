@@ -26,7 +26,7 @@ export const ITF_PHOTOS: Record<string, string> = {
   'abel-braga':        `${BASE}/abel-braga.jpg`,
   'ondino-vieira':     `${BASE}/ondino-vieira.jpg`,
   'renato-gaucho':     `${BASE}/renato-gaucho.jpg`,
-  'fernando-diniz':    `${BASE}/fernando-diniz.jpg`,
+  'fernando-diniz':    'https://hafxruwnggitvtyngedy.supabase.co/storage/v1/object/public/players/a815a36d-b18b-4380-97e0-da6c86af233c.jpg',
   'tim':               `${BASE}/tim.jpg`,
   'nelsinho-baptista': `${BASE}/nelsinho-baptista.jpg`,
   'silvio-pirilo':     `${BASE}/silvio-pirilo.jpg`,
