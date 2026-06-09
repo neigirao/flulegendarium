@@ -9,11 +9,11 @@ export const TITULO_PONTOS_T = {
 
 export const CAMPANHA_PONTOS_T = {
   libertadores_vice: 60, libertadores_semi: 30, libertadores_quartas: 15, libertadores_oitavas: 5,
-  sulamericana_vice: 25, sulamericana_semi: 10,
+  sulamericana_vice: 25, sulamericana_semi: 10, sulamericana_quartas: 5,
   copa_brasil_vice: 24, copa_brasil_semi: 12, copa_brasil_quartas: 6, copa_brasil_oitavas: 3,
   brasileiro_2: 30, brasileiro_3: 15, brasileiro_4: 8, brasileiro_5: 4, brasileiro_6: 2,
   mundial_vice: 80, mundial_3: 40, mundial_semi: 20,
-  carioca_vice: 7, rio_sp_vice: 2,
+  carioca_vice: 7, carioca_semi: 3, rio_sp_vice: 2,
 } as const;
 
 export interface ITFScores {
@@ -112,10 +112,10 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 110,
     empates: 62,
     derrotas: 76,
-    legenda: 'Ídolo eterno como jogador, campeão como treinador. Renato Gaúcho conquistou a Copa do Brasil 2007, levou o Flu à final da Libertadores 2008 e retornou em 2025 para mais uma campanha histórica — desta vez no Mundial de Clubes. 6 passagens pelo clube.',
+    legenda: 'Ídolo eterno como jogador, campeão como treinador. Renato Gaúcho conquistou a Copa do Brasil 2007, levou o Flu à final da Libertadores 2008, chegou à semifinal do Brasileiro 2002 e retornou em 2025 para mais uma campanha histórica — semifinal do Mundial e quartas da Sul-Americana. 6 passagens pelo clube.',
     titulos_raw: { copa_brasil: 1 },
-    campanhas_raw: { libertadores_vice: 1, copa_brasil_semi: 1, mundial_semi: 1 },
-    premios: ['Campeão Copa do Brasil 2007 (1° título nacional do Flu na competição)', 'Vice-campeão Libertadores 2008 (final vs LDU)', 'Semifinalista Copa do Mundo de Clubes 2025', '52,7% de aproveitamento em 248 jogos · 6 passagens'],
+    campanhas_raw: { libertadores_vice: 1, copa_brasil_semi: 1, mundial_semi: 1, brasileiro_3: 1, sulamericana_quartas: 1 },
+    premios: ['Campeão Copa do Brasil 2007 (1° título nacional do Flu na competição)', 'Vice-campeão Libertadores 2008 (final vs LDU)', 'Semifinalista Copa do Mundo de Clubes 2025', 'Semifinalista Campeonato Brasileiro 2002 (3º/4º lugar)', 'Quartas de final Copa Sul-Americana 2025', '52,7% de aproveitamento em 248 jogos · 6 passagens'],
   },
   {
     id: 'fernando-diniz',
@@ -126,10 +126,10 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 92,
     empates: 41,
     derrotas: 57,
-    legenda: 'O homem que fez o Fluminense campeão da América. Em 190 jogos e duas passagens, Fernando Diniz conquistou a Copa Libertadores 2023 (2×1 vs Boca no Maracanã), a Recopa Sul-Americana 2024 e o Carioca 2023 — e ainda levou o clube à final do Mundial de Clubes.',
+    legenda: 'O homem que fez o Fluminense campeão da América. Em 190 jogos e duas passagens, Fernando Diniz conquistou a Copa Libertadores 2023 (2×1 vs Boca no Maracanã), a Recopa Sul-Americana 2024 e o Carioca 2023 — e ainda levou o clube à final do Mundial de Clubes 2023.',
     titulos_raw: { libertadores: 1, recopa: 1, carioca: 1 },
-    campanhas_raw: { mundial_vice: 1 },
-    premios: ['Campeão Copa Libertadores 2023 (2×1 vs Boca Juniors no Maracanã)', 'Campeão Recopa Sul-Americana 2024', 'Campeão Carioca 2023', 'Vice-campeão Copa do Mundo de Clubes 2023 (vs Manchester City)', '55,6% de aproveitamento em 190 jogos'],
+    campanhas_raw: { mundial_vice: 1, copa_brasil_semi: 1, copa_brasil_oitavas: 1, carioca_semi: 1 },
+    premios: ['Campeão Copa Libertadores 2023 (2×1 vs Boca Juniors no Maracanã)', 'Campeão Recopa Sul-Americana 2024', 'Campeão Carioca 2023', 'Vice-campeão Copa do Mundo de Clubes 2023 (vs Manchester City)', 'Semifinalista Copa do Brasil 2022', 'Oitavas de final Copa do Brasil 2023', 'Semifinalista Campeonato Carioca 2024', '55,6% de aproveitamento em 190 jogos'],
   },
   {
     id: 'tim',
