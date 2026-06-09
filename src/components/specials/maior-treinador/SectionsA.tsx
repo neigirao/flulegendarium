@@ -173,10 +173,10 @@ export function HeroSection({ onStart }: HeroProps) {
         </div>
 
         <div style={{ fontFamily: BB, fontSize: 17, color: '#E8B560', letterSpacing: '0.08em', marginBottom: 6 }}>
-          15 TÉCNICOS · UM LEGADO EM DISPUTA
+          20 TÉCNICOS · UM LEGADO EM DISPUTA
         </div>
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 36, letterSpacing: '0.04em' }}>
-          De Luís Vinhaes a Fernando Diniz — mais de 80 anos de história tricolor
+          De Quincey Taylor a Fernando Diniz — mais de 100 anos de história tricolor
         </div>
 
         <button
@@ -282,7 +282,7 @@ export function FinalistasSection() {
       <div style={{ maxWidth: 1180, margin: '0 auto' }}>
         <Kicker n="">Candidatos</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÉCNICOS ANALISADOS</h2>
-        <p style={{ fontSize: 15, color: '#475569', maxWidth: 560, marginBottom: 36 }}>De Luís Vinhaes a Fernando Diniz — mais de 80 anos de estratégia tricolor. Clique em um nome para ver os detalhes.</p>
+        <p style={{ fontSize: 15, color: '#475569', maxWidth: 560, marginBottom: 36 }}>De Quincey Taylor a Fernando Diniz — mais de 100 anos de estratégia tricolor. Clique em um nome para ver os detalhes.</p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 16 }}>
           {ITF_COACHES.map((c, i) => (
@@ -516,26 +516,32 @@ const CAMPANHA_LABEL: Record<CampanhaKey, string> = {
   libertadores_oitavas: 'Oitavas Libertadores',
   sulamericana_vice: 'Vice-campeão Sul-Americana',
   sulamericana_semi: 'Semifinal Sul-Americana',
+  sulamericana_quartas: 'Quartas Sul-Americana',
   copa_brasil_vice: 'Vice-campeão Copa do Brasil',
   copa_brasil_semi: 'Semifinal Copa do Brasil',
   copa_brasil_quartas: 'Quartas Copa do Brasil',
   copa_brasil_oitavas: 'Oitavas Copa do Brasil',
   brasileiro_2: '2º lugar Brasileiro',
-  brasileiro_3: '3º lugar Brasileiro',
+  brasileiro_3: '3º/4º lugar Brasileiro',
   brasileiro_4: '4º lugar Brasileiro',
   brasileiro_5: '5º lugar Brasileiro',
   brasileiro_6: '6º lugar Brasileiro',
+  brasileiro_oitavas: 'Oitavas Brasileiro',
   mundial_vice: 'Vice-campeão Mundial',
   mundial_3: '3º lugar Mundial',
   mundial_semi: 'Semifinal Mundial',
+  carioca_vice: 'Vice-campeão Carioca',
+  carioca_semi: 'Semifinal Carioca',
+  rio_sp_vice: 'Vice-campeão Rio-SP',
 };
 
 const CAMPANHA_COLOR: Partial<Record<CampanhaKey, string>> = {
   libertadores_vice: '#7A0213', libertadores_semi: '#006140', libertadores_quartas: '#64748B', libertadores_oitavas: '#94A3B8',
-  sulamericana_vice: '#7A0213', sulamericana_semi: '#006140',
+  sulamericana_vice: '#7A0213', sulamericana_semi: '#006140', sulamericana_quartas: '#64748B',
   copa_brasil_vice: '#E8B560', copa_brasil_semi: '#006140', copa_brasil_quartas: '#64748B', copa_brasil_oitavas: '#94A3B8',
-  brasileiro_2: '#7A0213', brasileiro_3: '#64748B', brasileiro_4: '#94A3B8', brasileiro_5: '#94A3B8', brasileiro_6: '#94A3B8',
+  brasileiro_2: '#7A0213', brasileiro_3: '#64748B', brasileiro_4: '#94A3B8', brasileiro_5: '#94A3B8', brasileiro_6: '#94A3B8', brasileiro_oitavas: '#CBD5E0',
   mundial_vice: '#E8B560', mundial_3: '#64748B', mundial_semi: '#64748B',
+  carioca_vice: '#AF1E35', carioca_semi: '#94A3B8', rio_sp_vice: '#64748B',
 };
 
 export function CampanhasSection() {
