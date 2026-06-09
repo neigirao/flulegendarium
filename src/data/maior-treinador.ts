@@ -76,6 +76,7 @@ export const ITF_COACHES: ITFCoach[] = [
     titulos_raw: { carioca: 3, rio_sp: 1, copa_rio: 4 },
     campanhas_raw: {},
     premios: ['3× Campeão Carioca (1951, 1959, 1973)', 'Campeão Torneio Rio-São Paulo 1960', 'Campeão Torneio José de Paula Junior 1952', 'Campeão Copa Rio-Mundial 1952', 'Campeão Copa das Municipalidades 1953', 'Campeão Torneio de Verão Rio 1973', '64,2% de aproveitamento em 482 jogos'],
+    dados_estimados: true,
   },
   {
     id: 'abel-braga',
@@ -153,13 +154,14 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 57,
     legenda: 'O homem que fez o Fluminense campeão da América. Em 190 jogos e duas passagens, Fernando Diniz conquistou a Copa Libertadores 2023 (2×1 vs Boca no Maracanã), a Recopa Sul-Americana 2024 e o Carioca 2023 — e ainda levou o clube à final do Mundial de Clubes.',
     classicos: {
-      Flamengo: { v: 6, e: 4, d: 4 },
-      Vasco:    { v: 6, e: 4, d: 3 },
-      Botafogo: { v: 6, e: 4, d: 3 },
+      // Total confirmado: V=7 E=10 D=19 em ~35 jogos (30% aproveit.) — CNN Brasil/Goal.com
+      Flamengo: { v: 4, e: 3, d: 5 },
+      Vasco:    { v: 2, e: 4, d: 6 },
+      Botafogo: { v: 1, e: 3, d: 8 },
     },
     titulos_raw: { libertadores: 1, recopa: 1, carioca: 1 },
     campanhas_raw: { mundial_vice: 1 },
-    premios: ['Campeão Copa Libertadores 2023 (2×1 vs Boca Juniors no Maracanã)', 'Campeão Recopa Sul-Americana 2024', 'Campeão Carioca 2023', 'Vice-campeão Copa do Mundo de Clubes 2023 (vs Manchester City)', '55,6% de aproveitamento em 190 jogos'],
+    premios: ['Campeão Copa Libertadores 2023 (2×1 vs Boca Juniors no Maracanã)', 'Campeão Recopa Sul-Americana 2024', 'Campeão Carioca 2023', 'Vice-campeão Copa do Mundo de Clubes 2023 (vs Manchester City)', '55,6% de aproveitamento em 190 jogos · 30% em clássicos'],
   },
   {
     id: 'tim',
@@ -179,6 +181,7 @@ export const ITF_COACHES: ITFCoach[] = [
     titulos_raw: { carioca: 1, taca_guanabara: 1, copa_rio: 1 },
     campanhas_raw: {},
     premios: ['Campeão Carioca 1964', 'Campeão Taça Guanabara 1966', 'Campeão Torneio Pará-Guanabara 1966', '50% de aproveitamento em 170 jogos'],
+    dados_estimados: true,
   },
   {
     id: 'nelsinho-rosa',
@@ -217,6 +220,7 @@ export const ITF_COACHES: ITFCoach[] = [
     titulos_raw: { rio_sp: 1 },
     campanhas_raw: {},
     premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '71,6% de aproveitamento em 149 jogos — maior da lista', 'Primeiro técnico do Flu a ganhar título nacional'],
+    dados_estimados: true,
   },
   {
     id: 'parreira',
@@ -286,9 +290,10 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 15,
     legenda: 'Em uma única passagem de 52 jogos em 2016, Levir Culpi conquistou a Copa Sul-Minas-Rio — título regional inédito para o Fluminense. 51,9% de aproveitamento em um período de crise financeira no clube.',
     classicos: {
-      Flamengo: { v: 2, e: 1, d: 1 },
-      Vasco:    { v: 2, e: 1, d: 1 },
-      Botafogo: { v: 2, e: 1, d: 1 },
+      // Confirmados: Fla 0-0 (mar) + 2-1 (jun); Vas 0-1 (abr); Bot 1-1 (mar) + 0-1 (abr)
+      Flamengo: { v: 2, e: 2, d: 1 },
+      Vasco:    { v: 1, e: 1, d: 2 },
+      Botafogo: { v: 1, e: 2, d: 2 },
     },
     titulos_raw: { copa_rio: 1 },
     campanhas_raw: {},
@@ -350,6 +355,7 @@ export const ITF_COACHES: ITFCoach[] = [
     titulos_raw: {},
     campanhas_raw: {},
     premios: ['135 jogos no comando do Flu (1929–1933)', '52,8% de aproveitamento', 'Pioneiro da estruturação do futebol tricolor'],
+    dados_estimados: true,
   },
 ];
 
