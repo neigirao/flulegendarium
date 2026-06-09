@@ -11,7 +11,7 @@ export const CAMPANHA_PONTOS_T = {
   libertadores_vice: 60, libertadores_semi: 30, libertadores_quartas: 15, libertadores_oitavas: 5,
   sulamericana_vice: 25, sulamericana_semi: 10, sulamericana_quartas: 5,
   copa_brasil_vice: 24, copa_brasil_semi: 12, copa_brasil_quartas: 6, copa_brasil_oitavas: 3,
-  brasileiro_2: 30, brasileiro_3: 15, brasileiro_4: 8, brasileiro_5: 4, brasileiro_6: 2,
+  brasileiro_2: 30, brasileiro_3: 15, brasileiro_4: 8, brasileiro_5: 4, brasileiro_6: 2, brasileiro_oitavas: 1,
   mundial_vice: 80, mundial_3: 40, mundial_semi: 20,
   carioca_vice: 7, carioca_semi: 3, rio_sp_vice: 2,
 } as const;
@@ -340,8 +340,8 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 25,
     legenda: 'Campeão da Libertadores 1983 e do Mundial de Clubes 1983 pelo Grêmio, Valdir Espinosa teve três passagens pelo Fluminense sem conquistar títulos. Em 2004, o clube qualificou-se para a Copa Sul-Americana sob seu comando.',
     titulos_raw: {},
-    campanhas_raw: {},
-    premios: ['Classificou o Flu para a Copa Sul-Americana 2004', '57,4% de aproveitamento em 112 jogos', 'Campeão da Libertadores 1983 e Mundial 1983 (pelo Grêmio)'],
+    campanhas_raw: { brasileiro_oitavas: 1, copa_brasil_oitavas: 1 },
+    premios: ['Classificou o Flu para a Copa Sul-Americana 2004', 'Oitavas de final Campeonato Brasileiro 2000 (Copa João Havelange)', 'Oitavas de final Copa do Brasil 2000', '57,4% de aproveitamento em 112 jogos', 'Campeão da Libertadores 1983 e Mundial 1983 (pelo Grêmio)'],
   },
 ];
 
