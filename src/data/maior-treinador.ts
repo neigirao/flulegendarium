@@ -170,8 +170,8 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 27,
     legenda: 'Conduziu o Fluminense ao primeiro título nacional da história do clube: o Torneio Rio-São Paulo de 1957. Com 72,1% de aproveitamento em 148 jogos, é o técnico com maior percentual de vitórias da lista.',
     titulos_raw: { rio_sp: 1 },
-    campanhas_raw: {},
-    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '3º lugar Campeonato Carioca 1957', '72,1% de aproveitamento em 148 jogos', 'Primeiro técnico do Flu a ganhar título nacional'],
+    campanhas_raw: { carioca_vice: 1 },
+    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', 'Vice-campeão Carioca 1957', '72,1% de aproveitamento em 148 jogos', 'Primeiro técnico do Flu a ganhar título nacional'],
   },
   {
     id: 'parreira',
