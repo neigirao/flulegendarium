@@ -4,7 +4,7 @@
 export const TITULO_PONTOS_T = {
   libertadores: 100, brasileiro: 50, copa_brasil: 40, recopa: 20,
   carioca: 15, rio_sp: 5, copa_rio: 5, mundial: 200,
-  primeira_liga: 5, taca_guanabara: 3, serie_c: 8,
+  primeira_liga: 5, serie_c: 50,
 } as const;
 
 export const CAMPANHA_PONTOS_T = {
@@ -12,7 +12,7 @@ export const CAMPANHA_PONTOS_T = {
   sulamericana_vice: 25, sulamericana_semi: 10, sulamericana_quartas: 5,
   copa_brasil_vice: 24, copa_brasil_semi: 12, copa_brasil_quartas: 6, copa_brasil_oitavas: 3,
   brasileiro_2: 30, brasileiro_3: 15, brasileiro_4: 8, brasileiro_5: 4, brasileiro_6: 2, brasileiro_oitavas: 1,
-  mundial_vice: 80, mundial_3: 40, mundial_semi: 20,
+  mundial_vice: 80, mundial_3: 40, mundial_semi: 50,
   carioca_vice: 7, carioca_semi: 3, rio_sp_vice: 2,
 } as const;
 
@@ -204,7 +204,7 @@ export const ITF_COACHES: ITFCoach[] = [
     empates: 21,
     derrotas: 27,
     legenda: 'Ídolo eterno como jogador, Telê Santana também foi campeão como técnico do Fluminense. Em três passagens (1967–1989) conquistou o Carioca 1969 e a Taça Guanabara 1969 — antes de construir sua lenda máxima no São Paulo com duas Libertadores.',
-    titulos_raw: { carioca: 1, taca_guanabara: 1 },
+    titulos_raw: { carioca: 1 },
     campanhas_raw: {},
     premios: ['Campeão Carioca 1969', 'Campeão Taça Guanabara 1969', '58,2% de aproveitamento em 98 jogos · 3 passagens (1967–1989)', 'Conquistou 2× Libertadores como técnico do São Paulo (1992, 1993)'],
   },
@@ -232,7 +232,7 @@ export const ITF_COACHES: ITFCoach[] = [
     empates: 26,
     derrotas: 31,
     legenda: 'Lenda como zagueiro pelo Flu, voltou ao clube como técnico em três passagens. Na primeira (1971), conquistou a Taça Guanabara de forma interina no lugar de Zagallo. Em 1977, somou mais três títulos regionais incluindo o Troféu Teresa Herrera na Espanha.',
-    titulos_raw: { taca_guanabara: 1, copa_rio: 3 },
+    titulos_raw: { copa_rio: 3 },
     campanhas_raw: {},
     premios: ['Campeão Taça Guanabara 1971 (interino, 3×1 no Fla com hat-trick de Mickey)', 'Campeão Copa Governador Faria Lima 1977', 'Campeão Copa Vale do Paraíba 1977', 'Campeão Troféu Teresa Herrera 1977 (Espanha)', '58% de aproveitamento em 115 jogos como treinador'],
   },

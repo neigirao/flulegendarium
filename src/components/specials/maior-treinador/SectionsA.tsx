@@ -439,16 +439,16 @@ export function AproveitamentoSection() {
 const BADGE_COLOR_T: Record<string, string> = {
   libertadores: '#C4944A', brasileiro: '#006140', copa_brasil: '#7A0213',
   recopa: '#E8B560', carioca: '#AF1E35', rio_sp: '#64748B', copa_rio: '#64748B',
-  mundial: '#E8B560', primeira_liga: '#AF1E35', taca_guanabara: '#64748B', serie_c: '#006140',
+  mundial: '#E8B560', primeira_liga: '#AF1E35', serie_c: '#006140',
 };
 const BADGE_ICON_T: Record<string, string> = {
   libertadores: '🏆', brasileiro: '🥇', copa_brasil: '🏅', recopa: '🏆', carioca: '🎖️',
-  rio_sp: '🎖️', copa_rio: '🎖️', mundial: '🌍', primeira_liga: '🥈', taca_guanabara: '🎖️', serie_c: '🥇',
+  rio_sp: '🎖️', copa_rio: '🎖️', mundial: '🌍', primeira_liga: '🥈', serie_c: '🥇',
 };
 const BADGE_LABEL_T: Record<string, string> = {
   libertadores: 'Libertadores', brasileiro: 'Brasileiro', copa_brasil: 'Copa do Brasil',
   recopa: 'Recopa', carioca: 'Carioca', rio_sp: 'Rio-SP', copa_rio: 'Copa Rio',
-  mundial: 'Mundial', primeira_liga: 'Primeira Liga', taca_guanabara: 'Taça Guanabara', serie_c: 'Série C',
+  mundial: 'Mundial', primeira_liga: 'Primeira Liga', serie_c: 'Série C',
 };
 
 export function TitulosSection() {
@@ -464,7 +464,7 @@ export function TitulosSection() {
         <Kicker n="02">Títulos</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÍTULOS</h2>
         <p style={{ fontSize: 14, color: '#475569', marginBottom: 30 }}>
-          Cada conquista vale pontos diferentes: Mundial (200) · Libertadores (100) · Brasileiro (50) · Copa do Brasil (40) · Recopa (20) · Carioca (15) · Série C (8) · Rio-SP, Copa Rio, Primeira Liga (5) · Taça Guanabara (3).
+          Cada conquista vale pontos diferentes: Mundial (200) · Libertadores (100) · Brasileiro (50) · Série C (50) · Copa do Brasil (40) · Recopa (20) · Carioca (15) · Rio-SP, Copa Rio, Primeira Liga (5).
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {rows.map((c, i) => {
