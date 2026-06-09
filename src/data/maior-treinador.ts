@@ -179,7 +179,6 @@ export const ITF_COACHES: ITFCoach[] = [
     titulos_raw: { carioca: 1, taca_guanabara: 1, copa_rio: 1 },
     campanhas_raw: {},
     premios: ['Campeão Carioca 1964', 'Campeão Taça Guanabara 1966', 'Campeão Torneio Pará-Guanabara 1966', '50% de aproveitamento em 170 jogos'],
-    dados_estimados: true,
   },
   {
     id: 'nelsinho-rosa',
@@ -205,11 +204,11 @@ export const ITF_COACHES: ITFCoach[] = [
     nome: 'Sílvio Pirilo',
     apelido: 'O Pioneiro Nacional',
     periodo: '1956–1958',
-    jogos: 149,
+    jogos: 148,
     vitorias: 99,
     empates: 23,
     derrotas: 27,
-    legenda: 'Conduziu o Fluminense ao primeiro título nacional da história do clube: o Torneio Rio-São Paulo de 1957. Com 71,6% de aproveitamento em 149 jogos, é o técnico com maior percentual de vitórias da lista.',
+    legenda: 'Conduziu o Fluminense ao primeiro título nacional da história do clube: o Torneio Rio-São Paulo de 1957. Com 71,6% de aproveitamento em 148 jogos, é o técnico com maior percentual de vitórias da lista.',
     classicos: {
       Flamengo: { v: 5, e: 3, d: 2 },
       Vasco:    { v: 5, e: 3, d: 2 },
@@ -217,8 +216,7 @@ export const ITF_COACHES: ITFCoach[] = [
     },
     titulos_raw: { rio_sp: 1 },
     campanhas_raw: {},
-    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '71,6% de aproveitamento em 149 jogos — maior da lista', 'Primeiro técnico do Flu a ganhar título nacional'],
-    dados_estimados: true,
+    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '71,6% de aproveitamento em 148 jogos — maior da lista', 'Primeiro técnico do Flu a ganhar título nacional'],
   },
   {
     id: 'parreira',
@@ -314,7 +312,6 @@ export const ITF_COACHES: ITFCoach[] = [
     titulos_raw: {},
     campanhas_raw: {},
     premios: ['135 jogos no comando do Flu (1929–1933)', '52,8% de aproveitamento', 'Pioneiro da estruturação do futebol tricolor'],
-    dados_estimados: true,
   },
   {
     id: 'quincey-taylor',
