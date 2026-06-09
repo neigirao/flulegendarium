@@ -13,6 +13,7 @@ export const CAMPANHA_PONTOS_T = {
   copa_brasil_vice: 24, copa_brasil_semi: 12, copa_brasil_quartas: 6, copa_brasil_oitavas: 3,
   brasileiro_2: 30, brasileiro_3: 15, brasileiro_4: 8, brasileiro_5: 4, brasileiro_6: 2,
   mundial_vice: 80, mundial_3: 40, mundial_semi: 20,
+  carioca_vice: 7, rio_sp_vice: 2,
 } as const;
 
 export interface ITFScores {
@@ -62,10 +63,10 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 277,
     empates: 98,
     derrotas: 107,
-    legenda: 'O técnico com mais jogos na história do Fluminense. Em três passagens conquistou 3 Cariocas (1951, 1959 e 1973), o Rio-São Paulo 1960 e mais quatro títulos regionais — 64,2% de aproveitamento em 482 jogos.',
-    titulos_raw: { carioca: 3, rio_sp: 1, copa_rio: 4 },
-    campanhas_raw: {},
-    premios: ['3× Campeão Carioca (1951, 1959, 1973)', 'Campeão Torneio Rio-São Paulo 1960', 'Campeão Torneio José de Paula Junior 1952', 'Campeão Copa Rio-Mundial 1952', 'Campeão Copa das Municipalidades 1953', 'Campeão Torneio de Verão Rio 1973', '64,2% de aproveitamento em 482 jogos'],
+    legenda: 'O técnico com mais jogos na história do Fluminense. Em três passagens conquistou 3 Cariocas (1951, 1959 e 1973), o Rio-São Paulo 1960, a Copa Rio-Mundial 1952 e mais três títulos regionais — 64,2% de aproveitamento em 482 jogos.',
+    titulos_raw: { carioca: 3, rio_sp: 1, copa_rio: 3, mundial: 1 },
+    campanhas_raw: { carioca_vice: 2, rio_sp_vice: 1 },
+    premios: ['3× Campeão Carioca (1951, 1959, 1973)', 'Campeão Copa Rio-Mundial 1952 (título mundial interclubes)', 'Campeão Torneio Rio-São Paulo 1960', 'Campeão Torneio José de Paula Junior 1952', 'Campeão Copa das Municipalidades 1953', 'Campeão Torneio de Verão Rio 1973', '2× Vice-campeão Carioca (1952, 1953)', 'Vice-campeão Torneio Rio-São Paulo 1954', '64,2% de aproveitamento em 482 jogos'],
   },
   {
     id: 'abel-braga',
@@ -78,8 +79,8 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 101,
     legenda: 'Quatro passagens, três Cariocas e o Brasileirão 2012. Abel Braga é o técnico mais identificado com o Fluminense moderno — ninguém dirigiu mais vezes o clube nas últimas duas décadas. 56,7% de aproveitamento em 352 jogos.',
     titulos_raw: { brasileiro: 1, carioca: 3, copa_rio: 1 },
-    campanhas_raw: {},
-    premios: ['Campeão Brasileiro 2012 (77 pts, 22V-11E-5D)', '3× Campeão Carioca (2005, 2012, 2022)', 'Campeão Troféu Luiz Perido 2012', '56,7% de aproveitamento em 352 jogos', 'Técnico com mais passagens pelo Flu na era moderna'],
+    campanhas_raw: { copa_brasil_vice: 1, libertadores_quartas: 2 },
+    premios: ['Campeão Brasileiro 2012 (77 pts, 22V-11E-5D)', '3× Campeão Carioca (2005, 2012, 2022)', 'Vice-campeão Copa do Brasil 2005', 'Quartas de final Libertadores 2012', 'Quartas de final Libertadores 2013', 'Campeão Troféu Luiz Perido 2012', '56,7% de aproveitamento em 352 jogos', 'Técnico com mais passagens pelo Flu na era moderna'],
   },
   {
     id: 'ondino-vieira',
@@ -170,7 +171,7 @@ export const ITF_COACHES: ITFCoach[] = [
     legenda: 'Conduziu o Fluminense ao primeiro título nacional da história do clube: o Torneio Rio-São Paulo de 1957. Com 72,1% de aproveitamento em 148 jogos, é o técnico com maior percentual de vitórias da lista.',
     titulos_raw: { rio_sp: 1 },
     campanhas_raw: {},
-    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '72,1% de aproveitamento em 148 jogos', 'Primeiro técnico do Flu a ganhar título nacional'],
+    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '3º lugar Campeonato Carioca 1957', '72,1% de aproveitamento em 148 jogos', 'Primeiro técnico do Flu a ganhar título nacional'],
   },
   {
     id: 'parreira',
