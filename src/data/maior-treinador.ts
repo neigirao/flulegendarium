@@ -111,10 +111,10 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 110,
     empates: 62,
     derrotas: 76,
-    legenda: 'Ídolo eterno como jogador, campeão como treinador. Renato Gaúcho conquistou a Copa do Brasil 2007, levou o Flu à final da Libertadores 2008 e retornou em 2025 para mais uma campanha histórica — desta vez no Mundial de Clubes. 7 passagens pelo clube.',
+    legenda: 'Ídolo eterno como jogador, campeão como treinador. Renato Gaúcho conquistou a Copa do Brasil 2007, levou o Flu à final da Libertadores 2008 e retornou em 2025 para mais uma campanha histórica — desta vez no Mundial de Clubes. 6 passagens pelo clube.',
     titulos_raw: { copa_brasil: 1 },
     campanhas_raw: { libertadores_vice: 1, copa_brasil_semi: 1, mundial_semi: 1 },
-    premios: ['Campeão Copa do Brasil 2007 (1° título nacional do Flu na competição)', 'Vice-campeão Libertadores 2008 (final vs LDU)', 'Semifinalista Copa do Mundo de Clubes 2025', '52,7% de aproveitamento em 248 jogos · 7 passagens'],
+    premios: ['Campeão Copa do Brasil 2007 (1° título nacional do Flu na competição)', 'Vice-campeão Libertadores 2008 (final vs LDU)', 'Semifinalista Copa do Mundo de Clubes 2025', '52,7% de aproveitamento em 248 jogos · 6 passagens'],
   },
   {
     id: 'fernando-diniz',
@@ -128,7 +128,7 @@ export const ITF_COACHES: ITFCoach[] = [
     legenda: 'O homem que fez o Fluminense campeão da América. Em 190 jogos e duas passagens, Fernando Diniz conquistou a Copa Libertadores 2023 (2×1 vs Boca no Maracanã), a Recopa Sul-Americana 2024 e o Carioca 2023 — e ainda levou o clube à final do Mundial de Clubes.',
     titulos_raw: { libertadores: 1, recopa: 1, carioca: 1 },
     campanhas_raw: { mundial_vice: 1 },
-    premios: ['Campeão Copa Libertadores 2023 (2×1 vs Boca Juniors no Maracanã)', 'Campeão Recopa Sul-Americana 2024', 'Campeão Carioca 2023', 'Vice-campeão Copa do Mundo de Clubes 2023 (vs Manchester City)', '55,5% de aproveitamento em 190 jogos · 30% em clássicos'],
+    premios: ['Campeão Copa Libertadores 2023 (2×1 vs Boca Juniors no Maracanã)', 'Campeão Recopa Sul-Americana 2024', 'Campeão Carioca 2023', 'Vice-campeão Copa do Mundo de Clubes 2023 (vs Manchester City)', '55,6% de aproveitamento em 190 jogos'],
   },
   {
     id: 'tim',
@@ -170,7 +170,7 @@ export const ITF_COACHES: ITFCoach[] = [
     legenda: 'Conduziu o Fluminense ao primeiro título nacional da história do clube: o Torneio Rio-São Paulo de 1957. Com 72,1% de aproveitamento em 148 jogos, é o técnico com maior percentual de vitórias da lista.',
     titulos_raw: { rio_sp: 1 },
     campanhas_raw: {},
-    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '72,1% de aproveitamento em 148 jogos — maior da lista', 'Primeiro técnico do Flu a ganhar título nacional'],
+    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '72,1% de aproveitamento em 148 jogos', 'Primeiro técnico do Flu a ganhar título nacional'],
   },
   {
     id: 'parreira',
