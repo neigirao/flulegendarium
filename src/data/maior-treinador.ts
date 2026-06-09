@@ -86,7 +86,7 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 174,
     empates: 77,
     derrotas: 101,
-    legenda: 'Quatro passagens, três Cariocas e o Brasileirão 2012. Abel Braga é o técnico mais identificado com o Fluminense moderno — ninguém dirigiu mais vezes o clube nas últimas duas décadas. 57,1% de aproveitamento em 352 jogos.',
+    legenda: 'Quatro passagens, três Cariocas e o Brasileirão 2012. Abel Braga é o técnico mais identificado com o Fluminense moderno — ninguém dirigiu mais vezes o clube nas últimas duas décadas. 56,7% de aproveitamento em 352 jogos.',
     classicos: {
       Flamengo: { v: 15, e: 9, d: 7 },
       Vasco:    { v: 14, e: 9, d: 8 },
@@ -94,7 +94,7 @@ export const ITF_COACHES: ITFCoach[] = [
     },
     titulos_raw: { brasileiro: 1, carioca: 3, copa_rio: 1 },
     campanhas_raw: {},
-    premios: ['Campeão Brasileiro 2012 (77 pts, 22V-11E-5D)', '3× Campeão Carioca (2005, 2012, 2022)', 'Campeão Troféu Luiz Perido 2012', '57,1% de aproveitamento em 352 jogos', 'Técnico com mais passagens pelo Flu na era moderna'],
+    premios: ['Campeão Brasileiro 2012 (77 pts, 22V-11E-5D)', '3× Campeão Carioca (2005, 2012, 2022)', 'Campeão Troféu Luiz Perido 2012', '56,7% de aproveitamento em 352 jogos', 'Técnico com mais passagens pelo Flu na era moderna'],
   },
   {
     id: 'ondino-vieira',
@@ -105,7 +105,7 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 176,
     empates: 61,
     derrotas: 67,
-    legenda: 'O maior campeão de títulos da era clássica tricolor. Com 64,6% de aproveitamento em 302 jogos, Ondino Vieira conquistou 3 Cariocas, o Rio-São Paulo 1940, Torneio Extra 1941 e mais quatro torneios regionais — o ciclo vitorioso mais extenso da história do Fluminense.',
+    legenda: 'O maior campeão de títulos da era clássica tricolor. Com 65,0% de aproveitamento em 302 jogos, Ondino Vieira conquistou 3 Cariocas, o Rio-São Paulo 1940, Torneio Extra 1941 e mais quatro torneios regionais — o ciclo vitorioso mais extenso da história do Fluminense.',
     classicos: {
       Flamengo: { v: 12, e: 5, d: 5 },
       Vasco:    { v: 12, e: 5, d: 5 },
@@ -119,7 +119,7 @@ export const ITF_COACHES: ITFCoach[] = [
       'Campeão Torneio Extra 1941',
       'Campeão Torneio Municipal 1948',
       'Campeão Torneio Início 1940 e 1941',
-      '64,6% de aproveitamento em 302 jogos',
+      '65,0% de aproveitamento em 302 jogos',
     ],
   },
   {
@@ -208,7 +208,7 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 99,
     empates: 23,
     derrotas: 27,
-    legenda: 'Conduziu o Fluminense ao primeiro título nacional da história do clube: o Torneio Rio-São Paulo de 1957. Com 71,6% de aproveitamento em 148 jogos, é o técnico com maior percentual de vitórias da lista.',
+    legenda: 'Conduziu o Fluminense ao primeiro título nacional da história do clube: o Torneio Rio-São Paulo de 1957. Com 72,1% de aproveitamento em 148 jogos, é o técnico com maior percentual de vitórias da lista.',
     classicos: {
       Flamengo: { v: 5, e: 3, d: 2 },
       Vasco:    { v: 5, e: 3, d: 2 },
@@ -216,7 +216,7 @@ export const ITF_COACHES: ITFCoach[] = [
     },
     titulos_raw: { rio_sp: 1 },
     campanhas_raw: {},
-    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '71,6% de aproveitamento em 148 jogos — maior da lista', 'Primeiro técnico do Flu a ganhar título nacional'],
+    premios: ['Campeão Torneio Rio-São Paulo 1957 (1° título nacional do Flu)', '72,1% de aproveitamento em 148 jogos — maior da lista', 'Primeiro técnico do Flu a ganhar título nacional'],
   },
   {
     id: 'parreira',
