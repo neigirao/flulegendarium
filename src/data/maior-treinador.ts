@@ -184,8 +184,8 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 47,
     legenda: 'Cinco passagens e dois títulos que salvaram o Fluminense em momentos críticos: o Brasileirão de 1984 e o Carioca de 1975. Em 1999, ressuscitou o clube da Série C. Em 2009, levou o Flu à final da Copa Sul-Americana.',
     titulos_raw: { brasileiro: 1, carioca: 1, serie_c: 1 },
-    campanhas_raw: { sulamericana_vice: 1 },
-    premios: ['Campeão Brasileiro 1984', 'Campeão Carioca 1975', 'Ressuscitou o Flu da Série C em 1999', 'Vice-campeão Copa Sul-Americana 2009', 'Único técnico a ganhar o Brasileirão e salvar o Flu da Série C'],
+    campanhas_raw: { sulamericana_vice: 1, brasileiro_3: 1, copa_brasil_quartas: 1 },
+    premios: ['Campeão Brasileiro 1984', 'Campeão Carioca 1975', 'Ressuscitou o Flu da Série C em 1999', 'Vice-campeão Copa Sul-Americana 2009', 'Semifinalista Campeonato Brasileiro 1975 (3º/4º lugar)', 'Quartas de final Copa do Brasil 2009', 'Único técnico a ganhar o Brasileirão e salvar o Flu da Série C'],
   },
   {
     id: 'muricy-ramalho',
