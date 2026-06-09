@@ -240,7 +240,7 @@ export function MetodologiaSection() {
         <Kicker n="">Régua</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>COMO DESCOBRIR O MAIOR TREINADOR DO FLUMINENSE?</h2>
         <p style={{ fontSize: 15, color: '#475569', maxWidth: 600, marginBottom: 40, lineHeight: 1.6 }}>
-          A soma direta de pontos brutos por todas as categorias — sem normalização. 5 critérios, cada conquista e performance com seu valor absoluto.
+          A soma direta de pontos brutos por todas as categorias — sem normalização. 4 critérios, cada conquista e performance com seu valor absoluto.
         </p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 14 }}>

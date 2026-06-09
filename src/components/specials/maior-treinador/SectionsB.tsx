@@ -144,13 +144,13 @@ export function TransicaoSection() {
     <section style={{ background: '#0A1810', padding: '80px 32px', textAlign: 'center' }}>
       <div style={{ maxWidth: 800, margin: '0 auto' }}>
         <div style={{ fontFamily: BB, fontSize: 'clamp(28px,5vw,56px)', color: 'white', lineHeight: 1.1, letterSpacing: '0.04em', marginBottom: 20 }}>
-          5 CATEGORIAS.{' '}
+          4 CATEGORIAS.{' '}
           <span style={{ color: '#E8B560' }}>UMA RÉGUA.</span>
           <br />
           UM SÓ NOME NO TOPO.
         </div>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.5)', lineHeight: 1.7, maxWidth: 560, margin: '0 auto' }}>
-          Aproveitamento, títulos, campanhas, clássicos e longevidade — cada detalhe pesou na balança. Chegou a hora do veredicto.
+          Aproveitamento, títulos, campanhas e longevidade — cada detalhe pesou na balança. Chegou a hora do veredicto.
         </p>
       </div>
     </section>
