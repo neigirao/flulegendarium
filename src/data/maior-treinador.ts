@@ -76,7 +76,6 @@ export const ITF_COACHES: ITFCoach[] = [
     titulos_raw: { carioca: 3, rio_sp: 1, copa_rio: 4 },
     campanhas_raw: {},
     premios: ['3× Campeão Carioca (1951, 1959, 1973)', 'Campeão Torneio Rio-São Paulo 1960', 'Campeão Torneio José de Paula Junior 1952', 'Campeão Copa Rio-Mundial 1952', 'Campeão Copa das Municipalidades 1953', 'Campeão Torneio de Verão Rio 1973', '64,2% de aproveitamento em 482 jogos'],
-    dados_estimados: true,
   },
   {
     id: 'abel-braga',
@@ -102,11 +101,11 @@ export const ITF_COACHES: ITFCoach[] = [
     nome: 'Ondino Vieira',
     apelido: 'O Arquiteto da Era de Ouro',
     periodo: '1938–1950',
-    jogos: 304,
+    jogos: 302,
     vitorias: 176,
     empates: 61,
     derrotas: 67,
-    legenda: 'O maior campeão de títulos da era clássica tricolor. Com 64,6% de aproveitamento em 304 jogos, Ondino Vieira conquistou 3 Cariocas, o Rio-São Paulo 1940, Torneio Extra 1941 e mais quatro torneios regionais — o ciclo vitorioso mais extenso da história do Fluminense.',
+    legenda: 'O maior campeão de títulos da era clássica tricolor. Com 64,6% de aproveitamento em 302 jogos, Ondino Vieira conquistou 3 Cariocas, o Rio-São Paulo 1940, Torneio Extra 1941 e mais quatro torneios regionais — o ciclo vitorioso mais extenso da história do Fluminense.',
     classicos: {
       Flamengo: { v: 12, e: 5, d: 5 },
       Vasco:    { v: 12, e: 5, d: 5 },
@@ -120,9 +119,8 @@ export const ITF_COACHES: ITFCoach[] = [
       'Campeão Torneio Extra 1941',
       'Campeão Torneio Municipal 1948',
       'Campeão Torneio Início 1940 e 1941',
-      '64,6% de aproveitamento em 304 jogos',
+      '64,6% de aproveitamento em 302 jogos',
     ],
-    dados_estimados: true,
   },
   {
     id: 'renato-gaucho',
@@ -148,11 +146,11 @@ export const ITF_COACHES: ITFCoach[] = [
     nome: 'Fernando Diniz',
     apelido: 'O Campeão da América',
     periodo: '2019 · 2022–2024',
-    jogos: 188,
-    vitorias: 91,
+    jogos: 190,
+    vitorias: 92,
     empates: 41,
-    derrotas: 56,
-    legenda: 'O homem que fez o Fluminense campeão da América. Em 188 jogos e duas passagens, Fernando Diniz conquistou a Copa Libertadores 2023 (2×1 vs Boca no Maracanã), a Recopa Sul-Americana 2024 e o Carioca 2023 — e ainda levou o clube à final do Mundial de Clubes.',
+    derrotas: 57,
+    legenda: 'O homem que fez o Fluminense campeão da América. Em 190 jogos e duas passagens, Fernando Diniz conquistou a Copa Libertadores 2023 (2×1 vs Boca no Maracanã), a Recopa Sul-Americana 2024 e o Carioca 2023 — e ainda levou o clube à final do Mundial de Clubes.',
     classicos: {
       // Total confirmado: V=7 E=10 D=19 em ~35 jogos (30% aproveit.) — CNN Brasil/Goal.com
       Flamengo: { v: 4, e: 3, d: 5 },
@@ -161,7 +159,7 @@ export const ITF_COACHES: ITFCoach[] = [
     },
     titulos_raw: { libertadores: 1, recopa: 1, carioca: 1 },
     campanhas_raw: { mundial_vice: 1 },
-    premios: ['Campeão Copa Libertadores 2023 (2×1 vs Boca Juniors no Maracanã)', 'Campeão Recopa Sul-Americana 2024', 'Campeão Carioca 2023', 'Vice-campeão Copa do Mundo de Clubes 2023 (vs Manchester City)', '55,6% de aproveitamento em 190 jogos · 30% em clássicos'],
+    premios: ['Campeão Copa Libertadores 2023 (2×1 vs Boca Juniors no Maracanã)', 'Campeão Recopa Sul-Americana 2024', 'Campeão Carioca 2023', 'Vice-campeão Copa do Mundo de Clubes 2023 (vs Manchester City)', '55,5% de aproveitamento em 190 jogos · 30% em clássicos'],
   },
   {
     id: 'tim',
