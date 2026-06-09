@@ -212,8 +212,8 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 23,
     legenda: 'Responsável pela final histórica de 1995 — Flamengo 2×3 Fluminense, com o gol de barriga de Renato Gaúcho que ficou no inconsciente coletivo tricolor. Joel Santana deu ao Flu o Carioca de 1995 em uma das viradas mais dramáticas da história.',
     titulos_raw: { carioca: 1 },
-    campanhas_raw: {},
-    premios: ['Campeão Carioca 1995 (Flu 3×2 Fla com gol de barriga de Renato)', 'Articulou a base da Copa do Brasil 2007 (3ª passagem, até oitavas)', 'Final histórica do Carioca 95 no Maracanã'],
+    campanhas_raw: { brasileiro_3: 1 },
+    premios: ['Campeão Carioca 1995 (Flu 3×2 Fla com gol de barriga de Renato)', 'Semifinalista Campeonato Brasileiro 1995 (3º/4º lugar)', 'Articulou a base da Copa do Brasil 2007 (3ª passagem, até oitavas)', 'Final histórica do Carioca 95 no Maracanã'],
   },
   {
     id: 'oswaldo-oliveira',
