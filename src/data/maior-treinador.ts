@@ -20,7 +20,7 @@ export interface ITFScores {
   titulos:        number;
   campanhas:      number;
   classicos:      number;  // classics win% × 1pt
-  longevidade:    number;  // jogos × 1
+  longevidade:    number;  // jogos × 0.5
 }
 
 export interface ITFWeight {
@@ -280,45 +280,6 @@ export const ITF_COACHES: ITFCoach[] = [
     premios: ['Campeão Carioca 1995 (Flu 3×2 Fla com gol de barriga de Renato)', 'Articulou a base da Copa do Brasil 2007 (3ª passagem, até oitavas)', 'Final histórica do Carioca 95 no Maracanã'],
   },
   {
-    id: 'levir-culpi',
-    nome: 'Levir Culpi',
-    apelido: 'O Campeão Inédito',
-    periodo: '2016',
-    jogos: 52,
-    vitorias: 22,
-    empates: 15,
-    derrotas: 15,
-    legenda: 'Em uma única passagem de 52 jogos em 2016, Levir Culpi conquistou a Copa Sul-Minas-Rio — título regional inédito para o Fluminense. 51,9% de aproveitamento em um período de crise financeira no clube.',
-    classicos: {
-      // Confirmados: Fla 0-0 (mar) + 2-1 (jun); Vas 0-1 (abr); Bot 1-1 (mar) + 0-1 (abr)
-      Flamengo: { v: 2, e: 2, d: 1 },
-      Vasco:    { v: 1, e: 1, d: 2 },
-      Botafogo: { v: 1, e: 2, d: 2 },
-    },
-    titulos_raw: { copa_rio: 1 },
-    campanhas_raw: {},
-    premios: ['Campeão Copa Sul-Minas-Rio 2016', '51,9% de aproveitamento em 52 jogos'],
-  },
-  {
-    id: 'cristovao-borges',
-    nome: 'Cristóvão Borges',
-    apelido: 'O Navegador da Tempestade',
-    periodo: '2014–2015',
-    jogos: 58,
-    vitorias: 28,
-    empates: 11,
-    derrotas: 19,
-    legenda: 'Assumiu o Flu em plena Copa do Mundo de 2014, num período de crise com a saída do patrocinador Unimed. 54,6% de aproveitamento em 58 jogos — sem títulos, mas com solidez tática no momento mais turbulento do clube.',
-    classicos: {
-      Flamengo: { v: 2, e: 1, d: 1 },
-      Vasco:    { v: 2, e: 1, d: 1 },
-      Botafogo: { v: 2, e: 1, d: 1 },
-    },
-    titulos_raw: {},
-    campanhas_raw: {},
-    premios: ['54,6% de aproveitamento em 58 jogos', 'Liderou o Flu durante a Copa do Mundo de 2014', 'Sem títulos conquistados'],
-  },
-  {
     id: 'oswaldo-oliveira',
     nome: 'Oswaldo de Oliveira',
     apelido: 'O Retornante',
@@ -499,7 +460,7 @@ export function ITF_compute_scores(coach: ITFCoach): ITFScores {
   const campanhas = Object.entries(coach.campanhas_raw)
     .reduce((sum, [k, n]) => sum + (n || 0) * (CAMPANHA_PONTOS_T[k as keyof typeof CAMPANHA_PONTOS_T] || 0), 0);
 
-  const longevidade = coach.jogos * 1;
+  const longevidade = coach.jogos * 0.5;
 
   return { aproveitamento, titulos, campanhas, classicos, longevidade };
 }

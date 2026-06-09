@@ -8,8 +8,8 @@ export const ITF_PHOTOS: Record<string, string> = {
   // Cadastre as fotos no CMS com esses nomes de arquivo:
   // zeze-moreira.jpg      abel-braga.jpg        ondino-vieira.jpg
   // renato-gaucho.jpg     tim.jpg               nelsinho-rosa.jpg
-  // silvio-pirilo.jpg     parreira.jpg          levir-culpi.jpg
-  // muricy-ramalho.jpg    joel-santana.jpg      cristovao-borges.jpg
+  // silvio-pirilo.jpg     parreira.jpg
+  // muricy-ramalho.jpg    joel-santana.jpg
   // luis-vinhaes.jpg      oswaldo-oliveira.jpg  quincey-taylor.jpg
   // carlomagno.jpg        gentil-cardoso.jpg    paulo-emilio.jpg
   // pinheiro.jpg          valdir-espinosa.jpg
@@ -23,10 +23,8 @@ export const ITF_PHOTOS: Record<string, string> = {
   'nelsinho-rosa':     `${BASE}/nelsinho-rosa.jpg`,
   'silvio-pirilo':     `${BASE}/silvio-pirilo.jpg`,
   'parreira':          `${BASE}/parreira.jpg`,
-  'levir-culpi':       `${BASE}/levir-culpi.jpg`,
   'muricy-ramalho':    `${BASE}/muricy-ramalho.jpg`,
   'joel-santana':      `${BASE}/joel-santana.jpg`,
-  'cristovao-borges':  `${BASE}/cristovao-borges.jpg`,
   'luis-vinhaes':      `${BASE}/luis-vinhaes.jpg`,
   'oswaldo-oliveira':  `${BASE}/oswaldo-oliveira.jpg`,
   'quincey-taylor':    `${BASE}/quincey-taylor.jpg`,
