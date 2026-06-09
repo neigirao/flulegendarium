@@ -1,12 +1,13 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState, CSSProperties } from 'react';
 
 interface RevealProps {
   children: ReactNode;
   delay?: number;
   y?: number;
+  style?: CSSProperties;
 }
 
-export function Reveal({ children, delay = 0, y = 30 }: RevealProps) {
+export function Reveal({ children, delay = 0, y = 30, style }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -28,6 +29,7 @@ export function Reveal({ children, delay = 0, y = 30 }: RevealProps) {
         opacity: visible ? 1 : 0,
         transform: visible ? 'translateY(0)' : `translateY(${y}px)`,
         transition: `opacity 0.5s ease ${delay}s, transform 0.5s ease ${delay}s`,
+        ...style,
       }}
     >
       {children}

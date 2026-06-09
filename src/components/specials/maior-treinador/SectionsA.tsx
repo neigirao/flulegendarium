@@ -284,18 +284,18 @@ export function FinalistasSection() {
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÉCNICOS ANALISADOS</h2>
         <p style={{ fontSize: 15, color: '#475569', maxWidth: 560, marginBottom: 36 }}>De Quincey Taylor a Fernando Diniz — mais de 100 anos de estratégia tricolor. Clique em um nome para ver os detalhes.</p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 16 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 16, alignItems: 'stretch' }}>
           {ITF_COACHES.map((c, i) => (
-            <Reveal key={c.id} delay={(i % 4) * 0.05}>
+            <Reveal key={c.id} delay={(i % 4) * 0.05} style={{ height: '100%' }}>
               <div
                 onClick={() => setSel(c)}
-                style={{ background: '#F7F5F2', border: '1px solid #E2E8F0', borderRadius: 16, padding: 18, cursor: 'pointer', transition: 'transform 0.18s, box-shadow 0.18s', position: 'relative', overflow: 'hidden' }}
+                style={{ height: '100%', boxSizing: 'border-box', background: '#F7F5F2', border: '1px solid #E2E8F0', borderRadius: 16, padding: 18, cursor: 'pointer', transition: 'transform 0.18s, box-shadow 0.18s', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center' }}
                 onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-4px)'; e.currentTarget.style.boxShadow = '0 14px 32px rgba(0,0,0,0.1)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, width: '100%' }}>
                   <CoachPortrait coach={c} size={64} ring="#C4944A" />
-                  <div>
+                  <div style={{ minWidth: 0 }}>
                     <div style={{ fontFamily: BB, fontSize: 18, color: '#1a1a2e', letterSpacing: '0.02em', lineHeight: 1.1 }}>{c.nome}</div>
                     <div style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>{c.periodo}</div>
                   </div>
