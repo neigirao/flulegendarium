@@ -33,5 +33,5 @@ export const ITF_PHOTOS: Record<string, string> = {
   'gentil-cardoso':    `${BASE}/gentil-cardoso.jpg`,
   'paulo-emilio':      `${BASE}/paulo-emilio.jpg`,
   'pinheiro':          `${BASE}/pinheiro.jpg`,
-  'valdir-espinosa':   `${BASE}/valdir-espinosa.jpg`,
+  'valdir-espinosa':   'https://hafxruwnggitvtyngedy.supabase.co/storage/v1/object/public/players/player-1781037462070.jpeg',
 };
