@@ -8,7 +8,6 @@ import {
   AproveitamentoSection,
   TitulosSection,
   CampanhasSection,
-  ClassicosSection,
 } from '@/components/specials/maior-treinador/SectionsA';
 import { useInView } from '@/hooks/use-in-view';
 
@@ -73,7 +72,6 @@ export default function MaiorTreinador() {
         <AproveitamentoSection />
         <TitulosSection />
         <CampanhasSection />
-        <ClassicosSection />
         <div ref={sentinelRef} style={{ height: 1 }} />
         <Suspense fallback={<div style={{ minHeight: 400 }} />}>
           {shouldLoadB && <LazySectionsB />}

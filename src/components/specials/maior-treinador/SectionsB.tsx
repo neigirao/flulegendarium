@@ -356,10 +356,9 @@ export function ComparadorSection() {
     ['Aproveitamento (%)', sa.aproveitamento.toFixed(1), sb.aproveitamento.toFixed(1)],
     ['Títulos (pts)', sa.titulos.toFixed(0), sb.titulos.toFixed(0)],
     ['Campanhas (pts)', sa.campanhas.toFixed(0), sb.campanhas.toFixed(0)],
-    ['Clássicos (%)', sa.classicos.toFixed(1), sb.classicos.toFixed(1)],
     ['Longevidade (pts)', sa.longevidade.toFixed(0), sb.longevidade.toFixed(0)],
-    ['Nota ITF', (sa.aproveitamento + sa.titulos + sa.campanhas + sa.classicos + sa.longevidade).toFixed(1),
-      (sb.aproveitamento + sb.titulos + sb.campanhas + sb.classicos + sb.longevidade).toFixed(1)],
+    ['Nota ITF', (sa.aproveitamento + sa.titulos + sa.campanhas + sa.longevidade).toFixed(1),
+      (sb.aproveitamento + sb.titulos + sb.campanhas + sb.longevidade).toFixed(1)],
   ];
 
   const Sel = ({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) => (

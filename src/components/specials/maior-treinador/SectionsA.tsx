@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   ITF_COACHES, ITF_WEIGHTS, ITF_compute_scores, ITF_MAX_SCORES,
-  ITFCoach, ITF_SORTED_BY_APROVEITAMENTO, ITF_SORTED_BY_TITULOS, ITF_SORTED_BY_CAMPANHAS, ITF_SORTED_BY_CLASSICOS,
+  ITFCoach, ITF_SORTED_BY_APROVEITAMENTO, ITF_SORTED_BY_TITULOS, ITF_SORTED_BY_CAMPANHAS,
   CAMPANHA_PONTOS_T,
 } from '@/data/maior-treinador';
 import { ITF_PHOTOS } from '@/data/itf-coach-photos';
@@ -189,7 +189,7 @@ export function HeroSection({ onStart }: HeroProps) {
         </button>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(20px,5vw,64px)', marginTop: 48, flexWrap: 'wrap' as const }}>
-          {([['15', 'técnicos'], ['5', 'critérios'], ['80+', 'anos de história']] as [string, string][]).map(([v, l]) => (
+          {([['15', 'técnicos'], ['4', 'critérios'], ['80+', 'anos de história']] as [string, string][]).map(([v, l]) => (
             <div key={l} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: BB, fontSize: 46, color: '#E8B560', lineHeight: 1 }}>{v}</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700, marginTop: 4 }}>{l}</div>
@@ -223,13 +223,6 @@ const CRITERIOS = [
     pct: '20%',
     desc: 'Finais e semifinais de torneios expressivos',
     color: '#006140',
-  },
-  {
-    key: 'classicos',
-    label: 'Clássicos',
-    pct: '15%',
-    desc: 'Aproveitamento nos clássicos contra Fla, Vasco e Botafogo',
-    color: '#AF1E35',
   },
   {
     key: 'longevidade',
@@ -273,7 +266,7 @@ export function MetodologiaSection() {
         <div style={{ marginTop: 32, background: '#0A1810', borderRadius: 16, padding: '28px 32px', color: 'white', overflowX: 'auto' as const }}>
           <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 14 }}>A Fórmula</div>
           <div style={{ fontFamily: BB, fontSize: 'clamp(14px,2.2vw,22px)', letterSpacing: '0.02em', lineHeight: 1.6, color: 'rgba(255,255,255,0.92)' }}>
-            Maior Treinador do Flu = Aproveitamento + Títulos + Campanhas + Clássicos + Longevidade
+            Maior Treinador do Flu = Aproveitamento + Títulos + Campanhas + Longevidade
           </div>
         </div>
       </div>
@@ -363,7 +356,7 @@ export function FinalistasSection() {
               <div style={{ marginTop: 22, padding: 16, background: 'linear-gradient(135deg, rgba(196,148,74,0.18), rgba(122,2,19,0.18))', borderRadius: 12, textAlign: 'center' as const }}>
                 <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota Maior Treinador do Flu</div>
                 <div style={{ fontFamily: BB, fontSize: 48, color: '#E8B560', lineHeight: 1 }}>
-                  {(ITF_compute_scores(sel).aproveitamento + ITF_compute_scores(sel).titulos + ITF_compute_scores(sel).campanhas + ITF_compute_scores(sel).classicos + ITF_compute_scores(sel).longevidade).toFixed(1)}
+                  {(ITF_compute_scores(sel).aproveitamento + ITF_compute_scores(sel).titulos + ITF_compute_scores(sel).campanhas + ITF_compute_scores(sel).longevidade).toFixed(1)}
                 </div>
               </div>
               {sel.premios.length > 0 && (
@@ -600,48 +593,3 @@ export function CampanhasSection() {
   );
 }
 
-/* ── CLÁSSICOS ───────────────────────────────── */
-export function ClassicosSection() {
-  const coaches = ITF_SORTED_BY_CLASSICOS;
-
-  return (
-    <section style={{ background: 'white', padding: '72px 32px', borderTop: '1px solid #EDE8E0' }}>
-      <div style={{ maxWidth: 1080, margin: '0 auto' }}>
-        <Kicker n="04">Clássicos · aproveitamento %</Kicker>
-        <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>CLÁSSICOS</h2>
-        <p style={{ fontSize: 14, color: '#475569', marginBottom: 36 }}>
-          Aproveitamento de pontos nos clássicos contra Flamengo, Vasco e Botafogo — quem dominava os rivais históricos.
-        </p>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          {coaches.map((c, i) => {
-            const classicoPct = ITF_compute_scores(c).classicos;
-            const cl = c.classicos;
-            const totV = cl.Flamengo.v + cl.Vasco.v + cl.Botafogo.v;
-            const totE = cl.Flamengo.e + cl.Vasco.e + cl.Botafogo.e;
-            const totD = cl.Flamengo.d + cl.Vasco.d + cl.Botafogo.d;
-            return (
-              <Reveal key={c.id} delay={i * 0.04}>
-                <div style={{ background: '#F7F5F2', border: '1px solid #E2E8F0', borderRadius: 14, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <div style={{ fontFamily: BB, fontSize: 24, color: i === 0 ? '#C4944A' : '#CBD5E0', width: 28, textAlign: 'center' as const, flexShrink: 0 }}>{i + 1}</div>
-                  <CoachPortrait coach={c} size={48} ring={i === 0 ? '#C4944A' : '#E2E8F0'} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: BB, fontSize: 19, color: '#1a1a2e', letterSpacing: '0.02em' }}>{c.nome}</div>
-                    <div style={{ display: 'flex', gap: 14, marginTop: 5, fontSize: 11, color: '#64748B', flexWrap: 'wrap' as const }}>
-                      <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{cl.Flamengo.v}</span>V <span style={{ fontWeight: 700, color: '#64748B' }}>{cl.Flamengo.e}</span>E <span style={{ fontWeight: 700, color: '#94A3B8' }}>{cl.Flamengo.d}</span>D vs Fla</span>
-                      <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{cl.Vasco.v}</span>V <span style={{ fontWeight: 700, color: '#64748B' }}>{cl.Vasco.e}</span>E <span style={{ fontWeight: 700, color: '#94A3B8' }}>{cl.Vasco.d}</span>D vs Vas</span>
-                      <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{cl.Botafogo.v}</span>V <span style={{ fontWeight: 700, color: '#64748B' }}>{cl.Botafogo.e}</span>E <span style={{ fontWeight: 700, color: '#94A3B8' }}>{cl.Botafogo.d}</span>D vs Bot</span>
-                    </div>
-                  </div>
-                  <div style={{ textAlign: 'right' as const, flexShrink: 0, minWidth: 70 }}>
-                    <div style={{ fontFamily: BB, fontSize: 26, color: i === 0 ? '#C4944A' : '#7A0213', lineHeight: 1 }}>{classicoPct.toFixed(0)}%</div>
-                    <div style={{ fontSize: 9, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>{totV}V {totE}E {totD}D</div>
-                  </div>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
-      </div>
-    </section>
-  );
-}
