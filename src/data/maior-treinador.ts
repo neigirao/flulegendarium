@@ -156,8 +156,8 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 42,
     legenda: 'Quatro passagens pelo Fluminense entre 1979 e 1993, com dois Cariocas conquistados (1980 e 1985). Nelsinho foi o técnico da era de transição tricolor, mantendo o clube competitivo nas décadas de 80 e início dos 90.',
     titulos_raw: { carioca: 2 },
-    campanhas_raw: {},
-    premios: ['2× Campeão Carioca (1980 e 1985)', '53,98% de aproveitamento em 155 jogos', '4 passagens pelo Flu (1979–1993)'],
+    campanhas_raw: { carioca_vice: 1 },
+    premios: ['2× Campeão Carioca (1980 e 1985)', 'Vice-campeão Carioca 1981', '53,98% de aproveitamento em 155 jogos', '4 passagens pelo Flu (1979–1993)'],
   },
   {
     id: 'silvio-pirilo',
