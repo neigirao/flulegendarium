@@ -148,11 +148,11 @@ export const ITF_COACHES: ITFCoach[] = [
     nome: 'Fernando Diniz',
     apelido: 'O Campeão da América',
     periodo: '2019 · 2022–2024',
-    jogos: 190,
-    vitorias: 92,
+    jogos: 188,
+    vitorias: 91,
     empates: 41,
-    derrotas: 57,
-    legenda: 'O homem que fez o Fluminense campeão da América. Em 190 jogos e duas passagens, Fernando Diniz conquistou a Copa Libertadores 2023 (2×1 vs Boca no Maracanã), a Recopa Sul-Americana 2024 e o Carioca 2023 — e ainda levou o clube à final do Mundial de Clubes.',
+    derrotas: 56,
+    legenda: 'O homem que fez o Fluminense campeão da América. Em 188 jogos e duas passagens, Fernando Diniz conquistou a Copa Libertadores 2023 (2×1 vs Boca no Maracanã), a Recopa Sul-Americana 2024 e o Carioca 2023 — e ainda levou o clube à final do Mundial de Clubes.',
     classicos: {
       // Total confirmado: V=7 E=10 D=19 em ~35 jogos (30% aproveit.) — CNN Brasil/Goal.com
       Flamengo: { v: 4, e: 3, d: 5 },
