@@ -198,8 +198,8 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 11,
     legenda: 'Em apenas 54 jogos, Muricy Ramalho conquistou o Brasileirão 2010 e encerrou 26 anos de jejum do Fluminense no torneio. O maior aproveitamento entre os técnicos campeões do clube — 61% em média.',
     titulos_raw: { brasileiro: 1 },
-    campanhas_raw: {},
-    premios: ['Campeão Brasileiro 2010 (71 pts, 20V-11E-7D)', 'Encerrou 26 anos de jejum do Flu no Brasileirão', 'Maior aproveitamento entre técnicos campeões do Flu (61,1%)', '23 rodadas na liderança do Brasileirão 2010'],
+    campanhas_raw: { copa_brasil_quartas: 1, carioca_semi: 1 },
+    premios: ['Campeão Brasileiro 2010 (71 pts, 20V-11E-7D)', 'Encerrou 26 anos de jejum do Flu no Brasileirão', 'Quartas de final Copa do Brasil 2010', 'Semifinalista Campeonato Carioca 2011', 'Maior aproveitamento entre técnicos campeões do Flu (61,1%)', '23 rodadas na liderança do Brasileirão 2010'],
   },
   {
     id: 'joel-santana',
