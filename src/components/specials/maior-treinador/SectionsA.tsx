@@ -107,7 +107,7 @@ export function HeroSection({ onStart }: HeroProps) {
           QUEM É O <span style={{ color: '#E8B560' }}>MAIOR TREINADOR</span> DA HISTÓRIA DO FLUMINENSE?
         </h1>
         <p style={{ fontSize: 'clamp(15px,2vw,18px)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 640, margin: '0 auto 36px' }}>
-          Analisamos 15 técnicos tricolores com uma metodologia exclusiva para descobrir quem foi o treinador mais importante da história do clube.
+          Analisamos 20 técnicos tricolores com uma metodologia exclusiva para descobrir quem foi o treinador mais importante da história do clube.
         </p>
 
         {/* SVG: prancheta tática */}
@@ -189,7 +189,7 @@ export function HeroSection({ onStart }: HeroProps) {
         </button>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(20px,5vw,64px)', marginTop: 48, flexWrap: 'wrap' as const }}>
-          {([['15', 'técnicos'], ['4', 'critérios'], ['80+', 'anos de história']] as [string, string][]).map(([v, l]) => (
+          {([['20', 'técnicos'], ['4', 'critérios'], ['100+', 'anos de história']] as [string, string][]).map(([v, l]) => (
             <div key={l} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: BB, fontSize: 46, color: '#E8B560', lineHeight: 1 }}>{v}</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700, marginTop: 4 }}>{l}</div>
