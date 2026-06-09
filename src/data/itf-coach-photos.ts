@@ -6,21 +6,13 @@ const BASE = 'https://hafxruwnggitvtyngedy.supabase.co/storage/v1/object/public/
 
 export const ITF_PHOTOS: Record<string, string> = {
   // Cadastre as fotos no CMS com esses nomes de arquivo:
-  // zeze-moreira.jpg
-  // abel-braga.jpg
-  // ondino-vieira.jpg
-  // renato-gaucho.jpg
-  // fernando-diniz.jpg
-  // tim.jpg
-  // nelsinho-rosa.jpg
-  // silvio-pirilo.jpg
-  // parreira.jpg
-  // levir-culpi.jpg
-  // muricy-ramalho.jpg
-  // joel-santana.jpg
-  // cristovao-borges.jpg
-  // luis-vinhaes.jpg
-  // oswaldo-oliveira.jpg
+  // zeze-moreira.jpg      abel-braga.jpg        ondino-vieira.jpg
+  // renato-gaucho.jpg     tim.jpg               nelsinho-rosa.jpg
+  // silvio-pirilo.jpg     parreira.jpg          levir-culpi.jpg
+  // muricy-ramalho.jpg    joel-santana.jpg      cristovao-borges.jpg
+  // luis-vinhaes.jpg      oswaldo-oliveira.jpg  quincey-taylor.jpg
+  // carlomagno.jpg        gentil-cardoso.jpg    paulo-emilio.jpg
+  // pinheiro.jpg          valdir-espinosa.jpg
 
   'zeze-moreira':      `${BASE}/zeze-moreira.jpg`,
   'abel-braga':        `${BASE}/abel-braga.jpg`,
@@ -37,4 +29,10 @@ export const ITF_PHOTOS: Record<string, string> = {
   'cristovao-borges':  `${BASE}/cristovao-borges.jpg`,
   'luis-vinhaes':      `${BASE}/luis-vinhaes.jpg`,
   'oswaldo-oliveira':  `${BASE}/oswaldo-oliveira.jpg`,
+  'quincey-taylor':    `${BASE}/quincey-taylor.jpg`,
+  'carlomagno':        `${BASE}/carlomagno.jpg`,
+  'gentil-cardoso':    `${BASE}/gentil-cardoso.jpg`,
+  'paulo-emilio':      `${BASE}/paulo-emilio.jpg`,
+  'pinheiro':          `${BASE}/pinheiro.jpg`,
+  'valdir-espinosa':   `${BASE}/valdir-espinosa.jpg`,
 };
