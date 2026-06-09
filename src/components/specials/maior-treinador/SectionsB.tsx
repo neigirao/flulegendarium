@@ -289,7 +289,7 @@ export function RankingOficialSection() {
       <div style={{ maxWidth: 900, margin: '0 auto' }}>
         <div style={{ textAlign: 'center' }}><Kicker n="✓">Resultado completo</Kicker></div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', textAlign: 'center', marginBottom: 8 }}>OS MAIORES TREINADORES DO FLUMINENSE SÃO</h2>
-        <p style={{ fontSize: 14, color: '#475569', textAlign: 'center', marginBottom: 36 }}>Os 20 técnicos, ordenados pela nota final do Índice Treinadores do Flu.</p>
+        <p style={{ fontSize: 14, color: '#475569', textAlign: 'center', marginBottom: 36 }}>Os 14 técnicos, ordenados pela nota final do Índice Treinadores do Flu.</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {all.map((c, i) => {
             const medal = i === 0 ? '#C4944A' : i === 1 ? '#A8B0BB' : i === 2 ? '#B8754A' : null;

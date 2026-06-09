@@ -107,7 +107,7 @@ export function HeroSection({ onStart }: HeroProps) {
           QUEM É O <span style={{ color: '#E8B560' }}>MAIOR TREINADOR</span> DA HISTÓRIA DO FLUMINENSE?
         </h1>
         <p style={{ fontSize: 'clamp(15px,2vw,18px)', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, maxWidth: 640, margin: '0 auto 36px' }}>
-          Analisamos 20 técnicos tricolores com uma metodologia exclusiva para descobrir quem foi o treinador mais importante da história do clube.
+          Analisamos 14 técnicos tricolores com uma metodologia exclusiva para descobrir quem foi o treinador mais importante da história do clube.
         </p>
 
         {/* SVG: prancheta tática */}
@@ -173,10 +173,10 @@ export function HeroSection({ onStart }: HeroProps) {
         </div>
 
         <div style={{ fontFamily: BB, fontSize: 17, color: '#E8B560', letterSpacing: '0.08em', marginBottom: 6 }}>
-          20 TÉCNICOS · UM LEGADO EM DISPUTA
+          14 TÉCNICOS · UM LEGADO EM DISPUTA
         </div>
         <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 36, letterSpacing: '0.04em' }}>
-          De Quincey Taylor a Fernando Diniz — mais de 100 anos de história tricolor
+          De Carlomagno a Fernando Diniz — mais de 90 anos de história tricolor
         </div>
 
         <button
@@ -189,7 +189,7 @@ export function HeroSection({ onStart }: HeroProps) {
         </button>
 
         <div style={{ display: 'flex', justifyContent: 'center', gap: 'clamp(20px,5vw,64px)', marginTop: 48, flexWrap: 'wrap' as const }}>
-          {([['20', 'técnicos'], ['4', 'critérios'], ['100+', 'anos de história']] as [string, string][]).map(([v, l]) => (
+          {([['14', 'técnicos'], ['4', 'critérios'], ['90+', 'anos de história']] as [string, string][]).map(([v, l]) => (
             <div key={l} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: BB, fontSize: 46, color: '#E8B560', lineHeight: 1 }}>{v}</div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700, marginTop: 4 }}>{l}</div>
@@ -282,7 +282,7 @@ export function FinalistasSection() {
       <div style={{ maxWidth: 1180, margin: '0 auto' }}>
         <Kicker n="">Candidatos</Kicker>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(32px,5vw,52px)', color: '#7A0213', letterSpacing: '0.02em', marginBottom: 8 }}>TÉCNICOS ANALISADOS</h2>
-        <p style={{ fontSize: 15, color: '#475569', maxWidth: 560, marginBottom: 36 }}>De Quincey Taylor a Fernando Diniz — mais de 100 anos de estratégia tricolor. Clique em um nome para ver os detalhes.</p>
+        <p style={{ fontSize: 15, color: '#475569', maxWidth: 560, marginBottom: 36 }}>De Carlomagno a Fernando Diniz — mais de 90 anos de estratégia tricolor. Clique em um nome para ver os detalhes.</p>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))', gap: 16, alignItems: 'stretch' }}>
           {ITF_COACHES.map((c, i) => (
