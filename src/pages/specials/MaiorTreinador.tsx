@@ -58,7 +58,7 @@ export default function MaiorTreinador() {
     <div style={{ fontFamily: 'Inter, -apple-system, sans-serif', background: '#F7F5F2', color: '#1a1a2e', overflowX: 'hidden' }}>
       <SEOManager
         title="Maior Treinador da História do Fluminense | Índice Lendas do Flu"
-        description="Quem é o maior treinador da história do Fluminense? Analisamos 14 técnicos — Diniz, Abel Braga, Renato Gaúcho, Zezé Moreira e mais — com 4 critérios. Descubra o vencedor."
+        description="Quem é o maior treinador da história do Fluminense? Analisamos 11 técnicos — Diniz, Abel Braga, Renato Gaúcho, Zezé Moreira e mais — com 4 critérios. Descubra o vencedor."
         keywords="maior treinador fluminense, melhor técnico fluminense, fernando diniz fluminense, abel braga fluminense, renato gaucho fluminense, zeze moreira fluminense, índice lendas do flu, história do fluminense, técnicos fluminense"
         type="article"
         schema="Article"
