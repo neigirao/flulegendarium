@@ -63,10 +63,10 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 277,
     empates: 98,
     derrotas: 107,
-    legenda: 'O técnico com mais jogos na história do Fluminense. Em três passagens conquistou 3 Cariocas (1951, 1959 e 1973), o Rio-São Paulo 1960, a Copa Rio-Mundial 1952 e mais três títulos regionais — 64,2% de aproveitamento em 482 jogos.',
-    titulos_raw: { carioca: 3, rio_sp: 1, copa_rio: 3, mundial: 1 },
+    legenda: 'O técnico com mais jogos na história do Fluminense. Em três passagens conquistou 2 Cariocas (1951 e 1959), o Rio-São Paulo 1960 e a Copa Rio-Mundial 1952 — 64,2% de aproveitamento em 482 jogos.',
+    titulos_raw: { carioca: 2, rio_sp: 1, mundial: 1 },
     campanhas_raw: { carioca_vice: 2, rio_sp_vice: 1 },
-    premios: ['3× Campeão Carioca (1951, 1959, 1973)', 'Campeão Copa Rio-Mundial 1952 (título mundial interclubes)', 'Campeão Torneio Rio-São Paulo 1960', 'Campeão Torneio José de Paula Junior 1952', 'Campeão Copa das Municipalidades 1953', 'Campeão Torneio de Verão Rio 1973', '2× Vice-campeão Carioca (1952, 1953)', 'Vice-campeão Torneio Rio-São Paulo 1954', '64,2% de aproveitamento em 482 jogos'],
+    premios: ['2× Campeão Carioca (1951, 1959)', 'Campeão Copa Rio-Mundial 1952 (título mundial interclubes)', 'Campeão Torneio Rio-São Paulo 1960', '2× Vice-campeão Carioca (1952, 1953)', 'Vice-campeão Torneio Rio-São Paulo 1954', '64,2% de aproveitamento em 482 jogos'],
   },
   {
     id: 'abel-braga',
