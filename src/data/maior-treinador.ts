@@ -177,8 +177,8 @@ export const ITF_COACHES: ITFCoach[] = [
     derrotas: 21,
     legenda: 'Três passagens pelo Fluminense ao longo de quase duas décadas (2001–2019). Oswaldo de Oliveira manteve 56,5% de aproveitamento em 85 jogos sem jamais conquistar um título — um dos maiores índices entre técnicos sem taças no clube.',
     titulos_raw: {},
-    campanhas_raw: { copa_brasil_semi: 1, brasileiro_3: 1, copa_brasil_quartas: 1 },
-    premios: ['85 jogos com 56,5% de aproveitamento', 'Semifinalista Campeonato Brasileiro 2001 (3º/4º lugar)', 'Quartas de final Copa do Brasil 2002', 'Semifinalista Copa do Brasil 2006', 'Três passagens pelo Flu (2001-02, 2006 e 2019)'],
+    campanhas_raw: { copa_brasil_semi: 1, brasileiro_3: 1 },
+    premios: ['85 jogos com 56,5% de aproveitamento', 'Semifinalista Campeonato Brasileiro 2001 (3º/4º lugar)', 'Semifinalista Copa do Brasil 2006', 'Três passagens pelo Flu (2001-02, 2006 e 2019)'],
   },
   {
     id: 'carlomagno',
