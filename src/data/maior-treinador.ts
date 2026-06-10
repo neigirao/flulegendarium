@@ -3,7 +3,7 @@
 
 export const TITULO_PONTOS_T = {
   libertadores: 100, brasileiro: 50, copa_brasil: 40, recopa: 20,
-  carioca: 15, rio_sp: 5, copa_rio: 5, mundial: 200,
+  carioca: 15, rio_sp: 5, mundial: 200,
   primeira_liga: 5, serie_c: 50,
 } as const;
 
@@ -78,9 +78,9 @@ export const ITF_COACHES: ITFCoach[] = [
     empates: 77,
     derrotas: 101,
     legenda: 'Quatro passagens, três Cariocas e o Brasileirão 2012. Abel Braga é o técnico mais identificado com o Fluminense moderno — ninguém dirigiu mais vezes o clube nas últimas duas décadas. 56,7% de aproveitamento em 352 jogos.',
-    titulos_raw: { brasileiro: 1, carioca: 3, copa_rio: 1 },
+    titulos_raw: { brasileiro: 1, carioca: 3 },
     campanhas_raw: { copa_brasil_vice: 1, libertadores_quartas: 2 },
-    premios: ['Campeão Brasileiro 2012 (77 pts, 22V-11E-5D)', '3× Campeão Carioca (2005, 2012, 2022)', 'Vice-campeão Copa do Brasil 2005', 'Quartas de final Libertadores 2012', 'Quartas de final Libertadores 2013', 'Campeão Troféu Luiz Perido 2012', '56,7% de aproveitamento em 352 jogos', 'Técnico com mais passagens pelo Flu na era moderna'],
+    premios: ['Campeão Brasileiro 2012 (77 pts, 22V-11E-5D)', '3× Campeão Carioca (2005, 2012, 2022)', 'Vice-campeão Copa do Brasil 2005', 'Quartas de final Libertadores 2012', 'Quartas de final Libertadores 2013', '56,7% de aproveitamento em 352 jogos', 'Técnico com mais passagens pelo Flu na era moderna'],
   },
   {
     id: 'renato-gaucho',
@@ -190,9 +190,9 @@ export const ITF_COACHES: ITFCoach[] = [
     empates: 13,
     derrotas: 15,
     legenda: 'Uruguaio que conduziu o Fluminense ao bicampeonato carioca de 1936 e 1937. Na campanha histórica de 1937, o Flu perdeu apenas 1 partida em 22 jogos e marcou 65 gols — com Hércules artilheiro com 22 gols. Em 1938, passou o comando a Ondino Vieira no meio do Carioca.',
-    titulos_raw: { carioca: 2, copa_rio: 1 },
+    titulos_raw: { carioca: 2 },
     campanhas_raw: {},
-    premios: ['Campeão Carioca 1936', 'Campeão Carioca 1937 (1 derrota em 22 jogos, 65 gols)', 'Campeão Torneio Municipal 1938', '73,7% de aproveitamento em 90 jogos'],
+    premios: ['Campeão Carioca 1936', 'Campeão Carioca 1937 (1 derrota em 22 jogos, 65 gols)', '73,7% de aproveitamento em 90 jogos'],
   },
   {
     id: 'tele-santana',
@@ -231,10 +231,10 @@ export const ITF_COACHES: ITFCoach[] = [
     vitorias: 58,
     empates: 26,
     derrotas: 31,
-    legenda: 'Lenda como zagueiro pelo Flu, voltou ao clube como técnico em três passagens. Na primeira (1971), conquistou a Taça Guanabara de forma interina no lugar de Zagallo. Em 1977, somou mais três títulos regionais incluindo o Troféu Teresa Herrera na Espanha.',
-    titulos_raw: { copa_rio: 3 },
+    legenda: 'Lenda como zagueiro pelo Flu, voltou ao clube como técnico em três passagens. Na primeira (1971), conquistou a Taça Guanabara de forma interina no lugar de Zagallo, com vitória de 3×1 sobre o Flamengo.',
+    titulos_raw: {},
     campanhas_raw: {},
-    premios: ['Campeão Taça Guanabara 1971 (interino, 3×1 no Fla com hat-trick de Mickey)', 'Campeão Copa Governador Faria Lima 1977', 'Campeão Copa Vale do Paraíba 1977', 'Campeão Troféu Teresa Herrera 1977 (Espanha)', '58% de aproveitamento em 115 jogos como treinador'],
+    premios: ['Campeão Taça Guanabara 1971 (interino, 3×1 no Fla com hat-trick de Mickey)', '58% de aproveitamento em 115 jogos como treinador'],
   },
   {
     id: 'valdir-espinosa',
