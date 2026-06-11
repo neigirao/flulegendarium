@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ILFPlayer } from '@/data/maior-atacante';
 import { ILF_PHOTOS } from '@/data/ilf-player-photos';
 
@@ -21,6 +21,11 @@ export function Portrait({ player, size = 96, ring = '#C4944A', big }: PortraitP
   const [imgSrc, setImgSrc] = useState(() => rawSrc ? supabaseTransform(rawSrc, size) : rawSrc);
   const [failed, setFailed] = useState(false);
   const showPhoto = !!imgSrc && !failed;
+
+  useEffect(() => {
+    setImgSrc(rawSrc ? supabaseTransform(rawSrc, size) : rawSrc);
+    setFailed(false);
+  }, [rawSrc]);
 
   function handleError() {
     if (rawSrc && imgSrc !== rawSrc) {

@@ -35,6 +35,11 @@ function CoachPortrait({ coach, size = 96, ring = '#C4944A', big }: CoachPortrai
   const [failed, setFailed] = useState(false);
   const showPhoto = !!imgSrc && !failed;
 
+  useEffect(() => {
+    setImgSrc(rawSrc ? supabaseTransform(rawSrc, size) : rawSrc);
+    setFailed(false);
+  }, [rawSrc]);
+
   function handleError() {
     if (rawSrc && imgSrc !== rawSrc) {
       setImgSrc(rawSrc);
