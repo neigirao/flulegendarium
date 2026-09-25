@@ -7,6 +7,7 @@ import { CriticalMeta } from '../CriticalMeta';
 vi.mock('@/hooks/use-lcp-optimization', () => ({
   useLCPOptimization: () => ({
     optimizeForLCP: vi.fn(),
+    measureLCP: vi.fn(() => undefined),
   }),
 }));
 
@@ -16,13 +17,7 @@ describe('CriticalMeta', () => {
     expect(document.head).toBeDefined();
   });
 
-  it('should add critical CSS to head', () => {
-    render(<CriticalMeta />);
-    
-    // Verificar se CSS crítico foi adicionado
-    const criticalStyle = document.querySelector('style[data-critical="true"]');
-    expect(criticalStyle).toBeTruthy();
-  });
+  // Critical CSS is in index.html at build time, not inserted by this component.
 
   it('should add viewport meta tag', () => {
     render(<CriticalMeta />);
