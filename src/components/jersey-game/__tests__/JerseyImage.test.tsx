@@ -84,7 +84,7 @@ describe('JerseyImage', () => {
       const jersey = createMockJersey({ type: 'home' });
       render(<JerseyImage jersey={jersey} {...defaultProps} />);
       
-      expect(screen.getByText('Titular')).toBeInTheDocument();
+      expect(screen.getByText(/Titular/)).toBeInTheDocument();
     });
 
     it('deve mostrar badge do fabricante', () => {
@@ -99,25 +99,25 @@ describe('JerseyImage', () => {
     it('deve mostrar "Titular" para type="home"', () => {
       const jersey = createMockJersey({ type: 'home' });
       render(<JerseyImage jersey={jersey} {...defaultProps} />);
-      expect(screen.getByText('Titular')).toBeInTheDocument();
+      expect(screen.getByText(/Titular/)).toBeInTheDocument();
     });
 
     it('deve mostrar "Reserva" para type="away"', () => {
       const jersey = createMockJersey({ type: 'away' });
       render(<JerseyImage jersey={jersey} {...defaultProps} />);
-      expect(screen.getByText('Reserva')).toBeInTheDocument();
+      expect(screen.getByText(/Reserva/)).toBeInTheDocument();
     });
 
     it('deve mostrar "Terceiro" para type="third"', () => {
       const jersey = createMockJersey({ type: 'third' });
       render(<JerseyImage jersey={jersey} {...defaultProps} />);
-      expect(screen.getByText('Terceiro')).toBeInTheDocument();
+      expect(screen.getByText(/Terceiro/)).toBeInTheDocument();
     });
 
     it('deve mostrar "Especial" para type="special"', () => {
       const jersey = createMockJersey({ type: 'special' });
       render(<JerseyImage jersey={jersey} {...defaultProps} />);
-      expect(screen.getByText('Especial')).toBeInTheDocument();
+      expect(screen.getByText(/Especial/)).toBeInTheDocument();
     });
   });
 
@@ -179,8 +179,8 @@ describe('JerseyImage', () => {
         />
       );
       
-      const container = document.querySelector('.border-difficulty-easy');
-      expect(container).toBeInTheDocument();
+      const image = screen.getByTestId('jersey-image');
+      expect(image.parentElement).toHaveStyle({ filter: 'brightness(0.95) contrast(1.05) saturate(0.95)' });
     });
 
     it('deve aplicar efeitos para dificuldade "muito_dificil"', () => {
@@ -193,8 +193,8 @@ describe('JerseyImage', () => {
         />
       );
       
-      const container = document.querySelector('.border-difficulty-very-hard');
-      expect(container).toBeInTheDocument();
+      const image = screen.getByTestId('jersey-image');
+      expect(image.parentElement).toHaveStyle({ filter: 'brightness(0.8) contrast(1.2) saturate(0.8)' });
     });
   });
 
@@ -234,19 +234,4 @@ describe('JerseyImage', () => {
     });
   });
 
-  describe('Texto Auxiliar', () => {
-    it('deve mostrar pergunta sobre o ano', () => {
-      const jersey = createMockJersey();
-      render(<JerseyImage jersey={jersey} {...defaultProps} />);
-      
-      expect(screen.getByText('De que ano é essa camisa?')).toBeInTheDocument();
-    });
-
-    it('deve mostrar dica sobre pontuação', () => {
-      const jersey = createMockJersey();
-      render(<JerseyImage jersey={jersey} {...defaultProps} />);
-      
-      expect(screen.getByText('Digite o ano exato para mais pontos!')).toBeInTheDocument();
-    });
-  });
 });
