@@ -10,9 +10,7 @@ import { logger } from '@/utils/logger';
 
 const STORAGE_KEY = 'lendas-flu-game-settings';
 
-export interface GameSettings {
-  // Futuras configurações podem ser adicionadas aqui
-}
+export type GameSettings = Record<string, never>;
 
 const DEFAULT_SETTINGS: GameSettings = {};
 
