@@ -71,11 +71,10 @@ describe('useLayoutShiftPrevention', () => {
       style: { minHeight: '' },
     };
 
-    const { result, rerender } = renderHook(() => useLayoutShiftPrevention({
-      reserveSpace: true,
-      aspectRatio: 2, // width is 2x height
-      minHeight: 100,
-    }));
+    const { result, rerender } = renderHook(
+      ({ reserveSpace }) => useLayoutShiftPrevention({ reserveSpace, aspectRatio: 2, minHeight: 100 }),
+      { initialProps: { reserveSpace: false } }
+    );
 
     // Simulate the element being attached
     Object.defineProperty(result.current.containerRef, 'current', {
@@ -83,8 +82,8 @@ describe('useLayoutShiftPrevention', () => {
       writable: true,
     });
 
-    // Force re-run of effect
-    rerender();
+    // A ref assignment alone does not rerun an effect; change a dependency.
+    rerender({ reserveSpace: true });
 
     // With width 400 and aspect ratio 2, height should be 200
     // Which is greater than minHeight 100
@@ -97,18 +96,17 @@ describe('useLayoutShiftPrevention', () => {
       style: { minHeight: '' },
     };
 
-    const { result, rerender } = renderHook(() => useLayoutShiftPrevention({
-      reserveSpace: true,
-      aspectRatio: 1,
-      minHeight: 200,
-    }));
+    const { result, rerender } = renderHook(
+      ({ reserveSpace }) => useLayoutShiftPrevention({ reserveSpace, aspectRatio: 1, minHeight: 200 }),
+      { initialProps: { reserveSpace: false } }
+    );
 
     Object.defineProperty(result.current.containerRef, 'current', {
       value: mockElement,
       writable: true,
     });
 
-    rerender();
+    rerender({ reserveSpace: true });
 
     // With width 100 and aspect ratio 1, calculated height is 100
     // But minHeight is 200, so it should use 200
@@ -159,7 +157,7 @@ describe('useLayoutShiftPrevention', () => {
         aspectRatio,
         minHeight: 100,
       }),
-      { initialProps: { aspectRatio: 1 } }
+      { initialProps: { aspectRatio: 0 } }
     );
 
     Object.defineProperty(result.current.containerRef, 'current', {
