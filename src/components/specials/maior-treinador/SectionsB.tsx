@@ -458,7 +458,7 @@ export function VotacaoSection() {
     setLoading(true);
     const { error } = await supabase.from('itf_votes').insert({ coach_id: coachId });
     if (!error) {
-      try { localStorage.setItem('itf_voted', coachId); } catch {}
+      try { localStorage.setItem('itf_voted', coachId); } catch { /* localStorage indisponível */ }
       setVoted(coachId);
     }
     setLoading(false);
