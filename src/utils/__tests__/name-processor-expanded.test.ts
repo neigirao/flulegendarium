@@ -41,7 +41,7 @@ describe('name-processor (expanded)', () => {
 
     it('should handle tilde', () => {
       expect(isCorrectGuess('joao', 'João')).toBe(true);
-      expect(isCorrectGuess('germano', 'Germão')).toBe(true);
+      expect(isCorrectGuess('germano', 'Germão')).toBe(false); // 'germano' and 'germao' differ after accent removal
     });
 
     it('should handle umlaut and other diacritics', () => {
