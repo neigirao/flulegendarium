@@ -1,8 +1,10 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
+import { hasValidAdminSession, unauthorizedResponse } from '../_shared/authGuard.ts';
+
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-session',
 };
 
 interface MigrationRequest {
@@ -23,6 +25,11 @@ Deno.serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Acesso restrito: só sessão de admin (painel manda x-admin-session).
+  if (!(await hasValidAdminSession(req))) {
+    return unauthorizedResponse(corsHeaders);
   }
 
   try {
