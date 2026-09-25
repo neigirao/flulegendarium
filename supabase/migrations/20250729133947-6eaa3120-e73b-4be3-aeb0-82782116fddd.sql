@@ -1,3 +1,5 @@
+-- SEGURANCA (2026-09-25): senha removida do historico apos exposicao publica do repo.
+-- As senhas admin atuais ficam fora do repositorio (cofre do dono). Migration historica: NAO reexecutar em producao.
 -- Criar usuário admin
 -- Primeiro, inserir na tabela auth.users (isso normalmente seria feito pelo signup, mas vamos fazer manualmente)
 INSERT INTO auth.users (
@@ -20,7 +22,7 @@ INSERT INTO auth.users (
   gen_random_uuid(),
   '00000000-0000-0000-0000-000000000000',
   'neigirao@admin.com',
-  crypt('PCFClub!21', gen_salt('bf')),
+  crypt('SENHA-REMOVIDA-DO-REPO-VER-COFRE', gen_salt('bf')),
   now(),
   now(),
   now(),
