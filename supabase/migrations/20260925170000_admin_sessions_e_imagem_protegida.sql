@@ -46,7 +46,7 @@ CREATE FUNCTION public.verify_admin_credentials(p_username text, p_password text
 RETURNS TABLE (id uuid, username text, session_token uuid)
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
 DECLARE
   v_fails int;
@@ -55,10 +55,10 @@ DECLARE
   v_token uuid;
 BEGIN
   SELECT count(*) INTO v_fails
-  FROM public.admin_login_attempts
-  WHERE lower(username) = lower(p_username)
-    AND NOT success
-    AND attempted_at > now() - interval '15 minutes';
+  FROM public.admin_login_attempts a
+  WHERE lower(a.username) = lower(p_username)
+    AND NOT a.success
+    AND a.attempted_at > now() - interval '15 minutes';
 
   -- Resposta identica a "senha errada": nao vaza que a conta existe nem que esta bloqueada.
   IF v_fails >= 5 THEN
