@@ -151,7 +151,8 @@ export const useUXFeedback = () => {
       const timeBonus = Math.floor(timeRemaining / 10);
       const totalPoints = basePoints + streakBonus + timeBonus;
       
-      showSuccess(totalPoints, streak, playerName);
+      // Do not overwrite milestone feedback with the ordinary success state.
+      if (!achievementTitle) showSuccess(totalPoints, streak, playerName);
       triggerHapticFeedback('success');
     } else {
       showError(playerName);
