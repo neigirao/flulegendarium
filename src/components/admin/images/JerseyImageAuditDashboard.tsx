@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { adminSessionHeaders } from '@/utils/adminSession';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -354,7 +355,7 @@ export const JerseyImageAuditDashboard = () => {
       logger.info('🚀 Iniciando migração de base64 via Edge Function...');
       toast.info('Migrando imagens base64... Isso pode levar alguns minutos.');
       
-      const { data, error } = await supabase.functions.invoke('migrate-jersey-images');
+      const { data, error } = await supabase.functions.invoke('migrate-jersey-images', { headers: adminSessionHeaders() });
       
       if (error) throw error;
       
