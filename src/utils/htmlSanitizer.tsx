@@ -10,10 +10,30 @@ const sanitizerConfig = {
   ALLOWED_ATTR: [
     'href', 'src', 'alt', 'title', 'class'
   ],
-  ALLOWED_URI_REGEXP: /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp):|[^a-z]|[a-z+.-]+(?:[^a-z+.-:]|$))/i,
+  // Allowlist explícita: http(s), mailto, tel, data:image/*;base64 e caminhos relativos.
+  // Bloqueia data:text/html e qualquer outro esquema (o default do DOMPurify deixava
+  // data:text/html passar em <img src>).
+  ALLOWED_URI_REGEXP: /^(?:(?:https?|mailto|tel):|data:image\/(?:png|jpe?g|gif|webp|svg\+xml);base64,|[/#.])/i,
   FORBID_TAGS: ['script', 'object', 'embed', 'iframe', 'form', 'input'],
   FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover']
 };
+
+// DOMPurify libera QUALQUER data: URI em tags de mídia (img/audio/video) antes de
+// consultar ALLOWED_URI_REGEXP - incluindo data:text/html. Este hook restringe
+// data: a imagens em base64 (o fallback SVG de camisa depende disso).
+const ALLOWED_DATA_IMAGE_URI = /^data:image\/(?:png|jpe?g|gif|webp|svg\+xml);base64,/i;
+
+DOMPurify.addHook('uponSanitizeAttribute', (_currentNode, data) => {
+  const attrName = data.attrName?.toLowerCase();
+  const value = data.attrValue ?? '';
+  if (
+    (attrName === 'src' || attrName === 'href') &&
+    /^data:/i.test(value) &&
+    !ALLOWED_DATA_IMAGE_URI.test(value)
+  ) {
+    data.keepAttr = false;
+  }
+});
 
 /**
  * Sanitizes HTML content to prevent XSS attacks
