@@ -226,7 +226,7 @@ export const reportsService = {
   },
 
   async getErrorMetricsReport(days: number = 7): Promise<ErrorMetrics[]> {
-    const { data, error } = await (supabase.rpc as any)('get_error_metrics_daily', {
+    const { data, error } = await (supabase.rpc as unknown as (fn: string, args: { p_days: number }) => Promise<{ data: unknown; error: unknown }>)('get_error_metrics_daily', {
       p_days: Math.max(1, days),
     });
 
@@ -237,7 +237,7 @@ export const reportsService = {
 
     if (!Array.isArray(data)) return [];
 
-    return data.map((row: any) => ({
+    return (Array.isArray(data) ? data : []).map((row: Record<string, unknown>) => ({
       date: String(row.date),
       total_errors: Number(row.total_errors ?? 0),
       error_rate: Number(row.error_rate ?? 0),
