@@ -1,5 +1,5 @@
 
-# ads.txt file for Lendas do Flu - Quiz Oficial do Fluminense
+# ads.txt file for Lendas do Flu - Quiz do Fluminense
 # Google AdSense configuration
 
 # Google AdSense
