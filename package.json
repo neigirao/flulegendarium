@@ -16,9 +16,13 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "audit:docs": "bash scripts/audit-docs.sh"
+    "audit:docs": "bash scripts/audit-docs.sh",
+    "mobile:sync": "npm run build && cap sync ios"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/browser": "^8.0.4",
+    "@capacitor/core": "^8.5.2",
     "@hookform/resolvers": "^3.9.0",
     "@playwright/test": "1.53.2",
     "@radix-ui/react-accordion": "^1.2.0",
@@ -91,6 +95,8 @@
     "zustand": "^5.0.6"
   },
   "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
+    "@capacitor/ios": "^8.5.2",
     "@eslint/js": "^9.9.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/node": "^24.0.3",
