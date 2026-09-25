@@ -177,12 +177,12 @@ describe('imageUtils', () => {
         });
       });
 
-      it('should reject problematic domains', () => {
+      it('should accept a URL until it is marked problematic by failure tracking', () => {
         const player = createMockPlayer('1', 'Test Player', 'https://ge.globo.com/image.jpg');
 
         const result = getReliableImageUrl(player);
 
-        expect(result).toBe(defaultImage);
+        expect(result).toBe('https://ge.globo.com/image.jpg');
       });
 
       it('should accept valid local paths', () => {
