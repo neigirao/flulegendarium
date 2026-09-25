@@ -1,6 +1,6 @@
 /// <reference types="@testing-library/jest-dom" />
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, fireEvent } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent, act } from '@testing-library/react';
 import { ImageGuard } from '../ImageGuard';
 import { playerSilhouetteSvg, fluminenseJerseySvg } from '@/utils/fallback-images/fluminenseSvg';
 
@@ -114,17 +114,17 @@ describe('ImageGuard', () => {
       });
     });
 
-    it('deve chamar onError quando imagem falha', async () => {
+    it('deve chamar onError após duas tentativas e fallback', async () => {
       const onError = vi.fn();
       render(<ImageGuard src="/broken.jpg" alt="Test" onError={onError} />);
-      
-      const img = screen.getByRole('img');
-      fireEvent.error(img);
-      
-      // onError pode ser chamado após retries
-      await waitFor(() => {
-        expect(onError).toHaveBeenCalled();
-      }, { timeout: 3000 });
+
+      // Two retries of the original URL, then two of the configured fallback.
+      // The callback reports a failed level, not each failed attempt.
+      for (let attempt = 0; attempt < 5; attempt++) {
+        fireEvent.error(screen.getByRole('img'));
+        await act(async () => { await new Promise(resolve => setTimeout(resolve, 0)); });
+      }
+      await waitFor(() => expect(onError).toHaveBeenCalled());
     });
 
     it('deve usar loading="eager" quando priority=true', () => {
