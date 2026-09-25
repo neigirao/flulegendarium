@@ -55,7 +55,12 @@ export function useDeviceDetection(): DeviceInfo {
     const canvas = document.createElement('canvas');
     canvas.width = 1;
     canvas.height = 1;
-    const supportsWebP = canvas.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+    let supportsWebP = false;
+    try {
+      supportsWebP = (canvas.toDataURL('image/webp') ?? '').startsWith('data:image/webp');
+    } catch {
+      // Canvas may be disabled in privacy modes or unavailable in a test DOM.
+    }
 
     // Connection type - use type assertion for Navigator extension
     const nav = navigator as NavigatorWithConnection;
