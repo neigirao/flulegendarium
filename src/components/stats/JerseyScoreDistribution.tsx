@@ -64,7 +64,7 @@ export const JerseyScoreDistribution = () => {
                 <YAxis tick={{ fontSize: 11, fill: "hsl(var(--muted-foreground))" }} axisLine={false} tickLine={false} />
                 <Tooltip
                   contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: "8px", color: "hsl(var(--foreground))" }}
-                  formatter={(value: number, _: string, props: any) => [`${value} jogadores (${props.payload.pct}%)`, "Quantidade"]}
+                  formatter={(value: number, _: string, props: { payload: { pct: number } }) => [`${value} jogadores (${props.payload.pct}%)`, "Quantidade"]}
                 />
                 <Bar dataKey="count" radius={[6, 6, 0, 0]} label={{ position: "top", fontSize: 10, fill: "hsl(var(--muted-foreground))", formatter: (v: number) => (v > 0 ? v : "") }}>
                   {data?.chartData.map((_, i) => (

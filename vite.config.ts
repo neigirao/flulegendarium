@@ -11,7 +11,7 @@ function criticalCssPlugin(): Plugin {
     apply: 'build',
     enforce: 'post',
     async closeBundle() {
-      const { default: Critters } = await import('critters') as any;
+      const { default: Critters } = (await import('critters')) as { default: new (opts: Record<string, unknown>) => { process(html: string): Promise<string> } };
       const outDir = path.resolve(__dirname, 'dist');
       const htmlPath = path.join(outDir, 'index.html');
       if (!fs.existsSync(htmlPath)) return;

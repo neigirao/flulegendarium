@@ -85,7 +85,7 @@ export const DifficultyDistribution = () => {
                   borderRadius: "8px",
                   color: "hsl(var(--foreground))",
                 }}
-                formatter={(value: number, _: string, props: any) => [
+                formatter={(value: number, _: string, props: { payload: { pct: number } }) => [
                   `${value} jogadores (${props.payload.pct})`,
                   "Quantidade",
                 ]}
