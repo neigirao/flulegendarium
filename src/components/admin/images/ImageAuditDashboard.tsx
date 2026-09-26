@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { adminSessionHeaders } from '@/utils/adminSession';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -139,6 +140,7 @@ export const ImageAuditDashboard = () => {
 
       // Chamar Edge Function
       const { data, error } = await supabase.functions.invoke('migrate-player-image', {
+        headers: adminSessionHeaders(),
         body: {
           playerId: player.id,
           playerName: player.name,

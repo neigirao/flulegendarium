@@ -139,9 +139,11 @@ export const useAdminAuth = () => {
         isAdmin: true
       });
       
-      // Store admin session in localStorage
+      // Store admin session in localStorage (token vem da RPC pós-migration de sessão)
+      const sessionToken = (adminUser as { session_token?: string }).session_token ?? null;
       localStorage.setItem(ADMIN_SESSION_KEY, JSON.stringify({
         user: adminUserSession,
+        token: sessionToken,
         timestamp: Date.now()
       }));
 
