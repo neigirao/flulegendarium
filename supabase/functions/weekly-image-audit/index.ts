@@ -2,9 +2,11 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient, SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 import { Resend } from "https://esm.sh/resend@4.0.0";
 
+import { hasValidAdminSession, hasInternalSecret, unauthorizedResponse } from '../_shared/authGuard.ts';
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-admin-session, x-internal-secret",
 };
 
 // Domínios conhecidos por serem problemáticos
@@ -262,6 +264,11 @@ const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Acesso restrito: sessão de admin (painel) ou segredo interno (cron/manual).
+  if (!hasInternalSecret(req) && !(await hasValidAdminSession(req))) {
+    return unauthorizedResponse(corsHeaders);
   }
 
   try {
