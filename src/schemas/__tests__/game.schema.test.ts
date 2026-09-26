@@ -128,7 +128,7 @@ describe('DecadeGameMetadataSchema', () => {
   it('should validate complete metadata', () => {
     const validMetadata = {
       selectedDecade: '1990',
-      availablePlayers: ['uuid-1', 'uuid-2'],
+      availablePlayers: ['00000000-0000-4000-8000-000000000001', '00000000-0000-4000-8000-000000000002'],
       totalDecadePlayers: 50,
     };
 

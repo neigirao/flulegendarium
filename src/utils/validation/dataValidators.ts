@@ -167,9 +167,10 @@ export const sanitizeString = (str: unknown): string => {
 };
 
 export const validateNumber = (value: unknown, min?: number, max?: number): ValidationResult<number> => {
+  // Number(null) and Number('') are 0; neither represents a supplied number.
   const num = Number(value);
   
-  if (isNaN(num)) {
+  if (value === null || value === undefined || (typeof value === 'string' && !value.trim()) || !Number.isFinite(num)) {
     return {
       isValid: false,
       error: 'Valor não é um número válido',

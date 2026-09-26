@@ -60,7 +60,7 @@ describe('UnifiedPlayerImage', () => {
   describe('Renderização Básica', () => {
     it('deve renderizar com dados do jogador', () => {
       const player = createMockPlayer();
-      render(<UnifiedPlayerImage player={player} />);
+      render(<UnifiedPlayerImage player={player} priority />);
       
       const img = screen.getByRole('img');
       expect(img).toBeInTheDocument();

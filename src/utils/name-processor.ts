@@ -29,19 +29,22 @@ const normalizeText = (text: string): string => {
  * Verifica se há correspondência parcial entre palpite e nome alvo.
  */
 const isPartialMatch = (guess: string, target: string): boolean => {
-  const normalizedGuess = normalizeText(guess);
-  const normalizedTarget = normalizeText(target);
-  
+  const normalizedGuess = normalizeText(guess).replace(/\s+/g, ' ');
+  const normalizedTarget = normalizeText(target).replace(/\s+/g, ' ');
+
+  // Empty input must never match everything through String.includes('').
+  if (!normalizedGuess || !normalizedTarget) return false;
   if (normalizedGuess === normalizedTarget) return true;
-  if (normalizedTarget.includes(normalizedGuess)) return true;
-  if (normalizedGuess.includes(normalizedTarget)) return true;
-  
-  const guessWords = normalizedGuess.split(' ').filter(w => w.length > 2);
-  const targetWords = normalizedTarget.split(' ').filter(w => w.length > 2);
-  
-  return guessWords.some(gw => 
-    targetWords.some(tw => tw.includes(gw) || gw.includes(tw))
-  );
+
+  // Match whole name tokens only: 'Rom' must not accept 'Romário'.
+  // A full player name may be extended with additional given/family names.
+  const guessWords = normalizedGuess.split(' ');
+  const targetWords = normalizedTarget.split(' ');
+  if (guessWords.length > 1 && targetWords.length > 1 &&
+      (normalizedTarget.startsWith(`${normalizedGuess} `) ||
+       normalizedGuess.startsWith(`${normalizedTarget} `))) return true;
+
+  return guessWords.some(word => word.length > 2 && targetWords.includes(word));
 };
 
 /**

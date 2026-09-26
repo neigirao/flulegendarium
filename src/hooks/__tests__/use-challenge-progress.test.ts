@@ -346,20 +346,3 @@ describe('useChallengeProgress', () => {
     });
   });
 });
-
-// Test without user
-describe('useChallengeProgress without user', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    
-    // Override useAuth mock
-    vi.doMock('../useAuth', () => ({
-      useAuth: () => ({
-        user: null,
-      }),
-    }));
-  });
-
-  // Note: This test is limited because we can't easily change mocks mid-suite
-  // In a real scenario, we'd use different test files or setup/teardown patterns
-});

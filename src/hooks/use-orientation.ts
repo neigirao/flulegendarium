@@ -49,7 +49,7 @@ export function useOrientation(): OrientationState {
     };
 
     // Modern browsers
-    if (screen.orientation) {
+    if (typeof screen !== 'undefined' && screen.orientation?.addEventListener) {
       screen.orientation.addEventListener('change', handleOrientationChange);
     }
     
@@ -58,7 +58,7 @@ export function useOrientation(): OrientationState {
     window.addEventListener('resize', handleOrientationChange);
 
     return () => {
-      if (screen.orientation) {
+      if (typeof screen !== 'undefined' && screen.orientation?.removeEventListener) {
         screen.orientation.removeEventListener('change', handleOrientationChange);
       }
       window.removeEventListener('orientationchange', handleOrientationChange);

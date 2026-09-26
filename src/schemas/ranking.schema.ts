@@ -8,9 +8,9 @@ import { DifficultyLevelSchema } from './player.schema';
 export const RankingEntrySchema = z.object({
   id: z.string().uuid().optional(),
   playerName: z.string()
+    .trim()
     .min(1, 'Nome é obrigatório')
-    .max(100, 'Nome muito longo')
-    .trim(),
+    .max(100, 'Nome muito longo'),
   score: z.number().int(), // Permite negativo após pular jogador
   gameMode: GameModeSchema.default('classic'),
   difficultyLevel: DifficultyLevelSchema.optional(),

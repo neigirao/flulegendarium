@@ -6,7 +6,7 @@ const FORBIDDEN_WORDS = [
   
   // Rio teams (except Fluminense)
   "flamengo", "fla", "mengo", "mengão", "urubu",
-  "vasco", "vascão", "cruzmaltino", "gigante da colina",
+  "vasco", "vascão", "vascaino", "vascaíno", "cruzmaltino", "gigante da colina",
   "botafogo", "fogão", "glorioso", "estrela solitária"
 ];
 

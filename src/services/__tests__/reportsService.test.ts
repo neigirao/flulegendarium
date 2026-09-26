@@ -56,7 +56,7 @@ describe('reportsService', () => {
       expect(june14Data?.new_users).toBe(1);
     });
 
-    it('should return empty array on error', async () => {
+    it('propagates provider errors', async () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           gte: vi.fn().mockReturnValue({
@@ -66,9 +66,7 @@ describe('reportsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await reportsService.getUserEngagementReport(7);
-
-      expect(result).toEqual([]);
+      await expect(reportsService.getUserEngagementReport(7)).rejects.toBeTruthy();
     });
 
     it('should calculate returning users correctly', async () => {
@@ -126,7 +124,7 @@ describe('reportsService', () => {
       expect(june14Data?.bounce_rate).toBe(50); // 1 of 2 sessions was short
     });
 
-    it('should handle exception gracefully', async () => {
+    it('propagates network exceptions', async () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           gte: vi.fn().mockReturnValue({
@@ -136,9 +134,7 @@ describe('reportsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await reportsService.getUserEngagementReport(7);
-
-      expect(result).toEqual([]);
+      await expect(reportsService.getUserEngagementReport(7)).rejects.toBeTruthy();
     });
   });
 
@@ -168,7 +164,7 @@ describe('reportsService', () => {
       expect(june14Data?.promoters).toBeGreaterThanOrEqual(0);
     });
 
-    it('should return empty array on error', async () => {
+    it('propagates provider errors', async () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           gte: vi.fn().mockReturnValue({
@@ -178,9 +174,7 @@ describe('reportsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await reportsService.getNPSReport(7);
-
-      expect(result).toEqual([]);
+      await expect(reportsService.getNPSReport(7)).rejects.toBeTruthy();
     });
 
     it('should handle no feedback data', async () => {
@@ -202,7 +196,7 @@ describe('reportsService', () => {
       });
     });
 
-    it('should handle exception gracefully', async () => {
+    it('propagates network exceptions', async () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           gte: vi.fn().mockReturnValue({
@@ -212,80 +206,35 @@ describe('reportsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await reportsService.getNPSReport(7);
-
-      expect(result).toEqual([]);
+      await expect(reportsService.getNPSReport(7)).rejects.toBeTruthy();
     });
   });
 
   describe('getErrorMetricsReport', () => {
-    it('should categorize errors by type', async () => {
-      const mockBugs = [
-        { id: '1', description: 'Problema de carregamento de página', created_at: '2024-06-14T10:00:00Z' },
-        { id: '2', description: 'Imagem não aparece', created_at: '2024-06-14T11:00:00Z' },
-        { id: '3', description: 'Erro de login', created_at: '2024-06-14T12:00:00Z' },
-        { id: '4', description: 'Pontuação incorreta', created_at: '2024-06-14T13:00:00Z' },
-        { id: '5', description: 'Bug aleatório', created_at: '2024-06-14T14:00:00Z' },
-      ];
-
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          gte: vi.fn().mockResolvedValue({ data: mockBugs, error: null }),
-        }),
-      });
-      (supabase.from as Mock) = mockFrom;
-
+    it('maps the daily aggregate returned by the RPC', async () => {
+      const row = { date: '2024-06-14', total_errors: 5, error_rate: 10,
+        top_errors: [{ error_type: 'Imagens', count: 2, percentage: 40 }],
+        resolved_errors: 3, avg_resolution_time: 4, data_quality: 'real' };
+      const rpc = vi.fn().mockResolvedValue({ data: [row], error: null });
+      (supabase.rpc as Mock) = rpc;
       const result = await reportsService.getErrorMetricsReport(7);
-
-      const june14Data = result.find(d => d.date === '2024-06-14');
-      expect(june14Data?.total_errors).toBe(5);
-      expect(june14Data?.top_errors.length).toBeGreaterThan(0);
-      
-      const errorTypes = june14Data?.top_errors.map(e => e.error_type);
-      expect(errorTypes).toContain('Carregamento');
-      expect(errorTypes).toContain('Imagens');
+      expect(rpc).toHaveBeenCalledWith('get_error_metrics_daily', { p_days: 7 });
+      expect(result).toEqual([row]);
     });
 
-    it('should return empty array on error', async () => {
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          gte: vi.fn().mockResolvedValue({ data: null, error: { message: 'Error' } }),
-        }),
-      });
-      (supabase.from as Mock) = mockFrom;
-
-      const result = await reportsService.getErrorMetricsReport(7);
-
-      expect(result).toEqual([]);
+    it('returns empty data when no aggregate rows exist', async () => {
+      (supabase.rpc as Mock) = vi.fn().mockResolvedValue({ data: [], error: null });
+      expect(await reportsService.getErrorMetricsReport(7)).toEqual([]);
     });
 
-    it('should handle no bugs data', async () => {
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          gte: vi.fn().mockResolvedValue({ data: [], error: null }),
-        }),
-      });
-      (supabase.from as Mock) = mockFrom;
-
-      const result = await reportsService.getErrorMetricsReport(7);
-
-      expect(Array.isArray(result)).toBe(true);
-      result.forEach(day => {
-        expect(day.total_errors).toBe(0);
-      });
+    it('propagates an RPC error rather than claiming there were no errors', async () => {
+      (supabase.rpc as Mock) = vi.fn().mockResolvedValue({ data: null, error: { message: 'RPC error' } });
+      await expect(reportsService.getErrorMetricsReport(7)).rejects.toEqual({ message: 'RPC error' });
     });
 
-    it('should handle exception gracefully', async () => {
-      const mockFrom = vi.fn().mockReturnValue({
-        select: vi.fn().mockReturnValue({
-          gte: vi.fn().mockRejectedValue(new Error('Database error')),
-        }),
-      });
-      (supabase.from as Mock) = mockFrom;
-
-      const result = await reportsService.getErrorMetricsReport(7);
-
-      expect(result).toEqual([]);
+    it('propagates network failures', async () => {
+      (supabase.rpc as Mock) = vi.fn().mockRejectedValue(new Error('Network error'));
+      await expect(reportsService.getErrorMetricsReport(7)).rejects.toThrow('Network error');
     });
   });
 
@@ -315,7 +264,7 @@ describe('reportsService', () => {
       expect(june14Data?.priority_breakdown.low).toBe(1);
     });
 
-    it('should return empty array on error', async () => {
+    it('propagates provider errors', async () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           gte: vi.fn().mockResolvedValue({ data: null, error: { message: 'Error' } }),
@@ -323,9 +272,7 @@ describe('reportsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await reportsService.getSupportTicketsReport(30);
-
-      expect(result).toEqual([]);
+      await expect(reportsService.getSupportTicketsReport(30)).rejects.toBeTruthy();
     });
 
     it('should handle no tickets', async () => {
@@ -344,7 +291,7 @@ describe('reportsService', () => {
       });
     });
 
-    it('should handle exception gracefully', async () => {
+    it('propagates network exceptions', async () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           gte: vi.fn().mockRejectedValue(new Error('Query failed')),
@@ -352,9 +299,7 @@ describe('reportsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await reportsService.getSupportTicketsReport(30);
-
-      expect(result).toEqual([]);
+      await expect(reportsService.getSupportTicketsReport(30)).rejects.toBeTruthy();
     });
   });
 
@@ -384,7 +329,7 @@ describe('reportsService', () => {
       expect(june14Data?.categories.length).toBeGreaterThan(0);
     });
 
-    it('should return empty array on error', async () => {
+    it('propagates provider errors', async () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           gte: vi.fn().mockResolvedValue({ data: null, error: { message: 'Error' } }),
@@ -392,9 +337,7 @@ describe('reportsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await reportsService.getFeedbackReport(30);
-
-      expect(result).toEqual([]);
+      await expect(reportsService.getFeedbackReport(30)).rejects.toBeTruthy();
     });
 
     it('should handle feedback without category', async () => {
@@ -434,7 +377,7 @@ describe('reportsService', () => {
       expect(june14Data?.avg_rating).toBeGreaterThan(0);
     });
 
-    it('should handle exception gracefully', async () => {
+    it('propagates network exceptions', async () => {
       const mockFrom = vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
           gte: vi.fn().mockRejectedValue(new Error('Connection refused')),
@@ -442,9 +385,7 @@ describe('reportsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await reportsService.getFeedbackReport(30);
-
-      expect(result).toEqual([]);
+      await expect(reportsService.getFeedbackReport(30)).rejects.toBeTruthy();
     });
 
     it('should handle empty feedback array', async () => {

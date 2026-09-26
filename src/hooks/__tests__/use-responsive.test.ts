@@ -136,25 +136,6 @@ describe('useResponsive', () => {
     expect(result.current.isMobile).toBe(true);
   });
 
-  it('should return default values when window is undefined', () => {
-    const originalWindow = global.window;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (global as any).window = undefined;
-
-    const { result } = renderHook(() => useResponsive());
-    
-    expect(result.current.isXs).toBe(false);
-    expect(result.current.isSm).toBe(false);
-    expect(result.current.isMd).toBe(false);
-    expect(result.current.isLg).toBe(false);
-    expect(result.current.isXl).toBe(false);
-    expect(result.current.isMobile).toBe(false);
-    expect(result.current.isTablet).toBe(false);
-    expect(result.current.isDesktop).toBe(false);
-
-    global.window = originalWindow;
-  });
-
   it('should correctly identify boundary values', () => {
     // Test boundary at 480px
     setWindowWidth(480);

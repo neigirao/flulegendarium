@@ -8,6 +8,7 @@ export * from '@testing-library/react';
 // Mock do Supabase
 vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
+    rpc: vi.fn(() => Promise.resolve({ data: [], error: null })),
     from: vi.fn(() => ({
       select: vi.fn(() => Promise.resolve({ data: [], error: null })),
       insert: vi.fn(() => Promise.resolve({ data: null, error: null })),

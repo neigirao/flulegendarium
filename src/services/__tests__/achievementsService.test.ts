@@ -11,7 +11,7 @@ describe('achievementsService', () => {
   describe('getUserAchievements', () => {
     it('should return user achievements ordered by unlocked_at', async () => {
       const mockAchievements = [
-        { id: '1', user_id: 'user-123', achievement_id: 'primeiro_gol', unlocked_at: '2024-01-02', progress: 1, max_progress: 1 },
+        { id: '1', user_id: 'user-123', achievement_id: 'primeiro_campeao', unlocked_at: '2024-01-02', progress: 1, max_progress: 1 },
         { id: '2', user_id: 'user-123', achievement_id: 'artilheiro', unlocked_at: '2024-01-01', progress: 10, max_progress: 10 },
       ];
 
@@ -75,7 +75,7 @@ describe('achievementsService', () => {
       const mockInsertResult = {
         id: 'achievement-record-123',
         user_id: 'user-123',
-        achievement_id: 'primeiro_gol',
+        achievement_id: 'primeiro_campeao',
         progress: 1,
         max_progress: 1,
         unlocked_at: '2024-01-01',
@@ -113,7 +113,7 @@ describe('achievementsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await unlockAchievement('user-123', 'primeiro_gol');
+      const result = await unlockAchievement('user-123', 'primeiro_campeao');
 
       expect(result).toEqual(mockInsertResult);
     });
@@ -122,7 +122,7 @@ describe('achievementsService', () => {
       const existingAchievement = {
         id: 'existing-123',
         user_id: 'user-123',
-        achievement_id: 'primeiro_gol',
+        achievement_id: 'primeiro_campeao',
         progress: 1,
         max_progress: 1,
         unlocked_at: '2024-01-01',
@@ -142,7 +142,7 @@ describe('achievementsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      const result = await unlockAchievement('user-123', 'primeiro_gol');
+      const result = await unlockAchievement('user-123', 'primeiro_campeao');
 
       expect(result).toEqual(existingAchievement);
     });
@@ -184,7 +184,7 @@ describe('achievementsService', () => {
       });
       (supabase.from as Mock) = mockFrom;
 
-      await expect(unlockAchievement('user-123', 'primeiro_gol')).rejects.toEqual({
+      await expect(unlockAchievement('user-123', 'primeiro_campeao')).rejects.toEqual({
         message: 'Insert error',
       });
     });

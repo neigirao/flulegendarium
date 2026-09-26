@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { 
-  isValidJerseyImageUrl, 
-  getReliableJerseyImageUrl, 
+import {
+  isValidJerseyImageUrl,
+  getReliableJerseyImageUrl,
   jerseyDefaultImage,
-  clearJerseyImageUrlCache 
+  clearJerseyImageUrlCache
 } from '../imageUtils';
 
 // Mock logger
@@ -57,16 +57,16 @@ describe('Jersey Image Utils', () => {
       expect(isValidJerseyImageUrl('javascript:alert(1)')).toBe(false);
     });
 
-    it('deve retornar true para URLs válidas com protocolo http', () => {
-      expect(isValidJerseyImageUrl('http://example.com/jersey.jpg')).toBe(true);
+    it('deve rejeitar domínio externo não autorizado com http', () => {
+      expect(isValidJerseyImageUrl('http://example.com/jersey.jpg')).toBe(false);
     });
 
-    it('deve retornar true para URLs válidas com protocolo https', () => {
-      expect(isValidJerseyImageUrl('https://example.com/jersey.png')).toBe(true);
+    it('deve rejeitar domínio externo não autorizado com https', () => {
+      expect(isValidJerseyImageUrl('https://example.com/jersey.png')).toBe(false);
     });
 
-    it('deve retornar true para caminhos relativos', () => {
-      expect(isValidJerseyImageUrl('/images/jersey.jpg')).toBe(true);
+    it('deve aceitar apenas caminhos locais autorizados', () => {
+      expect(isValidJerseyImageUrl('/images/jersey.jpg')).toBe(false);
       expect(isValidJerseyImageUrl('/lovable-uploads/abc123.png')).toBe(true);
     });
 
@@ -78,7 +78,7 @@ describe('Jersey Image Utils', () => {
   describe('getReliableJerseyImageUrl', () => {
     const createMockJersey = (overrides = {}) => ({
       id: 'test-jersey-id',
-      image_url: 'https://valid-url.com/jersey.jpg',
+      image_url: 'https://xyz.supabase.co/storage/v1/object/public/jerseys/jersey.jpg',
       years: [2020],
       ...overrides
     });
@@ -86,7 +86,7 @@ describe('Jersey Image Utils', () => {
     it('deve retornar URL do banco quando válida', () => {
       const jersey = createMockJersey();
       const result = getReliableJerseyImageUrl(jersey);
-      expect(result).toBe('https://valid-url.com/jersey.jpg');
+      expect(result).toBe('https://xyz.supabase.co/storage/v1/object/public/jerseys/jersey.jpg');
     });
 
     it('deve retornar imagem padrão para URL inválida', () => {
@@ -96,8 +96,8 @@ describe('Jersey Image Utils', () => {
     });
 
     it('deve retornar imagem padrão para URL gstatic', () => {
-      const jersey = createMockJersey({ 
-        image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:abc123' 
+      const jersey = createMockJersey({
+        image_url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:abc123'
       });
       const result = getReliableJerseyImageUrl(jersey);
       expect(result).toBe(jerseyDefaultImage);
@@ -111,34 +111,34 @@ describe('Jersey Image Utils', () => {
 
     it('deve cachear resultado para mesma camisa', () => {
       const jersey = createMockJersey();
-      
+
       const result1 = getReliableJerseyImageUrl(jersey);
       const result2 = getReliableJerseyImageUrl(jersey);
-      
+
       expect(result1).toBe(result2);
     });
 
     it('deve limpar cache quando clearJerseyImageUrlCache é chamado', () => {
       const jersey = createMockJersey();
-      
+
       getReliableJerseyImageUrl(jersey);
       clearJerseyImageUrlCache();
-      
+
       // Modificar a jersey para verificar que cache foi limpo
-      const modifiedJersey = createMockJersey({ 
-        id: 'test-jersey-id', 
-        image_url: 'https://new-url.com/jersey.jpg' 
+      const modifiedJersey = createMockJersey({
+        id: 'test-jersey-id',
+        image_url: 'https://xyz.supabase.co/storage/v1/object/public/jerseys/new-jersey.jpg'
       });
       const result = getReliableJerseyImageUrl(modifiedJersey);
-      
-      expect(result).toBe('https://new-url.com/jersey.jpg');
+
+      expect(result).toBe('https://xyz.supabase.co/storage/v1/object/public/jerseys/new-jersey.jpg');
     });
   });
 
   describe('jerseyDefaultImage', () => {
     it('deve ser uma URL válida', () => {
       expect(jerseyDefaultImage).toBeTruthy();
-      expect(jerseyDefaultImage.startsWith('/')).toBe(true);
+      expect(jerseyDefaultImage.startsWith('data:image/svg+xml,')).toBe(true);
     });
 
     it('não deve ser uma URL externa', () => {

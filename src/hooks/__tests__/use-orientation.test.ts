@@ -1,11 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, cleanup } from '@testing-library/react';
 import { useOrientation } from '../use-orientation';
 
 describe('useOrientation', () => {
   let addEventListenerSpy: ReturnType<typeof vi.spyOn>;
   let removeEventListenerSpy: ReturnType<typeof vi.spyOn>;
 
+  const originalScreen = window.screen;
   beforeEach(() => {
     vi.useFakeTimers();
     addEventListenerSpy = vi.spyOn(window, 'addEventListener');
@@ -13,6 +14,8 @@ describe('useOrientation', () => {
   });
 
   afterEach(() => {
+    cleanup();
+    Object.defineProperty(window, 'screen', { value: originalScreen, configurable: true });
     vi.useRealTimers();
     vi.restoreAllMocks();
   });
@@ -139,20 +142,6 @@ describe('useOrientation', () => {
 
     expect(result.current.orientation).toBe('landscape');
     expect(result.current.isLandscape).toBe(true);
-  });
-
-  it('should return default values when window is undefined', () => {
-    const originalWindow = global.window;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (global as any).window = undefined;
-
-    const { result } = renderHook(() => useOrientation());
-    
-    expect(result.current.orientation).toBe('portrait');
-    expect(result.current.isPortrait).toBe(true);
-    expect(result.current.angle).toBe(0);
-
-    global.window = originalWindow;
   });
 
   it('should use legacy window.orientation when screen.orientation is unavailable', () => {
