@@ -1,3 +1,5 @@
+-- SEGURANCA (2026-09-25): senha removida do historico apos exposicao publica do repo.
+-- As senhas admin atuais ficam fora do repositorio (cofre do dono). Migration historica: NAO reexecutar em producao.
 -- Reativar login admin de forma segura via função RPC com SECURITY DEFINER
 -- e redefinir a senha solicitada para os usuários administrativos conhecidos.
 
@@ -25,11 +27,11 @@ GRANT EXECUTE ON FUNCTION public.verify_admin_credentials(TEXT, TEXT) TO anon, a
 
 -- Garante um usuário admin padrão e redefine senha conforme solicitado.
 INSERT INTO public.admin_users (username, password_hash)
-SELECT 'admin', crypt('PCFClub!21', gen_salt('bf'))
+SELECT 'admin', crypt('SENHA-REMOVIDA-DO-REPO-VER-COFRE', gen_salt('bf'))
 WHERE NOT EXISTS (
   SELECT 1 FROM public.admin_users WHERE lower(username) = 'admin'
 );
 
 UPDATE public.admin_users
-SET password_hash = crypt('PCFClub!21', gen_salt('bf'))
+SET password_hash = crypt('SENHA-REMOVIDA-DO-REPO-VER-COFRE', gen_salt('bf'))
 WHERE lower(username) IN ('admin', 'neigirao');

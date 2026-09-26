@@ -1,7 +1,9 @@
+-- SEGURANCA (2026-09-25): senha removida do historico apos exposicao publica do repo.
+-- As senhas admin atuais ficam fora do repositorio (cofre do dono). Migration historica: NAO reexecutar em producao.
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 
 UPDATE public.admin_users
-SET password_hash = extensions.crypt('PCFClub!21', extensions.gen_salt('bf'))
+SET password_hash = extensions.crypt('SENHA-REMOVIDA-DO-REPO-VER-COFRE', extensions.gen_salt('bf'))
 WHERE lower(username) = 'admin';
 
 CREATE OR REPLACE FUNCTION public.verify_admin_credentials(
