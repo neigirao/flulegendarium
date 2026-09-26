@@ -19,8 +19,16 @@ export const validateImageUrl = (url: string | null | undefined): ValidationResu
     };
   }
 
+  const trimmedUrl = url.trim();
+  const isRelativePath = trimmedUrl.startsWith('/');
+
+  let parsedUrl: URL;
   try {
-    new URL(url);
+    // Caminhos relativos (/lovable-uploads/x.png) são válidos; URLs absolutas
+    // precisam parsear sozinhas e usar http(s) - bloqueia javascript:, data:, etc.
+    parsedUrl = isRelativePath
+      ? new URL(trimmedUrl, 'https://placeholder.local')
+      : new URL(trimmedUrl);
   } catch {
     logger.warn('URL de imagem inválida', 'VALIDATION', { url });
     return {
@@ -30,12 +38,24 @@ export const validateImageUrl = (url: string | null | undefined): ValidationResu
     };
   }
 
-  const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
-  const hasValidExtension = validExtensions.some(ext => 
-    url.toLowerCase().includes(ext)
-  );
+  if (!isRelativePath && parsedUrl.protocol !== 'https:' && parsedUrl.protocol !== 'http:') {
+    logger.warn('Protocolo de URL de imagem não permitido', 'VALIDATION', { url });
+    return {
+      isValid: false,
+      error: 'URL de imagem inválida',
+      sanitizedData: '/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png'
+    };
+  }
 
-  if (!hasValidExtension && !url.includes('supabase') && !url.includes('lovable-uploads')) {
+  // Extensão checada no final do pathname - includes() aceitava ".jpg" em query
+  // string ou no meio de um javascript: disfarçado.
+  const pathname = parsedUrl.pathname.toLowerCase();
+  const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+  const hasValidExtension = validExtensions.some(ext => pathname.endsWith(ext));
+
+  const isTrustedSource = parsedUrl.hostname.includes('supabase') || pathname.includes('lovable-uploads');
+
+  if (!hasValidExtension && !isTrustedSource) {
     logger.warn('URL não parece ser uma imagem', 'VALIDATION', { url });
     return {
       isValid: false,

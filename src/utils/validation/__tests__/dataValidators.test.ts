@@ -19,6 +19,22 @@ describe('dataValidators', () => {
       const result = validateImageUrl('https://supabase.co/storage/image.png');
       expect(result.isValid).toBe(true);
     });
+
+    it('should accept relative local paths', () => {
+      const result = validateImageUrl('/lovable-uploads/local-image.png');
+      expect(result.isValid).toBe(true);
+      expect(result.sanitizedData).toBe('/lovable-uploads/local-image.png');
+    });
+
+    it('should reject non-http(s) protocols', () => {
+      expect(validateImageUrl('javascript:alert(1)').isValid).toBe(false);
+      expect(validateImageUrl('data:image/png;base64,iVBOR').isValid).toBe(false);
+    });
+
+    it('should not accept extension only in query string', () => {
+      const result = validateImageUrl('https://example.com/download?file=.jpg');
+      expect(result.isValid).toBe(false);
+    });
   });
 
   describe('validatePlayerData', () => {
