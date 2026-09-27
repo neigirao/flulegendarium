@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +7,7 @@ import { RootLayout } from '@/components/RootLayout';
 import { SEOManager } from '@/components/seo/SEOManager';
 import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { entrarNoAplicativo, noAplicativo } from '@/lib/entrar-nativo';
 
 const Auth = () => {
   const { user, loading } = useAuth();
@@ -21,7 +22,28 @@ const Auth = () => {
     }
   }, [user, loading, navigate, location.state]);
 
+  const [erroLogin, setErroLogin] = useState<string | null>(null);
+  const [abrindo, setAbrindo] = useState(false);
+
   const handleGoogleLogin = async () => {
+    setErroLogin(null);
+    /*
+     * Dentro do app o caminho da web não serve: o `origin` é
+     * `capacitor://localhost` e o provedor nunca volta — a pessoa fica presa
+     * no navegador. O caminho nativo abre a janela de autenticação do sistema
+     * e recebe o retorno pelo esquema `lendasdoflu://` (ver
+     * `src/lib/entrar-nativo.ts`).
+     */
+    if (noAplicativo()) {
+      setAbrindo(true);
+      const resultado = await entrarNoAplicativo('google');
+      setAbrindo(false);
+      if (resultado !== null && resultado !== 'cancelado') {
+        setErroLogin('Não foi possível entrar agora. Tente de novo.');
+        console.error('login nativo falhou:', resultado);
+      }
+      return;
+    }
     const state = location.state as { from?: { pathname?: string } } | null;
     const from = state?.from?.pathname || '/selecionar-modo-jogo';
     await supabase.auth.signInWithOAuth({
@@ -82,6 +104,7 @@ const Auth = () => {
                   variant="outline"
                   className="w-full touch-target-lg font-display border-2 hover:bg-muted"
                   onClick={handleGoogleLogin}
+                  disabled={abrindo}
                 >
                   <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                     <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
@@ -91,6 +114,16 @@ const Auth = () => {
                   </svg>
                   Entrar com Google
                 </Button>
+                {abrindo && (
+                  <p className="mt-3 text-center text-sm text-muted-foreground font-body">
+                    Abrindo o Google…
+                  </p>
+                )}
+                {erroLogin && (
+                  <p className="mt-3 text-center text-sm text-destructive font-body">
+                    {erroLogin}
+                  </p>
+                )}
               </CardContent>
             </Card>
           </div>
