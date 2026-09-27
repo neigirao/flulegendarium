@@ -8,7 +8,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = scene as? UIWindowScene else { return }
 
         window = UIWindow(windowScene: windowScene)
-        window?.rootViewController = CAPBridgeViewController()
+        /*
+         * `ViewController`, e NÃO `CAPBridgeViewController` — que é o que o
+         * template do Capacitor escreve aqui. A subclasse existe por um
+         * método só: registrar o plugin do login nativo (ver
+         * `ViewController.swift`). Quem desenha a tela é este método, em
+         * código — a janela da storyboard é descartada antes de aparecer —
+         * então é AQUI que a classe tem que estar. Voltar esta linha para a
+         * classe base compila, sobe na App Store, e o "Entrar com Google"
+         * trava sem erro nenhum no build.
+         */
+        window?.rootViewController = ViewController()
         window?.makeKeyAndVisible()
 
         SceneDelegateProxy.shared.scene(scene, willConnectTo: session, options: connectionOptions)
