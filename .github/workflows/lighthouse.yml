@@ -23,12 +23,12 @@ jobs:
       - name: Instalar Lighthouse CI
         run: npm install -g @lhci/cli@0.15.1
       - name: Auditar home do build (sem enviar relatórios a terceiros)
-        run: lhci autorun --collect.staticDistDir=./dist --collect.maxAutodiscoverUrls=1 --collect.numberOfRuns=1 --upload.target=filesystem
+        run: lhci autorun --collect.staticDistDir=./dist --collect.maxAutodiscoverUrls=1 --collect.numberOfRuns=1 --upload.target=filesystem --upload.outputDir=./lhci-reports
       - name: Guardar relatório do PR
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-home
-          path: .lighthouseci/
-          if-no-files-found: ignore
+          path: lhci-reports/
+          if-no-files-found: error
           retention-days: 7
