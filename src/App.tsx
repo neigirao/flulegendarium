@@ -47,6 +47,7 @@ import {
 } from "@/components/lazy-modules";
 
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
+const Privacidade = React.lazy(() => import("@/pages/Privacidade"));
 
 const AppRouteFallback = () => (
   <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-6 text-center" role="status" aria-live="polite">
@@ -125,6 +126,7 @@ function App() {
                             <Route path="/perfil" element={<LazyProfilePage />} />
                             <Route path="/desafios" element={<LazyDailyChallengesPage />} />
                             <Route path="/faq" element={<LazyFAQ />} />
+                            <Route path="/privacidade" element={<Privacidade />} />
                             <Route path="/tutorial" element={<LazyTutorial />} />
                             <Route path="/noticias" element={<LazyNewsPortal />} />
                             <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
