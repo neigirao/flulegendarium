@@ -1,0 +1,34 @@
+name: Lighthouse (relatório)
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Instalar Lighthouse CI
+        run: npm install -g @lhci/cli@0.15.1
+      - name: Auditar home do build (sem enviar relatórios a terceiros)
+        run: lhci autorun --collect.staticDistDir=./dist --collect.maxAutodiscoverUrls=1 --collect.numberOfRuns=1 --upload.target=filesystem
+      - name: Guardar relatório do PR
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-home
+          path: .lighthouseci/
+          if-no-files-found: ignore
+          retention-days: 7
