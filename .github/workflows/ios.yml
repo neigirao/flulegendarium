@@ -1,0 +1,26 @@
+name: iOS simulator build (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  ios-simulator:
+    runs-on: macos-15
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run mobile:sync
+      - name: Resolve Swift packages
+        run: xcodebuild -resolvePackageDependencies -project ios/App/App.xcodeproj -scheme App
+      - name: Compile simulator app without signing or publishing
+        run: >-
+          xcodebuild -project ios/App/App.xcodeproj
+          -scheme App -configuration Debug
+          -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath /tmp/lendas-ios-build
+          CODE_SIGNING_ALLOWED=NO build
