@@ -3,6 +3,8 @@ workflows:
     name: iOS App Store build
     max_build_duration: 60
     instance_type: mac_mini_m1
+    integrations:
+      app_store_connect: repup
     environment:
       ios_signing:
         distribution_type: app_store
@@ -29,7 +31,6 @@ workflows:
         recipients:
           - neigirao@gmail.com
       app_store_connect:
-        auth: key
-        api_key: repup
+        auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
