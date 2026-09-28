@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForPageReady, startGameWithName } from './helpers/test-helpers';
 
 test.describe('Quiz de Camisas', () => {
@@ -40,7 +40,7 @@ test.describe('Quiz de Camisas', () => {
     // Aguardar jogo carregar
     await page.waitForTimeout(2000);
     
-    const scoreDisplay = page.getByTestId('score-display');
+    const scoreDisplay = page.getByText('Score', { exact: true });
     await expect(scoreDisplay).toBeVisible({ timeout: 15000 });
   });
 
@@ -50,7 +50,7 @@ test.describe('Quiz de Camisas', () => {
     // Aguardar jogo carregar
     await page.waitForTimeout(2000);
     
-    const skipButton = page.getByTestId('skip-button');
+    const skipButton = page.getByRole('button', { name: /Pular/ });
     await expect(skipButton).toBeVisible({ timeout: 15000 });
   });
 
