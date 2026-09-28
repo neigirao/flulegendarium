@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForPageReady, waitForElement, goToGameModeSelection } from './helpers/test-helpers';
 
 test.describe('Seleção de Modo de Jogo', () => {
@@ -15,9 +15,9 @@ test.describe('Seleção de Modo de Jogo', () => {
 
   test('should display all game modes', async ({ page }) => {
     // Verificar que os modos estão visíveis usando data-testid
-    const adaptativoButton = page.getByTestId('game-mode-adaptativo');
-    const decadaButton = page.getByTestId('game-mode-decada');
-    const camisasButton = page.getByTestId('game-mode-camisas');
+    const adaptativoButton = page.getByTestId('game-mode-adaptive');
+    const decadaButton = page.getByTestId('game-mode-decade');
+    const camisasButton = page.getByTestId('game-mode-jersey');
     
     await expect(adaptativoButton).toBeVisible({ timeout: 10000 });
     await expect(decadaButton).toBeVisible();
@@ -25,7 +25,7 @@ test.describe('Seleção de Modo de Jogo', () => {
   });
 
   test('should navigate to quiz adaptativo', async ({ page }) => {
-    const adaptativoButton = page.getByTestId('game-mode-adaptativo');
+    const adaptativoButton = page.getByTestId('game-mode-adaptive');
     await expect(adaptativoButton).toBeVisible({ timeout: 10000 });
     
     await adaptativoButton.click({ force: true });
@@ -37,7 +37,7 @@ test.describe('Seleção de Modo de Jogo', () => {
   });
 
   test('should navigate to quiz decada', async ({ page }) => {
-    const decadaButton = page.getByTestId('game-mode-decada');
+    const decadaButton = page.getByTestId('game-mode-decade');
     await expect(decadaButton).toBeVisible({ timeout: 10000 });
     
     await decadaButton.click({ force: true });
@@ -49,7 +49,7 @@ test.describe('Seleção de Modo de Jogo', () => {
   });
 
   test('should navigate to quiz camisas', async ({ page }) => {
-    const camisasButton = page.getByTestId('game-mode-camisas');
+    const camisasButton = page.getByTestId('game-mode-jersey');
     await expect(camisasButton).toBeVisible({ timeout: 10000 });
     
     await camisasButton.click({ force: true });

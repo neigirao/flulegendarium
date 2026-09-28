@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { 
   waitForPageReady, 
   startGameWithName, 
@@ -19,10 +19,10 @@ test.describe('Gameplay - Quiz Adaptativo', () => {
     await page.waitForTimeout(5000);
     
     // Esperar elementos do jogo carregarem
-    const timerDisplay = page.getByTestId('timer-display');
-    const scoreDisplay = page.getByTestId('score-display');
+    const timerDisplay = page.getByText(/\d+ seg/);
+    const scoreDisplay = page.getByText('Score', { exact: true });
     const playerImage = page.getByTestId('player-image');
-    const gameContainer = page.getByTestId('game-container');
+    const gameContainer = page.getByTestId('quiz-adaptativo-page');
     
     const hasTimer = await timerDisplay.isVisible({ timeout: 20000 }).catch(() => false);
     const hasScore = await scoreDisplay.isVisible({ timeout: 5000 }).catch(() => false);
@@ -53,10 +53,10 @@ test.describe('Gameplay - Quiz Adaptativo', () => {
     await page.waitForTimeout(5000);
     
     // Esperar jogo carregar
-    const timerDisplay = page.getByTestId('timer-display');
-    const scoreDisplay = page.getByTestId('score-display');
+    const timerDisplay = page.getByText(/\d+ seg/);
+    const scoreDisplay = page.getByText('Score', { exact: true });
     const playerImage = page.getByTestId('player-image');
-    const gameContainer = page.getByTestId('game-container');
+    const gameContainer = page.getByTestId('quiz-adaptativo-page');
     
     const hasTimer = await timerDisplay.isVisible({ timeout: 20000 }).catch(() => false);
     const hasScore = await scoreDisplay.isVisible({ timeout: 5000 }).catch(() => false);
@@ -109,7 +109,7 @@ test.describe('Gameplay - Quiz Adaptativo', () => {
     // Verificar que algo aconteceu (toast, game over, ou mudança de estado)
     const gameOverDialog = page.getByTestId('game-over-dialog');
     const toast = page.locator('[data-sonner-toast]');
-    const scoreChanged = page.getByTestId('score-display');
+    const scoreChanged = page.getByText('Score', { exact: true });
     
     const hasGameOver = await gameOverDialog.isVisible({ timeout: 3000 }).catch(() => false);
     const hasToast = await toast.count() > 0;
@@ -125,10 +125,10 @@ test.describe('Gameplay - Quiz Adaptativo', () => {
     await page.waitForTimeout(5000);
     
     // Esperar jogo carregar
-    const timerDisplay = page.getByTestId('timer-display');
-    const scoreDisplay = page.getByTestId('score-display');
+    const timerDisplay = page.getByText(/\d+ seg/);
+    const scoreDisplay = page.getByText('Score', { exact: true });
     const playerImage = page.getByTestId('player-image');
-    const gameContainer = page.getByTestId('game-container');
+    const gameContainer = page.getByTestId('quiz-adaptativo-page');
     
     const hasTimer = await timerDisplay.isVisible({ timeout: 20000 }).catch(() => false);
     const hasScore = await scoreDisplay.isVisible({ timeout: 5000 }).catch(() => false);
@@ -145,9 +145,9 @@ test.describe('Gameplay - Quiz Adaptativo', () => {
     await page.waitForTimeout(5000);
     
     // Verificar timer usando data-testid
-    const timerDisplay = page.getByTestId('timer-display');
-    const scoreDisplay = page.getByTestId('score-display');
-    const gameContainer = page.getByTestId('game-container');
+    const timerDisplay = page.getByText(/\d+ seg/);
+    const scoreDisplay = page.getByText('Score', { exact: true });
+    const gameContainer = page.getByTestId('quiz-adaptativo-page');
     
     const hasTimer = await timerDisplay.isVisible({ timeout: 25000 }).catch(() => false);
     const hasScore = await scoreDisplay.isVisible({ timeout: 5000 }).catch(() => false);
@@ -156,41 +156,16 @@ test.describe('Gameplay - Quiz Adaptativo', () => {
     expect(hasTimer || hasScore || hasGameContainer).toBeTruthy();
   });
 
-  test('should show game over when time runs out', async ({ page }) => {
-    test.setTimeout(120000); // 2 minutos para este teste
-    
-    await startGameWithName(page, 'Jogador Teste');
-    await page.waitForTimeout(5000);
-    
-    // Esperar jogo carregar
-    const timerDisplay = page.getByTestId('timer-display');
-    const scoreDisplay = page.getByTestId('score-display');
-    const gameContainer = page.getByTestId('game-container');
-    
-    const hasTimer = await timerDisplay.isVisible({ timeout: 25000 }).catch(() => false);
-    const hasScore = await scoreDisplay.isVisible({ timeout: 5000 }).catch(() => false);
-    const hasGameContainer = await gameContainer.isVisible({ timeout: 5000 }).catch(() => false);
-    
-    if (!hasTimer && !hasScore && !hasGameContainer) {
-      // Jogo não carregou, passar teste
-      expect(true).toBeTruthy();
-      return;
-    }
-    
-    // Esperar o tempo acabar (máximo 45 segundos + buffer)
-    await page.waitForTimeout(50000);
-    
-    // Verificar que game over apareceu ou ranking form
-    const gameOverDialog = page.getByTestId('game-over-dialog');
-    const rankingForm = page.getByTestId('ranking-form');
-    
-    const hasGameOver = await gameOverDialog.isVisible({ timeout: 20000 }).catch(() => false);
-    const hasRanking = await rankingForm.isVisible({ timeout: 5000 }).catch(() => false);
-    
-    // Também aceitar se timer zerou (indica fim de jogo)
-    const timerText = await timerDisplay.textContent().catch(() => null);
-    const timerZeroed = timerText?.includes('0s') || timerText?.includes('00');
-    
-    expect(hasGameOver || hasRanking || timerZeroed).toBeTruthy();
+  test('should show game over when the timer expires', async ({ page }) => {
+    test.setTimeout(60000);
+    // Preserve the 60 timer ticks, only shorten their wall-clock spacing.
+    await page.addInitScript(() => {
+      const originalSetInterval = window.setInterval.bind(window);
+      window.setInterval = ((handler: TimerHandler, timeout?: number, ...args: unknown[]) =>
+        originalSetInterval(handler, timeout === 1000 ? 20 : timeout, ...args)) as typeof window.setInterval;
+    });
+    await page.reload();
+    await expect(page.getByTestId('player-image')).toBeVisible({ timeout: 30000 });
+    await expect(page.getByTestId('game-over-dialog')).toBeVisible({ timeout: 15000 });
   });
 });
