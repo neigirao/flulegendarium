@@ -36,15 +36,17 @@ const Privacidade = () => {
 
         <h2 className="pt-2 text-lg font-semibold">Para que usamos</h2>
         <p>
-          Só para fazer o jogo funcionar para você: salvar seu progresso, montar rankings e estatísticas e lembrar suas
-          preferências. Não vendemos seus dados. A base legal é a execução do serviço que você pediu ao criar a conta.
+          Para fazer o jogo funcionar: salvar seu progresso, montar rankings e lembrar suas preferências. Também usamos
+          métricas de uso para entender como o jogo é usado e corrigir falhas. Não vendemos seus dados. O serviço se baseia
+          na execução da conta; para métricas, respeitamos os direitos previstos na LGPD.
         </p>
 
         <h2 className="pt-2 text-lg font-semibold">Com quem os dados passam</h2>
         <ul className="list-disc space-y-1 pl-6">
           <li>Supabase: login (Google ou e-mail) e banco de dados onde seu jogo fica guardado.</li>
           <li>Google: se você escolher entrar com o Google, o login passa pela sua conta Google.</li>
-          <li>Sentry: registro técnico de erros, para corrigir falhas.</li>
+          <li>Google Analytics 4: mede visitas e interações com o jogo para melhorar o app. O Google pode usar cookies ou identificadores de dispositivo para essas métricas.</li>
+          <li>Sentry: registra erros e uma amostra reduzida de desempenho para corrigir falhas. Não gravamos sessões nem habilitamos o envio padrão de dados pessoais.</li>
           <li>Vercel Speed Insights: métricas anônimas de desempenho do site.</li>
           <li>Lovable: hospedagem do site.</li>
         </ul>
@@ -58,7 +60,7 @@ const Privacidade = () => {
         <h2 className="pt-2 text-lg font-semibold">Cookies e armazenamento no navegador</h2>
         <p>
           Usamos o armazenamento local do navegador para manter você conectado e lembrar preferências. Não usamos
-          cookies de publicidade.
+          cookies de publicidade. O Google Analytics pode usar cookies ou identificadores para medir visitas e interações.
         </p>
 
         <h2 className="pt-2 text-lg font-semibold">Seus direitos</h2>
