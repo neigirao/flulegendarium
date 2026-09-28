@@ -27,7 +27,7 @@ export const Footer = () => {
             <Link to="/estatisticas" className="text-muted-foreground hover:text-foreground transition-colors">
               Estatísticas
             </Link>
-            <Link to="/ranking" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/estatisticas" className="text-muted-foreground hover:text-foreground transition-colors">
               Ranking
             </Link>
             <a
