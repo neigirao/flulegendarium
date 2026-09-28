@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForPageReady, startGameWithName } from './helpers/test-helpers';
 
 test.describe('Quiz Adaptativo', () => {
@@ -36,7 +36,7 @@ test.describe('Quiz Adaptativo', () => {
       await page.waitForTimeout(3000);
       
       // Verificar se score está visível
-      const scoreDisplay = page.getByTestId('score-display');
+      const scoreDisplay = page.getByText('Score', { exact: true });
       await expect(scoreDisplay).toBeVisible({ timeout: 15000 });
     }
   });
@@ -70,7 +70,7 @@ test.describe('Quiz Adaptativo', () => {
     await startGameWithName(page, 'Jogador Teste');
     
     // Aguardar carregamento
-    await page.waitForTimeout(3000);
+    await expect(page.getByTestId('player-image')).toBeVisible({ timeout: 20000 });
     
     // Verificar que não há erros de imagem visíveis
     const errorIcon = page.getByTestId('image-error');
