@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForPageReady, startGameWithName } from './helpers/test-helpers';
 
 test.describe('Image Display Guarantee', () => {
