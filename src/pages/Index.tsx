@@ -206,12 +206,12 @@ const Index = () => {
           <div className="inline-flex items-center gap-2 text-primary w-full justify-center pb-10">
             <Instagram className="w-5 h-5" />
             <a
-              href="https://www.instagram.com/lendasdoflu"
+              href="https://www.instagram.com/jogolendasdoflu"
               target="_blank"
               rel="noopener noreferrer"
               className="text-lg font-bold hover:text-primary/80 transition-colors"
             >
-              @lendasdoflu
+              @jogolendasdoflu
             </a>
           </div>
         </div>
