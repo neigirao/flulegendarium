@@ -62,7 +62,7 @@ const SCHEMA_GENERATORS: Record<SchemaType, (props: { title: string; description
     "logo": `${CANONICAL_DOMAIN}/og-image.png`,
     "sameAs": [
       "https://twitter.com/lendasdoflu",
-      "https://instagram.com/lendasdoflu"
+      "https://instagram.com/jogolendasdoflu"
     ]
   }),
 

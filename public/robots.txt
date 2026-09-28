@@ -1,5 +1,5 @@
 
-# Robots.txt para Lendas do Flu - Quiz Oficial do Fluminense
+# Robots.txt para Lendas do Flu - Quiz independente sobre o Fluminense
 # Otimizado para SEO, growth orgânico e indexação por IAs
 
 User-agent: *

@@ -24,7 +24,7 @@ Lendas do Flu é uma aplicação web de quiz para torcedores do Fluminense FC. O
 
 - Stack: React 18 + TypeScript + Vite + Tailwind CSS + Supabase
 - Domínio de produção: https://lendasdoflu.com
-- Instagram: @lendasdoflu
+- Instagram: @jogolendasdoflu
 
 ## Rotas Principais
 

@@ -7,7 +7,7 @@ import { ArrowLeft, HelpCircle, MessageCircle, Trophy, Users, GamepadIcon, Shiel
 
 const adaptiveTutorialSteps = [
   {
-    title: "Bem-vindo ao Advinhe o Jogador",
+    title: "Bem-vindo ao Adivinhe o Jogador",
     icon: Brain,
     content: "Este modo ajusta automaticamente a dificuldade com base no seu desempenho. Quanto melhor você joga, mais desafiador ele fica.",
   },
@@ -62,11 +62,11 @@ const faqData = [
       },
       {
         question: "Quais modos de jogo estão disponíveis?",
-        answer: "Temos TRÊS modos: 1) Advinhe o Jogador - Sistema inteligente que ajusta a dificuldade baseado no seu desempenho; 2) Advinhe o Jogador por Década - Escolha uma época específica (anos 70, 80, 90, 2000s, 2010s, 2020s); 3) Quiz das Camisas - Veja uma camisa histórica e escolha o ano correto entre 3 opções!"
+        answer: "Temos TRÊS modos: 1) Adivinhe o Jogador - Sistema inteligente que ajusta a dificuldade baseado no seu desempenho; 2) Adivinhe o Jogador por Década - Escolha uma época específica (anos 70, 80, 90, 2000s, 2010s, 2020s); 3) Quiz das Camisas - Veja uma camisa histórica e escolha o ano correto entre 3 opções!"
       },
       {
-        question: "Como funciona o Advinhe o Jogador por Década?",
-        answer: "No Advinhe o Jogador por Década você escolhe um período específico da história do Fluminense. Por exemplo, se escolher 'Anos 2000s', aparecerão apenas jogadores que atuaram nessa década. É perfeito para nostálgicos ou para testar conhecimento sobre eras específicas!"
+        question: "Como funciona o Adivinhe o Jogador por Década?",
+        answer: "No Adivinhe o Jogador por Década você escolhe um período específico da história do Fluminense. Por exemplo, se escolher 'Anos 2000s', aparecerão apenas jogadores que atuaram nessa década. É perfeito para nostálgicos ou para testar conhecimento sobre eras específicas!"
       },
       {
         question: "Como funciona o sistema adaptativo?",
@@ -122,11 +122,11 @@ const faqData = [
     questions: [
       {
         question: "Como começar a jogar?",
-        answer: "Clique em 'Começar a Jogar' na página inicial, escolha entre Advinhe o Jogador, Advinhe o Jogador por Década ou Quiz das Camisas e use este tutorial como referência para testar seus conhecimentos tricolores!"
+        answer: "Clique em 'Começar a Jogar' na página inicial, escolha entre Adivinhe o Jogador, Adivinhe o Jogador por Década ou Quiz das Camisas e use este tutorial como referência para testar seus conhecimentos tricolores!"
       },
       {
         question: "Qual é a diferença entre os modos?",
-        answer: "Advinhe o Jogador: dificuldade automática baseada no desempenho. Advinhe o Jogador por Década: você escolhe a era (70s, 80s, 90s, 2000s, 2010s, 2020s) e joga apenas com jogadores daquele período específico. Quiz das Camisas: você identifica o ano de um uniforme histórico."
+        answer: "Adivinhe o Jogador: dificuldade automática baseada no desempenho. Adivinhe o Jogador por Década: você escolhe a era (70s, 80s, 90s, 2000s, 2010s, 2020s) e joga apenas com jogadores daquele período específico. Quiz das Camisas: você identifica o ano de um uniforme histórico."
       },
       {
         question: "Posso tentar mais de uma vez por jogador?",
@@ -178,7 +178,7 @@ const faqData = [
       },
       {
         question: "Existe ranking separado por modo de jogo?",
-        answer: "O ranking mostra as melhores pontuações de todos os modos. Jogadores que conseguem alta pontuação no Advinhe o Jogador por Década das décadas mais antigas (mais difíceis) podem alcançar o topo mais facilmente!"
+        answer: "O ranking mostra as melhores pontuações de todos os modos. Jogadores que conseguem alta pontuação no Adivinhe o Jogador por Década das décadas mais antigas (mais difíceis) podem alcançar o topo mais facilmente!"
       }
     ]
   },
@@ -255,7 +255,7 @@ export default function Tutorial() {
               <CardHeader className="bg-muted/50">
                 <CardTitle className="flex items-center gap-3 text-primary font-display text-display-sm">
                   <Brain className="w-6 h-6" />
-                  Tutorial do modo Advinhe o Jogador
+                  Tutorial do modo Adivinhe o Jogador
                 </CardTitle>
                 <CardDescription className="font-body">Etapas principais do modo adaptativo</CardDescription>
               </CardHeader>
