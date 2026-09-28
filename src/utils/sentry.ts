@@ -24,25 +24,16 @@ export const initializeSentry = () => {
         // Enable HTTP request timing
         enableHTTPTimings: true,
       }),
-      Sentry.replayIntegration(),
     ],
     
-    // Set tracesSampleRate to 1.0 to capture 100%
-    // of transactions for performance monitoring.
-    // We recommend adjusting this value in production
-    tracesSampleRate: 1.0,
-    
-    // Capture Replay for 10% of all sessions,
-    // plus for 100% of sessions with an error
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
+    // Sample performance traces; session replay is disabled.
+    tracesSampleRate: 0.1,
     
     // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
     tracePropagationTargets: ["localhost", /^https:\/\/.*\.supabase\.co\//, /^https:\/\/api\./],
     
-    // Setting this option to true will send default PII data to Sentry.
-    // For example, automatic IP address collection on events
-    sendDefaultPii: true,
+    // Do not attach default personal data to error events.
+    sendDefaultPii: false,
     
     // Environment
     environment: import.meta.env.MODE,
