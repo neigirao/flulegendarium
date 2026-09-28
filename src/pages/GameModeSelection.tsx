@@ -78,7 +78,7 @@ const GameModeSelection = () => {
       />
       <RootLayout>
         <div data-testid="game-mode-page" className="min-h-screen page-warm bg-tricolor-vertical-border">
-          <div className="max-w-[1180px] mx-auto px-7 pt-8 pb-16">
+          <div className="max-w-[1180px] mx-auto px-4 sm:px-7 pt-8 pb-16">
 
             {/* Back button */}
             <button
@@ -105,7 +105,7 @@ const GameModeSelection = () => {
             </div>
 
             {/* Welcome strip */}
-            <div className="max-w-[680px] mx-auto mb-7 bg-white border border-border rounded-[14px] px-5 py-3.5 flex items-center gap-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+            <div className="max-w-[680px] mx-auto mb-7 bg-white border border-border rounded-[14px] px-5 py-3.5 flex flex-wrap sm:flex-nowrap items-center gap-3.5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
               <div className="w-11 h-11 rounded-full bg-gradient-to-br from-primary to-[#AF1E35] flex items-center justify-center text-white font-display text-[20px] flex-shrink-0">
                 {initial}
               </div>
@@ -113,12 +113,12 @@ const GameModeSelection = () => {
                 <div className="text-[14px] font-semibold text-foreground mb-0.5">
                   👋 Olá, <strong>{userName}</strong>!
                 </div>
-                <div className="text-[12px] text-muted-foreground flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
+                <div className="text-[12px] text-muted-foreground flex items-start gap-1.5 leading-snug">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0 mt-1.5" />
                   Sua pontuação será salva automaticamente no ranking
                 </div>
               </div>
-              <div className="flex items-center gap-3 flex-shrink-0">
+              <div className="flex items-center gap-3 flex-shrink-0 ml-[3.625rem] sm:ml-0">
                 {streak > 0 && (
                   <div className="text-center" title={`Melhor sequência: ${bestStreak} dias`}>
                     <div className="font-display text-[22px] text-accent leading-none">🔥 {streak}</div>
