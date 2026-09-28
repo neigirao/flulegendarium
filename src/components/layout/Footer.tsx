@@ -30,14 +30,15 @@ export const Footer = () => {
             <Link to="/ranking" className="text-muted-foreground hover:text-foreground transition-colors">
               Ranking
             </Link>
+            <Link to="/suporte" className="text-muted-foreground hover:text-foreground transition-colors">Suporte</Link>
             <a
-              href="https://www.instagram.com/lendasdoflu"
+              href="https://www.instagram.com/jogolendasdoflu"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
             >
               <Instagram className="w-3.5 h-3.5" />
-              @lendasdoflu
+              @jogolendasdoflu
             </a>
           </nav>
 
