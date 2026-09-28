@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures';
 import { waitForPageReady, startGameWithName, closeAllOverlays } from './helpers/test-helpers';
 
 test.describe('Cenários de Erro e Resiliência', () => {
