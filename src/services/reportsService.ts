@@ -226,7 +226,7 @@ export const reportsService = {
   },
 
   async getErrorMetricsReport(days: number = 7): Promise<ErrorMetrics[]> {
-    const { data, error } = await (supabase.rpc as unknown as (fn: string, args: { p_days: number }) => Promise<{ data: unknown; error: unknown }>)('get_error_metrics_daily', {
+    const { data, error } = await (supabase.rpc as unknown as (fn: string, args: { p_days: number }) => Promise<{ data: unknown; error: { message?: string } | null }>)('get_error_metrics_daily', {
       p_days: Math.max(1, days),
     });
 
