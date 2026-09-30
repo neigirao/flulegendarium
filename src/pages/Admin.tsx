@@ -116,7 +116,7 @@ export default function Admin() {
           <TabsContent value="image-audit">
             <div className={`${adminCardClassName} space-y-8`}>
               <div>
-                <h2 className={adminSectionTitleClassName}>Reports de Imagens (Usuários)</h2>
+                <h2 className={adminSectionTitleClassName}>Relatos de problemas nas imagens</h2>
                 <Suspense fallback={adminTabFallback}>
                   <ImageFeedbackReport />
                 </Suspense>
