@@ -1,9 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+import { hasValidAdminSession, unauthorizedResponse } from '../_shared/authGuard.ts';
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-admin-session",
 };
 
 // Domínios externos problemáticos
@@ -31,6 +33,11 @@ function isBase64Url(url: string): boolean {
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Acesso restrito: só sessão de admin (painel manda x-admin-session).
+  if (!(await hasValidAdminSession(req))) {
+    return unauthorizedResponse(corsHeaders);
   }
 
   try {
