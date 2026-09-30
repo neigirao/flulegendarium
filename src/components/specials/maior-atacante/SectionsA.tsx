@@ -591,7 +591,6 @@ function getCompPhases(p: ILFPlayer) {
 
 export function CampanhasSection() {
   const players = ILF_SORTED_BY_CAMPANHAS;
-  const valLabel = (v: number) => KNOCKOUT_LEGEND.find(l => l.v === v)?.label || '—';
   const posColor = (pos: number) => pos === 1 ? '#C4944A' : pos <= 4 ? '#006140' : pos <= 10 ? '#64748B' : '#94A3B8';
 
   return (
