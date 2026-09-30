@@ -66,7 +66,7 @@ export const UsersTable = ({
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
             <Input
-              placeholder="Buscar por nome ou email..."
+              placeholder="Buscar por nome ou e-mail"
               value={searchTerm}
               onChange={(e) => onSearchChange(e.target.value)}
               className="pl-10"
