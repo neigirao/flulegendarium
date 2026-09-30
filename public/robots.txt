@@ -128,47 +128,44 @@ Crawl-delay: 1
 
 # ===== BOTS DE IA E ASSISTENTES =====
 
-# OpenAI (ChatGPT, GPTs)
+# OpenAI - busca e resposta (citação)
+User-agent: OAI-SearchBot
+Allow: /
+
 User-agent: ChatGPT-User
 Allow: /
-Crawl-delay: 1
 
+# OpenAI - treino de modelos
 User-agent: GPTBot
 Allow: /
-Crawl-delay: 1
 
-User-agent: OpenAI-SearchBot
+# Anthropic (Claude) - busca/resposta e treino
+User-agent: Claude-SearchBot
 Allow: /
-Crawl-delay: 1
 
-# Anthropic (Claude)
-User-agent: Claude-Web
+User-agent: Claude-User
 Allow: /
-Crawl-delay: 1
 
-User-agent: anthropic-ai
+User-agent: ClaudeBot
 Allow: /
-Crawl-delay: 1
 
-# Perplexity
+# Perplexity - busca e resposta
 User-agent: PerplexityBot
 Allow: /
-Crawl-delay: 1
 
-# Google Bard/Gemini
+User-agent: Perplexity-User
+Allow: /
+
+# Google (treino Gemini) e Apple (treino Apple Intelligence)
 User-agent: Google-Extended
 Allow: /
-Crawl-delay: 1
 
-# Microsoft Copilot
-User-agent: Bingbot-ChatGPT
+User-agent: Applebot-Extended
 Allow: /
-Crawl-delay: 1
 
 # Meta AI
-User-agent: FacebookBot
+User-agent: meta-externalagent
 Allow: /
-Crawl-delay: 2
 
 # ===== METADADOS PARA IAs =====
 
