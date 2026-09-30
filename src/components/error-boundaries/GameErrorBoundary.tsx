@@ -32,7 +32,7 @@ const GameErrorFallback = ({ onRetry, onGoBack }: { onRetry: () => void; onGoBac
             Erro no Jogo
           </CardTitle>
           <CardDescription>
-            Ocorreu um problema durante o jogo. Suas estatísticas foram salvas.
+            O jogo foi interrompido. Não conseguimos confirmar o salvamento desta partida.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
