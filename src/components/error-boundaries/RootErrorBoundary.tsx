@@ -106,7 +106,7 @@ export class RootErrorBoundary extends Component<Props, State> {
                 Ops! Algo deu errado
               </CardTitle>
               <CardDescription>
-                Ocorreu um erro inesperado na aplicação. Nossas equipes foram notificadas.
+                Algo deu errado ao abrir o app. Tente novamente. Se continuar, fale com o suporte.
               </CardDescription>
             </CardHeader>
             
@@ -188,4 +188,4 @@ export class RootErrorBoundary extends Component<Props, State> {
 
     return this.props.children;
   }
-}
+                }

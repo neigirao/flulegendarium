@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Heart, Smartphone, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -6,7 +6,7 @@ import { SEOManager } from '@/components/seo/SEOManager';
 
 const Donations = () => {
   const donationValues = [
-    { amount: 1, icon: '☕', label: 'Um cafézinho', description: 'Ajuda básica' },
+    { amount: 1, icon: '☕', label: 'Um cafezinho', description: 'Ajuda básica' },
     { amount: 5, icon: '🍕', label: 'Uma fatia de pizza', description: 'Apoio simples' },
     { amount: 10, icon: '❤️', label: 'Apoia os servidores', description: 'Suporte essencial' },
     { amount: 25, icon: '⚡', label: 'Auxilia novas funções', description: 'Desenvolvimento' },
@@ -15,8 +15,10 @@ const Donations = () => {
 
   const pixKey = "a772f096-c75d-4c0f-a4fe-2ae2e7884649";
 
-  const copyPixKey = () => {
-    navigator.clipboard.writeText(pixKey);
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle');
+  const copyPixKey = async () => {
+    try { await navigator.clipboard.writeText(pixKey); setCopyStatus('copied'); }
+    catch { setCopyStatus('error'); }
   };
 
   return (
@@ -48,7 +50,7 @@ const Donations = () => {
             </h2>
             
             <p className="font-body text-xl text-muted-foreground mb-6">
-              Ajude a melhorar e manter o jogo
+              Ajude a manter o Flu em jogo por aqui. A doação é opcional.
             </p>
             
             <p className="font-body text-muted-foreground leading-relaxed">
@@ -71,7 +73,7 @@ const Donations = () => {
                 <div className="bg-card rounded-lg p-6 max-w-xs mx-auto border border-border">
                   <img 
                     src="/lovable-uploads/7df50b87-e220-4f5e-be35-e5f61cb46d2f.png"
-                    alt="PIX QR Code para doações"
+                    alt="QR code do Pix para doações"
                     className="w-48 h-48 object-contain mx-auto mb-4"
                   />
                   <p className="text-sm text-muted-foreground font-medium font-body">PIX QR Code</p>
@@ -87,8 +89,9 @@ const Donations = () => {
                   variant="outline"
                   className="mt-4 touch-target font-body border-primary/30 text-primary hover:bg-primary/5"
                 >
-                  Copiar Chave PIX: {pixKey}
+                  {copyStatus === 'copied' ? 'Chave copiada' : 'Copiar chave Pix'}
                 </Button>
+                {copyStatus === 'error' && <div role="alert">Não conseguimos copiar. Selecione a chave e copie manualmente.<p className="break-all select-all">{pixKey}</p></div>}
               </div>
             </CardContent>
           </Card>
@@ -98,7 +101,7 @@ const Donations = () => {
             <CardHeader>
               <h3 className="font-display text-display-subtitle text-primary text-center flex items-center justify-center gap-2">
                 <Gift className="h-6 w-6 text-gold" />
-                Valores de doação
+                Sugestões de valor
               </h3>
             </CardHeader>
             <CardContent className="p-6">

@@ -12,7 +12,7 @@ const slides = [
     icon: Trophy,
     details: [
       'De Castilho a Cano, passando por todas as eras',
-      'Jogue de graça, sem cadastro',
+      'Entre com Google ou Apple para jogar de graça',
       'Desafie amigos e entre no ranking',
     ],
   },

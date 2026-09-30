@@ -54,7 +54,7 @@ const Privacidade = () => {
         <h2 className="pt-2 text-lg font-semibold">O que fica público</h2>
         <p>
           Rankings e páginas públicas de estatísticas mostram apenas seu nome de exibição e seu desempenho no jogo.
-          Nada além disso fica público.
+          O perfil também pode mostrar a foto escolhida por você.
         </p>
 
         <h2 className="pt-2 text-lg font-semibold">Cookies e armazenamento no navegador</h2>

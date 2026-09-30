@@ -50,7 +50,7 @@ export const ErrorState = ({
     game: {
       icon: AlertTriangle,
       title: title || "Erro no jogo",
-      description: description || "Ocorreu um problema durante o jogo. Suas estatísticas foram salvas.",
+      description: description || "O jogo foi interrompido. Não conseguimos confirmar o salvamento desta partida.",
       color: "text-primary",
       bgColor: "bg-secondary/10"
     },

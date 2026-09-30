@@ -112,13 +112,13 @@ const AdaptiveGameContainer = () => {
   return (
     <>
       <SEOManager
-        title={`Advinhe o Jogador - ${currentDifficulty.label} | Lendas do Flu`}
+        title={`Adivinhe o Jogador - ${currentDifficulty.label} | Lendas do Flu`}
         description="Quiz inteligente que se adapta ao seu nível! Adivinhe jogadores lendários do Fluminense."
         schema="Game"
       />
 
       <BaseGameContainer
-        title="Advinhe o Jogador"
+        title="Adivinhe o Jogador"
         isLoading={isLoading}
         loadingMessage="Carregando jogadores..."
         hasPlayers={!!(players && players.length > 0)}

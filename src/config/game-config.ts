@@ -131,14 +131,14 @@ export const ANALYTICS_CONFIG = {
 export const GAME_MODES = {
   ADAPTIVE: {
     id: 'adaptive',
-    name: 'Advinhe o Jogador',
+    name: 'Adivinhe o Jogador',
     description: 'Dificuldade ajusta automaticamente baseado no seu desempenho',
     path: '/quiz-adaptativo',
     icon: '🎯'
   },
   DECADE: {
     id: 'decade',
-    name: 'Advinhe o Jogador por Década',
+    name: 'Adivinhe o Jogador por Década',
     description: 'Teste seus conhecimentos sobre jogadores de cada época',
     path: '/quiz-decada',
     icon: '📅'

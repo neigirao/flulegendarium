@@ -70,7 +70,7 @@ const faqData = [
       },
       {
         question: "Como funciona o sistema adaptativo?",
-        answer: "O sistema adaptativo ajusta automaticamente a dificuldade do jogo baseado no seu desempenho. Acertou várias seguidas? O jogo fica mais difícil. Errou? Diminui um pouco a dificuldade. É como ter um treinador pessoal para seu conhecimento tricolor!"
+        answer: "O sistema adaptativo ajusta automaticamente a dificuldade do jogo baseado no seu desempenho. Acertou várias seguidas? O jogo fica mais difícil. A dificuldade sobe com o total de acertos da partida e não volta a cair. É como ter um treinador pessoal para seu conhecimento tricolor!"
       },
       {
         question: "Como funciona a progressão de dificuldade?",
@@ -78,7 +78,7 @@ const faqData = [
       },
       {
         question: "O jogo é gratuito?",
-        answer: "Sim! Lendas do Flu é completamente gratuito. Você pode jogar como convidado sem nenhuma restrição. Para aparecer no ranking oficial, basta inserir seu nome após cada partida."
+        answer: "Sim! Lendas do Flu é completamente gratuito. Para jogar, entre com Google ou Apple. Para aparecer no ranking oficial, basta inserir seu nome após cada partida."
       },
       {
         question: "Quantos jogadores estão no jogo?",
@@ -138,7 +138,7 @@ const faqData = [
       },
       {
         question: "Como funciona a pontuação?",
-        answer: "Os pontos variam conforme a dificuldade do jogador - jogadores mais difíceis valem mais pontos! No nível Muito Fácil você ganha 2,5 pontos, Fácil: 3,75 pontos, Médio: 5 pontos, Difícil: 7,5 pontos e Muito Difícil: 10 pontos por acerto."
+        answer: "Cada acerto vale pontos conforme o nível de dificuldade."
       },
       {
         question: "Posso usar nomes e apelidos?",
@@ -174,7 +174,7 @@ const faqData = [
       },
       {
         question: "Como adicionar meu Instagram ao ranking?",
-        answer: "Ao salvar sua pontuação, coloque seu nome seguido de (@seuinstagram). Por exemplo: 'João Silva (@joaosilva)'. Assim sua foto do Instagram aparecerá no ranking e seu nome virará um link para seu perfil."
+        answer: "Ao salvar sua pontuação, coloque seu nome seguido de (@seuinstagram). Por exemplo: 'João Silva (@joaosilva)'. Seu nome vira um link para o perfil. A foto aparece se estiver disponível; caso contrário, mostramos suas iniciais."
       },
       {
         question: "Existe ranking separado por modo de jogo?",
@@ -310,7 +310,7 @@ export default function Tutorial() {
                 <ul className="space-y-2 font-body text-muted-foreground">
                   <li>• Você tem tempo limitado para responder cada rodada.</li>
                   <li>• Errou a resposta? A partida termina em Game Over.</li>
-                  <li>• A pontuação sobe com dificuldade e rapidez da resposta.</li>
+                  <li>• No quiz de jogadores, a pontuação sobe com a dificuldade. No quiz das camisas, responder rápido também rende um bônus.</li>
                   <li>• Trocar de aba durante a partida encerra o jogo.</li>
                 </ul>
               </CardContent>
@@ -412,4 +412,4 @@ export default function Tutorial() {
       </div>
     </>
   );
-}
+          }

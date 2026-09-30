@@ -44,7 +44,7 @@ const NotFound = () => {
             </div>
           </div>
           <h2 className="text-2xl font-bold text-primary mb-4">
-            Página Não Encontrada
+            Essa página saiu de campo
           </h2>
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
             Ops! A página que você está procurando não existe ou foi movida.

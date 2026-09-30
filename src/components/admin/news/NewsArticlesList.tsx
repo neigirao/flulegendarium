@@ -250,7 +250,7 @@ export const NewsArticlesList = ({ onEditArticle }: NewsArticlesListProps) => {
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Deletar notícia</AlertDialogTitle>
+                      <AlertDialogTitle>Excluir notícia</AlertDialogTitle>
                       <AlertDialogDescription>
                         Tem certeza que deseja deletar a notícia "{article.title}"? 
                         Esta ação não pode ser desfeita.

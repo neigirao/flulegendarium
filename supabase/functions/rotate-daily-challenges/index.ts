@@ -12,7 +12,7 @@ const corsHeaders = {
 // Valid target_metric values: games_played, streak, accuracy
 const challengeTemplates = [
   {
-    title: "Primeira Vitória do Dia",
+    title: "Primeira partida do dia",
     description: "Complete uma partida hoje",
     challenge_type: "daily",
     target_metric: "games_played",

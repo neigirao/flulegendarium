@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 
 const HOW_IT_WORKS = [
   { num: '1', color: 'bg-primary shadow-[0_6px_18px_rgba(122,2,19,0.3)]',  title: 'VEJA',      desc: 'Uma foto ou camisa de um ídolo do Fluminense aparece na sua tela.' },
-  { num: '2', color: 'bg-secondary shadow-[0_6px_18px_rgba(0,97,64,0.3)]', title: 'RESPONDA',  desc: 'Digite o nome ou escolha a era correta. Use apelidos — o sistema é esperto.' },
+  { num: '2', color: 'bg-secondary shadow-[0_6px_18px_rgba(0,97,64,0.3)]', title: 'RESPONDA',  desc: 'Digite o nome ou escolha o ano da camisa. Use apelidos — o sistema é esperto.' },
   { num: '3', color: 'bg-[#C4944A] shadow-[0_6px_18px_rgba(196,148,74,0.3)]', title: 'PONTUE',    desc: 'Ganhe pontos, suba o nível e dispute o topo do ranking tricolor.' },
 ] as const;
 
@@ -81,7 +81,7 @@ const Index = () => {
                 </h1>
 
                 <p className="text-[17px] text-foreground/75 leading-[1.55] mb-7 max-w-[480px]">
-                  Das Laranjeiras ao Maracanã — <strong className="text-foreground">3 modos de quiz</strong> para provar que você é um verdadeiro tricolor.
+                  Das Laranjeiras ao Maracanã — <strong className="text-foreground">3 modos de quiz</strong> para botar sua memória tricolor em campo.
                 </p>
 
                 <div className="flex gap-3 items-center flex-wrap mb-6">

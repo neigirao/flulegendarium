@@ -296,7 +296,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: 'Lendas do Flu <onboarding@resend.dev>',
       to: ['neigirao@gmail.com'], // Email do desenvolvedor (verificado no Resend)
-      subject: `📊 Relatório Semanal de Auditoria de Imagens - ${auditResults.problematic} imagens precisam migração`,
+      subject: `📊 Relatório Semanal de Auditoria de Imagens - ${auditResults.problematic} imagens precisam de migração`,
       html: emailHtml,
     });
 

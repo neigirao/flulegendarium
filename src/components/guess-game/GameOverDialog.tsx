@@ -184,7 +184,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
           toast.success('Pontuação salva automaticamente no ranking!');
         } catch (error) {
           console.error('Error auto-saving to ranking:', error);
-          toast.error('Erro ao salvar pontuação. Tente jogar novamente.');
+          toast.error('Não conseguimos salvar esta pontuação no ranking.');
         } finally {
           setIsAutoSaving(false);
           autoSaveInFlightRef.current = false;

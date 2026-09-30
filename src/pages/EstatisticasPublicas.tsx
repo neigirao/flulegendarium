@@ -174,7 +174,7 @@ const EstatisticasPublicas = () => {
               <SectionHeader
                 emoji="⚡"
                 title="Lendas Mais Conhecidas vs Mais Difíceis"
-                subtitle="Compare quem todo mundo reconhece com quem desafia até os experts"
+                subtitle="Compare quem todo mundo reconhece com quem desafia até os craques da memória tricolor"
               />
               <HardestPlayers />
             </motion.div>
