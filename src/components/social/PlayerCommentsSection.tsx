@@ -12,7 +12,7 @@ interface Comment {
   id: string;
   user_name: string;
   comment: string;
-  rating: number;
+  rating: number | null;
   created_at: string;
 }
 
@@ -207,7 +207,7 @@ export const PlayerCommentsSection = ({ playerId, playerName }: PlayerCommentsSe
                       <Star
                         key={i}
                         className={`w-3 h-3 ${
-                          i < comment.rating
+                          i < (comment.rating ?? 0)
                             ? 'fill-yellow-400 text-yellow-400'
                             : 'text-muted-foreground'
                         }`}
