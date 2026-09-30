@@ -122,7 +122,7 @@ export const TopNavigation = () => {
                 <button
                   key={item.label}
                   onClick={item.onClick}
-                  onMouseEnter={() => handlePrefetch(item.route)}
+                  onMouseEnter={() => item.route && handlePrefetch(item.route)}
                   className="px-3.5 py-1.5 text-[13px] font-medium text-muted-foreground rounded-[7px] hover:bg-primary/6 hover:text-primary transition-colors"
                 >
                   {item.label}
@@ -188,7 +188,7 @@ export const TopNavigation = () => {
                       <Button
                         key={item.label}
                         variant="ghost"
-                        onClick={() => handleNavigation(item.onClick)}
+                        onClick={() => item.onClick && handleNavigation(item.onClick)}
                         className="justify-start text-primary hover:bg-secondary/10 hover:text-secondary touch-target-lg"
                       >
                         <item.icon className="h-5 w-5 mr-3" />
