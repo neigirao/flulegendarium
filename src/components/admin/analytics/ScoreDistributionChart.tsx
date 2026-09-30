@@ -15,7 +15,7 @@ interface ScoreDistributionChartProps {
 }
 
 interface TooltipPayload {
-  payload: { percent: number };
+  payload?: { percent?: number };
 }
 
 export const ScoreDistributionChart = ({ data, isLoading }: ScoreDistributionChartProps) => {
@@ -77,7 +77,7 @@ export const ScoreDistributionChart = ({ data, isLoading }: ScoreDistributionCha
                     borderRadius: '8px'
                   }}
                   formatter={(value: number, name: string, props: TooltipPayload) => [
-                    `${value} jogadores (${props.payload.percent}%)`,
+                    `${value} jogadores (${props.payload?.percent ?? 0}%)`,
                     'Quantidade'
                   ]}
                 />
