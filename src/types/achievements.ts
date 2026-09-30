@@ -21,8 +21,8 @@ export interface UserAchievement {
   user_id: string;
   achievement_id: string;
   unlocked_at: string;
-  progress: number;
-  max_progress: number;
+  progress: number | null;
+  max_progress: number | null;
   created_at: string;
 }
 
