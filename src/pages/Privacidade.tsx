@@ -29,7 +29,7 @@ const Privacidade = () => {
 
         <h2 className="pt-2 text-lg font-semibold">O que guardamos</h2>
         <ul className="list-disc space-y-1 pl-6">
-          <li>Conta: seu e-mail e, se você entrar com o Google, nome e foto do perfil Google.</li>
+          <li>Conta: seu e-mail e, se você entrar com o Google, nome e foto do perfil Google; com a Apple, o e-mail que a Apple informar.</li>
           <li>Jogo: pontuações, progresso, conquistas, estatísticas, desafios e preferências.</li>
           <li>Perfil: nome de exibição e foto que você escolher.</li>
         </ul>
@@ -43,7 +43,7 @@ const Privacidade = () => {
 
         <h2 className="pt-2 text-lg font-semibold">Com quem os dados passam</h2>
         <ul className="list-disc space-y-1 pl-6">
-          <li>Supabase: login (Google ou e-mail) e banco de dados onde seu jogo fica guardado.</li>
+          <li>Supabase: login social (Google ou Apple) e banco de dados onde seu jogo fica guardado.</li>
           <li>Google: se você escolher entrar com o Google, o login passa pela sua conta Google.</li>
           <li>Google Analytics 4: mede visitas e interações com o jogo para melhorar o app. O Google pode usar cookies ou identificadores de dispositivo para essas métricas.</li>
           <li>Sentry: registra erros e uma amostra reduzida de desempenho para corrigir falhas. Não gravamos sessões nem habilitamos o envio padrão de dados pessoais.</li>
@@ -78,6 +78,10 @@ const Privacidade = () => {
 
         <h2 className="pt-2 text-lg font-semibold">Mudanças</h2>
         <p>Se esta política mudar, a data no topo é atualizada.</p>
+
+        <p>
+          Veja também os <Link to="/termos" className="underline">Termos de uso</Link>.
+        </p>
       </article>
     </main>
   );
