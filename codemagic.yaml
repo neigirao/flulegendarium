@@ -66,4 +66,4 @@ workflows:
           success: false
           failure: true
 
-# web-ci ativo: pushes na main rodam typecheck + testes + build.
+# web-ci ativo: pushes na main rodam typecheck + testes + build. (kick 2)
