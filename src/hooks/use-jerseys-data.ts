@@ -91,7 +91,7 @@ export const useJerseysData = () => {
     },
     staleTime: 5 * 60 * 1000,
     retry: (failureCount, error: Error & { status?: number }) => {
-      if (error?.status >= 400 && error?.status < 500) {
+      if ((error?.status ?? 0) >= 400 && (error?.status ?? 0) < 500) {
         return false;
       }
       return failureCount < 2;
