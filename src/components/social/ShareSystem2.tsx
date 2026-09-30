@@ -196,7 +196,7 @@ Teste seus conhecimentos: ${window.location.origin}
           {/* Opções de Compartilhamento */}
           <div className="space-y-4">
             {/* Compartilhamento Rápido */}
-            {navigator.share && (
+            {typeof navigator.share === 'function' && (
               <Button
                 onClick={shareViaWebShare}
                 className="w-full bg-primary hover:bg-primary/90"
