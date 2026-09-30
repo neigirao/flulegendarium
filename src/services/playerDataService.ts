@@ -42,7 +42,7 @@ export const collectPlayerData = async (): Promise<Player[]> => {
     error: null,
   });
 
-  if (!validation.success) {
+  if (!validation.success || !validation.data) {
     logger.error(`Dados de jogadores inválidos: ${JSON.stringify(validation.errors)}`);
     throw new Error("Dados recebidos estão em formato inválido");
   }
@@ -55,9 +55,9 @@ export const collectPlayerData = async (): Promise<Player[]> => {
     name: player.name,
     position: player.position,
     image_url: getReliableImageUrl(player as Parameters<typeof getReliableImageUrl>[0]),
-    fun_fact: player.fun_fact,
-    achievements: player.achievements,
-    year_highlight: player.year_highlight,
+    fun_fact: player.fun_fact ?? '',
+    achievements: player.achievements ?? [],
+    year_highlight: player.year_highlight ?? '',
     statistics: {
       gols: player.statistics.gols ?? 0,
       jogos: player.statistics.jogos ?? 0,
