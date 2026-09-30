@@ -1272,6 +1272,44 @@ export type Database = {
         }
         Relationships: []
       }
+      // NOTE: ilf_votes/itf_votes adicionadas a mao (2026-09-30) - os types gerados
+      // estavam dessincronizados do schema live. REGENERAR com supabase gen types.
+      ilf_votes: {
+        Row: {
+          id: string
+          player_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          player_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          player_id?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
+      itf_votes: {
+        Row: {
+          id: string
+          coach_id: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          coach_id: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          coach_id?: string
+          created_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -1283,6 +1321,9 @@ export type Database = {
           level: number | null
           points: number | null
           role: string | null
+          play_streak: number | null
+          last_play_date: string | null
+          best_play_streak: number | null
         }
         Insert: {
           avatar_url?: string | null
@@ -1294,6 +1335,9 @@ export type Database = {
           level?: number | null
           points?: number | null
           role?: string | null
+          play_streak?: number | null
+          last_play_date?: string | null
+          best_play_streak?: number | null
         }
         Update: {
           avatar_url?: string | null
@@ -1305,6 +1349,9 @@ export type Database = {
           level?: number | null
           points?: number | null
           role?: string | null
+          play_streak?: number | null
+          last_play_date?: string | null
+          best_play_streak?: number | null
         }
         Relationships: []
       }
