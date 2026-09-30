@@ -248,8 +248,8 @@ export const executiveAnalyticsService = {
         position: player.position,
         totalAttempts: player.total_attempts || 0,
         correctAttempts: player.correct_attempts || 0,
-        successRate: player.total_attempts > 0 
-          ? Math.round((player.correct_attempts || 0) / player.total_attempts * 100) 
+        successRate: (player.total_attempts ?? 0) > 0 
+          ? Math.round((player.correct_attempts || 0) / (player.total_attempts ?? 1) * 100) 
           : 0,
         avgGuessTime: Math.round((player.average_guess_time || 30000) / 1000),
         difficultyLevel: player.difficulty_level || 'medio'
