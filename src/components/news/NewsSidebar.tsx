@@ -92,7 +92,7 @@ export const NewsSidebar = ({
                     <div className="flex items-center gap-1">
                       <Calendar className="w-3 h-3" />
                       <span>
-                        {format(new Date(article.published_at), "d/M", { locale: ptBR })}
+                        {format(new Date(article.published_at ?? article.created_at), "d/M", { locale: ptBR })}
                       </span>
                     </div>
                     
