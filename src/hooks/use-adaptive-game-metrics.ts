@@ -158,7 +158,7 @@ export const useAdaptiveGameMetrics = () => {
   const saveToRanking = useCallback(async (
     playerName: string, 
     finalScore: number, 
-    currentDifficultyLevel: string
+    currentDifficultyLevel?: string
   ) => {
     try {
       logger.info('Salvando pontuação adaptativa no ranking', 'GAME_METRICS', {
