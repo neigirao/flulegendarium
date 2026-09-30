@@ -117,7 +117,7 @@ export const JerseyImageAuditDashboard = () => {
       
       toast.success(`Auditoria concluída: ${problematicCount} imagens precisam de migração`);
     } catch (error) {
-      logger.error('❌ Erro na auditoria:', error);
+      logger.error('❌ Erro na auditoria:', undefined, error);
       toast.error('Erro ao auditar banco de dados');
     } finally {
       setIsAuditing(false);
@@ -206,7 +206,7 @@ export const JerseyImageAuditDashboard = () => {
       return true;
 
     } catch (error) {
-      logger.error(`❌ Erro ao migrar camisa ${jersey.years.join('/')}:`, error);
+      logger.error(`❌ Erro ao migrar camisa ${jersey.years.join('/')}:`, undefined, error);
       
       // Update UI with error
       setAuditResults(prev => 
@@ -285,7 +285,7 @@ export const JerseyImageAuditDashboard = () => {
       }
       
     } catch (error) {
-      logger.error('❌ Erro geral na migração:', error);
+      logger.error('❌ Erro geral na migração:', undefined, error);
       toast.error('Erro ao migrar imagens');
     } finally {
       setIsMigrating(false);
@@ -345,7 +345,7 @@ export const JerseyImageAuditDashboard = () => {
       toast.success(`Imagem da camisa ${jersey.years.join('/')} atualizada!`);
     } catch (error) {
       toast.error('Erro ao fazer upload manual');
-      logger.error('Upload manual falhou:', error);
+      logger.error('Upload manual falhou:', undefined, error);
     }
   };
 
@@ -365,7 +365,7 @@ export const JerseyImageAuditDashboard = () => {
       // Refresh audit results
       await auditDatabase();
     } catch (error) {
-      logger.error('❌ Erro na migração via Edge Function:', error);
+      logger.error('❌ Erro na migração via Edge Function:', undefined, error);
       toast.error('Erro ao migrar imagens base64');
     } finally {
       setIsMigrating(false);
