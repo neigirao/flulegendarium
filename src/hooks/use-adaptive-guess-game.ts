@@ -164,8 +164,8 @@ export const useAdaptiveGuessGame = (players: Player[]): AdaptiveGame => {
     const usedPlusRecent = new Set([...usedPlayerIds.current, ...recentIds]);
 
     const selectedPlayer =
-      selectPlayerByDifficulty(players, currentDifficulty.level as Player['difficulty_level'], usedPlusRecent) ??
-      selectPlayerByDifficulty(players, currentDifficulty.level as Player['difficulty_level'], usedPlayerIds.current);
+      selectPlayerByDifficulty(players, currentDifficulty.level, usedPlusRecent) ??
+      selectPlayerByDifficulty(players, currentDifficulty.level, usedPlayerIds.current);
 
     if (selectedPlayer) {
       // Adicionar ao set de jogadores usados nesta sessão e ao histórico persistido
