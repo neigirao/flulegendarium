@@ -99,7 +99,7 @@ export const ImageAuditDashboard = () => {
       
       toast.success(`Auditoria concluída: ${problematicCount} imagens precisam de migração`);
     } catch (error) {
-      logger.error('❌ Erro na auditoria:', error);
+      logger.error('❌ Erro na auditoria:', undefined, error);
       toast.error('Erro ao auditar banco de dados');
     } finally {
       setIsAuditing(false);
@@ -173,7 +173,7 @@ export const ImageAuditDashboard = () => {
       return true;
 
     } catch (error) {
-      logger.error(`❌ Erro ao migrar ${player.name}:`, error);
+      logger.error(`❌ Erro ao migrar ${player.name}:`, undefined, error);
       
       // Atualizar UI com erro
       setAuditResults(prev => 
@@ -256,7 +256,7 @@ export const ImageAuditDashboard = () => {
       }
       
     } catch (error) {
-      logger.error('❌ Erro geral na migração:', error);
+      logger.error('❌ Erro geral na migração:', undefined, error);
       toast.error('Erro ao migrar imagens');
     } finally {
       setIsMigrating(false);
