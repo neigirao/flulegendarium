@@ -189,7 +189,7 @@ export const useJerseyGuessGame = (jerseys: Jersey[]) => {
     // Try difficulty-based selection first
     let selectedJersey = selectJerseyByDifficulty(
       jerseys, 
-      currentDifficulty.level as Jersey['difficulty_level'],
+      currentDifficulty.level,
       usedJerseyIds.current
     );
     
