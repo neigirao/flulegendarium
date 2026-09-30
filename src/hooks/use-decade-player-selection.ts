@@ -4,7 +4,7 @@ import { decadePlayerService } from "@/services/decadePlayerService";
 import { logger } from "@/utils/logger";
 
 /**
- * Hook para seleção de jogadores no modo Advinhe o Jogador por Década.
+ * Hook para seleção de jogadores no modo Adivinhe o Jogador por Década.
  * 
  * Gerencia a seleção de jogadores filtrados por década histórica:
  * - Carrega jogadores quando a década é selecionada
