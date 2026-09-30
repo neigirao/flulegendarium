@@ -1979,6 +1979,7 @@ export type Database = {
       }
     }
     Functions: {
+      delete_my_account: { Args: Record<string, never>; Returns: undefined }
       can_user_open_pack: { Args: { user_uuid: string }; Returns: boolean }
       cleanup_expired_notifications: { Args: never; Returns: undefined }
       get_current_user_role: { Args: never; Returns: string }
