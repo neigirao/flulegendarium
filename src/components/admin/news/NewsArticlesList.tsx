@@ -226,7 +226,7 @@ export const NewsArticlesList = ({ onEditArticle }: NewsArticlesListProps) => {
                 <Button
                   size="sm"
                   variant={article.is_published ? "secondary" : "default"}
-                  onClick={() => togglePublished(article.id, article.is_published)}
+                  onClick={() => togglePublished(article.id, article.is_published ?? false)}
                   className="flex items-center gap-1"
                 >
                   {article.is_published ? "Despublicar" : "Publicar"}
@@ -235,7 +235,7 @@ export const NewsArticlesList = ({ onEditArticle }: NewsArticlesListProps) => {
                 <Button
                   size="sm"
                   variant={article.is_featured ? "secondary" : "outline"}
-                  onClick={() => toggleFeatured(article.id, article.is_featured)}
+                  onClick={() => toggleFeatured(article.id, article.is_featured ?? false)}
                   className="flex items-center gap-1"
                 >
                   {article.is_featured ? "Remover destaque" : "Destacar"}
