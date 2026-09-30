@@ -39,7 +39,6 @@ workflows:
     name: Web CI (typecheck + tests + build)
     max_build_duration: 20
     instance_type: mac_mini_m1
-    cancel_previous_builds: true
     triggering:
       events:
         - push
@@ -47,6 +46,7 @@ workflows:
         - pattern: main
           include: true
           source: true
+      cancel_previous_builds: true
     environment:
       node: '22'
     scripts:
