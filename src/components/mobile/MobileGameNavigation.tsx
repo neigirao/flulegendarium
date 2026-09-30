@@ -37,7 +37,7 @@ export const MobileGameNavigation = ({
 
       {/* Mobile navigation bar */}
       {showNavigation && (
-        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 md:hidden">
+        <div className="fixed bottom-[calc(1rem+env(safe-area-inset-bottom))] left-1/2 transform -translate-x-1/2 z-50 md:hidden">
           <div className="flex items-center gap-2 bg-card/90 backdrop-blur-md rounded-full p-2 shadow-lg border border-border">
             {onHome && (
               <UniversalTouchTarget
