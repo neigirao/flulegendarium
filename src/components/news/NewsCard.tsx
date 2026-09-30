@@ -63,7 +63,7 @@ export const NewsCard = ({ article }: NewsCardProps) => {
             <div className="flex items-center gap-2">
               <Calendar className="w-3 h-3" />
               <span>
-                {format(new Date(article.published_at), "d/M/yyyy", { locale: ptBR })}
+                {format(new Date(article.published_at ?? article.created_at), "d/M/yyyy", { locale: ptBR })}
               </span>
             </div>
             
