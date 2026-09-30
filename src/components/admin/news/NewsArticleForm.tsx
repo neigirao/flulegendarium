@@ -91,14 +91,14 @@ export const NewsArticleForm = ({ articleId, onSuccess, onCancel }: NewsArticleF
 
       form.reset({
         title: data.title,
-        slug: data.slug,
+        slug: data.slug || "",
         summary: data.summary || "",
         content: data.content,
         featured_image_url: data.featured_image_url || "",
         category_id: data.category_id || "",
         author_name: data.author_name,
-        is_featured: data.is_featured,
-        is_published: data.is_published,
+        is_featured: data.is_featured ?? false,
+        is_published: data.is_published ?? false,
       });
     } catch (error) {
       console.error('Error fetching article:', error);
@@ -137,14 +137,14 @@ export const NewsArticleForm = ({ articleId, onSuccess, onCancel }: NewsArticleF
           .from('news_articles')
           .insert({
             title: data.title,
-            slug: data.slug,
+            slug: data.slug || "",
             summary: data.summary,
             content: data.content,
             featured_image_url: data.featured_image_url,
             category_id: data.category_id || null,
             author_name: data.author_name,
-            is_featured: data.is_featured,
-            is_published: data.is_published,
+            is_featured: data.is_featured ?? false,
+            is_published: data.is_published ?? false,
           });
 
         if (error) throw error;
