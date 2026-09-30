@@ -34,3 +34,34 @@ workflows:
         auth: integration
         submit_to_testflight: true
         submit_to_app_store: false
+
+  web-ci:
+    name: Web CI (typecheck + tests + build)
+    max_build_duration: 20
+    instance_type: mac_mini_m1
+    cancel_previous_builds: true
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        - pattern: main
+          include: true
+          source: true
+    environment:
+      node: '22'
+    scripts:
+      - name: Install npm dependencies
+        script: npm ci
+      - name: Typecheck
+        script: npx tsc -p tsconfig.app.json
+      - name: Tests
+        script: npx vitest run
+      - name: Build
+        script: npm run build
+    publishing:
+      email:
+        recipients:
+          - neigirao@gmail.com
+        notify:
+          success: false
+          failure: true
