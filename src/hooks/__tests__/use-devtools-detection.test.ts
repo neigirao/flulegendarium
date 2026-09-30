@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, type MockInstance } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useDevToolsDetection } from '../use-devtools-detection';
 
@@ -12,12 +12,12 @@ vi.mock('@/utils/logger', () => ({
 }));
 
 describe('useDevToolsDetection', () => {
-  let addEventListenerSpy: ReturnType<typeof vi.spyOn>;
-  let removeEventListenerSpy: ReturnType<typeof vi.spyOn>;
-  let documentAddEventListenerSpy: ReturnType<typeof vi.spyOn>;
-  let documentRemoveEventListenerSpy: ReturnType<typeof vi.spyOn>;
-  let setIntervalSpy: ReturnType<typeof vi.spyOn>;
-  let clearIntervalSpy: ReturnType<typeof vi.spyOn>;
+  let addEventListenerSpy: MockInstance;
+  let removeEventListenerSpy: MockInstance;
+  let documentAddEventListenerSpy: MockInstance;
+  let documentRemoveEventListenerSpy: MockInstance;
+  let setIntervalSpy: MockInstance;
+  let clearIntervalSpy: MockInstance;
 
   const setWindowSizes = (outer: number, inner: number) => {
     Object.defineProperty(window, 'outerWidth', { value: outer, configurable: true });
