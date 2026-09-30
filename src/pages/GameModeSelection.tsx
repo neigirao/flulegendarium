@@ -11,14 +11,14 @@ import { cn } from "@/lib/utils";
 import { DailyChallengeWidget } from "@/components/challenges/DailyChallengeWidget";
 import { usePlayStreak } from "@/hooks/use-play-streak";
 
-const DECADES = [
+const DECADES: ReadonlyArray<{ readonly num: string; readonly lab: string; readonly featured?: boolean }> = [
   { num: '60s', lab: 'Tricampeão' },
   { num: '70s', lab: 'Bi 70/71' },
   { num: '80s', lab: 'Brasileiro', featured: true },
   { num: '90s', lab: 'Romário' },
   { num: '00s', lab: 'Volta' },
   { num: '10s+', lab: 'Glória' },
-] as const;
+];
 
 const GameModeSelection = () => {
   const navigate = useNavigate();
