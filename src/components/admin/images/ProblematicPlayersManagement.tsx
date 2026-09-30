@@ -61,7 +61,7 @@ export const ProblematicPlayersManagement = () => {
       setPlayers(problematic);
       logger.info(`Encontrados ${problematic.length} jogadores com URLs problemáticas`);
     } catch (error) {
-      logger.error('Erro ao carregar jogadores:', error);
+      logger.error('Erro ao carregar jogadores:', undefined, error);
       toast.error('Erro ao carregar jogadores');
     } finally {
       setIsLoading(false);
@@ -122,7 +122,7 @@ export const ProblematicPlayersManagement = () => {
       logger.info(`✅ ${player.name} atualizado com URL local`);
 
     } catch (error) {
-      logger.error('Erro no upload:', error);
+      logger.error('Erro no upload:', undefined, error);
       toast.error(error instanceof Error ? error.message : 'Erro no upload');
     } finally {
       setUploadingPlayerId(null);
@@ -176,7 +176,7 @@ export const ProblematicPlayersManagement = () => {
       logger.info(`✅ ${player.name} migrado de URL alternativa`);
 
     } catch (error) {
-      logger.error('Erro ao atualizar URL:', error);
+      logger.error('Erro ao atualizar URL:', undefined, error);
       toast.error(error instanceof Error ? error.message : 'Erro ao atualizar');
     } finally {
       setUploadingPlayerId(null);
@@ -214,7 +214,7 @@ export const ProblematicPlayersManagement = () => {
       logger.info(`✅ ${player.name} URL atualizada diretamente`);
 
     } catch (error) {
-      logger.error('Erro ao atualizar URL:', error);
+      logger.error('Erro ao atualizar URL:', undefined, error);
       toast.error(error instanceof Error ? error.message : 'Erro ao atualizar');
     } finally {
       setUploadingPlayerId(null);
