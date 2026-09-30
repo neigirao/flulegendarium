@@ -117,7 +117,7 @@ Teste seus conhecimentos sobre os ídolos tricolores:`;
       </div>
 
       <div className="flex flex-col gap-3">
-        {navigator.share && (
+        {typeof navigator.share === 'function' && (
           <Button
             onClick={nativeShare}
             className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 w-full"
