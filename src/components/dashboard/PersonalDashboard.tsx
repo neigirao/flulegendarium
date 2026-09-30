@@ -222,7 +222,7 @@ export const PersonalDashboard: React.FC = () => {
       return {
         ...achievement,
         progress: userAchievement?.progress || 0,
-        unlocked: userAchievement?.progress >= achievement.maxProgress,
+        unlocked: (userAchievement?.progress ?? 0) >= achievement.maxProgress,
         unlockedAt: userAchievement?.unlocked_at ? new Date(userAchievement.unlocked_at) : undefined
       };
     });
