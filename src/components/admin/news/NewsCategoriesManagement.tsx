@@ -305,7 +305,7 @@ export const NewsCategoriesManagement = () => {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Deletar categoria</AlertDialogTitle>
+                        <AlertDialogTitle>Excluir categoria</AlertDialogTitle>
                         <AlertDialogDescription>
                           Tem certeza que deseja deletar a categoria "{category.name}"? 
                           Esta ação não pode ser desfeita e pode afetar notícias existentes.
