@@ -40,7 +40,7 @@ const getProblematicUrlsCache = (): ProblematicUrlCache[] => {
     // Filtrar URLs expiradas
     return parsed.filter(item => now - item.timestamp < CACHE_DURATION);
   } catch (error) {
-    logger.error('Erro ao ler cache de URLs problemáticas:', error);
+    logger.error('Erro ao ler cache de URLs problemáticas:', undefined, error);
     return [];
   }
 };
@@ -52,7 +52,7 @@ const saveProblematicUrlsCache = (cache: ProblematicUrlCache[]): void => {
   try {
     localStorage.setItem(PROBLEMATIC_URLS_KEY, JSON.stringify(cache));
   } catch (error) {
-    logger.error('Erro ao salvar cache de URLs problemáticas:', error);
+    logger.error('Erro ao salvar cache de URLs problemáticas:', undefined, error);
   }
 };
 
@@ -101,7 +101,7 @@ export const clearProblematicUrlsCache = (): void => {
     localStorage.removeItem(PROBLEMATIC_URLS_KEY);
     logger.info('🗑️ Cache de URLs problemáticas limpo');
   } catch (error) {
-    logger.error('Erro ao limpar cache de URLs problemáticas:', error);
+    logger.error('Erro ao limpar cache de URLs problemáticas:', undefined, error);
   }
 };
 
