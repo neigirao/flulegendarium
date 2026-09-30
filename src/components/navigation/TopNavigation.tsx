@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Shield, HelpCircle, User, Menu, Heart, Trophy, Landmark, BarChart3, Sparkles } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useLinkPrefetch } from "@/hooks/use-route-prefetch";
+import { noAplicativo } from "@/lib/entrar-nativo";
 
 export const TopNavigation = () => {
   const navigate = useNavigate();
@@ -32,12 +33,14 @@ export const TopNavigation = () => {
       onClick: () => navigate('/estatisticas'),
       icon: BarChart3,
     },
-    {
+    // Doações via Pix ficam fora do build nativo: link de pagamento externo
+    // dentro do app viola a diretriz 3.1.1 da App Store. No site, segue igual.
+    ...(!noAplicativo() ? [{
       label: "Doações",
       route: '/doacoes',
       onClick: () => navigate('/doacoes'),
       icon: Heart,
-    },
+    }] : []),
     {
       label: "Especiais",
       route: '/especiais',
