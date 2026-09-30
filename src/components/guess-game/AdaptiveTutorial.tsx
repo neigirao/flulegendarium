@@ -11,7 +11,7 @@ interface AdaptiveTutorialProps {
 
 const tutorialSteps = [
   {
-    title: "Bem-vindo ao Advinhe o Jogador!",
+    title: "Bem-vindo ao Adivinhe o Jogador!",
     icon: Brain,
     content: (
       <div className="space-y-4">
