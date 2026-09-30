@@ -174,7 +174,7 @@ export const DecadeGameContainer = () => {
         playerCount={availablePlayers.length}
         onReset={handleResetGame} showReset
       >
-        <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} timeRemaining={timeRemaining} gameActive={!gameOver && isTimerRunning} currentStreak={currentStreak} maxTime={60} />
+        <GameHeader score={score} onDebugClick={() => orch.setShowDebug(!orch.showDebug)} currentStreak={currentStreak} />
 
         {currentPlayer && (
           <div className="mt-6 space-y-6">
