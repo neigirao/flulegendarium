@@ -44,7 +44,7 @@ export const useSkipPlayer = (options: UseSkipPlayerOptions = {}): UseSkipPlayer
     
     toast({
       title: "Jogador pulado",
-      description: `Penalidade de -${skipPenalty} pontos aplicada.`,
+      description: `Você perdeu ${skipPenalty} pontos ao pular.`,
     });
 
     logger.info('Player skipped', 'SkipPlayer', { 
