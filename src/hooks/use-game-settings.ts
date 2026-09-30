@@ -10,7 +10,7 @@ import { logger } from '@/utils/logger';
 
 const STORAGE_KEY = 'lendas-flu-game-settings';
 
-export type GameSettings = Record<string, never>;
+export type GameSettings = Record<string, unknown>;
 
 const DEFAULT_SETTINGS: GameSettings = {};
 
