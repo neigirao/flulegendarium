@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { DeleteAccountDialog } from '@/components/delete-account-dialog';
 import { useNavigate } from 'react-router-dom';
 import { RootLayout } from '@/components/RootLayout';
 import { SEOManager } from '@/components/seo/SEOManager';
@@ -101,6 +102,12 @@ const ProfilePage = () => {
                 </div>
               </div>
             </div>
+
+            <section className="mb-8 rounded-lg border border-destructive/30 bg-card p-4" aria-label="Conta">
+              <h2 className="mb-2 font-display text-lg">Sua conta</h2>
+              <p className="mb-4 text-sm text-muted-foreground">Se quiser sair de vez do Lendas do Flu, você pode apagar sua conta e seus dados aqui.</p>
+              <DeleteAccountDialog />
+            </section>
 
             {/* Stats Grid */}
             <div className="mb-8">
