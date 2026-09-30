@@ -56,7 +56,7 @@ const KEYFRAMES = `
 
 export default function MaiorAtacante() {
   const finalistasRef = useRef<HTMLDivElement>(null);
-  const [sentinelRef, shouldLoadB] = useInView(0, '800px');
+  const [sentinelRef, shouldLoadB] = useInView<HTMLDivElement>(0, '800px');
 
   const scrollToFinalistas = () => {
     const el = document.getElementById('finalistas');
