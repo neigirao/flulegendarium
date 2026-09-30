@@ -183,7 +183,7 @@ const NewsArticle = () => {
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {format(new Date(article.published_at), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                        {format(new Date(article.published_at ?? article.created_at), "d 'de' MMMM 'de' yyyy", { locale: ptBR })}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
