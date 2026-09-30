@@ -106,7 +106,7 @@ export const JerseyStatsOverview = () => {
   ];
 
   const renderTable = (
-    items: typeof data.hardest,
+    items: NonNullable<typeof data>["hardest"],
     title: string,
     icon: React.ElementType,
     colorClass: string
