@@ -66,8 +66,9 @@ const Privacidade = () => {
         <h2 className="pt-2 text-lg font-semibold">Seus direitos</h2>
         <ul className="list-disc space-y-1 pl-6">
           <li>Corrigir: as informações do seu perfil podem ser editadas no próprio app.</li>
+          <li>Apagar: no app, abra Meu perfil e toque em "Apagar minha conta". A exclusão da conta e dos dados é permanente.</li>
           <li>
-            Exportar ou apagar: para receber uma cópia dos seus dados ou excluir sua conta e todos os dados, escreva
+            Exportar: para receber uma cópia dos seus dados, escreva
             para{" "}
             <a href="mailto:neigirao@gmail.com" className="underline">
               neigirao@gmail.com
