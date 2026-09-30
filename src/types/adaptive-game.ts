@@ -35,7 +35,7 @@ export interface AdaptiveGameActions {
   startGameForPlayer: () => void;
   resetScore: () => void;
   clearDifficultyChange: () => void;
-  saveToRanking: () => void;
+  saveToRanking: (playerName: string, finalScore: number, currentDifficultyLevel?: string) => Promise<void>;
 }
 
 export type AdaptiveGame = AdaptiveGameState & AdaptiveGameActions;
