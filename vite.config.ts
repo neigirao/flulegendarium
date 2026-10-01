@@ -57,33 +57,8 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          // Core React libraries
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          
-          // UI components
-          'ui-core': [
-            '@radix-ui/react-dialog', 
-            '@radix-ui/react-toast',
-            '@radix-ui/react-select'
-          ],
-          'ui-extended': [
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-tabs'
-          ],
-          
-          // Data layer
-          query: ['@tanstack/react-query'],
-          supabase: ['@supabase/supabase-js'],
-          
-          // Heavy dependencies - separate chunks
-          icons: ['lucide-react'],
-          charts: ['recharts'],
-          animations: ['framer-motion'],
-        },
-        
+        // Let Rollup split shared dependencies from the actual import graph.
+        // Broad manual chunks pulled chart-only dependencies into the home page.
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId;
           if (facadeModuleId) {
