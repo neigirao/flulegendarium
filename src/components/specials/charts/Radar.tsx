@@ -58,7 +58,7 @@ export function Radar({ axes, series, size = 320, max = 100 }: RadarProps) {
           <text
             key={i} x={x} y={y}
             textAnchor="middle" dominantBaseline="middle"
-            style={{ fontSize: 11, fontWeight: 700, fill: '#64748B' }}
+            style={{ fontSize: 12, fontWeight: 700, fill: '#64748B' }}
           >
             {ax.label}
           </text>
