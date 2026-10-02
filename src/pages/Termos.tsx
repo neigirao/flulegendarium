@@ -11,7 +11,7 @@ const Termos = () => {
   return (
     <main className="min-h-screen bg-background px-5 py-10">
       <article className="mx-auto max-w-2xl space-y-4 leading-relaxed text-foreground">
-        <Link to="/" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
+        <Link to="/" className="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← Voltar para o início
         </Link>
 
