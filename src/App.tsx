@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/hooks/useAuth";
 import { UXProvider } from "@/components/ux/UXProvider";
 import { RootLayout } from "@/components/RootLayout";
@@ -88,6 +88,7 @@ function App() {
                           <RouteErrorBoundary>
                           <Routes>
                             <Route path="/" element={<Index />} />
+                            <Route path="/ranking" element={<Navigate to="/#ranking" replace />} />
                             <Route path="/auth" element={<LazyAuth />} />
                             <Route path="/reset-password" element={<LazyResetPassword />} />
                             <Route path="/selecionar-modo-jogo" element={<ProtectedRoute allowGuest><LazyGameModeSelection /></ProtectedRoute>} />
