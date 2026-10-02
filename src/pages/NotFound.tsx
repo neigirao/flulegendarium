@@ -19,7 +19,7 @@ const NotFound = () => {
       {/* Header */}
       <header className="bg-card shadow-sm py-4 sticky top-0 z-50">
         <div className="container mx-auto px-4 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-3">
+          <Link to="/" className="inline-flex min-h-11 items-center gap-3">
             <img 
               src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
               alt="Fluminense FC" 
@@ -30,8 +30,8 @@ const NotFound = () => {
         </div>
       </header>
 
-      <div className="flex items-center justify-center py-20">
-        <div className="text-center max-w-md">
+      <div className="flex items-center justify-center px-4 py-12 sm:py-20">
+        <div className="text-center w-full max-w-md">
           <div className="flex items-center justify-center gap-4 mb-8">
             <img 
               src="/lovable-uploads/0aa3609f-0584-4bf4-8303-e03f50f7e131.png" 
