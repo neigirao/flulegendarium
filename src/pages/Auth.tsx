@@ -7,6 +7,7 @@ import { RootLayout } from '@/components/RootLayout';
 import { SEOManager } from '@/components/seo/SEOManager';
 import { ArrowLeft, Apple } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { authStart, authError, medirEntradaNativa } from '@/lib/auth-funnel';
 import { entrarNoAplicativo, noAplicativo } from '@/lib/entrar-nativo';
 
 const Auth = () => {
@@ -36,7 +37,7 @@ const Auth = () => {
     setErroLogin(null);
     if (noAplicativo()) {
       setAbrindo(provedor);
-      const resultado = await entrarNoAplicativo(provedor);
+      const resultado = await medirEntradaNativa(provedor, () => entrarNoAplicativo(provedor));
       setAbrindo(null);
       if (resultado !== null && resultado !== 'cancelado') {
         setErroLogin('Não foi possível entrar agora. Tente de novo.');
@@ -46,10 +47,14 @@ const Auth = () => {
     }
     const state = location.state as { from?: { pathname?: string } } | null;
     const from = state?.from?.pathname || '/selecionar-modo-jogo';
-    await supabase.auth.signInWithOAuth({
+    authStart(provedor, "web");
+    try {
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: provedor,
       options: { redirectTo: window.location.origin + from },
     });
+    if (error) { authError(provedor, "web", "provider_error"); setErroLogin('Não foi possível entrar agora. Tente de novo.'); }
+    } catch { authError(provedor, "web", "network"); setErroLogin('Não foi possível entrar agora. Tente de novo.'); }
   };
 
   const handleGoogleLogin = () => handleOAuthLogin('google');
@@ -127,6 +132,11 @@ const Auth = () => {
                   <Apple className="w-5 h-5 mr-2" />
                   Entrar com a Apple
                 </Button>
+                {sessionStorage.getItem('guest-demo-completed') !== 'true' && (
+                  <Button variant="ghost" className="w-full touch-target-lg mt-3" onClick={() => navigate('/selecionar-modo-jogo')}>
+                    Experimentar uma rodada sem conta
+                  </Button>
+                )}
                 {abrindo !== null && (
                   <p className="mt-3 text-center text-sm text-muted-foreground font-body">
                     {abrindo === 'google' ? 'Abrindo o Google…' : 'Abrindo a Apple…'}

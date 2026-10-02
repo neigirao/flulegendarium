@@ -3,6 +3,8 @@ import { useAuth } from '@/hooks/auth';
 import { useAchievementSystem } from '@/components/achievements/AchievementSystemProvider';
 import { useAchievementNotifications } from '@/hooks/use-achievement-notifications';
 import { useAnalytics } from '@/hooks/analytics';
+import { useDailyChallengesModule } from '@/hooks/use-daily-challenges-module';
+import { usePlayStreak } from '@/hooks/use-play-streak';
 import { useChallengeProgress } from '@/hooks/use-challenge-progress';
 import { useGuessHistory } from '@/hooks/use-guess-history';
 import { useSkipPlayer } from './use-skip-player';
@@ -71,6 +73,8 @@ export const useGameOrchestration = (config: GameOrchestrationConfig) => {
   const analytics = useAnalytics();
   const gameToasts = useGameToasts();
   const { isOnboardingActive, goToStep, nextStep, isStepActive } = useOnboarding();
+  const { updateProgressForMetric } = useDailyChallengesModule();
+  const { recordCompletedGame } = usePlayStreak();
   const { onCorrectGuess, onStreakAchieved, onGameCompleted } = useChallengeProgress();
   const { history, addEntry, clearHistory, getStats } = useGuessHistory();
 
@@ -103,6 +107,10 @@ export const useGameOrchestration = (config: GameOrchestrationConfig) => {
     if (gameOver && !prevGameOverRef.current) {
       analytics.trackGameCompleted(score, gamesPlayed, gameMode);
       onGameCompleted(score);
+      void recordCompletedGame();
+      const correct = history.filter(entry => entry.isCorrect).length;
+      const attempts = history.length + (currentItem && lastGuessRef.current ? 1 : 0);
+      if (attempts > 0) void updateProgressForMetric('accuracy', Math.round(correct / attempts * 100));
 
       if (currentItem && lastGuessRef.current) {
         addEntry({
@@ -116,7 +124,7 @@ export const useGameOrchestration = (config: GameOrchestrationConfig) => {
       }
     }
     prevGameOverRef.current = gameOver;
-  }, [gameOver, score, gamesPlayed, gameMode, analytics, onGameCompleted, currentItem, addEntry, currentDifficulty.label, timeRemaining]);
+  }, [gameOver, score, gamesPlayed, gameMode, analytics, onGameCompleted, recordCompletedGame, updateProgressForMetric, history, currentItem, addEntry, currentDifficulty.label, timeRemaining]);
 
   // Track correct guesses via streak changes
   useEffect(() => {

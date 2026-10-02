@@ -4,6 +4,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/utils/logger';
 
+export const challengeDay = (date = new Date()) => date.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
+// Serialize writes for each user/challenge across mounted hook instances.
+const progressQueues = new Map<string, Promise<unknown>>();
+
+export const nextChallengeProgress = (metric: string, current: number, value: number) =>
+  ['streak', 'max_streak', 'accuracy', 'score_threshold'].includes(metric)
+    ? Math.max(current, value) : current + value;
+
 interface DailyChallenge {
   id: string;
   title: string;
@@ -39,7 +47,7 @@ export const useDailyChallengesModule = () => {
   const challengesQuery = useQuery({
     queryKey: ['daily-challenges-with-progress', user?.id],
     queryFn: async (): Promise<ChallengeWithProgress[]> => {
-      const today = new Date().toISOString().split('T')[0];
+      const today = challengeDay();
 
       // Get active challenges
       const { data: challenges, error: challengesError } = await supabase
@@ -73,6 +81,8 @@ export const useDailyChallengesModule = () => {
 
       return challenges.map(challenge => ({
         ...challenge,
+        // No reward ledger exists yet. Never announce an uncredited bonus.
+        reward_points: 0,
         progress: progressMap[challenge.id] || null,
       }));
     },
@@ -96,24 +106,27 @@ export const useDailyChallengesModule = () => {
       }
 
       // Get current progress
-      const { data: existing } = await supabase
+      const { data: existing, error: existingError } = await supabase
         .from('user_challenge_progress')
         .select('*')
         .eq('challenge_id', challengeId)
         .eq('user_id', user.id)
         .maybeSingle();
 
+      if (existingError) throw existingError;
+
       // Get challenge details
-      const { data: challenge } = await supabase
+      const { data: challenge, error: challengeError } = await supabase
         .from('daily_challenges')
         .select('*')
         .eq('id', challengeId)
         .single();
 
-      if (!challenge) return null;
+      if (challengeError) throw challengeError;
+      if (!challenge || !challenge.is_active || challenge.start_date > challengeDay() || challenge.end_date < challengeDay() || challenge.target_metric !== metric || existing?.is_completed) return null;
 
       const currentProgress = existing?.current_progress || 0;
-      const newProgress = currentProgress + increment;
+      const newProgress = nextChallengeProgress(metric, currentProgress, increment);
       const isCompleted = newProgress >= challenge.target_value;
 
       if (existing) {
@@ -155,7 +168,7 @@ export const useDailyChallengesModule = () => {
       if (result?.justCompleted) {
         toast({
           title: "🎉 Desafio Concluído!",
-          description: `Você completou "${result.challenge.title}" e ganhou ${result.challenge.reward_points || 0} pontos!`,
+          description: `Você completou "${result.challenge.title}"!`,
         });
       }
     },
@@ -170,15 +183,19 @@ export const useDailyChallengesModule = () => {
 
     const challenges = challengesQuery.data || [];
     const relevantChallenges = challenges.filter(
-      c => c.target_metric === metric && !c.progress?.is_completed
+      c => (c.target_metric === metric || (metric === 'max_streak' && c.target_metric === 'streak')) && !c.progress?.is_completed
     );
 
     for (const challenge of relevantChallenges) {
-      await updateProgressMutation.mutateAsync({
+      const key = `${user.id}:${challenge.id}`;
+      const previous = progressQueues.get(key) || Promise.resolve();
+      const next = previous.catch(() => undefined).then(() => updateProgressMutation.mutateAsync({
         challengeId: challenge.id,
         increment,
-        metric,
-      });
+        metric: challenge.target_metric,
+      }));
+      progressQueues.set(key, next);
+      try { await next; } finally { if (progressQueues.get(key) === next) progressQueues.delete(key); }
     }
   };
 

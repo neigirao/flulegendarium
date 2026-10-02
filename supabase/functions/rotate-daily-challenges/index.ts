@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
 
-import { hasValidAdminSession, hasInternalSecret, unauthorizedResponse } from '../_shared/authGuard.ts';
+import { hasInternalSecret, unauthorizedResponse } from '../_shared/authGuard.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -97,13 +97,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-    // Get current date in UTC
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const tomorrow = new Date(today.getTime() + 24 * 60 * 60 * 1000);
-    
-    const todayISO = today.toISOString().split('T')[0];
-    const tomorrowISO = tomorrow.toISOString().split('T')[0];
+    // Challenges follow the same Brazilian calendar day as gameplay.
+    const todayISO = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
 
     console.log(`[rotate-daily-challenges] Processing for date: ${todayISO}`);
 
@@ -111,7 +106,7 @@ const handler = async (req: Request): Promise<Response> => {
     const { data: expiredData, error: expireError } = await supabase
       .from("daily_challenges")
       .update({ is_active: false })
-      .lt("end_date", todayISO)
+      .lt("start_date", todayISO)
       .eq("is_active", true)
       .select();
 
@@ -126,8 +121,7 @@ const handler = async (req: Request): Promise<Response> => {
       .from("daily_challenges")
       .select("*")
       .eq("is_active", true)
-      .gte("end_date", todayISO)
-      .lte("start_date", todayISO);
+      .eq("start_date", todayISO);
 
     if (activeError) {
       console.error("[rotate-daily-challenges] Error checking active challenges:", activeError);
@@ -143,7 +137,7 @@ const handler = async (req: Request): Promise<Response> => {
       const newChallenges = getRandomChallenges(3).map((template) => ({
         ...template,
         start_date: todayISO,
-        end_date: tomorrowISO,
+        end_date: todayISO,
         is_active: true,
       }));
 
@@ -173,32 +167,13 @@ const handler = async (req: Request): Promise<Response> => {
       );
     }
 
-    // 4. Update existing challenges if dates are wrong
-    const needsUpdate = activeChallenges.some(
-      (c) => c.start_date !== todayISO || c.end_date !== tomorrowISO
-    );
-
-    if (needsUpdate) {
-      console.log("[rotate-daily-challenges] Updating challenge dates");
-      
-      for (const challenge of activeChallenges) {
-        await supabase
-          .from("daily_challenges")
-          .update({
-            start_date: todayISO,
-            end_date: tomorrowISO,
-          })
-          .eq("id", challenge.id);
-      }
-    }
-
     return new Response(
       JSON.stringify({
         success: true,
         message: "Challenges already active for today",
         challenges: activeChallenges,
         expired: expiredData?.length || 0,
-        datesUpdated: needsUpdate,
+        datesUpdated: false,
       }),
       { 
         status: 200, 
