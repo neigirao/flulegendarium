@@ -109,7 +109,8 @@ export const useGameOrchestration = (config: GameOrchestrationConfig) => {
       onGameCompleted(score);
       void recordCompletedGame();
       const correct = history.filter(entry => entry.isCorrect).length;
-      void updateProgressForMetric('accuracy', Math.round(correct / (history.length + 1) * 100));
+      const attempts = history.length + (currentItem && lastGuessRef.current ? 1 : 0);
+      if (attempts > 0) void updateProgressForMetric('accuracy', Math.round(correct / attempts * 100));
 
       if (currentItem && lastGuessRef.current) {
         addEntry({
