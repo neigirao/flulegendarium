@@ -91,6 +91,10 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   const [previousRecord, setPreviousRecord] = useState(0);
   const autoSaveInFlightRef = useRef(false);
 
+  useEffect(() => {
+    if (open && !user) sessionStorage.setItem('guest-demo-completed', 'true');
+  }, [open, user]);
+
   // Check for personal record
   useEffect(() => {
     if (open && score > 0) {
@@ -170,6 +174,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
       if (
         open &&
         score > 0 &&
+        !!user &&
         !autoSaved &&
         !autoSaveInFlightRef.current &&
         onSaveToRanking &&
@@ -193,7 +198,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
     };
 
     autoSaveToRanking();
-  }, [open, score, onSaveToRanking, difficultyLevel, autoSaved, resolvedRankingName]);
+  }, [open, score, onSaveToRanking, difficultyLevel, autoSaved, resolvedRankingName, user]);
 
   // Reset state when dialog closes
   useEffect(() => {
@@ -215,6 +220,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
   };
 
   const handleNewGame = () => {
+    if (!user) { navigate('/auth'); return; }
     setShowShareOptions(false);
     setAutoSaved(false);
     clearAllImageCache();
@@ -382,7 +388,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                       className="w-full"
                     >
                       <RotateCcw className="w-4 h-4 mr-2" />
-                      Jogar Novamente
+                      {user ? "Jogar Novamente" : "Entrar para continuar"}
                     </Button>
                   </motion.div>
                   
@@ -446,7 +452,7 @@ export const GameOverDialog: React.FC<GameOverDialogProps> = ({
                         className="w-full"
                       >
                         <RotateCcw className="w-4 h-4 mr-2" />
-                        Jogar Novamente
+                        {user ? "Jogar Novamente" : "Entrar para continuar"}
                       </Button>
                     </motion.div>
                     
