@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
 import { authStart, authError, medirEntradaNativa } from '@/lib/auth-funnel';
 import { entrarNoAplicativo, noAplicativo } from '@/lib/entrar-nativo';
+import { GoogleSignInArt } from "@/components/auth/GoogleSignInArt";
 import { AppleSignInArt } from "@/components/auth/AppleSignInArt";
 import { cn } from "@/lib/utils";
 
@@ -87,23 +88,23 @@ const Index = () => {
       <div className="min-h-screen page-warm bg-tricolor-vertical-border">
         <TopNavigation />
 
-        <div className="pt-20 safe-area-top">
+        <div className="pt-[calc(80px+env(safe-area-inset-top))]">
 
           {/* ── HERO ── */}
-          <section className="max-w-[1240px] mx-auto px-5 sm:px-7 pt-14 sm:pt-12 pb-7">
+          <section className="max-w-[1240px] mx-auto px-5 sm:px-7 pt-5 sm:pt-12 pb-7">
             <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-12 items-center">
 
               <div>
-                <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] uppercase text-accent mb-4">
-                  <span className="w-6 h-0.5 bg-accent inline-block" />
+                <div className="inline-flex items-center gap-2 text-xs font-extrabold tracking-[0.12em] uppercase text-secondary mb-4">
+                  <span className="w-6 h-0.5 bg-secondary inline-block" />
                   Quiz · Fluminense FC · Desde 1902
                 </div>
 
                 {!user && (
-                  <div className="grid grid-cols-2 gap-3 mb-6" aria-label="Entrar na sua conta">
-                    <button disabled={loginPending} onClick={() => enter('google')} className="min-h-12 rounded-xl border border-border bg-white px-3 py-3 text-sm font-semibold hover:bg-muted disabled:opacity-50">Entrar com Google</button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6" aria-label="Entrar na sua conta">
+                    <button disabled={loginPending} onClick={() => enter('google')} className="min-h-12 rounded-xl border border-border bg-white px-3 py-3 text-sm font-semibold hover:bg-muted disabled:opacity-50"><GoogleSignInArt /></button>
                     <button disabled={loginPending} onClick={() => enter('apple')} className="min-h-12 rounded-xl border border-border bg-white px-3 py-3 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-muted disabled:opacity-50 !py-0"><AppleSignInArt /></button>
-                    {loginError && <p role="alert" className="col-span-2 text-sm text-destructive">{loginError}</p>}
+                    {loginError && <p role="alert" className="sm:col-span-2 text-sm text-destructive">{loginError}</p>}
                   </div>
                 )}
                 <h1 className="font-display text-[clamp(48px,7vw,72px)] leading-[0.92] tracking-[0.02em] text-primary mb-4">
@@ -144,7 +145,7 @@ const Index = () => {
               </div>
 
               <div className="flex flex-col items-center gap-4">
-                <div className="inline-flex items-center gap-2 text-[11px] font-extrabold tracking-[0.12em] uppercase text-[#C4944A] bg-white border border-[#C4944A]/25 px-3.5 py-1.5 rounded-full shadow-sm">
+                <div className="inline-flex items-center gap-2 text-xs font-extrabold tracking-[0.12em] uppercase text-[#C4944A] bg-white border border-[#C4944A]/25 px-3.5 py-1.5 rounded-full shadow-sm">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#C4944A] flex-shrink-0" />
                   Quem é esse ídolo?
                 </div>
@@ -159,7 +160,7 @@ const Index = () => {
                     style={{ background: 'linear-gradient(90deg, #7A0213 33%, white 33% 66%, #006140 66%)' }}
                   />
 
-                  <div className="absolute top-4 right-4 bg-white border border-border px-2.5 py-1 rounded-[7px] text-[9px] font-extrabold tracking-[0.1em] text-accent uppercase flex items-center gap-1 shadow-sm z-10">
+                  <div className="absolute top-4 right-4 bg-white border border-border px-2.5 py-1 rounded-[7px] text-xs font-extrabold tracking-[0.1em] text-accent uppercase flex items-center gap-1 shadow-sm z-10">
                     ⚡ Fácil
                   </div>
 
@@ -174,7 +175,7 @@ const Index = () => {
                   </div>
 
                   <div className="px-4 py-3.5 flex justify-between items-center bg-white border-t border-border">
-                    <div className="text-[10px] text-muted-foreground uppercase tracking-[0.08em] font-bold">
+                    <div className="text-xs text-muted-foreground uppercase tracking-[0.08em] font-bold">
                       Era: <strong className="text-accent">Anos 90</strong>
                     </div>
                     <div className="bg-primary text-white px-4 py-2 rounded-[8px] font-display text-[13px] tracking-[0.05em] shadow-[0_4px_12px_rgba(122,2,19,0.28)] flex items-center gap-1.5">
@@ -191,7 +192,7 @@ const Index = () => {
                   ].map(({ val, label, color }) => (
                     <div key={label} className="bg-white border border-border rounded-[10px] px-2 py-2.5 text-center shadow-sm">
                       <div className={cn('font-display text-[22px] leading-none', color)}>{val}</div>
-                      <div className="text-[9px] text-muted-foreground uppercase tracking-[0.08em] font-bold mt-1">{label}</div>
+                      <div className="text-xs text-muted-foreground uppercase tracking-[0.08em] font-bold mt-1">{label}</div>
                     </div>
                   ))}
                 </div>

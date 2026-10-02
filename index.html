@@ -169,7 +169,7 @@
       function loadThirdPartyScripts() {
         // Google Analytics
         gtag('js', new Date());
-        gtag('config', 'G-X2VE77MEYC');
+        gtag('config', 'G-X2VE77MEYC', { allow_google_signals: false, allow_ad_personalization_signals: false });
         var gaScript = document.createElement('script');
         gaScript.async = true;
         gaScript.src = 'https://www.googletagmanager.com/gtag/js?id=G-X2VE77MEYC';
