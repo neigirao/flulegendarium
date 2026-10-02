@@ -478,3 +478,12 @@ img {
     }
   }
 }
+
+/* Readable minimum for legacy micro-labels across game and admin screens. */
+.text-\[8px\], .text-\[9px\], .text-\[10px\], .text-\[11px\] {
+  font-size: 0.75rem;
+}
+
+@font-face { font-family: "Google Sign In"; font-weight: 500; font-style: normal; font-display: swap; src: url("https://fonts.gstatic.com/s/googlesans/v71/4Ua_rENHsxJlGDuGo1OIlJfC6l_24rlCK1Yo_Iqcsih3SAyH6cAwhX9RFD48TE63OOYKtrw2IKli.ttf") format("truetype"); }
+.google-sign-in-content { display: inline-flex; align-items: center; gap: 10px; font-family: "Google Sign In", Arial, sans-serif; font-size: 14px; font-weight: 500; text-transform: none; line-height: 20px; color: #1f1f1f; }
+button:has(.google-sign-in-content) { background: #fff; border: 1px solid #747775; padding-left: 12px; padding-right: 12px; min-height: 48px; }
