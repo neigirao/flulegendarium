@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const UPDATED = "27 de setembro de 2026";
+const UPDATED = "2 de outubro de 2026";
 
 /**
  * Política de privacidade do Lendas do Flu, em linguagem direta (LGPD, Lei 13.709/2018).
@@ -10,7 +10,7 @@ const Privacidade = () => {
   return (
     <main className="min-h-screen bg-background px-5 py-10">
       <article className="mx-auto max-w-2xl space-y-4 leading-relaxed text-foreground">
-        <Link to="/" className="text-sm text-muted-foreground underline-offset-4 hover:underline">
+        <Link to="/" className="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:underline">
           ← Voltar para o início
         </Link>
 
@@ -45,8 +45,8 @@ const Privacidade = () => {
         <ul className="list-disc space-y-1 pl-6">
           <li>Supabase: login social (Google ou Apple) e banco de dados onde seu jogo fica guardado.</li>
           <li>Google: se você escolher entrar com o Google, o login passa pela sua conta Google.</li>
-          <li>Google Analytics 4: mede visitas e interações com o jogo para melhorar o app. O Google pode usar cookies ou identificadores de dispositivo para essas métricas.</li>
-          <li>Sentry: registra erros e uma amostra reduzida de desempenho para corrigir falhas. Não gravamos sessões nem habilitamos o envio padrão de dados pessoais.</li>
+          <li>Google Analytics 4: mede visitas e interações com o jogo para melhorar o app, sem Google Signals ou personalização de anúncios. O Google pode usar cookies ou identificadores de dispositivo para essas métricas.</li>
+          <li>Sentry: registra erros para corrigir falhas, sem amostragem de transações de desempenho. Não gravamos sessões nem habilitamos o envio padrão de dados pessoais.</li>
           <li>Vercel Speed Insights: métricas anônimas de desempenho do site.</li>
           <li>Lovable: hospedagem do site.</li>
         </ul>
