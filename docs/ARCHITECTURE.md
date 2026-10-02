@@ -85,3 +85,14 @@ Referências operacionais:
 ## 8. Leitura rápida para agentes de IA
 
 Para reduzir tempo de diagnóstico em tarefas amplas, consulte primeiro `docs/AI_CODEBASE_INDEX.md` e depois aprofunde por camada neste documento.
+
+
+## Estado atual de autenticação e retenção (02/10/2026)
+
+- `src/App.tsx` permite convidado apenas nas quatro rotas de seleção/quiz via `ProtectedRoute allowGuest`. `guest-demo-completed` em sessionStorage encerra a demo por sessão; não concede privilégios de backend.
+- `Auth.tsx` escolhe web ou nativo. `useAuth.tsx` resolve a sessão e o evento pendente do funil. `auth-funnel.ts` envia enums GA4, valida provedor/validade do storage e não armazena dados pessoais. One Tap e o funil legado permanecem separados.
+- `use-game-orchestration.ts` integra resposta, fim de partida, desafios e sequência de dias. `use-daily-challenges-module.ts` aceita alias `max_streak` para os templates `streak` e serializa writes por usuário/desafio na mesma sessão. Isso não é uma transação entre dispositivos.
+- `use-play-streak.ts` só lê ao montar; grava após partida concluída. Calendário: America/Sao_Paulo.
+- `rotate-daily-challenges` encerra conjuntos antigos em vez de estender suas datas. Código no repo não comprova deploy. Criação/recompensa idempotente e transacional entre processos exige trabalho server-side separado.
+- Sem ledger de recompensa, conclusão é progresso, não bônus competitivo. Não anunciar pontos creditados sem crédito real.
+- `index.html` carrega GA4 e o cliente gerado Supabase tem configuração fixa. Variáveis Vite existentes não devem ser tratadas como substituição automática dessa infraestrutura.
