@@ -67,12 +67,20 @@ const Privacidade = () => {
         <ul className="list-disc space-y-1 pl-6">
           <li>Corrigir: as informações do seu perfil podem ser editadas no próprio app.</li>
           <li>
-            Exportar ou apagar: para receber uma cópia dos seus dados ou excluir sua conta e todos os dados, escreva
-            para{" "}
+            Exportar: para receber uma cópia dos seus dados, escreva para{" "}
             <a href="mailto:neigirao@gmail.com" className="underline">
               neigirao@gmail.com
             </a>
             .
+          </li>
+          <li>
+            Excluir a conta: no app, vá em Perfil e toque em &quot;Excluir minha conta&quot;. Isso apaga na hora o seu
+            progresso, histórico de jogos, conquistas, desafios, posição nos rankings, comentários, avaliações e chamados
+            de suporte. O seu login (Google ou Apple) continua existindo porque é compartilhado com outros projetos do
+            mesmo criador; se você usa outros apps dele, os dados desses apps não são apagados. Se você entrou com a
+            Apple, o acesso do app à sua conta Apple é revogado. Partidas jogadas como convidado, registradas só por
+            apelido, não ficam ligadas à sua conta e não são apagadas. Se não conseguir usar o app, escreva para o
+            e-mail acima.
           </li>
         </ul>
 
