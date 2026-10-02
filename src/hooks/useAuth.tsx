@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthError } from '@supabase/supabase-js';
+import { authResolvePendingOnLoad } from '@/lib/auth-funnel';
 import { supabase } from '@/integrations/supabase/client';
 
 interface AuthResult {
@@ -32,6 +33,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
         setUser(session?.user ?? null);
+        authResolvePendingOnLoad(!!session);
       } catch (error) {
         console.error('Error getting initial session:', error);
       } finally {
