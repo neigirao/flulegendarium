@@ -29,7 +29,7 @@ export function ClassicosSection() {
                 <Portrait player={p} size={48} ring={i === 0 ? '#C4944A' : '#E2E8F0'} />
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontFamily: BB, fontSize: 19, color: '#1a1a2e', letterSpacing: '0.02em' }}>{p.nome}</div>
-                  <div style={{ display: 'flex', gap: 14, marginTop: 5, fontSize: 11, color: '#64748B' }}>
+                  <div style={{ display: 'flex', gap: 14, marginTop: 5, fontSize: 12, color: '#64748B' }}>
                     <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{p.classicos.Flamengo}</span> vs Fla</span>
                     <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{p.classicos.Vasco}</span> vs Vas</span>
                     <span><span style={{ fontWeight: 700, color: '#7A0213' }}>{p.classicos.Botafogo}</span> vs Bot</span>
@@ -37,7 +37,7 @@ export function ClassicosSection() {
                 </div>
                 <div style={{ textAlign: 'right' as const, flexShrink: 0 }}>
                   <div style={{ fontFamily: BB, fontSize: 28, color: i === 0 ? '#C4944A' : '#7A0213', lineHeight: 1 }}>{p.total}</div>
-                  <div style={{ fontSize: 9, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols</div>
+                  <div style={{ fontSize: 12, color: '#94A3B8', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols</div>
                 </div>
               </div>
             </Reveal>
@@ -77,21 +77,21 @@ export function DecisivosSection() {
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontFamily: BB, fontSize: 20, letterSpacing: '0.02em' }}>{p.nome}</div>
                     {p.totalDec > 0 ? (
-                      <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>
+                      <div style={{ display: 'flex', gap: 12, marginTop: 6, fontSize: 12, color: 'rgba(255,255,255,0.65)' }}>
                         {p.decisivos.finais > 0 && <span>🏆 {p.decisivos.finais} {p.decisivos.finais === 1 ? 'final' : 'finais'}</span>}
                         {p.decisivos.semis > 0 && <span>{p.decisivos.semis} {p.decisivos.semis === 1 ? 'semi' : 'semis'}</span>}
                         {p.decisivos.quartas > 0 && <span>{p.decisivos.quartas} quartas</span>}
                         {p.decisivos.oitavas > 0 && <span>{p.decisivos.oitavas} oitavas</span>}
                       </div>
                     ) : (
-                      <div style={{ marginTop: 5, fontSize: 11, color: 'rgba(255,255,255,0.2)', fontStyle: 'italic' }}>Sem gols decisivos registrados</div>
+                      <div style={{ marginTop: 5, fontSize: 12, color: 'rgba(255,255,255,0.65)', fontStyle: 'italic' }}>Sem gols decisivos registrados</div>
                     )}
                   </div>
                   <div style={{ textAlign: 'right' as const, flexShrink: 0 }}>
                     {p.totalDec > 0 ? (
                       <>
                         <div style={{ fontFamily: BB, fontSize: 30, color: i === 0 ? '#E8B560' : 'white', lineHeight: 1 }}><AnimatedNumber value={p.totalDec} /></div>
-                        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols decisivos</div>
+                        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols decisivos</div>
                       </>
                     ) : (
                       <div style={{ fontFamily: BB, fontSize: 20, color: 'rgba(255,255,255,0.15)', lineHeight: 1 }}>—</div>
@@ -122,7 +122,7 @@ export function TransicaoSection() {
         opacity: inView ? 1 : 0, transform: inView ? 'scaleX(1)' : 'scaleX(0.3)', transition: 'all 0.7s ease',
       }} />
       <div style={{ maxWidth: 640, margin: '0 auto', opacity: inView ? 1 : 0, transform: inView ? 'translateY(0)' : 'translateY(24px)', transition: 'all 0.7s ease 0.15s' }}>
-        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 20 }}>Fim da análise</div>
+        <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 20 }}>Fim da análise</div>
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,52px)', lineHeight: 1.0, letterSpacing: '0.02em', marginBottom: 18 }}>
           {ILF_WEIGHTS.length} CATEGORIAS. <span style={{ color: '#E8B560' }}>UMA RÉGUA.</span><br />UM SÓ NOME NO TOPO.
         </h2>
@@ -131,7 +131,7 @@ export function TransicaoSection() {
             <span key={w.key}>{i > 0 ? (i === ILF_WEIGHTS.length - 1 ? ' e ' : ', ') : ''}<span style={{ color: 'rgba(255,255,255,0.85)' }}>{w.label.toLowerCase()}</span></span>
           ))} — tudo foi contado. O Melhor Atacante do Flu chegou ao seu veredito.
         </p>
-        <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, fontWeight: 700 }}>
+        <div style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: 8, fontSize: 12, color: 'rgba(255,255,255,0.65)', letterSpacing: '0.12em', textTransform: 'uppercase' as const, fontWeight: 700 }}>
           A revelação começa abaixo
           <span style={{ fontSize: 22, animation: 'bounceArrow 1.6s ease-in-out infinite' }}>↓</span>
         </div>
@@ -170,7 +170,7 @@ export function RevelacaoSection() {
           <div key={count} style={{ fontFamily: BB, fontSize: 'clamp(100px,22vw,220px)', color: 'white', lineHeight: 0.9, textShadow: '0 0 60px rgba(232,181,96,0.4)' }}>
             <span style={{ display: 'inline-block', animation: 'popCount 0.85s ease' }}>{count > 0 ? count : '🏆'}</span>
           </div>
-          <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginTop: 16 }}>Maior atacante da história do Fluminense...</div>
+          <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', marginTop: 16 }}>Maior atacante da história do Fluminense...</div>
         </div>
       ) : (
         <div style={{ textAlign: 'center', animation: 'revealUp 0.8s cubic-bezier(0.2,0.7,0.2,1)' }}>
@@ -187,7 +187,7 @@ export function RevelacaoSection() {
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 28, background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(232,181,96,0.3)', borderRadius: 18, padding: '20px 36px', flexWrap: 'wrap' as const, justifyContent: 'center' }}>
             <div>
               <div style={{ fontFamily: BB, fontSize: 64, color: '#E8B560', lineHeight: 1 }}><AnimatedNumber value={champ.ilf} decimals={1} /></div>
-              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota Melhor Atacante do Flu</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota Melhor Atacante do Flu</div>
             </div>
             <div style={{ width: 1, height: 56, background: 'rgba(255,255,255,0.15)' }} />
             <div style={{ textAlign: 'left' as const }}>
@@ -199,7 +199,7 @@ export function RevelacaoSection() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(120px,1fr))', gap: 10, maxWidth: 720, margin: '28px auto 0' }}>
             {ILF_WEIGHTS.map(w => (
               <div key={w.key} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 10, padding: '10px 8px' }}>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 3 }}>{w.label}</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.06em', marginBottom: 3 }}>{w.label}</div>
                 <div style={{ fontFamily: BB, fontSize: 22, color: '#E8B560' }}>{ILF_compute_scores(champ)[w.key].toFixed(0)}</div>
               </div>
             ))}
@@ -293,7 +293,7 @@ export function VotacaoSection() {
         <h2 style={{ fontFamily: BB, fontSize: 'clamp(30px,5vw,50px)', textAlign: 'center', letterSpacing: '0.02em', marginBottom: 8, lineHeight: 1 }}>E PRA VOCÊ, QUEM É O MAIOR?</h2>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.55)', textAlign: 'center', marginBottom: 36 }}>A análise do Melhor Atacante do Flu deu o veredito — mas a palavra final é da arquibancada.</p>
 
-        {loading && <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 24 }}>Carregando votos...</div>}
+        {loading && <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.65)', fontSize: 13, marginBottom: 24 }}>Carregando votos...</div>}
         <div data-mc="vote" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(148px, 1fr))', gap: 10, marginBottom: 28 }}>
           {allVote.map(p => {
             const pct = Math.round(((results[p.id] || 0) / total) * 100);
@@ -302,17 +302,17 @@ export function VotacaoSection() {
               <button key={p.id} onClick={() => vote(p.id)} disabled={!!voted || loading} style={{ background: isVote ? 'rgba(232,181,96,0.15)' : 'rgba(255,255,255,0.04)', border: isVote ? '2px solid #E8B560' : '1px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '16px 10px', cursor: voted || loading ? 'default' : 'pointer', color: 'white', transition: 'all 0.2s', textAlign: 'center' as const }}
                 onMouseEnter={e => { if (!voted) e.currentTarget.style.transform = 'translateY(-3px)'; }}
                 onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; }}>
-                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}><Portrait player={p} size={54} ring={isVote ? '#E8B560' : 'rgba(255,255,255,0.2)'} big={isVote} /></div>
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 8 }}><Portrait player={p} size={54} ring={isVote ? '#E8B560' : 'rgba(255,255,255,0.65)'} big={isVote} /></div>
                 <div style={{ fontFamily: BB, fontSize: 16, letterSpacing: '0.02em', lineHeight: 1.1, marginBottom: 2 }}>{p.nome}</div>
                 {voted ? (
                   <div style={{ marginTop: 6 }}>
                     <div style={{ height: 5, background: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden', marginBottom: 4 }}>
-                      <div style={{ width: `${pct}%`, height: 5, background: isVote ? '#E8B560' : 'rgba(255,255,255,0.35)', borderRadius: 3, transition: 'width 0.6s ease' }} />
+                      <div style={{ width: `${pct}%`, height: 5, background: isVote ? '#E8B560' : 'rgba(255,255,255,0.65)', borderRadius: 3, transition: 'width 0.6s ease' }} />
                     </div>
                     <div style={{ fontFamily: BB, fontSize: 18, color: isVote ? '#E8B560' : 'rgba(255,255,255,0.7)' }}>{pct}%</div>
                   </div>
                 ) : (
-                  <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560', marginTop: 4 }}>Votar →</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: '#E8B560', marginTop: 4 }}>Votar →</div>
                 )}
               </button>
             );
@@ -378,7 +378,7 @@ export function ComparadorSection() {
             return (
               <div key={label} style={{ display: 'flex', alignItems: 'center', padding: '11px 0', borderBottom: i < rows.length - 1 ? '1px solid #E7E1D8' : 'none' }}>
                 <div style={{ flex: 1, textAlign: 'right' as const, fontFamily: BB, fontSize: 24, color: aWins ? '#7A0213' : '#64748B' }}>{va}{aWins && ' ◀'}</div>
-                <div style={{ width: 150, textAlign: 'center' as const, fontSize: 11, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em', color: '#4B5563' }}>{label}</div>
+                <div style={{ width: 150, textAlign: 'center' as const, fontSize: 12, fontWeight: 700, textTransform: 'uppercase' as const, letterSpacing: '0.08em', color: '#4B5563' }}>{label}</div>
                 <div style={{ flex: 1, textAlign: 'left' as const, fontFamily: BB, fontSize: 24, color: bWins ? '#006140' : '#64748B' }}>{bWins && '▶ '}{vb}</div>
               </div>
             );
@@ -401,7 +401,7 @@ export function CTASection() {
           onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'} onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
           🏆 JOGAR LENDAS DO FLU
         </button>
-        <div style={{ marginTop: 28, fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>lendasdoflu.com</div>
+        <div style={{ marginTop: 28, fontSize: 12, color: 'rgba(255,255,255,0.65)' }}>lendasdoflu.com</div>
       </div>
     </section>
   );
