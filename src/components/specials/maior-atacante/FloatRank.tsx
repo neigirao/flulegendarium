@@ -37,7 +37,7 @@ export function FloatRank() {
         className="float-rank-panel"
       >
         <style>{`@media (min-width: 641px) { .float-rank-panel { display: block !important; } }`}</style>
-        <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
+        <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 6 }}>
           ⚡ Placar Parcial Melhor Atacante do Flu
         </div>
         {top.map((p, i) => {
@@ -54,7 +54,7 @@ export function FloatRank() {
             </div>
           );
         })}
-        <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.4)', marginTop: 8, textAlign: 'center' as const }}>Role até o fim para a revelação</div>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', marginTop: 8, textAlign: 'center' as const }}>Role até o fim para a revelação</div>
       </div>
     </>
   );
