@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/useAuth';
 import { useUserProfile } from '@/hooks/use-user-profile';
+import { ExcluirContaSecao } from '@/components/profile/ExcluirContaSecao';
 import { 
   User, Trophy, Target, Zap, Clock, TrendingUp, 
   Swords, ArrowLeft, Send, Inbox, CheckCircle, XCircle,
@@ -364,6 +365,8 @@ const ProfilePage = () => {
                 Jogar Agora
               </Button>
             </div>
+
+            <ExcluirContaSecao />
           </div>
         </div>
       </RootLayout>
