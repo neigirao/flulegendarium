@@ -21,21 +21,21 @@ export const Footer = () => {
 
           {/* Nav links */}
           <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
-            <Link to="/selecionar-modo-jogo" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/selecionar-modo-jogo" className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground transition-colors">
               Jogar
             </Link>
-            <Link to="/estatisticas" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/estatisticas" className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground transition-colors">
               Estatísticas
             </Link>
-            <Link to="/estatisticas" className="text-muted-foreground hover:text-foreground transition-colors">
+            <Link to="/estatisticas" className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground transition-colors">
               Ranking
             </Link>
-            <Link to="/suporte" className="text-muted-foreground hover:text-foreground transition-colors">Suporte</Link>
+            <Link to="/suporte" className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground transition-colors">Suporte</Link>
             <a
               href="https://www.instagram.com/jogolendasdoflu"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
+              className="inline-flex min-h-11 items-center text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1"
             >
               <Instagram className="w-3.5 h-3.5" />
               @jogolendasdoflu
