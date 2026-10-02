@@ -47,7 +47,7 @@ const KEYFRAMES = `
     [data-mc="vote"]     { grid-template-columns: 1fr !important; }
     [data-mc="minfix"]   { grid-template-columns: 1fr !important; }
     [data-mc="cols5"]    { grid-template-columns: repeat(3, 1fr) !important; }
-    [data-mc="cols5"] span { font-size: 8px !important; }
+    [data-mc="cols5"] span { font-size: 12px !important; }
   }
   @media (max-width: 400px) {
     [data-mc="cols5"] { grid-template-columns: repeat(3, 1fr) !important; }

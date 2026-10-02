@@ -69,7 +69,7 @@ export const GameModesPreview: React.FC<GameModesPreviewProps> = ({ playerCount,
   <div>
     <div className="flex items-baseline justify-between mb-5">
       <h2 className="font-display text-[30px] text-primary tracking-[0.03em]">ESCOLHA SEU MODO</h2>
-      <Link to="/tutorial" className="text-[13px] text-secondary font-semibold hover:text-secondary/80 flex items-center gap-1 transition-colors">
+      <Link to="/tutorial" className="min-h-11 px-1 text-[13px] text-secondary font-semibold hover:text-secondary/80 flex items-center gap-1 transition-colors">
         Ver tutorial →
       </Link>
     </div>

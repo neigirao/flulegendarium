@@ -25,7 +25,7 @@ export function Portrait({ player, size = 96, ring = '#C4944A', big }: PortraitP
   useEffect(() => {
     setImgSrc(rawSrc ? supabaseTransform(rawSrc, size) : rawSrc);
     setFailed(false);
-  }, [rawSrc]);
+  }, [rawSrc, size]);
 
   function handleError() {
     if (rawSrc && imgSrc !== rawSrc) {
@@ -51,6 +51,7 @@ export function Portrait({ player, size = 96, ring = '#C4944A', big }: PortraitP
             src={imgSrc}
             alt={player.nome}
             loading="lazy"
+            decoding="async"
             width={size}
             height={size}
             onError={handleError}

@@ -21,6 +21,7 @@ export const NewsSearch = ({ onSearch, searchTerm }: NewsSearchProps) => {
       <div className="flex gap-2">
         <Input
           type="text"
+          aria-label="Buscar notícias"
           placeholder="Buscar notícias..."
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -28,6 +29,7 @@ export const NewsSearch = ({ onSearch, searchTerm }: NewsSearchProps) => {
         />
         <Button 
           type="submit"
+          aria-label="Buscar notícias"
           className="bg-secondary hover:bg-secondary/90 text-secondary-foreground"
         >
           <Search className="w-4 h-4" />

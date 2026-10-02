@@ -15,6 +15,7 @@ import { HardestJerseys } from "@/components/stats/HardestJerseys";
 import { JerseyDecadeDistribution } from "@/components/stats/JerseyDecadeDistribution";
 import { JerseyScoreDistribution } from "@/components/stats/JerseyScoreDistribution";
 import { JerseyCuriosidades } from "@/components/stats/JerseyCuriosidades";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import { motion } from "framer-motion";
 import { BarChart3, Rocket } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,15 +39,6 @@ const sectionVariant = {
     transition: { delay: i * 0.1, duration: 0.5 },
   }),
 };
-
-const SectionHeader = ({ emoji, title, subtitle }: { emoji: string; title: string; subtitle?: string }) => (
-  <div className="space-y-1 mb-4">
-    <h2 className="text-xl font-display font-semibold text-foreground">
-      {emoji} {title}
-    </h2>
-    {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
-  </div>
-);
 
 const EstatisticasPublicas = () => {
   const navigate = useNavigate();
@@ -76,8 +68,9 @@ const EstatisticasPublicas = () => {
         description="📊 Descubra como a comunidade tricolor joga: rankings, jogadores mais difíceis, distribuição por década, curiosidades e muito mais."
       />
       <TopNavigation />
+      <style>{`.stats-panel [style*="opacity"] { opacity: 1 !important; }`}</style>
       <main className="min-h-screen page-warm pt-20 pb-16 px-4">
-        <div className="container mx-auto max-w-6xl space-y-12">
+        <div className="container mx-auto max-w-6xl space-y-6">
           {/* Breadcrumb */}
           <Breadcrumb>
             <BreadcrumbList>
@@ -116,83 +109,44 @@ const EstatisticasPublicas = () => {
             <GlobalStatsCards />
           </motion.section>
 
-          {/* 2. Curiosidades */}
-          <motion.section aria-label="Curiosidades" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={1}>
-            <SectionHeader emoji="🔎" title="Curiosidades" subtitle="Fatos surpreendentes escondidos nos dados do quiz" />
-            <Curiosidades />
-          </motion.section>
-
-          {/* Jersey Quiz Stats */}
-          <motion.section aria-label="Quiz das Camisas" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={2}>
-            <SectionHeader emoji="👕" title="Quiz das Camisas" subtitle="Números e curiosidades do quiz de camisas históricas" />
-            <div className="space-y-8">
-              <JerseyStatsCards />
-              <JerseyCuriosidades />
-              <div className="grid md:grid-cols-2 gap-6">
-                <JerseyDecadeDistribution />
-                <JerseyScoreDistribution />
-              </div>
-              <HardestJerseys />
-            </div>
-          </motion.section>
-
-          {/* 3-9: Below fold — lazy render */}
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 400px' }}>
-            <motion.div aria-label="Comportamento dos jogadores" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3}>
-              <SectionHeader
-                emoji="🎮"
-                title="Como os Tricolores Jogam"
-                subtitle="Preferência de modo de jogo e horários de pico da comunidade"
-              />
-              <PlayerBehaviorStats />
-            </motion.div>
-          </section>
-
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 350px' }}>
-            <motion.div aria-label="Evolução mensal" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={3}>
-              <SectionHeader emoji="📈" title="Linha do Tempo" subtitle="A evolução da comunidade tricolor mês a mês" />
-              <MonthlyGrowthChart />
-            </motion.div>
-          </section>
-
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 350px' }}>
-            <motion.div aria-label="Distribuição por década" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={4}>
-              <SectionHeader emoji="📅" title="Lendas por Década" subtitle="Qual era do Fluminense tem mais representantes no acervo?" />
-              <DecadeDistribution />
-            </motion.div>
-          </section>
-
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 300px' }}>
-            <motion.div aria-label="Distribuição de dificuldade" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={5}>
-              <SectionHeader emoji="📊" title="Distribuição de Dificuldade" />
-              <DifficultyDistribution />
-            </motion.div>
-          </section>
-
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
-            <motion.div aria-label="Jogadores mais conhecidos e mais difíceis" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={6}>
-              <SectionHeader
-                emoji="⚡"
-                title="Lendas Mais Conhecidas vs Mais Difíceis"
-                subtitle="Compare quem todo mundo reconhece com quem desafia até os craques da memória tricolor"
-              />
-              <HardestPlayers />
-            </motion.div>
-          </section>
-
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 500px' }}>
-            <motion.div aria-label="Hall da fama" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={7}>
-              <SectionHeader emoji="🏆" title="Hall da Fama" subtitle="Os melhores de cada modo de jogo" />
-              <TopPlayersExpanded />
-            </motion.div>
-          </section>
-
-          <section style={{ contentVisibility: 'auto', containIntrinsicSize: '0 350px' }}>
-            <motion.div aria-label="Distribuição de pontuações" variants={sectionVariant} initial="hidden" whileInView="visible" viewport={{ once: true }} custom={8}>
-              <SectionHeader emoji="🎯" title="Onde Você Se Encaixa?" subtitle="Veja como sua pontuação se compara com a comunidade" />
-              <ScoreDistribution />
-            </motion.div>
-          </section>
+          <Accordion type="multiple" className="rounded-xl border border-border bg-card px-4">
+            <AccordionItem value="curiosidades">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Curiosidades</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><Curiosidades /></AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="camisas">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Quiz das Camisas</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><JerseyStatsCards /><JerseyCuriosidades /><div className="grid md:grid-cols-2 gap-6"><JerseyDecadeDistribution /><JerseyScoreDistribution /></div><HardestJerseys /></AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="comportamento">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Como os Tricolores Jogam</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><PlayerBehaviorStats /></AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="tempo">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Linha do Tempo</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><MonthlyGrowthChart /></AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="decadas">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Lendas por Década</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><DecadeDistribution /></AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="dificuldade">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Distribuição de Dificuldade</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><DifficultyDistribution /></AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="lendas">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Lendas Mais Conhecidas vs Mais Difíceis</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><HardestPlayers /></AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="ranking">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Hall da Fama</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><TopPlayersExpanded /></AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="pontuacoes">
+              <AccordionTrigger className="text-left text-lg font-display text-primary min-h-14">Onde Você Se Encaixa?</AccordionTrigger>
+              <AccordionContent className="stats-panel space-y-6"><ScoreDistribution /></AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           {/* CTA to play */}
           <motion.div

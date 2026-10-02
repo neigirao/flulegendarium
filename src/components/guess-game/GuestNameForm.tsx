@@ -38,6 +38,7 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
               <Input
                 data-testid="player-name-input"
                 type="text"
+                aria-label="Seu nome"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Digite seu nome..."
@@ -47,6 +48,7 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
               />
             </div>
             
+            <p id="guest-name-help" className="text-sm text-muted-foreground">Digite seu nome para habilitar Começar Jogo.</p>
             <div className="flex gap-3">
               <Button
                 data-testid="cancel-button"
@@ -61,7 +63,8 @@ export const GuestNameForm = ({ onNameSubmitted, onCancel }: GuestNameFormProps)
                 data-testid="start-game-button"
                 type="submit"
                 disabled={!name.trim()}
-                className="flex-1 bg-secondary hover:bg-secondary/90 text-white"
+                aria-describedby="guest-name-help"
+                className="flex-1 bg-secondary hover:bg-secondary/90 text-white disabled:bg-slate-200 disabled:text-slate-700 disabled:opacity-100"
               >
                 <Play className="w-4 h-4 mr-2" />
                 Começar Jogo

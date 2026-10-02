@@ -1,9 +1,9 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Rocket, Instagram, Apple } from "lucide-react";
+import { Rocket, Instagram } from "lucide-react";
 import { SEOManager } from "@/components/seo/SEOManager";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAnalytics } from "@/hooks/analytics";
 import { GameTypeRankings } from "@/components/home/GameTypeRankings";
 import { GameModesPreview } from "@/components/home/GameModesPreview";
@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
 import { authStart, authError, medirEntradaNativa } from '@/lib/auth-funnel';
 import { entrarNoAplicativo, noAplicativo } from '@/lib/entrar-nativo';
+import { AppleSignInArt } from "@/components/auth/AppleSignInArt";
 import { cn } from "@/lib/utils";
 
 const HOW_IT_WORKS = [
@@ -41,6 +42,10 @@ const Index = () => {
     finally { setLoginPending(false); }
   };
   const navigate = useNavigate();
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash === "#ranking") document.getElementById("ranking")?.scrollIntoView({ behavior: "auto", block: "start" });
+  }, [hash]);
   const { trackFunnelPageView: trackPageView } = useAnalytics();
   const { onMouseEnter } = useLinkPrefetch();
 
@@ -65,7 +70,7 @@ const Index = () => {
 
   const playerCount = homeStats?.player_count ?? 188;
   const jerseyCount = homeStats?.jersey_count ?? 50;
-  const todayPlayers = homeStats?.today_players ?? 0;
+  
 
   const handlePrefetchGameMode = useCallback(() => onMouseEnter('/selecionar-modo-jogo'), [onMouseEnter]);
   const handleStartGame = useCallback(() => navigate('/selecionar-modo-jogo'), [navigate]);
@@ -97,7 +102,7 @@ const Index = () => {
                 {!user && (
                   <div className="grid grid-cols-2 gap-3 mb-6" aria-label="Entrar na sua conta">
                     <button disabled={loginPending} onClick={() => enter('google')} className="min-h-12 rounded-xl border border-border bg-white px-3 py-3 text-sm font-semibold hover:bg-muted disabled:opacity-50">Entrar com Google</button>
-                    <button disabled={loginPending} onClick={() => enter('apple')} className="min-h-12 rounded-xl border border-border bg-white px-3 py-3 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-muted disabled:opacity-50"><Apple className="w-4 h-4" />Entrar com Apple</button>
+                    <button disabled={loginPending} onClick={() => enter('apple')} className="min-h-12 rounded-xl border border-border bg-white px-3 py-3 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-muted disabled:opacity-50 !py-0"><AppleSignInArt /></button>
                     {loginError && <p role="alert" className="col-span-2 text-sm text-destructive">{loginError}</p>}
                   </div>
                 )}
@@ -128,9 +133,6 @@ const Index = () => {
                 </div>
 
                 <div className="inline-flex items-center gap-3.5 bg-white border border-border rounded-full px-4 py-2 shadow-[0_2px_10px_rgba(0,0,0,0.05)] text-[13px] text-muted-foreground">
-                  <span className="w-2 h-2 rounded-full bg-[#22C55E] shadow-[0_0_0_4px_rgba(34,197,94,0.2)] animate-pulse flex-shrink-0" />
-                  <span><strong className="text-foreground">{todayPlayers || 42}</strong> tricolores jogaram hoje</span>
-                  <span className="w-px h-3.5 bg-border flex-shrink-0" />
                   <span><strong className="text-foreground">{playerCount}</strong> ídolos no banco</span>
                 </div>
 
@@ -224,7 +226,7 @@ const Index = () => {
           </section>
 
           {/* ── HALL DA FAMA ── */}
-          <section className="max-w-[1240px] mx-auto px-7 py-14" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 700px' }}>
+          <section id="ranking" tabIndex={-1} className="scroll-mt-24 max-w-[1240px] mx-auto px-7 py-14" style={{ contentVisibility: 'auto', containIntrinsicSize: '0 700px' }}>
             <GameTypeRankings />
           </section>
 
@@ -234,7 +236,7 @@ const Index = () => {
               href="https://www.instagram.com/jogolendasdoflu"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-lg font-bold hover:text-primary/80 transition-colors"
+              className="inline-flex min-h-11 items-center text-lg font-bold hover:text-primary/80 transition-colors"
             >
               @jogolendasdoflu
             </a>

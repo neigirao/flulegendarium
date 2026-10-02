@@ -23,7 +23,7 @@ export function BarRow({ rank, label, sub, value, display, max, color = '#7A0213
           }}>{rank}</span>
           <div style={{ flex: 1 }}>
             <div style={{ fontWeight: 600, fontSize: 14, color: '#1a1a2e' }}>{label}</div>
-            <div style={{ fontSize: 11, color: '#94A3B8' }}>{sub}</div>
+            <div style={{ fontSize: 12, color: '#64748B' }}>{sub}</div>
           </div>
           <span style={{ fontFamily: "'Bebas Neue', Impact, sans-serif", fontSize: 22, color }}>{display}</span>
         </div>

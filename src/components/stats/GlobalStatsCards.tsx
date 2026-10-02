@@ -79,6 +79,7 @@ export const GlobalStatsCards = () => {
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
       {cards.map((card, i) => (
         <motion.div
+          className={i === cards.length - 1 ? "col-span-2 md:col-span-1" : undefined}
           key={card.label}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
