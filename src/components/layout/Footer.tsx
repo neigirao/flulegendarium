@@ -43,9 +43,13 @@ export const Footer = () => {
           </nav>
 
           {/* Copyright */}
-          <p className="text-xs text-muted-foreground/60 flex items-center gap-1">
-            © 2024 Lendas do Flu — Feito com <Heart className="w-3 h-3 text-primary fill-primary" /> por tricolores, para tricolores
-          </p>
+          <div className="text-xs text-muted-foreground/60 space-y-2 leading-relaxed">
+            <p>© {new Date().getFullYear()} Lendas do Flu</p>
+            <p className="inline-flex items-center justify-center gap-1 flex-wrap">
+              <span className="inline-flex items-center gap-1 whitespace-nowrap">Feito com <Heart aria-label="amor" className="w-3 h-3 text-primary fill-primary" /></span>
+              <span>por tricolores, para tricolores</span>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

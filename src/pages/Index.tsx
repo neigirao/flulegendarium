@@ -1,5 +1,5 @@
-import React, { useEffect, useCallback } from "react";
-import { Rocket, Instagram } from "lucide-react";
+import React, { useEffect, useCallback, useState } from "react";
+import { Rocket, Instagram, Apple } from "lucide-react";
 import { SEOManager } from "@/components/seo/SEOManager";
 import { TopNavigation } from "@/components/navigation/TopNavigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -12,6 +12,8 @@ import { Footer } from "@/components/layout/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/utils/logger";
+import { authStart, authError, medirEntradaNativa } from '@/lib/auth-funnel';
+import { entrarNoAplicativo, noAplicativo } from '@/lib/entrar-nativo';
 import { cn } from "@/lib/utils";
 
 const HOW_IT_WORKS = [
@@ -22,6 +24,22 @@ const HOW_IT_WORKS = [
 
 const Index = () => {
   const { user } = useAuth();
+  const [loginPending, setLoginPending] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const enter = async (provider: 'google' | 'apple') => {
+    setLoginPending(true); setLoginError(null);
+    try {
+      if (noAplicativo()) {
+        const result = await medirEntradaNativa(provider, () => entrarNoAplicativo(provider));
+        if (result !== null && result !== 'cancelado') setLoginError('Não foi possível entrar. Tente de novo.');
+      } else {
+        authStart(provider, 'web');
+        const { error } = await supabase.auth.signInWithOAuth({provider, options:{redirectTo:window.location.origin + '/selecionar-modo-jogo'}});
+        if (error) { authError(provider, 'web', 'provider_error'); setLoginError('Não foi possível entrar. Tente de novo.'); }
+      }
+    } catch { authError(provider, noAplicativo() ? 'native' : 'web', 'network'); setLoginError('Não foi possível entrar. Tente de novo.'); }
+    finally { setLoginPending(false); }
+  };
   const navigate = useNavigate();
   const { trackFunnelPageView: trackPageView } = useAnalytics();
   const { onMouseEnter } = useLinkPrefetch();
@@ -67,7 +85,7 @@ const Index = () => {
         <div className="pt-20 safe-area-top">
 
           {/* ── HERO ── */}
-          <section className="max-w-[1240px] mx-auto px-7 pt-12 pb-7">
+          <section className="max-w-[1240px] mx-auto px-5 sm:px-7 pt-14 sm:pt-12 pb-7">
             <div className="grid grid-cols-1 md:grid-cols-[1.15fr_1fr] gap-12 items-center">
 
               <div>
@@ -76,6 +94,13 @@ const Index = () => {
                   Quiz · Fluminense FC · Desde 1902
                 </div>
 
+                {!user && (
+                  <div className="grid grid-cols-2 gap-3 mb-6" aria-label="Entrar na sua conta">
+                    <button disabled={loginPending} onClick={() => enter('google')} className="min-h-12 rounded-xl border border-border bg-white px-3 py-3 text-sm font-semibold hover:bg-muted disabled:opacity-50">Entrar com Google</button>
+                    <button disabled={loginPending} onClick={() => enter('apple')} className="min-h-12 rounded-xl border border-border bg-white px-3 py-3 text-sm font-semibold inline-flex items-center justify-center gap-2 hover:bg-muted disabled:opacity-50"><Apple className="w-4 h-4" />Entrar com Apple</button>
+                    {loginError && <p role="alert" className="col-span-2 text-sm text-destructive">{loginError}</p>}
+                  </div>
+                )}
                 <h1 className="font-display text-[clamp(48px,7vw,72px)] leading-[0.92] tracking-[0.02em] text-primary mb-4">
                   DE CASTILHO<br />A <span className="text-secondary">CANO</span>,<br />VOCÊ SABE?
                 </h1>
@@ -92,7 +117,7 @@ const Index = () => {
                     className="bg-primary text-white rounded-[12px] px-7 py-4 font-display text-[20px] tracking-[0.05em] shadow-[0_8px_24px_rgba(122,2,19,0.32)] hover:-translate-y-0.5 hover:shadow-[0_12px_28px_rgba(122,2,19,0.4)] transition-all duration-150 flex items-center gap-2.5"
                   >
                     <Rocket className="w-5 h-5" />
-                    ADIVINHE AGORA
+                    {user ? "ADIVINHE AGORA" : "JOGAR UMA RODADA"}
                   </button>
                   <button
                     onClick={handleViewRanking}
