@@ -15,23 +15,16 @@ interface PerformanceWithMemory extends Performance {
 export const initializeSentry = () => {
   Sentry.init({
     dsn: "https://f9c46da6b7626a7ae61c9b0e87f46eba@o4509675988385792.ingest.us.sentry.io/4509676034392064",
-    integrations: [
-      Sentry.browserTracingIntegration({
-        // Enable automatic instrumentation of user interactions
-        enableInp: true,
-        // Enable long task tracking for performance monitoring
-        enableLongTask: true,
-        // Enable HTTP request timing
-        enableHTTPTimings: true,
-      }),
-    ],
-    
-    // Sample performance traces; session replay is disabled.
-    tracesSampleRate: 0.1,
-    
-    // Set `tracePropagationTargets` to control for which URLs distributed tracing should be enabled
-    tracePropagationTargets: ["localhost", /^https:\/\/.*\.supabase\.co\//, /^https:\/\/api\./],
-    
+    // Errors only: no browser tracing, session replay or performance sampling.
+    integrations: [],
+    tracesSampleRate: 0,
+    replaysSessionSampleRate: 0,
+    replaysOnErrorSampleRate: 0,
+    beforeSend(event) {
+      if (event.user) delete event.user.ip_address;
+      return event;
+    },
+
     // Do not attach default personal data to error events.
     sendDefaultPii: false,
     
