@@ -29,10 +29,6 @@ const DailyChallengesPage = () => {
 
   const completedCount = challenges.filter(c => c.progress?.is_completed).length;
   const totalChallenges = challenges.length;
-  const totalRewards = challenges
-    .filter(c => c.progress?.is_completed)
-    .reduce((sum, c) => sum + (c.reward_points || 0), 0);
-  const potentialRewards = challenges.reduce((sum, c) => sum + (c.reward_points || 0), 0);
   const progressPercent = totalChallenges > 0 ? (completedCount / totalChallenges) * 100 : 0;
 
   if (authLoading || !user) {
@@ -49,7 +45,7 @@ const DailyChallengesPage = () => {
     <>
       <SEOManager 
         title="Desafios Diários - Lendas do Flu"
-        description="Complete desafios diários e ganhe pontos extras no Lendas do Flu!"
+        description="Acompanhe seus desafios diários no Lendas do Flu!"
       />
       <RootLayout>
         <TopNavigation />
@@ -75,7 +71,7 @@ const DailyChallengesPage = () => {
                     Desafios Diários
                   </h1>
                   <p className="font-body text-muted-foreground">
-                    Complete desafios para ganhar pontos extras!
+                    Complete desafios e acompanhe seu progresso!
                   </p>
                 </div>
               </div>
@@ -83,7 +79,7 @@ const DailyChallengesPage = () => {
               {/* Progress Overview */}
               <Card className="bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/20">
                 <CardContent className="p-6">
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="text-center">
                       <div className="flex items-center justify-center gap-1 font-display text-display-subtitle text-primary">
                         <CheckCircle className="w-6 h-6" />
@@ -98,22 +94,8 @@ const DailyChallengesPage = () => {
                       </div>
                       <p className="font-body text-sm text-muted-foreground">Restantes</p>
                     </div>
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 font-display text-display-subtitle text-success">
-                        <Trophy className="w-6 h-6" />
-                        {totalRewards}
-                      </div>
-                      <p className="font-body text-sm text-muted-foreground">Pontos Ganhos</p>
-                    </div>
-                    <div className="text-center">
-                      <div className="flex items-center justify-center gap-1 font-display text-display-subtitle text-warning">
-                        <Sparkles className="w-6 h-6" />
-                        {potentialRewards - totalRewards}
-                      </div>
-                      <p className="font-body text-sm text-muted-foreground">Pontos Disponíveis</p>
-                    </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm font-body">
                       <span className="text-muted-foreground">Progresso do Dia</span>
