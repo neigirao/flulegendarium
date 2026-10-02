@@ -100,7 +100,7 @@ export const ChallengeCard = memo(({
             </div>
           </div>
           
-          <Badge variant={isCompleted ? 'default' : 'secondary'} className="text-xs">
+          <Badge hidden={rewardPoints <= 0} variant={isCompleted ? 'default' : 'secondary'} className="text-xs">
             +{rewardPoints}
           </Badge>
         </div>
@@ -140,6 +140,7 @@ export const ChallengeCard = memo(({
                 </h4>
                 <Badge 
                   variant={isCompleted ? 'default' : 'outline'} 
+                  hidden={rewardPoints <= 0}
                   className={isCompleted ? 'bg-success text-success-foreground' : ''}
                 >
                   <Trophy className="w-3 h-3 mr-1" />
