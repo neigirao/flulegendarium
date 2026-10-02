@@ -18,7 +18,7 @@ export function Kicker({ n, children, light }: KickerProps) {
         }}>{n}</span>
       )}
       <span style={{
-        fontSize: 11, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' as const,
+        fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' as const,
         color: light ? 'rgba(255,255,255,0.75)' : '#4B5563',
       }}>{children}</span>
     </div>
