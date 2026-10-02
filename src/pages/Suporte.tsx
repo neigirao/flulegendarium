@@ -6,7 +6,7 @@ export default function Suporte() {
     <main className="min-h-screen bg-background px-5 py-10">
       <SEOManager title="Suporte | Lendas do Flu" description="Ajuda e contato do Lendas do Flu." schema="WebPage" />
       <article className="mx-auto max-w-2xl space-y-5 leading-relaxed text-foreground">
-        <Link to="/" className="text-sm text-muted-foreground underline-offset-4 hover:underline">← Voltar para o início</Link>
+        <Link to="/" className="inline-flex min-h-11 items-center text-sm text-muted-foreground underline-offset-4 hover:underline">← Voltar para o início</Link>
         <h1 className="pt-4 text-3xl font-bold">Suporte</h1>
         <p>Lendas do Flu é um quiz independente para testar seu conhecimento sobre jogadores, décadas e camisas históricas do Fluminense. Não é um aplicativo oficial do clube.</p>
         <h2 className="text-xl font-semibold">Precisa de ajuda?</h2>
