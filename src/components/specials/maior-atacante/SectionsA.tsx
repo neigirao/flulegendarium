@@ -21,7 +21,7 @@ export function HeroSection({ onStart }: HeroProps) {
       <div style={{ height: 5, background: 'linear-gradient(90deg,#7A0213 33%,#FAFAFA 33% 66%,#006140 66%)' }} />
 
       <div style={{ maxWidth: 1080, margin: '0 auto', padding: '40px 32px 0', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 11, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 20 }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 20 }}>
           <span style={{ width: 28, height: 2, background: '#E8B560' }} />
           Índice Lendas do Flu
           <span style={{ width: 28, height: 2, background: '#E8B560' }} />
@@ -109,7 +109,7 @@ export function HeroSection({ onStart }: HeroProps) {
         <div style={{ fontFamily: BB, fontSize: 17, color: '#E8B560', letterSpacing: '0.08em', marginBottom: 6 }}>
           15 LENDAS · UM TÍTULO EM DISPUTA
         </div>
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 36, letterSpacing: '0.04em' }}>
+        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', marginBottom: 36, letterSpacing: '0.04em' }}>
           De Welfare a Cano — mais de um século de artilheiros tricolores
         </div>
 
@@ -126,7 +126,7 @@ export function HeroSection({ onStart }: HeroProps) {
           {[['15', 'candidatos'], ['6', 'critérios'], ['100+', 'anos de história']].map(([v, l]) => (
             <div key={l} style={{ textAlign: 'center' }}>
               <div style={{ fontFamily: BB, fontSize: 46, color: '#E8B560', lineHeight: 1 }}>{v}</div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700, marginTop: 4 }}>{l}</div>
+              <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700, marginTop: 4 }}>{l}</div>
             </div>
           ))}
         </div>
@@ -192,7 +192,7 @@ function FormaGol({ player }: { player: ILFPlayer }) {
 
   return (
     <div style={{ marginTop: 22, background: 'rgba(255,255,255,0.04)', borderRadius: 12, padding: '16px 18px' }}>
-      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>Forma do Gol</div>
+      <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.65)', marginBottom: 12 }}>Forma do Gol</div>
 
       {/* Barra segmentada */}
       <div style={{ display: 'flex', height: 8, borderRadius: 4, overflow: 'hidden', gap: 1, marginBottom: 10 }}>
@@ -207,9 +207,9 @@ function FormaGol({ player }: { player: ILFPlayer }) {
         {CATS.map(cat => (
           <div key={cat.label} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
             <div style={{ width: 8, height: 8, borderRadius: 2, background: cat.color, flexShrink: 0 }} />
-            <span style={{ fontSize: 10, color: cat.color, fontWeight: 700 }}>{cat.label}</span>
+            <span style={{ fontSize: 12, color: cat.color, fontWeight: 700 }}>{cat.label}</span>
             <span style={{ fontFamily: BB, fontSize: 13, color: 'white' }}>{catSum(cat)}</span>
-            <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)' }}>({pct(catSum(cat))}%)</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)' }}>({pct(catSum(cat))}%)</span>
           </div>
         ))}
       </div>
@@ -218,14 +218,14 @@ function FormaGol({ player }: { player: ILFPlayer }) {
       <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 8 }}>
         {CATS.map(cat => (
           <div key={cat.label} style={{ background: cat.bg, borderRadius: 8, padding: '8px 10px' }}>
-            <div style={{ fontSize: 9, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: cat.color, marginBottom: 7 }}>{cat.label}</div>
+            <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase' as const, color: cat.color, marginBottom: 7 }}>{cat.label}</div>
             <div style={{ display: 'flex', flexDirection: 'column' as const, gap: 5 }}>
               {[...cat.items].sort((a, b) => b.v - a.v).map(({ label, v }) => (
                 <div key={label}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 2 }}>
-                    <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.7)' }}>{label}</span>
+                    <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>{label}</span>
                     <span style={{ fontFamily: BB, fontSize: 13, color: 'white' }}>
-                      {v} <span style={{ fontSize: 9, color: 'rgba(255,255,255,0.35)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(v)}%</span>
+                      {v} <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', fontFamily: 'sans-serif', fontWeight: 400 }}>{pct(v)}%</span>
                     </span>
                   </div>
                   <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, overflow: 'hidden' }}>
@@ -264,7 +264,7 @@ export function FinalistasSection() {
                   <Portrait player={p} size={64} ring="#C4944A" />
                   <div>
                     <div style={{ fontFamily: BB, fontSize: 22, color: '#1a1a2e', letterSpacing: '0.02em', lineHeight: 1 }}>{p.nome}</div>
-                    <div style={{ fontSize: 11, color: '#64748B', marginTop: 3 }}>{p.periodo}</div>
+                    <div style={{ fontSize: 12, color: '#64748B', marginTop: 3 }}>{p.periodo}</div>
                   </div>
                 </div>
               </div>
@@ -290,7 +290,7 @@ export function FinalistasSection() {
                 <div>
                   <div style={{ fontFamily: BB, fontSize: 32, letterSpacing: '0.02em', lineHeight: 0.95 }}>{sel.nome}</div>
                   <div style={{ fontSize: 12, color: '#E8B560', fontWeight: 600 }}>{sel.apelido}</div>
-                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{sel.periodo} · {sel.posicao}</div>
+                  <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 2 }}>{sel.periodo} · {sel.posicao}</div>
                 </div>
               </div>
               <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)', lineHeight: 1.6, marginBottom: 22, fontStyle: 'italic', borderLeft: '3px solid #C4944A', paddingLeft: 14 }}>{sel.legenda}</p>
@@ -298,11 +298,11 @@ export function FinalistasSection() {
                 {[['Gols', sel.gols], ['Jogos', sel.jogos], ['Média', ILF_media(sel).toFixed(2)]].map(([l, v]) => (
                   <div key={String(l)} style={{ background: 'rgba(255,255,255,0.05)', borderRadius: 10, padding: '12px 8px', textAlign: 'center' as const }}>
                     <div style={{ fontFamily: BB, fontSize: 24, color: '#E8B560' }}>{v}</div>
-                    <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>{l}</div>
+                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>{l}</div>
                   </div>
                 ))}
               </div>
-              <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.4)', marginBottom: 12 }}>Pontuação por critério</div>
+              <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' as const, color: 'rgba(255,255,255,0.65)', marginBottom: 12 }}>Pontuação por critério</div>
               {(() => { const selScores = ILF_compute_scores(sel); return ILF_WEIGHTS.map(w => (
                 <div key={w.key} style={{ marginBottom: 9 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 3 }}>
@@ -315,7 +315,7 @@ export function FinalistasSection() {
                 </div>
               )); })()}
               <div style={{ marginTop: 22, padding: 16, background: 'linear-gradient(135deg, rgba(196,148,74,0.18), rgba(122,2,19,0.18))', borderRadius: 12, textAlign: 'center' as const }}>
-                <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota Melhor Atacante do Flu</div>
+                <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.12em', fontWeight: 700 }}>Nota Melhor Atacante do Flu</div>
                 <div style={{ fontFamily: BB, fontSize: 48, color: '#E8B560', lineHeight: 1 }}>{ILF_compute(sel).toFixed(1)}</div>
               </div>
               <FormaGol player={sel} />
@@ -370,7 +370,7 @@ export function MetodologiaSection() {
         </div>
 
         <div style={{ marginTop: 32, background: '#0A1810', borderRadius: 16, padding: '28px 32px', color: 'white', overflowX: 'auto' as const }}>
-          <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 14 }}>A Fórmula</div>
+          <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' as const, color: '#E8B560', marginBottom: 14 }}>A Fórmula</div>
           <div style={{ fontFamily: BB, fontSize: 'clamp(16px,2.4vw,24px)', letterSpacing: '0.02em', lineHeight: 1.6, color: 'rgba(255,255,255,0.92)' }}>
             Melhor Atacante do Flu = Gols + Clássicos + Decisivos + Títulos + Campanhas + Longevidade
           </div>
@@ -393,14 +393,14 @@ export function ProducaoSection() {
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'start' }}>
           <Reveal>
             <div style={{ background: 'linear-gradient(160deg,#0D2018,#0A1810)', borderRadius: 18, padding: 28, color: 'white', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 14, left: 0, right: 0, fontSize: 10, fontWeight: 800, letterSpacing: '0.16em', color: '#E8B560', textTransform: 'uppercase' as const }}>★ Líder da categoria</div>
+              <div style={{ position: 'absolute', top: 14, left: 0, right: 0, fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', color: '#E8B560', textTransform: 'uppercase' as const }}>★ Líder da categoria</div>
               <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', marginBottom: 14 }}><Portrait player={lider} size={104} ring="#E8B560" big /></div>
               <div style={{ fontFamily: BB, fontSize: 34, letterSpacing: '0.02em', lineHeight: 1 }}>{lider.nome}</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 18 }}>{lider.periodo}</div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 22 }}>
-                <div><div style={{ fontFamily: BB, fontSize: 32, color: '#E8B560' }}><AnimatedNumber value={lider.gols} /></div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols</div></div>
-                <div><div style={{ fontFamily: BB, fontSize: 32, color: 'white' }}>{lider.jogos}</div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>jogos</div></div>
-                <div><div style={{ fontFamily: BB, fontSize: 32, color: 'white' }}>{ILF_media(lider).toFixed(2)}</div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>média</div></div>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: '#E8B560' }}><AnimatedNumber value={lider.gols} /></div><div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>gols</div></div>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: 'white' }}>{lider.jogos}</div><div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>jogos</div></div>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: 'white' }}>{ILF_media(lider).toFixed(2)}</div><div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>média</div></div>
               </div>
             </div>
           </Reveal>
@@ -465,7 +465,7 @@ export function TitulosSection() {
                   <div style={{ fontFamily: BB, fontSize: 20, color: '#1a1a2e', letterSpacing: '0.02em' }}>{p.nome}</div>
                   <div style={{ display: 'flex', gap: 6, marginTop: 5, flexWrap: 'wrap' as const }}>
                     {p.items.map(([t, n]) => (
-                      <span key={t} style={{ fontSize: 10, fontWeight: 700, padding: '3px 8px 3px 6px', borderRadius: 5, color: 'white', background: BADGE_COLOR[t] || '#64748B', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                      <span key={t} style={{ fontSize: 12, fontWeight: 700, padding: '3px 8px 3px 6px', borderRadius: 5, color: 'white', background: BADGE_COLOR[t] || '#64748B', display: 'inline-flex', alignItems: 'center', gap: 4 }}>
                         <span style={{ fontSize: 12 }}>{BADGE_ICON[t] || '🏆'}</span>{n}× {t}
                       </span>
                     ))}
@@ -625,13 +625,13 @@ export function CampanhasSection() {
                           {LIBERTADORES_ANOS[p.id] ? (
                             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
                               {LIBERTADORES_ANOS[p.id].map(({ ano, label, color }) => (
-                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 12, whiteSpace: 'nowrap' as const }}>
                                   {ano} · {label}
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span style={{ background: phases.lib.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.lib.label}</span>
+                            <span style={{ background: phases.lib.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 12 }}>{phases.lib.label}</span>
                           )}
                         </div>
                       )}
@@ -641,13 +641,13 @@ export function CampanhasSection() {
                           {SULAMERICANA_ANOS[p.id] ? (
                             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
                               {SULAMERICANA_ANOS[p.id].map(({ ano, label, color }) => (
-                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 12, whiteSpace: 'nowrap' as const }}>
                                   {ano} · {label}
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span style={{ background: phases.sul.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.sul.label}</span>
+                            <span style={{ background: phases.sul.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 12 }}>{phases.sul.label}</span>
                           )}
                         </div>
                       )}
@@ -657,13 +657,13 @@ export function CampanhasSection() {
                           {COPA_BRASIL_ANOS[p.id] ? (
                             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
                               {COPA_BRASIL_ANOS[p.id].map(({ ano, label, color }) => (
-                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 12, whiteSpace: 'nowrap' as const }}>
                                   {ano} · {label}
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span style={{ background: phases.copa.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.copa.label}</span>
+                            <span style={{ background: phases.copa.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 12 }}>{phases.copa.label}</span>
                           )}
                         </div>
                       )}
@@ -673,13 +673,13 @@ export function CampanhasSection() {
                           {BRASILEIRO_ANOS[p.id] ? (
                             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
                               {BRASILEIRO_ANOS[p.id].map(({ ano, label, color }) => (
-                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                <span key={ano} style={{ background: color, color: 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 12, whiteSpace: 'nowrap' as const }}>
                                   {ano} · {label}
                                 </span>
                               ))}
                             </div>
                           ) : (
-                            <span style={{ background: phases.bra.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{phases.bra.label}</span>
+                            <span style={{ background: phases.bra.color, color: 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 12 }}>{phases.bra.label}</span>
                           )}
                         </div>
                       )}
@@ -689,7 +689,7 @@ export function CampanhasSection() {
                           {MUNDIAL_ANOS[p.id] ? (
                             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
                               {MUNDIAL_ANOS[p.id].map(({ ano, label, color }) => (
-                                <span key={ano} style={{ background: color, color: color === '#E8B560' ? '#1a1a2e' : 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 10, whiteSpace: 'nowrap' as const }}>
+                                <span key={ano} style={{ background: color, color: color === '#E8B560' ? '#1a1a2e' : 'white', padding: '2px 8px', borderRadius: 999, fontWeight: 700, fontSize: 12, whiteSpace: 'nowrap' as const }}>
                                   {ano} · {label}
                                 </span>
                               ))}
@@ -697,7 +697,7 @@ export function CampanhasSection() {
                           ) : (
                             <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' as const, justifyContent: 'flex-end' }}>
                               {phases.munList.map((mun, mi) => (
-                                <span key={mi} style={{ background: mun.color, color: mun.color === '#E8B560' ? '#1a1a2e' : 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 11 }}>{mun.label}</span>
+                                <span key={mi} style={{ background: mun.color, color: mun.color === '#E8B560' ? '#1a1a2e' : 'white', padding: '3px 10px', borderRadius: 999, fontWeight: 700, fontSize: 12 }}>{mun.label}</span>
                               ))}
                             </div>
                           )}
@@ -730,13 +730,13 @@ export function LongevidadeSection() {
         <div data-mc="stack" style={{ display: 'grid', gridTemplateColumns: '1fr 1.4fr', gap: 36, alignItems: 'start' }}>
           <Reveal>
             <div style={{ background: 'linear-gradient(160deg,#0D2018,#0A1810)', borderRadius: 18, padding: 28, color: 'white', textAlign: 'center' as const, position: 'relative', overflow: 'hidden' }}>
-              <div style={{ position: 'absolute', top: 14, left: 0, right: 0, fontSize: 10, fontWeight: 800, letterSpacing: '0.16em', color: '#E8B560', textTransform: 'uppercase' as const }}>★ Mais jogos pelo Flu</div>
+              <div style={{ position: 'absolute', top: 14, left: 0, right: 0, fontSize: 12, fontWeight: 800, letterSpacing: '0.16em', color: '#E8B560', textTransform: 'uppercase' as const }}>★ Mais jogos pelo Flu</div>
               <div style={{ marginTop: 20, display: 'flex', justifyContent: 'center', marginBottom: 14 }}><Portrait player={lider} size={104} ring="#E8B560" big /></div>
               <div style={{ fontFamily: BB, fontSize: 34, letterSpacing: '0.02em', lineHeight: 1 }}>{lider.nome}</div>
               <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 18 }}>{lider.periodo}</div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 22 }}>
-                <div><div style={{ fontFamily: BB, fontSize: 32, color: '#E8B560' }}><AnimatedNumber value={lider.jogos} /></div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>jogos</div></div>
-                <div><div style={{ fontFamily: BB, fontSize: 32, color: 'white' }}>{(lider.jogos * 0.25).toFixed(0)}</div><div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>pts</div></div>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: '#E8B560' }}><AnimatedNumber value={lider.jogos} /></div><div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>jogos</div></div>
+                <div><div style={{ fontFamily: BB, fontSize: 32, color: 'white' }}>{(lider.jogos * 0.25).toFixed(0)}</div><div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase' as const, letterSpacing: '0.08em' }}>pts</div></div>
               </div>
             </div>
           </Reveal>
