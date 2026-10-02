@@ -4,15 +4,16 @@ import { useAuth } from "@/hooks/useAuth";
 
 interface ProtectedRouteProps {
   children: ReactNode;
+  allowGuest?: boolean;
 }
 
-export const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ children, allowGuest = false }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
   if (loading) return null;
 
-  if (!user) {
+  if (!user && !(allowGuest && sessionStorage.getItem("guest-demo-completed") !== "true")) {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
