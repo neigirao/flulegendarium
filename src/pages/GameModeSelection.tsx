@@ -115,7 +115,7 @@ const GameModeSelection = () => {
                 </div>
                 <div className="text-[12px] text-muted-foreground flex items-start gap-1.5 leading-snug">
                   <span className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0 mt-1.5" />
-                  Sua pontuação será salva automaticamente no ranking
+                  {user ? "Sua pontuação será salva automaticamente no ranking" : "Experimente uma rodada sem conta. Entre depois para continuar e salvar pontos."}
                 </div>
               </div>
               <div className="flex items-center gap-3 flex-shrink-0 ml-[3.625rem] sm:ml-0">
