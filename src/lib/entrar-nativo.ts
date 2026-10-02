@@ -42,7 +42,14 @@ export const RETORNO_NATIVO = `${ESQUEMA}://entrar`;
 
 export type RetornoDoLogin =
   | { tipo: "codigo"; codigo: string }
-  | { tipo: "sessao"; acesso: string; atualizacao: string }
+  | {
+      tipo: "sessao";
+      acesso: string;
+      atualizacao: string;
+      /** Tokens do provedor (ex.: Apple), quando vêm no fragmento. */
+      provedorAtualizacao?: string;
+      provedorAcesso?: string;
+    }
   | { tipo: "erro"; motivo: string }
   | { tipo: "ignorar" };
 
@@ -66,7 +73,15 @@ export function lerRetornoDoLogin(url: string): RetornoDoLogin {
   const acesso = fragmento.get("access_token");
   const atualizacao = fragmento.get("refresh_token");
   if (acesso !== null && acesso !== "" && atualizacao !== null && atualizacao !== "") {
-    return { tipo: "sessao", acesso, atualizacao };
+    const provedorAtualizacao = fragmento.get("provider_refresh_token");
+    const provedorAcesso = fragmento.get("provider_token");
+    return {
+      tipo: "sessao",
+      acesso,
+      atualizacao,
+      ...(provedorAtualizacao ? { provedorAtualizacao } : {}),
+      ...(provedorAcesso ? { provedorAcesso } : {}),
+    };
   }
 
   const codigo = lida.searchParams.get("code");
@@ -186,5 +201,62 @@ export async function entrarNoAplicativo(
     return troca.error ? troca.error.message : null;
   } catch (falha) {
     return falha instanceof Error ? falha.message : "falha_inesperada";
+  }
+}
+
+export type ReautenticacaoApple =
+  | { ok: true; usuarioId: string; token: string; dica: "refresh_token" | "access_token" }
+  | { ok: false; motivo: "cancelado" | string };
+
+/**
+ * EXCLUSÃO DE CONTA: a Apple só aceita revogar com um token que ela mesma
+ * emitiu, e o Supabase não o guarda. Então, na hora de excluir, a pessoa passa
+ * de novo pela janela da Apple e pegamos o token do retorno. Não mexe no
+ * caminho de login normal (`entrarNoAplicativo`).
+ */
+export async function reautenticarComApple(): Promise<ReautenticacaoApple> {
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: "apple",
+      options: { redirectTo: RETORNO_NATIVO, skipBrowserRedirect: true },
+    });
+    if (error) return { ok: false, motivo: error.message };
+    if (!data.url) return { ok: false, motivo: "sem_url" };
+
+    const retorno =
+      Capacitor.getPlatform() === "ios"
+        ? await pelaJanelaDeAutenticacao(data.url)
+        : await peloNavegadorEOEsquema(data.url);
+
+    if (retorno === "cancelado" || retorno.tipo === "ignorar") return { ok: false, motivo: "cancelado" };
+    if (retorno.tipo === "erro") return { ok: false, motivo: retorno.motivo };
+
+    let usuarioId: string | undefined;
+    let token: string | undefined;
+    let dica: "refresh_token" | "access_token" = "refresh_token";
+
+    if (retorno.tipo === "sessao") {
+      const posta = await supabase.auth.setSession({
+        access_token: retorno.acesso,
+        refresh_token: retorno.atualizacao,
+      });
+      if (posta.error) return { ok: false, motivo: posta.error.message };
+      usuarioId = posta.data.session?.user.id;
+      token = retorno.provedorAtualizacao ?? retorno.provedorAcesso;
+      dica = retorno.provedorAtualizacao ? "refresh_token" : "access_token";
+    } else {
+      const troca = await supabase.auth.exchangeCodeForSession(retorno.codigo);
+      if (troca.error) return { ok: false, motivo: troca.error.message };
+      usuarioId = troca.data.session?.user.id;
+      const sessao = troca.data.session;
+      token = sessao?.provider_refresh_token ?? sessao?.provider_token ?? undefined;
+      dica = sessao?.provider_refresh_token ? "refresh_token" : "access_token";
+    }
+
+    if (!usuarioId) return { ok: false, motivo: "sem_usuario" };
+    if (!token) return { ok: false, motivo: "sem_token_da_apple" };
+    return { ok: true, usuarioId, token, dica };
+  } catch (falha) {
+    return { ok: false, motivo: falha instanceof Error ? falha.message : "falha_inesperada" };
   }
 }
