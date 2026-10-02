@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -6,13 +6,13 @@ export interface PlayStreak {
   streak: number;
   bestStreak: number;
   isLoading: boolean;
+  recordCompletedGame: () => Promise<void>;
 }
 
-const today = () => new Date().toISOString().slice(0, 10);
+const today = () => new Date().toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
 const yesterday = () => {
-  const d = new Date();
-  d.setDate(d.getDate() - 1);
-  return d.toISOString().slice(0, 10);
+  const d = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  return d.toLocaleDateString("en-CA", { timeZone: "America/Sao_Paulo" });
 };
 
 export const usePlayStreak = (): PlayStreak => {
@@ -23,6 +23,8 @@ export const usePlayStreak = (): PlayStreak => {
 
   useEffect(() => {
     if (!user) {
+      setStreak(0);
+      setBestStreak(0);
       setIsLoading(false);
       return;
     }
@@ -55,22 +57,28 @@ export const usePlayStreak = (): PlayStreak => {
         return;
       }
 
-      // Continuing streak from yesterday, or starting fresh
-      const newStreak = last_play_date === yesterday() ? play_streak + 1 : 1;
-      const newBest = Math.max(best_play_streak, newStreak);
-
-      await supabase
-        .from("profiles")
-        .update({ play_streak: newStreak, last_play_date: todayStr, best_play_streak: newBest })
-        .eq("id", user.id);
-
-      setStreak(newStreak);
-      setBestStreak(newBest);
+      // Opening the menu is not playing. Only completed games advance the streak.
+      setStreak(last_play_date === yesterday() ? play_streak : 0);
+      setBestStreak(best_play_streak);
       setIsLoading(false);
     };
 
     updateStreak();
   }, [user]);
 
-  return { streak, bestStreak, isLoading };
+  const recordCompletedGame = useCallback(async () => {
+    if (!user) return;
+    const { data, error } = await supabase.from("profiles")
+      .select("play_streak, last_play_date, best_play_streak").eq("id", user.id).single();
+    if (error || !data) return;
+    const profile = data as { play_streak: number; last_play_date: string | null; best_play_streak: number };
+    if (profile.last_play_date === today()) return;
+    const value = profile.last_play_date === yesterday() ? (profile.play_streak || 0) + 1 : 1;
+    const best = Math.max(profile.best_play_streak || 0, value);
+    const { error: writeError } = await supabase.from("profiles")
+      .update({ play_streak: value, last_play_date: today(), best_play_streak: best }).eq("id", user.id);
+    if (!writeError) { setStreak(value); setBestStreak(best); }
+  }, [user]);
+
+  return { streak, bestStreak, isLoading, recordCompletedGame };
 };
