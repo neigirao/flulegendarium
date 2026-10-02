@@ -9,7 +9,7 @@ export const AuthButton = () => {
 
   if (loading) {
     return (
-      <Button variant="outline" disabled className="border-primary/20 min-w-[120px]">
+      <Button variant="outline" aria-label="Carregando conta" disabled className="border-primary/20 min-w-[120px]">
         <LoadingSpinner size="sm" className="mr-2" />
         <span className="hidden sm:inline">Carregando...</span>
       </Button>
@@ -30,6 +30,7 @@ export const AuthButton = () => {
         <Button
           variant="outline"
           size="sm"
+          aria-label="Sair da conta"
           onClick={signOut}
           className="flex items-center gap-1 sm:gap-2 border-error/30 text-error hover:bg-error-light hover:text-error min-w-[60px] sm:min-w-[80px]"
         >
