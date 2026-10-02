@@ -1,3 +1,4 @@
+import { uniqueLeaderboard, type RankingEntry } from './unique-leaderboard';
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,11 +7,7 @@ import { Gamepad2, Shirt, Target } from "lucide-react";
 import { ShimmerSkeleton } from "@/components/ui/shimmer-skeleton";
 import { cn } from "@/lib/utils";
 
-interface RankingEntry {
-  id: string;
-  player_name: string;
-  score: number;
-}
+
 
 
 const Podium = ({ rankings }: { rankings: RankingEntry[] }) => {
@@ -89,11 +86,28 @@ const useRankingQuery = (table: string, gameMode?: string) =>
   useQuery({
     queryKey: ['rankings', table, gameMode],
     queryFn: async () => {
-      let query = supabase.from(table as 'rankings' | 'jersey_game_rankings').select('id, player_name, score').order('score', { ascending: false }).limit(10);
-      if (gameMode) query = query.eq('game_mode', gameMode);
-      const { data, error } = await query;
-      if (error) throw error;
-      return (data || []) as RankingEntry[];
+      const pageSize = 100;
+      const unique: RankingEntry[] = [];
+      const seen = new Set<string>();
+      // Page until ten distinct players or exhaustion; limit-before-dedupe can
+      // hide valid players when one person has many high-score runs.
+      for (let offset = 0; unique.length < 10; offset += pageSize) {
+        let query = supabase.from(table as 'rankings' | 'jersey_game_rankings')
+          .select('id, user_id, player_name, score')
+          .order('score', { ascending: false }).order('id', { ascending: true })
+          .range(offset, offset + pageSize - 1);
+        if (gameMode) query = query.eq('game_mode', gameMode);
+        const { data, error } = await query;
+        if (error) throw error;
+        const rows = (data || []) as RankingEntry[];
+        for (const entry of uniqueLeaderboard(rows)) {
+          const key = entry.user_id ? `user:${entry.user_id}` : `guest:${entry.player_name.trim().toLocaleLowerCase('pt-BR')}`;
+          if (!seen.has(key)) { seen.add(key); unique.push(entry); }
+          if (unique.length === 10) break;
+        }
+        if (rows.length < pageSize) break;
+      }
+      return unique;
     },
     staleTime: 5 * 60 * 1000,
   });
