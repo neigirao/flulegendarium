@@ -7,13 +7,13 @@ Este documento detalha o fluxo completo de uma partida no "Lendas do Flu", inclu
 ## Modos de Jogo
 
 ### 1. Quiz Adaptativo (`/quiz-adaptativo`)
-Sistema que ajusta a dificuldade automaticamente baseado no desempenho do jogador. Requer autenticação — `ProtectedRoute` redireciona para `/auth` se não logado.
+Sistema que ajusta a dificuldade automaticamente baseado no desempenho do jogador. Permite uma rodada demo por sessão; depois `ProtectedRoute` redireciona para `/auth`.
 
 ### 2. Quiz por Década (`/quiz-decada`)
-Jogadores filtrados por período histórico (1960s–2010s+). Requer autenticação.
+Jogadores filtrados por período histórico (1960s–2010s+). Permite uma rodada demo por sessão; conta necessária para continuar e salvar ranking.
 
 ### 3. Quiz das Camisas (`/quiz-camisas`)
-Adivinhe o ano das camisas históricas do Fluminense escolhendo entre 3 opções via two-step confirm. Requer autenticação.
+Adivinhe o ano das camisas históricas do Fluminense escolhendo entre 3 opções via two-step confirm. Permite uma rodada demo por sessão; conta necessária para continuar e salvar ranking.
 
 ---
 
@@ -21,15 +21,15 @@ Adivinhe o ano das camisas históricas do Fluminense escolhendo entre 3 opções
 
 ```mermaid
 flowchart TD
-    Start[Usuário acessa rota de jogo] --> Guard{ProtectedRoute: user?}
-    Guard -->|Não autenticado| RedirectAuth[Redireciona para /auth com state.from]
-    Guard -->|Autenticado| LoadGame[Carrega jogo]
+    Start[Usuário acessa rota de jogo] --> Guard{Conta ou demo disponível?}
+    Guard -->|Demo concluída e sem conta| RedirectAuth[Redireciona para /auth com state.from]
+    Guard -->|Conta ou demo| LoadGame[Carrega jogo]
     RedirectAuth --> Login[Usuário faz login]
     Login --> ReturnRoute[Redireciona de volta para state.from]
     ReturnRoute --> LoadGame
 ```
 
-**Nota**: O fluxo de "Jogar como convidado" foi removido. Todos os modos de jogo exigem conta.
+**Nota (02/10/2026)**: convidado pode jogar uma rodada por sessão de navegador. Game Over marca `guest-demo-completed`; o botão de continuar abre `/auth`. Ranking só é salvo para usuário autenticado. O restante do diagrama descreve o retorno de login, não a demo.
 
 ---
 
@@ -37,13 +37,14 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-    Start[Início] --> Auth{Usuário Autenticado?}
+    Start[Início] --> Auth{Conta ou demo disponível?}
     
-    Auth -->|Não| RedirectLogin[Redireciona para /auth]
-    Auth -->|Sim| LoadPlayers[Carregar Jogadores]
+    Auth -->|Demo concluída, sem conta| RedirectLogin[Redireciona para /auth]
+    Auth -->|Conta| LoadPlayers[Carregar Jogadores]
     
     RedirectLogin --> Auth
-    ValidateName -->|Sim| LoadPlayers
+    Auth -->|Demo| ValidateName[Informar nome]
+    ValidateName --> LoadPlayers
     
     LoadPlayers --> SelectPlayer[Selecionar Jogador]
     
