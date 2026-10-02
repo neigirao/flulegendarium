@@ -5,6 +5,9 @@ import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/utils/logger';
 
 export const challengeDay = (date = new Date()) => date.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
+// Serialize writes for each user/challenge across mounted hook instances.
+const progressQueues = new Map<string, Promise<unknown>>();
+
 export const nextChallengeProgress = (metric: string, current: number, value: number) =>
   ['streak', 'max_streak', 'accuracy', 'score_threshold'].includes(metric)
     ? Math.max(current, value) : current + value;
@@ -184,11 +187,15 @@ export const useDailyChallengesModule = () => {
     );
 
     for (const challenge of relevantChallenges) {
-      await updateProgressMutation.mutateAsync({
+      const key = `${user.id}:${challenge.id}`;
+      const previous = progressQueues.get(key) || Promise.resolve();
+      const next = previous.catch(() => undefined).then(() => updateProgressMutation.mutateAsync({
         challengeId: challenge.id,
         increment,
         metric: challenge.target_metric,
-      });
+      }));
+      progressQueues.set(key, next);
+      try { await next; } finally { if (progressQueues.get(key) === next) progressQueues.delete(key); }
     }
   };
 
