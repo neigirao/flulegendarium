@@ -14,7 +14,7 @@ Quiz web sobre ídolos históricos do Fluminense com modos de jogo (adaptativo, 
 ## Início rápido
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
@@ -25,20 +25,43 @@ npm run build
 npm run preview
 ```
 
+## Produto e publicação (02/10/2026)
+
+- Site: https://lendasdoflu.com/ . React Router oferece quiz adaptativo, por década e camisas, rankings, perfil, desafios, páginas públicas e administração.
+- Login de usuário: Google e Apple. Web usa OAuth Supabase; iOS usa `ASWebAuthenticationSession` e retorno `lendasdoflu://entrar`, tratados em `src/lib/entrar-nativo.ts`.
+- Uma rodada demo por sessão de navegador permite experimentar sem conta; após Game Over, `/auth` permite continuar. Não salva ranking do convidado. Não é proteção antifraude nem promessa de funcionamento offline.
+- Desafios usam o dia de São Paulo. Contagens somam; sequência e precisão usam o maior valor. Sequência de dias avança ao terminar uma partida, não ao abrir o menu.
+- Ainda não há crédito transacional de recompensa de desafio. A UI não promete bônus nem soma ao ranking. A correção da rotação em `supabase/functions/rotate-daily-challenges` precisa de deploy separado.
+- Eventos GA4 `auth_start`, `auth_success`, `auth_error`, `auth_abandon` são aditivos ao funil existente. Só enviam enums de provedor, superfície e motivo; nunca e-mail, ID, token, texto do erro ou URL de retorno.
+- `main` não prova que a versão está publicada. O publish Lovable, deploy de função e migração de banco são etapas separadas. PRs só entram depois do CI verde; não executar schema/deploy/publish como efeito de editar documentação.
+
+## Validação local
+
+```bash
+npm run lint
+npx tsc --noEmit -p tsconfig.app.json
+npm test
+npm run test:coverage
+npm run build
+npm run test:e2e
+```
+
+O Playwright abre Vite em 8080 localmente; em CI usa preview em 4173 após build. Instale o Chromium com `npx playwright install chromium`. Fixtures E2E usam uma sessão de teste, não credenciais de uma pessoa real. CI GitHub executa lint/build/testes/cobertura; E2E e Lighthouse são workflows separados. Codemagic também tem workflow web e iOS; não disparar distribuição só para validar documentação.
+
 ## Variáveis de ambiente
 
-Crie um arquivo `.env` na raiz do projeto com as seguintes variáveis:
+Use `.env.example` como referência, mas confira quem consome cada configuração:
 
-| Variável | Obrigatória | Descrição |
-|---|---|---|
-| `VITE_SUPABASE_URL` | ✅ | URL do projeto Supabase (ex: `https://<id>.supabase.co`) |
-| `VITE_SUPABASE_PUBLISHABLE_KEY` | ✅ | Chave anon/pública do Supabase |
-| `VITE_SUPABASE_PROJECT_ID` | ✅ | ID do projeto Supabase (usado em scripts de admin) |
-| `VITE_GOOGLE_CLIENT_ID` | ✅ | Client ID do Google OAuth para autenticação via One Tap |
-| `VITE_GA4_ID` | ❌ | ID do Google Analytics 4 (fallback para `G-X2VE77MEYC` se ausente) |
-| `VITE_ENABLE_DESIGN_SYSTEM` | ❌ | Define `"true"` para ativar o design system em produção (ativo por padrão em `DEV`) |
+| Configuração | Consumidor e efeito atual |
+|---|---|
+| `VITE_GOOGLE_CLIENT_ID` | `useGoogleOneTap.ts`; opcional para One Tap. Botões OAuth não dependem desse script. |
+| `VITE_GA4_ID` | `use-analytics.ts`; fallback `G-X2VE77MEYC`. O loader no `index.html` também tem o ID fixo: alinhar ambos ao trocar propriedade. |
+| `VITE_ENABLE_DESIGN_SYSTEM` | Ativa `/design-system` em produção com `true`; ativo em DEV. |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`, `VITE_SUPABASE_PROJECT_ID` | Constam no exemplo, mas **não substituem** o cliente gerado atual: `src/integrations/supabase/client.ts` contém URL e chave pública fixas. Rever esse arquivo e a configuração Lovable ao trocar backend. |
 
-> **Segurança:** As chaves Supabase expostas aqui são a chave `anon` (pública), segura para uso client-side. Nunca exponha a `service_role` key no frontend.
+Segredos das Edge Functions ficam no servidor: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `INTERNAL_FUNCTION_SECRET`; `RESEND_API_KEY`, `OPENAI_API_KEY`, `SENTRY_DSN` e `ENVIRONMENT` são usados pelas funções que precisam deles. Nunca colocar service-role, certificados, chave Apple `.p8` ou tokens de assinatura em `VITE_*`, commits ou logs.
+
+Google/Apple e redirect URLs são configurados no Supabase/provedor, não só em `.env`. No iOS, manter esquema de URL e bundle ID alinhados com Info.plist e Capacitor. Consulte `docs/mobile-ios.md`.
 
 ## Documentação essencial
 
