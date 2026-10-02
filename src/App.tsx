@@ -90,11 +90,11 @@ function App() {
                             <Route path="/" element={<Index />} />
                             <Route path="/auth" element={<LazyAuth />} />
                             <Route path="/reset-password" element={<LazyResetPassword />} />
-                            <Route path="/selecionar-modo-jogo" element={<ProtectedRoute><LazyGameModeSelection /></ProtectedRoute>} />
+                            <Route path="/selecionar-modo-jogo" element={<ProtectedRoute allowGuest><LazyGameModeSelection /></ProtectedRoute>} />
                             <Route
                               path="/quiz-adaptativo"
                               element={
-                                <ProtectedRoute>
+                                <ProtectedRoute allowGuest>
                                   <GameErrorBoundary>
                                     <LazyAdaptiveGuessPlayer />
                                   </GameErrorBoundary>
@@ -104,7 +104,7 @@ function App() {
                             <Route
                               path="/quiz-decada"
                               element={
-                                <ProtectedRoute>
+                                <ProtectedRoute allowGuest>
                                   <GameErrorBoundary>
                                     <LazyDecadeGuessPlayer />
                                   </GameErrorBoundary>
@@ -114,7 +114,7 @@ function App() {
                             <Route
                               path="/quiz-camisas"
                               element={
-                                <ProtectedRoute>
+                                <ProtectedRoute allowGuest>
                                   <GameErrorBoundary>
                                     <LazyJerseyQuizPage />
                                   </GameErrorBoundary>
