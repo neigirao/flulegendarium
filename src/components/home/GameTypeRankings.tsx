@@ -125,16 +125,16 @@ export const GameTypeRankings = () => {
       </div>
 
       <Tabs defaultValue="adaptive" className="mt-6">
-        <TabsList className="grid w-full max-w-[400px] mx-auto grid-cols-3 bg-card border border-border shadow-sm mb-6">
-          <TabsTrigger value="adaptive" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground gap-1.5">
+        <TabsList className="grid w-full max-w-[400px] mx-auto grid-cols-3 min-h-12 bg-card border border-border shadow-sm mb-6">
+          <TabsTrigger aria-label="Ranking adaptativo" value="adaptive" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground gap-1.5 min-h-11">
             <Target className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Adaptivo</span>
           </TabsTrigger>
-          <TabsTrigger value="classic" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground gap-1.5">
+          <TabsTrigger aria-label="Ranking clássico" value="classic" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground gap-1.5 min-h-11">
             <Gamepad2 className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Clássico</span>
           </TabsTrigger>
-          <TabsTrigger value="jersey" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground gap-1.5">
+          <TabsTrigger aria-label="Ranking de camisas" value="jersey" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground text-muted-foreground gap-1.5 min-h-11">
             <Shirt className="w-3.5 h-3.5" />
             <span className="hidden sm:inline">Camisas</span>
           </TabsTrigger>
