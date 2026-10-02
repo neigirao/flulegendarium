@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RootLayout } from '@/components/RootLayout';
 import { SEOManager } from '@/components/seo/SEOManager';
-import { ArrowLeft, Apple } from 'lucide-react';
+import { AppleSignInArt } from "@/components/auth/AppleSignInArt";
+import { ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { authStart, authError, medirEntradaNativa } from '@/lib/auth-funnel';
 import { entrarNoAplicativo, noAplicativo } from '@/lib/entrar-nativo';
@@ -77,7 +78,7 @@ const Auth = () => {
         description="Entre na sua conta para salvar seu progresso e competir no ranking global dos Lendas do Flu!"
       />
       <RootLayout>
-        <div className="min-h-screen page-warm bg-tricolor-vertical-border flex items-center justify-center p-4 safe-area-top safe-area-bottom">
+        <div className="page-warm bg-tricolor-vertical-border flex items-start sm:items-center justify-center px-4 py-8 sm:py-12 safe-area-top safe-area-bottom">
           <div className="w-full max-w-md">
             <div className="text-center mb-8">
               <Button
@@ -129,8 +130,7 @@ const Auth = () => {
                   onClick={handleAppleLogin}
                   disabled={abrindo !== null}
                 >
-                  <Apple className="w-5 h-5 mr-2" />
-                  Entrar com a Apple
+                  <AppleSignInArt />
                 </Button>
                 {sessionStorage.getItem('guest-demo-completed') !== 'true' && (
                   <Button variant="ghost" className="w-full touch-target-lg mt-3" onClick={() => navigate('/selecionar-modo-jogo')}>
