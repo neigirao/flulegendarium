@@ -57,7 +57,11 @@ const Termos = () => {
 
         <h2 className="pt-2 text-lg font-semibold">Encerramento</h2>
         <p>
-          Você pode parar de jogar quando quiser. Para excluir sua conta e todos os dados, escreva para{" "}
+          Você pode parar de jogar quando quiser. Para excluir sua conta, no app vá em Perfil e toque em &quot;Excluir minha conta&quot;. Isso apaga seu progresso, histórico, conquistas, desafios, posição nos rankings, comentários, avaliações e chamados de suporte. O seu login (Google ou Apple) continua existindo, porque é compartilhado com outros projetos do mesmo criador. Detalhes na{" "}
+          <Link to="/privacidade" className="underline">
+            política de privacidade
+          </Link>
+          . Se não conseguir usar o app, escreva para{" "}
           <a href="mailto:neigirao@gmail.com" className="underline">
             neigirao@gmail.com
           </a>
