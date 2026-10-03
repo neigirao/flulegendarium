@@ -17,7 +17,7 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
     "audit:docs": "bash scripts/audit-docs.sh",
-    "mobile:sync": "npm run build && cap sync ios"
+    "mobile:sync": "npm run build && node scripts/native-artwork.mjs --sync"
   },
   "dependencies": {
     "@capacitor/app": "^8.1.1",
