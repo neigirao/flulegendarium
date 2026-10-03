@@ -81,7 +81,7 @@ const Index = () => {
     <>
       <SEOManager
         title="Lendas do Flu | Quiz de Jogadores e Camisas Históricas do Fluminense"
-        description="🏆 3 modos de quiz: Jogadores, Por Década e Camisas Históricas! Teste seus conhecimentos sobre os ídolos e uniformes tricolores."
+        description="Teste seu conhecimento sobre o Fluminense: adivinhe jogadores, relembre camisas históricas e jogue desafios por décadas. Quiz tricolor grátis."
         schema="WebSite"
       />
 
