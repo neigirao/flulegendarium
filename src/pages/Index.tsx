@@ -80,7 +80,7 @@ const Index = () => {
   return (
     <>
       <SEOManager
-        title="Lendas do Flu | Quiz de Jogadores e Camisas Históricas do Fluminense"
+        title="Lendas do Flu - Quiz de jogadores e história do Fluminense"
         description="Teste seu conhecimento sobre o Fluminense: adivinhe jogadores, relembre camisas históricas e jogue desafios por décadas. Quiz tricolor grátis."
         schema="WebSite"
       />
