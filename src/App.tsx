@@ -16,6 +16,7 @@ import { AdminRouteGuard } from "@/components/admin/AdminRouteGuard";
 import { ProtectedRoute } from "@/components/guards/ProtectedRoute";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { featureFlags } from "@/config/feature-flags";
+import { noAplicativo } from "@/lib/entrar-nativo";
 
 // Core pages (immediate load)
 import Index from "@/pages/Index";
@@ -135,7 +136,8 @@ function App() {
                             <Route path="/tutorial" element={<LazyTutorial />} />
                             <Route path="/noticias" element={<LazyNewsPortal />} />
                             <Route path="/noticias/:slug" element={<LazyNewsArticle />} />
-                            <Route path="/doacoes" element={<LazyDonations />} />
+                            {/* Pix/doações: fora do app nativo (diretriz 3.1.1 da App Store). Na web a rota continua. */}
+                            <Route path="/doacoes" element={noAplicativo() ? <Navigate to="/" replace /> : <LazyDonations />} />
                             <Route path="/conquistas" element={<LazyConquistas />} />
                             <Route path="/especiais" element={<LazyEspeciais />} />
                             <Route path="/especiais/maior-atacante" element={<LazyMaiorAtacante />} />
