@@ -41,16 +41,8 @@ export interface OperationalMetric {
   last_updated: string;
 }
 
-export interface BusinessMetrics {
-  monthly_active_users: number;
-  daily_active_users: number;
-  weekly_active_users: number;
-  engagement_score: number;
-  retention_rate: number;
-  churn_rate: number;
-  avg_session_duration: number;
-  last_updated: string;
-}
+export type { BusinessMetrics } from './business-metrics';
+import { businessWindow, calculateBusinessMetrics, type BusinessMetrics } from './business-metrics';
 
 export const adminBusinessIntelligence = {
   async getUserSegments(days: number = 30): Promise<UserSegment[]> {
@@ -351,58 +343,29 @@ export const adminBusinessIntelligence = {
   },
 
   async getBusinessMetrics(days: number = 30): Promise<BusinessMetrics> {
-    try {
-      const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-      const periodAgo = new Date(today.getTime() - days * 24 * 60 * 60 * 1000);
-
-      const [
-        { data: dailyData },
-        { data: weeklyData },
-        { data: periodData }
-      ] = await Promise.all([
-        supabase.from('user_game_history').select('user_id, game_duration, created_at').gte('created_at', today.toISOString()),
-        supabase.from('user_game_history').select('user_id').gte('created_at', weekAgo.toISOString()),
-        supabase.from('user_game_history').select('user_id, created_at').gte('created_at', periodAgo.toISOString())
-      ]);
-
-      const dailyActiveUsers = new Set(dailyData?.map(d => d.user_id) || []).size;
-      const weeklyActiveUsers = new Set(weeklyData?.map(d => d.user_id) || []).size;
-      const periodActiveUsers = new Set(periodData?.map(d => d.user_id) || []).size;
-
-      const engagementScore = periodActiveUsers > 0 ? 
-        Math.round((dailyActiveUsers / periodActiveUsers) * 100) : 0;
-
-      const lastWeekData = periodData?.filter(d =>
-        new Date(d.created_at) >= weekAgo && new Date(d.created_at) < today
-      ) || [];
-      const thisWeekUsers = new Set(weeklyData?.map(d => d.user_id) || []);
-      const lastWeekUsers = new Set(lastWeekData.map(d => d.user_id));
-      const retainedUsers = [...thisWeekUsers].filter(user => lastWeekUsers.has(user)).length;
-      const retentionRate = lastWeekUsers.size > 0 ? 
-        Math.round((retainedUsers / lastWeekUsers.size) * 100) : 0;
-
-      const avgSessionDuration = dailyData?.length ? Math.round((dailyData.reduce((sum, d) => sum + (d.game_duration || 180), 0) / dailyData.length) / 60) : 0;
-
-      return {
-        monthly_active_users: periodActiveUsers,
-        daily_active_users: dailyActiveUsers,
-        weekly_active_users: weeklyActiveUsers,
-        engagement_score: engagementScore,
-        retention_rate: retentionRate,
-        churn_rate: Math.max(0, 100 - retentionRate),
-        avg_session_duration: avgSessionDuration,
-        last_updated: now.toISOString()
-      };
-
-    } catch (error) {
-      logger.error('Erro ao buscar métricas de negócio', 'BI', { error: String(error) });
-      return {
-        monthly_active_users: 0, daily_active_users: 0, weekly_active_users: 0,
-        engagement_score: 0, retention_rate: 0, churn_rate: 0,
-        avg_session_duration: 0, last_updated: new Date().toISOString()
-      };
+    const now = new Date();
+    const window = businessWindow(now, days);
+    // Scope is rows visible to this session, not proof of global access under RLS.
+    const rows: { user_id: string | null; created_at: string; game_duration: number | null }[] = [];
+    const pageSize = 500;
+    const maxRows = 20_000;
+    for (let offset = 0; offset < maxRows; offset += pageSize) {
+      const { data, error } = await supabase.from('user_game_history')
+        .select('id, user_id, game_duration, created_at')
+        .gte('created_at', new Date(window.queryStart).toISOString())
+        .lt('created_at', now.toISOString())
+        .order('created_at', { ascending: true })
+        .order('id', { ascending: true })
+        .range(offset, offset + pageSize - 1);
+      if (error) {
+        logger.error('Erro ao buscar métricas de negócio', 'BI', { error: error.message });
+        throw error;
+      }
+      if (!data) throw new Error('Métricas indisponíveis: consulta sem resposta');
+      rows.push(...data);
+      if (data.length < pageSize) return calculateBusinessMetrics(rows, now, days);
     }
+    // Never present a capped sample as a complete aggregate.
+    throw new Error('Métricas indisponíveis: limite de 20.000 sessões. Use agregação no servidor.');
   }
 };
