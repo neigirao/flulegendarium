@@ -17,7 +17,8 @@ export const BusinessIntelligenceDashboard = () => {
   const { period, setPeriod } = useReportPeriod();
   const {
     businessMetrics,
-    isLoadingBusiness
+    isLoadingBusiness,
+    isErrorBusiness
   } = useAdminAnalytics(period);
 
   return (
@@ -26,14 +27,15 @@ export const BusinessIntelligenceDashboard = () => {
         <div>
           <h2 className="text-2xl font-bold text-primary mb-2">Business Intelligence</h2>
           <p className="text-muted-foreground">
-            Analytics avançados e visão executiva em tempo real
+            Atividade de jogo nas linhas acessíveis à sessão. Não comprova cobertura global.
           </p>
         </div>
         <PeriodSelector value={period} onChange={setPeriod} />
       </div>
 
+      {isErrorBusiness && <p role="alert" className="text-destructive">Métricas indisponíveis. Nenhum zero foi estimado. Tente novamente mais tarde.</p>}
       {/* Resumo Executivo */}
-      {businessMetrics && !isLoadingBusiness && (
+      {businessMetrics && !isLoadingBusiness && !isErrorBusiness && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -57,7 +59,7 @@ export const BusinessIntelligenceDashboard = () => {
                   <Zap className="w-5 h-5 text-green-500" />
                   <span className="text-sm font-medium text-muted-foreground">Engagement</span>
                 </div>
-                <p className="text-2xl font-bold text-green-600">{businessMetrics.engagement_score}%</p>
+                <p className="text-2xl font-bold text-green-600">{businessMetrics.engagement_score === null ? "Não disponível" : `${businessMetrics.engagement_score}%`}</p>
                 <p className="text-xs text-muted-foreground">DAU/Período</p>
               </div>
               
@@ -66,19 +68,25 @@ export const BusinessIntelligenceDashboard = () => {
                   <Target className="w-5 h-5 text-purple-500" />
                   <span className="text-sm font-medium text-muted-foreground">Retenção</span>
                 </div>
-                <p className="text-2xl font-bold text-purple-600">{businessMetrics.retention_rate}%</p>
-                <p className="text-xs text-muted-foreground">Taxa geral</p>
+                <p className="text-2xl font-bold text-purple-600">{businessMetrics.retention_rate === null ? "Não disponível" : `${businessMetrics.retention_rate}%`}</p>
+                <p className="text-xs text-muted-foreground">Usuários da semana anterior que voltaram nos últimos 7 dias</p>
               </div>
               
               <div className="text-center p-4">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <TrendingUp className="w-5 h-5 text-orange-500" />
-                  <span className="text-sm font-medium text-muted-foreground">Churn</span>
+                  <span className="text-sm font-medium text-muted-foreground">Não retornaram</span>
                 </div>
-                <p className="text-2xl font-bold text-orange-600">{businessMetrics.churn_rate}%</p>
-                <p className="text-xs text-muted-foreground">Taxa do período</p>
+                <p className="text-2xl font-bold text-orange-600">{businessMetrics.inactive_previous_week_rate === null ? "Não disponível" : `${businessMetrics.inactive_previous_week_rate}%`}</p>
+                <p className="text-xs text-muted-foreground">Entre os usuários da semana anterior; não é cancelamento de conta</p>
               </div>
             </div>
+            <p className="mt-4 text-xs text-muted-foreground">
+              Dia em UTC; semanas consecutivas de 7 dias, sem sobreposição. Base anterior: {businessMetrics.retention_previous_users} usuários.
+              {" "}Duração média hoje: {businessMetrics.avg_session_duration === null ? "não disponível" : `${businessMetrics.avg_session_duration} min`}.
+              {" "}Duração conhecida em {businessMetrics.duration_known_sessions}/{businessMetrics.duration_total_sessions} sessões.
+              {" "}Atualizado em {new Date(businessMetrics.last_updated).toLocaleString("pt-BR")}.
+            </p>
           </CardContent>
         </Card>
       )}
