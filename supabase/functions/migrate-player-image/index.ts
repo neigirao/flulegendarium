@@ -1,8 +1,10 @@
+import { hasValidAdminSession, unauthorizedResponse } from '../_shared/authGuard.ts';
+import { downloadImage } from './safe-image.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-session',
 };
 
 interface MigrationRequest {
@@ -25,36 +27,31 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ success: false, error: 'Método não permitido' }), { status: 405, headers: { ...corsHeaders, Allow: 'POST, OPTIONS', 'Content-Type': 'application/json' } });
+  }
+
   try {
+    if (!(await hasValidAdminSession(req))) return unauthorizedResponse(corsHeaders);
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const { playerId, playerName, currentUrl }: MigrationRequest = await req.json();
 
+    if (typeof playerId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(playerId)) {
+      throw new Error('Jogador inválido');
+    }
+    const { data: player, error: playerError } = await supabase.from('players').select('id').eq('id', playerId).maybeSingle();
+    if (playerError || !player) throw new Error('Jogador não encontrado');
+
     console.log(`🔄 Iniciando migração para ${playerName} (${playerId})`);
     console.log(`   URL atual: ${currentUrl}`);
 
     // 1. Download da imagem externa
     console.log('📥 Fazendo download da imagem...');
-    const imageResponse = await fetch(currentUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-      },
-    });
+    const { bytes: imageBuffer, contentType, extension } = await downloadImage(currentUrl);
 
-    if (!imageResponse.ok) {
-      throw new Error(`Falha ao baixar imagem: ${imageResponse.status} ${imageResponse.statusText}`);
-    }
-
-    const imageBlob = await imageResponse.blob();
-    const imageBuffer = await imageBlob.arrayBuffer();
-    
-    // Detectar extensão da imagem
-    const contentType = imageResponse.headers.get('content-type') || 'image/jpeg';
-    const extension = contentType.includes('png') ? 'png' : 
-                      contentType.includes('webp') ? 'webp' : 'jpg';
-    
     console.log(`   Tamanho: ${(imageBuffer.byteLength / 1024).toFixed(2)} KB`);
     console.log(`   Tipo: ${contentType} (ext: ${extension})`);
 
@@ -62,7 +59,7 @@ Deno.serve(async (req) => {
     const fileName = `${playerId}.${extension}`;
     console.log(`📤 Fazendo upload para storage: ${fileName}`);
     
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from('players')
       .upload(fileName, imageBuffer, {
         contentType,

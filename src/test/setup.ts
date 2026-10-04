@@ -21,6 +21,8 @@ vi.mock('@/integrations/supabase/client', () => ({
   },
 }));
 
+// Browser mocks only apply to jsdom suites. Node edge-function tests have no window.
+if (typeof window !== 'undefined') {
 // Mock do window.gtag
 Object.defineProperty(window, 'gtag', {
   value: vi.fn(),
@@ -41,3 +43,5 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: vi.fn(),
   })),
 });
+
+}
