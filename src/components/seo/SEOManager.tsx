@@ -18,6 +18,9 @@ interface SEOManagerProps {
   gameMode?: string;
   difficulty?: string;
   articleBody?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  authorName?: string;
   mentions?: Array<{ name: string; url?: string }>;
   breadcrumbs?: Array<{ name: string; url: string }>;
 }
@@ -122,8 +125,6 @@ const SCHEMA_GENERATORS: Record<SchemaType, (props: { title: string; description
     "url": url,
     "image": image,
     "inLanguage": "pt-BR",
-    "datePublished": "2026-06-02T00:00:00-03:00",
-    "dateModified": new Date().toISOString(),
     "author": {
       "@type": "Organization",
       "name": "Lendas do Flu",
@@ -160,6 +161,9 @@ export const SEOManager = ({
   noindex = false,
   schema,
   articleBody,
+  publishedTime,
+  modifiedTime,
+  authorName,
   mentions,
   breadcrumbs,
 }: SEOManagerProps) => {
@@ -198,9 +202,9 @@ export const SEOManager = ({
 
     // Article-specific Open Graph (only when type is article)
     if (type === 'article') {
-      updateMeta('property', 'article:published_time', '2026-06-02T00:00:00-03:00');
-      updateMeta('property', 'article:modified_time', new Date().toISOString());
-      updateMeta('property', 'article:author', 'Lendas do Flu');
+      if (publishedTime) updateMeta('property', 'article:published_time', publishedTime);
+      if (modifiedTime || publishedTime) updateMeta('property', 'article:modified_time', (modifiedTime || publishedTime) as string);
+      updateMeta('property', 'article:author', authorName || 'Lendas do Flu');
       updateMeta('property', 'article:section', 'Esportes');
     }
 
@@ -233,6 +237,13 @@ export const SEOManager = ({
     // Enrich Article schema with optional body and mentions
     if (schemaType === 'Article') {
       if (articleBody) structuredData['articleBody'] = articleBody;
+      // Datas e autoria reais do artigo. Sem a data, o campo fica de fora:
+      // uma data inventada é pior que nenhuma.
+      if (publishedTime) structuredData['datePublished'] = publishedTime;
+      if (modifiedTime || publishedTime) structuredData['dateModified'] = modifiedTime || publishedTime;
+      if (authorName) {
+        structuredData['author'] = { "@type": "Person", "name": authorName };
+      }
       if (mentions?.length) {
         structuredData['mentions'] = mentions.map(m => ({
           "@type": "Person",
@@ -278,7 +289,7 @@ export const SEOManager = ({
       document.querySelector('script[data-seo-manager]')?.remove();
       document.querySelector('script[data-seo-breadcrumb]')?.remove();
     };
-  }, [title, description, keywords, image, resolvedUrl, resolvedCanonical, type, noindex, schema, articleBody, mentions, breadcrumbs]);
+  }, [title, description, keywords, image, resolvedUrl, resolvedCanonical, type, noindex, schema, articleBody, publishedTime, modifiedTime, authorName, mentions, breadcrumbs]);
 
   return null;
 };
