@@ -17,7 +17,7 @@ export const useAdminAnalytics = (days: number = 30) => {
     refetchInterval: 5 * 60 * 1000
   });
 
-  const { data: businessMetrics, isLoading: isLoadingBusiness } = useQuery({
+  const { data: businessMetrics, isLoading: isLoadingBusiness, isError: isErrorBusiness } = useQuery({
     queryKey: ['admin-business-metrics', days],
     queryFn: () => adminBusinessIntelligence.getBusinessMetrics(days),
     staleTime: 15 * 60 * 1000,
@@ -66,6 +66,7 @@ export const useAdminAnalytics = (days: number = 30) => {
     businessMetrics,
     isLoadingOperational,
     isLoadingBusiness,
+    isErrorBusiness,
     // Executive Analytics
     funnelData,
     retentionMetrics: retentionMetrics || { playAgainRate: 0, averageSessionsPerUser: 0, returningUsers: 0 },
