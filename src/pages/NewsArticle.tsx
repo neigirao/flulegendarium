@@ -136,6 +136,10 @@ const NewsArticle = () => {
         keywords={`${article.category?.name || 'notícias'}, fluminense, tricolor, ${article.title}`}
         url={`https://lendasdoflu.com/noticias/${article.slug}`}
         schema="Article"
+        type="article"
+        publishedTime={new Date(article.published_at ?? article.created_at).toISOString()}
+        modifiedTime={new Date(article.updated_at ?? article.published_at ?? article.created_at).toISOString()}
+        authorName={article.author_name || undefined}
       />
       <RootLayout>
         <div className="min-h-screen bg-tricolor-vertical-border safe-area-top safe-area-bottom">
