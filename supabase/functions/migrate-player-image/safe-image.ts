@@ -29,7 +29,7 @@ export async function downloadImage(input: unknown, fetcher: typeof fetch = fetc
       headers: { 'User-Agent': 'LendasImageMigration/1.0' },
     });
     if (!response.ok || response.redirected) throw new Error('Falha ao baixar imagem');
-    const contentType = (response.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase();
+    const contentType = ((response.headers.get('content-type') ?? '').split(';')[0] ?? '').trim().toLowerCase();
     const extension = ({ 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' } as Record<string, string>)[contentType];
     if (!extension) throw new Error('Tipo de imagem não permitido');
     const length = response.headers.get('content-length');
