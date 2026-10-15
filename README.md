@@ -4,6 +4,10 @@ Quiz web sobre ídolos históricos do Fluminense com modos de jogo (adaptativo, 
 
 > **Foco desta documentação:** acelerar diagnóstico de erros, reduzir regressões e facilitar evolução assistida por IA.
 
+## Leia antes de alterar
+
+[Estado atual e gates de operação](docs/CURRENT_STATE.md) descreve admin, exclusão restrita aos dados do Lendas, observabilidade e release. Não apagar `auth.users`: o backend é compartilhado com outros projetos. Merge, deploy de função, SQL e publish são estados separados.
+
 ## Visão rápida
 
 - **Frontend:** React 18 + TypeScript + Vite
@@ -25,7 +29,7 @@ npm run build
 npm run preview
 ```
 
-## Produto e publicação (02/10/2026)
+## Produto e publicação (revisão de 15/10/2026)
 
 - Site: https://lendasdoflu.com/ . React Router oferece quiz adaptativo, por década e camisas, rankings, perfil, desafios, páginas públicas e administração.
 - Login de usuário: Google e Apple. Web usa OAuth Supabase; iOS usa `ASWebAuthenticationSession` e retorno `lendasdoflu://entrar`, tratados em `src/lib/entrar-nativo.ts`.
@@ -46,7 +50,7 @@ npm run build
 npm run test:e2e
 ```
 
-O Playwright abre Vite em 8080 localmente; em CI usa preview em 4173 após build. Instale o Chromium com `npx playwright install chromium`. Fixtures E2E usam uma sessão de teste, não credenciais de uma pessoa real. CI GitHub executa lint/build/testes/cobertura; E2E e Lighthouse são workflows separados. Codemagic também tem workflow web e iOS; não disparar distribuição só para validar documentação.
+O Playwright abre Vite em 8080 localmente; em CI usa preview em 4173 após build. Instale o Chromium com `npx playwright install chromium`. Fixtures E2E usam uma sessão de teste, não credenciais de uma pessoa real. CI GitHub executa lint/build/testes/cobertura; E2E e Lighthouse são workflows separados. Codemagic tem workflow web manual e iOS separado; o webhook automático foi desligado em15/10. GitHub Actions ainda tem triggers de push/PR: não confundir com Codemagic manual. Não iniciar checks/builds sem autorização; commits documentais desta revisão usam [skip ci].
 
 ## Variáveis de ambiente
 
