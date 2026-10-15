@@ -14,7 +14,7 @@ xcodebuild -project ios/App/App.xcodeproj -scheme App \
   CODE_SIGNING_ALLOWED=NO build
 ```
 
-`mobile:sync` recompila o site (`dist/`) e sincroniza os arquivos no projeto iOS. `ios/App/App/public/`, configuração JSON gerada, builds e dados de usuário do Xcode não são versionados. O workflow GitHub iOS executa manualmente para simulador. `codemagic.yaml` inclui workflow de distribuição com assinatura e envio ao TestFlight (não submissão automática ao App Store); aguardar a primeira build verde antes de automatizar. Precisa de macOS/Xcode para validar a compilação. Nunca incluir certificados, perfis ou chaves no repositório.
+`mobile:sync` recompila o site (`dist/`) e sincroniza os arquivos no projeto iOS. `ios/App/App/public/`, configuração JSON gerada, builds e dados de usuário do Xcode não são versionados. O workflow GitHub iOS executa manualmente para simulador. `codemagic.yaml` inclui workflow de distribuição com assinatura e envio ao TestFlight (não submissão automática ao App Store); não automatizar nem iniciar sem aprovação. Precisa de macOS/Xcode para validar a compilação. Nunca incluir certificados, perfis ou chaves no repositório.
 
 ## Antes de chamar de app pronto
 
@@ -33,3 +33,13 @@ Nenhuma migration, edge function nem auth admin faz parte desta base. Android vi
 A demo de convidado é uma rodada por sessão de WebView/navegador. Após concluir, pede login; a demo não salva ranking. Eventos de autenticação distinguem web/nativo sem enviar tokens ou PII. Doações ficam ocultas no build nativo. Ícone/splash e o bootstrap nativo estão no repo; validar no aparelho antes de afirmar qualidade ou disponibilidade na loja.
 
 Publicar o site não recompila o binário instalado. `npm run mobile:sync` gera assets; distribuição iOS exige build e assinatura separados. Não incluir chaves Apple/certificados nos arquivos de ambiente do cliente.
+
+## Estado de manutenção em 15/10/2026
+
+A base já empacota `dist/`; não é o remote-loader antigo do Pile. Doações ficam bloqueadas no app nativo. Arte nativa temporária e favicons/OG web são superfícies distintas: preservar a separação e conferir o pacote final. Os alvos são iPhone, não iPad.
+
+Codemagic web-ci está manual e o webhook automático foi desativado em15/10; iOS continua separado. GitHub Actions tem configuração própria e ainda contém triggers automáticos. Não iniciar checks/builds nem enviar binário só por atualizar docs. O último número/estado aceito deve ser consultado no ASC, não inferido deste guia.
+
+Exclusão em `/perfil` usa confirmação digitada, revoga Apple antes de apagar dados do Lendas e preserva o usuário Auth compartilhado. O código não comprova implantação da RPC/Edge Function ou teste real. Leia `CURRENT_STATE.md` antes de testar.
+
+Sentry está configurado errors-only sem replay/tracing e sem PII por padrão; isso não significa ausência total de breadcrumbs. Não declarar Crashlytics integrado por analogia aos outros apps: o YAML inspecionado não tem a etapa de integração Firebase que existe no Pile/entrenós. Se for adicionado, revisar pacote, política/ficha e ingestão separadamente.
