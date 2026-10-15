@@ -2,6 +2,8 @@
 
 Obrigado por contribuir com o Lendas do Flu.
 
+Leia primeiro [CURRENT_STATE.md](CURRENT_STATE.md) para gates de exclusão, banco compartilhado e pipelines. Documentos de auditoria de março são históricos, não estado de implantação.
+
 ## 1. Princípios
 
 - Corrigir com segurança antes de otimizar.
@@ -87,3 +89,9 @@ Arquivos mais comuns:
 - `docs/ARCHITECTURE.md`
 - `docs/AI_GUIDE.md`
 - `docs/ERROR_TRIAGE.md`
+
+## Operação sem efeitos colaterais
+
+Codemagic web-ci é manual e o webhook está desligado (15/10). GitHub Actions é separado e ainda tem triggers push/PR. Não disparar checks/builds/publish/deploy por uma atualização documental. Migrations e funções precisam de revisão e autorização próprias; não presumir que foram aplicadas.
+
+Não testar exclusão com conta ativa/Apple Review. Exigir backup verificado e autorização para uma conta descartável nomeada. A exclusão do Lendas mantém Auth porque o projeto é compartilhado; nunca ampliar para `auth.users` por conveniência. Nenhum segredo real, payload de login ou dado privado deve entrar em docs/logs.
