@@ -1,5 +1,5 @@
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useAdaptiveGuessGame } from '../use-adaptive-guess-game';
 import type { Player } from '@/types/guess-game';
@@ -111,6 +111,11 @@ const createMockPlayers = (): Player[] => [
 ];
 
 describe('useAdaptiveGuessGame', () => {
+  // Flush pending fire-and-forget async logs (achievement unlocks) before worker teardown (vitest 4 rpc fix)
+  afterEach(async () => {
+    await new Promise((r) => setTimeout(r, 150));
+  });
+
   beforeEach(() => {
     vi.clearAllMocks();
   });
