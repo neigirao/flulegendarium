@@ -17,3 +17,8 @@ verify_jwt = false
 
 [functions.rotate-daily-challenges]
 verify_jwt = false
+
+# Aviso de novo cadastro (Resend). Quem chama é o trigger em auth.users via
+# pg_net, sem JWT de usuário; a função valida o header x-signup-webhook-secret.
+[functions.notify-signup]
+verify_jwt = false
