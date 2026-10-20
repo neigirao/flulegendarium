@@ -132,3 +132,23 @@ Erros de build com `@lovable.dev/cloud-auth-js` são esperados — pacote só ex
 - `docs/AI_GUIDE.md` — contrato de trabalho para IAs
 - `docs/CHANGELOG.md` — histórico de mudanças
 - `ROADMAP.md` — próximas prioridades
+
+## Migrations Supabase: GRANT explícito obrigatório (desde 30/out/2026)
+
+A Supabase não concede mais acesso automático ao Data API para tabelas novas no
+schema public (changelog: https://supabase.com/changelog/45329-breaking-change-tables-not-exposed-to-data-and-graphql-api-automatically).
+Toda migration que cria tabela em `public` precisa incluir, no mesmo arquivo:
+
+1. `ALTER TABLE ... ENABLE ROW LEVEL SECURITY;`
+2. `CREATE POLICY ...` (pelo menos uma por operação permitida);
+3. GRANTs explícitos mínimos, por papel — nunca GRANT ALL para anon/authenticated:
+
+```sql
+-- leitura pública:        GRANT SELECT ON public.<tabela> TO anon, authenticated;
+-- dono autenticado:       GRANT SELECT, INSERT, UPDATE, DELETE ON public.<tabela> TO authenticated;
+-- edge functions (service): GRANT ALL ON public.<tabela> TO service_role;
+-- tabela só via RPC security definer: SEM grant de tabela (documentar o porquê).
+```
+
+Sem o GRANT, o PostgREST responde 42501 (permission denied for table) em preview
+branches, db reset local e em qualquer tabela criada após 30/out/2026.
